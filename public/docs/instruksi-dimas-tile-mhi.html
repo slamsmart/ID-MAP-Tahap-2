@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Instruksi untuk Dimas - Export Tile MHI</title>
+<style>
+@page { size: A4; margin: 2cm; }
+body { font-family: 'Segoe UI', sans-serif; font-size: 11pt; line-height: 1.7; color: #1a1a1a; max-width: 800px; margin: 0 auto; padding: 40px; }
+h1 { color: #0f3d2e; font-size: 22pt; margin-bottom: 5px; }
+h2 { color: #1a4a6e; font-size: 14pt; margin-top: 30px; border-bottom: 2px solid #e0e0e0; padding-bottom: 5px; }
+h3 { color: #333; font-size: 12pt; margin-top: 20px; }
+.subtitle { color: #666; font-size: 11pt; margin-bottom: 30px; }
+.box { background: #f0f7f4; border: 1px solid #c8e6c9; border-radius: 8px; padding: 15px 20px; margin: 15px 0; }
+.warning { background: #fff3e0; border: 1px solid #ffe0b2; border-radius: 8px; padding: 15px 20px; margin: 15px 0; }
+.code-block { background: #1e1e1e; color: #d4d4d4; border-radius: 8px; padding: 20px; margin: 15px 0; font-family: 'Consolas', 'Courier New', monospace; font-size: 10pt; line-height: 1.5; overflow-x: auto; white-space: pre-wrap; }
+.code-block .comment { color: #6a9955; }
+.code-block .string { color: #ce9178; }
+.code-block .keyword { color: #569cd6; }
+.highlight { background: #ffff00; padding: 2px 4px; font-weight: bold; }
+ol li { margin-bottom: 10px; }
+.step { background: #e3f2fd; border-left: 4px solid #1a4a6e; padding: 10px 15px; margin: 10px 0; border-radius: 0 6px 6px 0; }
+.output-example { background: #e8f5e9; border: 1px dashed #4caf50; border-radius: 6px; padding: 12px 15px; margin: 10px 0; font-family: monospace; font-size: 10pt; }
+</style>
+</head>
+<body>
+
+<h1>Instruksi Export Tile Layer MHI</h1>
+<p class="subtitle">Untuk: Dimas Syarif Alim, S.Kel — GIS Specialist ID-MAP<br>Dari: Slamet Abdullah — Ketua Tim ID-MAP</p>
+
+<div class="box">
+<strong>Tujuan:</strong> Mendapatkan URL tile layer MHI agar bisa di-overlay langsung di peta Leaflet ID-MAP. Dengan ini, user bisa melihat warna MHI (hijau/kuning/merah) sambil menggambar polygon untuk menghitung carbon stock — semua dalam 1 peta yang sinkron.
+</div>
+
+<h2>Langkah-langkah</h2>
+
+<div class="step">
+<strong>Step 1:</strong> Buka Google Earth Engine Code Editor<br>
+<a href="https://code.earthengine.google.com/">https://code.earthengine.google.com/</a>
+</div>
+
+<div class="step">
+<strong>Step 2:</strong> Buat script baru, lalu paste kode di bawah ini
+</div>
+
+<div class="step">
+<strong>Step 3:</strong> <span class="highlight">GANTI path asset MHI</span> di baris var mhi = ... sesuai asset yang kamu punya di GEE
+</div>
+
+<div class="step">
+<strong>Step 4:</strong> Klik <strong>Run</strong>
+</div>
+
+<div class="step">
+<strong>Step 5:</strong> Lihat di panel <strong>Console</strong> — copy URL tile yang muncul
+</div>
+
+<div class="step">
+<strong>Step 6:</strong> Kirim URL tersebut ke saya (Slamet)
+</div>
+
+<h2>Script GEE (Copy-Paste)</h2>
+
+<div class="code-block"><span class="comment">// ============================================================
+// Export MHI Jawa Timur sebagai Tile Layer untuk ID-MAP
+// ============================================================</span>
+
+<span class="comment">// Load image MHI
+// GANTI PATH INI sesuai asset MHI yang ada di akun GEE kamu</span>
+<span class="keyword">var</span> mhi = ee.Image(<span class="string">"projects/ee-dimassyarifworkspace/assets/MHI_JawaTimur_2024"</span>);
+
+<span class="comment">// Visualisasi parameter (sama seperti di app MHI)</span>
+<span class="keyword">var</span> visParams = {
+  min: 0,
+  max: 100,
+  palette: [<span class="string">'d7191c'</span>, <span class="string">'f5c542'</span>, <span class="string">'1a9641'</span>] <span class="comment">// Merah - Kuning - Hijau</span>
+};
+
+<span class="comment">// Generate tile URL</span>
+<span class="keyword">var</span> mapId = mhi.getMapId(visParams);
+
+<span class="comment">// Print tile URL ke Console</span>
+print(<span class="string">'=== TILE URL UNTUK ID-MAP ==='</span>);
+print(<span class="string">'Copy URL di bawah ini dan kirim ke Slamet:'</span>);
+print(mapId.urlFormat);
+
+<span class="comment">// Verifikasi di peta</span>
+<span class="keyword">var</span> jatim = ee.Geometry.Rectangle([110.5, -8.8, 114.8, -6.5]);
+Map.centerObject(jatim, 9);
+Map.addLayer(mhi, visParams, <span class="string">'MHI Jawa Timur'</span>);
+</div>
+
+<h2>Output yang Diharapkan</h2>
+
+<p>Setelah klik Run, di panel Console akan muncul URL seperti ini:</p>
+
+<div class="output-example">
+https://earthengine.googleapis.com/v1/projects/earthengine-legacy/maps/XXXXXXXXXXXXXXXX/tiles/{z}/{x}/{y}
+</div>
+
+<p><strong>Copy URL tersebut dan kirim ke saya.</strong></p>
+
+<h2>Catatan Penting</h2>
+
+<div class="warning">
+<strong>⚠ URL ini expired setelah ~2 jam.</strong><br>
+Untuk testing dan demo hackathon ini cukup. Nanti kalau butuh permanen, kita bisa export sebagai static tiles ke Google Cloud Storage.
+</div>
+
+<h3>Kalau path asset berbeda:</h3>
+<p>Cek asset kamu di GEE dengan cara:</p>
+<ol>
+<li>Klik tab <strong>Assets</strong> di panel kiri GEE</li>
+<li>Cari image MHI yang sudah kamu upload/generate</li>
+<li>Klik image tersebut → copy path-nya</li>
+<li>Ganti di script: <code>var mhi = ee.Image("PATH_KAMU_DISINI");</code></li>
+</ol>
+
+<h3>Kalau MHI-nya berupa ImageCollection (bukan single Image):</h3>
+<p>Ganti baris pertama menjadi:</p>
+<div class="code-block"><span class="keyword">var</span> mhi = ee.ImageCollection(<span class="string">"projects/ee-dimassyarifworkspace/assets/MHI_collection"</span>)
+  .sort(<span class="string">'system:time_start'</span>, false)
+  .first(); <span class="comment">// Ambil yang terbaru</span>
+</div>
+
+<h2>Kenapa Ini Dibutuhkan?</h2>
+
+<p>Saat ini ID-MAP menampilkan MHI via iframe (embed app GEE). Masalahnya:</p>
+<ul>
+<li>User tidak bisa gambar polygon di atas peta MHI (iframe cross-origin)</li>
+<li>Saat switch ke mode polygon, posisi peta berubah (tidak sinkron)</li>
+<li>Kalkulasi luas area jadi tidak akurat</li>
+</ul>
+
+<p>Dengan tile URL, saya bisa overlay MHI langsung di Leaflet → user lihat warna MHI + gambar polygon + hitung carbon stock, semua dalam 1 peta yang sama. Akurat dan seamless.</p>
+
+<div class="box">
+<strong>Terima kasih Mas Dimas! 🙏</strong><br>
+Kalau ada kendala atau pertanyaan, langsung hubungi saya.
+</div>
+
+</body>
+</html>

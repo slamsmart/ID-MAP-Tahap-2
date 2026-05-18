@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proposal ID-MAP - Infrastruktur Digital Ekosistem Karbon</title>
+<style>
+@page { size: A4; margin: 2cm; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 11pt; line-height: 1.6; color: #1a1a1a; background: #fff; }
+.page { page-break-after: always; padding: 40px; min-height: 100vh; position: relative; }
+.page:last-child { page-break-after: avoid; }
+h1 { font-size: 28pt; color: #0f3d2e; margin-bottom: 8px; }
+h2 { font-size: 18pt; color: #fff; background: #1a4a6e; padding: 12px 20px; margin: 30px 0 20px; border-radius: 4px; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
+h3 { font-size: 13pt; color: #1a4a6e; margin: 20px 0 10px; font-weight: 700; }
+h4 { font-size: 11pt; color: #333; margin: 15px 0 8px; font-weight: 600; }
+p { margin-bottom: 10px; text-align: justify; }
+.subtitle { font-size: 12pt; color: #555; margin-bottom: 20px; }
+.cover { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; background: linear-gradient(135deg, #1a2a4a 0%, #1a4a6e 50%, #0f3d2e 100%); color: #fff; }
+.cover h1 { color: #fff; font-size: 42pt; margin-bottom: 10px; }
+.cover .tagline { font-size: 14pt; color: #a8d8c8; margin-bottom: 40px; max-width: 600px; }
+.cover .category { background: #4CAF50; color: #fff; padding: 8px 24px; border-radius: 20px; font-size: 11pt; font-weight: 600; display: inline-block; margin-top: 20px; }
+.cover .org { font-size: 14pt; margin-top: 40px; font-weight: 700; letter-spacing: 2px; }
+.cover .year { font-size: 20pt; font-weight: 800; margin-top: 5px; }
+.cover .sponsors { font-size: 9pt; color: #ccc; margin-top: 30px; letter-spacing: 1px; }
+table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 10pt; }
+table th { background: #1a4a6e; color: #fff; padding: 10px 12px; text-align: left; font-weight: 600; }
+table td { padding: 8px 12px; border-bottom: 1px solid #e0e0e0; vertical-align: top; }
+table tr:nth-child(even) td { background: #f8fafb; }
+.info-box { background: #f0f7f4; border-left: 4px solid #0f3d2e; padding: 15px 20px; margin: 15px 0; border-radius: 0 4px 4px 0; }
+.info-box p { margin-bottom: 5px; }
+.flow-diagram { background: #f8fafb; border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center; font-family: monospace; font-size: 10pt; line-height: 2; }
+.badge { display: inline-block; background: #e8f5e9; color: #2e7d32; padding: 3px 10px; border-radius: 12px; font-size: 9pt; font-weight: 600; margin-right: 5px; }
+.note { font-size: 9pt; color: #666; font-style: italic; margin: 5px 0; }
+ol, ul { margin: 10px 0 10px 20px; }
+li { margin-bottom: 6px; }
+strong { color: #1a4a6e; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+.col-box { background: #f8fafb; border: 1px solid #e0e0e0; border-radius: 6px; padding: 15px; }
+.col-box h4 { margin-top: 0; color: #1a4a6e; }
+.header-bar { background: #1a4a6e; color: #fff; padding: 8px 15px; font-size: 9pt; display: flex; justify-content: space-between; margin-bottom: 30px; }
+.section-label { font-size: 9pt; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+.page-num { position: absolute; bottom: 20px; right: 40px; background: #1a4a6e; color: #fff; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10pt; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<!-- PAGE 1: COVER -->
+<div class="page cover">
+<div class="sponsors">BANK INDONESIA &bull; OJK &bull; ASPI &bull; FINTECH INDONESIA &bull; APUVINDO &bull; LPPI</div>
+<div style="margin-top:40px;">
+<p style="font-size:11pt; letter-spacing:2px; opacity:0.8;">2ND SUBMISSION</p>
+<p style="font-size:32pt; font-weight:900; letter-spacing:3px; margin:10px 0;">PROPOSAL</p>
+</div>
+<div style="margin-top:30px;">
+<p style="font-size:16pt; font-weight:300; letter-spacing:4px;">DIGDAYA X HACKATHON</p>
+<p style="font-size:10pt; color:#a8d8c8; margin-top:5px;">BERINOVASI UNTUK MASA DEPAN, MEMBERDAYAKAN TALENTA DIGITAL</p>
+</div>
+<div style="background:rgba(255,255,255,0.1); padding:30px 50px; border-radius:8px; margin-top:40px;">
+<h1 style="font-size:48pt;">ID-MAP</h1>
+<p class="tagline">Infrastruktur Digital Mangrove &amp; Pesisir<br>untuk Ekosistem Karbon Indonesia</p>
+</div>
+<div class="category">Kategori: Pemantauan dan Restorasi Lingkungan</div>
+<div class="org">PUSAT INOVASI DIGITAL INDONESIA</div>
+<div class="year">2026</div>
+</div>
+
+<!-- PAGE 2: REPOSITIONING NOTE -->
+<div class="page">
+<div class="header-bar"><span>ID-MAP &mdash; Infrastruktur Digital Ekosistem Karbon</span><span>DIGDAYA X Hackathon 2026</span></div>
+<h2>Catatan Repositioning</h2>
+
+<h3>Perubahan Strategis</h3>
+<table>
+<tr><th>Aspek</th><th>Sebelumnya (1st Submission)</th><th>Sekarang (2nd Submission)</th></tr>
+<tr><td><strong>Nama Panjang</strong></td><td>Integrasi Data Mangrove dan Pesisir</td><td>Infrastruktur Digital Mangrove &amp; Pesisir untuk Ekosistem Karbon Indonesia</td></tr>
+<tr><td><strong>Positioning</strong></td><td>Platform data &amp; monitoring</td><td>Infrastruktur ekosistem karbon nasional</td></tr>
+<tr><td><strong>Fokus</strong></td><td>Pemantauan &amp; pelaporan</td><td>Carbon marketplace end-to-end</td></tr>
+<tr><td><strong>Output</strong></td><td>Dashboard GIS &amp; laporan</td><td>Kredit karbon terverifikasi &amp; terdaftar SRN</td></tr>
+<tr><td><strong>Revenue</strong></td><td>APBD/APBN (pemerintah)</td><td>Transaction fee + carbon verification fee</td></tr>
+</table>
+
+<h3>Model Bisnis Tiga Sisi</h3>
+<div class="two-col">
+<div class="col-box"><h4>B2C (Individu)</h4><p>Pemerhati lingkungan berkontribusi via QRIS mulai Rp 10.000 untuk mendanai proyek mangrove. Tracking dampak real-time.</p></div>
+<div class="col-box"><h4>B2B (Korporasi)</h4><p>Perusahaan membeli kredit karbon terverifikasi dan terdaftar SRN untuk ESG compliance dan carbon offsetting.</p></div>
+</div>
+<div class="info-box" style="margin-top:15px;">
+<h4 style="margin-top:0;">Mitra (Komunitas Legal)</h4>
+<p>Kelompok masyarakat pesisir yang menginisiasi dan melaksanakan proyek mangrove. Mitra adalah jembatan antara pendanaan dan implementasi lapangan.</p>
+</div>
+
+<h3>Alur Ekosistem ID-MAP</h3>
+<div class="flow-diagram">
+<strong>MITRA (Komunitas Legal)</strong> &rarr; Inisiasi Proyek Mangrove<br>
+&darr;<br>
+<strong>INDIVIDU (B2C)</strong> &rarr; Pendanaan via QRIS<br>
+&darr;<br>
+<strong>MITRA</strong> &rarr; Pelaksanaan Proyek + MRV (Monitoring, Reporting, Verification)<br>
+&darr;<br>
+<strong>SRN KLHK</strong> &rarr; Registrasi &amp; Sertifikat Karbon<br>
+&darr;<br>
+<strong>KORPORASI (B2B)</strong> &rarr; Beli Kredit Karbon (Carbon Credit Purchase)
+</div>
+<div class="page-num">1</div>
+</div>
+
+<!-- PAGE 3: TEAM IDENTITY -->
+<div class="page">
+<div class="header-bar"><span>ID-MAP &mdash; Infrastruktur Digital Ekosistem Karbon</span><span>DIGDAYA X Hackathon 2026</span></div>
+<h2>Team Identity</h2>
+
+<table>
+<tr><td style="width:160px;font-weight:700;">Nama Tim</td><td><strong>ID-MAP</strong> (Infrastruktur Digital Mangrove &amp; Pesisir untuk Ekosistem Karbon Indonesia)</td></tr>
+<tr><td style="font-weight:700;">Nama Ketua Tim</td><td>Slamet Abdullah, S.Pi</td></tr>
+<tr><td style="font-weight:700;">Kontak</td><td>+62 812 3456 1017</td></tr>
+<tr><td style="font-weight:700;">Email</td><td>slamet.abdullah@gmail.com</td></tr>
+<tr><td style="font-weight:700;">Institusi</td><td>Cabang Dinas Kelautan dan Perikanan Kabupaten Malang</td></tr>
+<tr><td style="font-weight:700;">Link Portofolio</td><td>https://id-map-national.vercel.app/</td></tr>
+</table>
+
+<h3>Nama Anggota Tim &amp; Peran</h3>
+<table>
+<tr><th>No.</th><th>Nama</th><th>Peran</th><th>Latar Belakang</th></tr>
+<tr><td>1</td><td>Slamet Abdullah, S.Pi</td><td>Ketua Tim / Full-Stack Developer</td><td>Vibe Coder, Analis Konservasi dan Rehabilitasi Wilayah Pesisir</td></tr>
+<tr><td>2</td><td>Dimas Syarif Alim, S.Kel</td><td>Data Analyst / GIS Specialist</td><td>Pengelola Ekosistem dan Laut Pesisir (PELP), GIS Expert</td></tr>
+</table>
+
+<h3>Ringkasan Tim</h3>
+<p class="note">(maks. 600 karakter)</p>
+<div class="info-box">
+<p>Tim ID-MAP merupakan kolaborasi lintas-disiplin antara praktisi pemerintahan di bidang kelautan dan perikanan dengan tenaga ahli teknologi informasi. Ketua tim adalah aparatur Cabang Dinas Kelautan dan Perikanan Kabupaten Malang yang sekaligus berpengalaman sebagai full-stack developer dan UI designer, sehingga memahami kebutuhan lapangan sekaligus mampu mewujudkannya secara teknis. Tim didukung oleh GIS specialist dan data analyst &mdash; kombinasi yang relevan untuk membangun infrastruktur digital ekosistem karbon yang akurat, skalabel, dan siap digunakan oleh seluruh pemangku kepentingan.</p>
+</div>
+
+<h3>Executive Summary Project</h3>
+<p class="note">(maks. 600 karakter)</p>
+<div class="info-box">
+<p>ID-MAP adalah infrastruktur digital nasional yang menghubungkan ekosistem karbon mangrove Indonesia &mdash; dari inisiasi proyek oleh mitra komunitas, pendanaan publik via QRIS, pelaksanaan MRV terstandar, hingga registrasi SRN KLHK dan perdagangan kredit karbon oleh korporasi. Platform ini menjawab sub-problem <em>Pemantauan dan Restorasi Lingkungan</em> dengan menyediakan marketplace karbon biru terintegrasi yang menggabungkan monitoring real-time, estimasi carbon stock, dan carbon credit readiness dalam satu ekosistem terpadu.</p>
+</div>
+<div class="page-num">2</div>
+</div>
+
+<!-- PAGE 4: PROBLEM STATEMENT -->
+<div class="page">
+<div class="header-bar"><span>ID-MAP &mdash; Infrastruktur Digital Ekosistem Karbon</span><span>DIGDAYA X Hackathon 2026</span></div>
+<h2>Problem Statement</h2>
+
+<h3>Problem Statement yang Dipilih</h3>
+<div class="info-box">
+<p><strong>Klaster:</strong> Percepatan Layanan Publik, Ekonomi Kreatif, dan Ekspor Jasa Digital</p>
+<p><strong>Sub-kategori:</strong> Digitalisasi Layanan Publik &amp; Pariwisata</p>
+<p><strong>Sub-problem:</strong> 5. <strong>Pemantauan dan Restorasi Lingkungan</strong></p>
+</div>
+
+<h3>Sub-Problem Statement Acuan</h3>
+<div class="info-box">
+<ol>
+<li>Pemantauan kondisi ekosistem mangrove dan pesisir secara real-time berbasis data spasial.</li>
+<li>Evaluasi keberhasilan program restorasi mangrove nasional secara terukur dan terstandar.</li>
+<li>Integrasi data lapangan, citra satelit, dan parameter biofisik dalam satu platform terpadu.</li>
+<li>Digitalisasi sistem pelaporan dan pemantauan lingkungan untuk mendukung kebijakan perlindungan kawasan pesisir.</li>
+</ol>
+</div>
+
+<h3>Tujuan Utama</h3>
+<p class="note">(maks. 800 karakter)</p>
+<div class="info-box">
+<p>Membangun infrastruktur digital ekosistem karbon mangrove yang menghubungkan seluruh pemangku kepentingan &mdash; dari komunitas pelaksana hingga korporasi pembeli kredit karbon. Target spesifik:</p>
+<ol>
+<li>Menyediakan platform marketplace karbon biru terintegrasi dengan SRN KLHK sesuai PP 98/2021 dan Permen LHK 21/2022.</li>
+<li>Memfasilitasi pendanaan proyek mangrove dari individu (B2C) melalui mekanisme QRIS yang transparan dan terukur.</li>
+<li>Mengintegrasikan sistem MRV yang memenuhi standar internasional untuk carbon credit issuance.</li>
+<li>Menghasilkan estimasi carbon stock dan absorption rate berbasis AI dengan akurasi &ge;85%.</li>
+<li>Mempercepat proses registrasi proyek karbon ke SRN dari rata-rata 6 bulan menjadi &lt;2 bulan.</li>
+<li>Menjadi rujukan infrastruktur perdagangan karbon biru nasional 2026&ndash;2030.</li>
+</ol>
+</div>
+<div class="page-num">3</div>
+</div>
+
+<!-- PAGE 5: PROBLEM DEFINITION -->
+<div class="page">
+<div class="header-bar"><span>ID-MAP &mdash; Infrastruktur Digital Ekosistem Karbon</span><span>DIGDAYA X Hackathon 2026</span></div>
+<h2>Problem Definition</h2>
+
+<h3>Apa Masalah Utamanya?</h3>
+<p class="note">(maks. 1000 karakter)</p>
+<div class="info-box">
+<p>Indonesia memiliki sekitar <strong>3,36 juta hektar mangrove</strong> &mdash; terluas kedua di dunia &mdash; dengan potensi serapan karbon 3-5x lebih tinggi dari hutan daratan. Namun ekosistem karbon biru ini menghadapi tiga masalah kritis:</p>
+<ol>
+<li><strong>Tidak Ada Infrastruktur Perdagangan Karbon Biru:</strong> Meskipun PP 98/2021 tentang Nilai Ekonomi Karbon telah terbit, belum ada platform digital yang menghubungkan proyek mangrove terverifikasi dengan pembeli kredit karbon. Proses masih manual, mahal, dan memakan waktu 12-18 bulan.</li>
+<li><strong>Fragmentasi Stakeholder:</strong> Komunitas pelaksana, pendana individu, verifikator, dan korporasi pembeli beroperasi dalam silo tanpa sistem yang menghubungkan mereka secara transparan.</li>
+<li><strong>MRV Belum Terstandar untuk Carbon Credit:</strong> Sistem monitoring yang ada belum memenuhi standar penerbitan sertifikat karbon &mdash; data tidak terverifikasi secara spasial, tidak ada baseline akurat, dan proses registrasi SRN masih manual.</li>
+</ol>
+</div>
+
+<h3>Siapa yang Terdampak dan Seberapa Besar?</h3>
+<p class="note">(maks. 700 karakter)</p>
+<div class="info-box">
+<ol>
+<li><strong>Komunitas Pesisir &amp; Kelompok Mitra:</strong> &plusmn;2,2 juta nelayan dan petambak yang bergantung pada ekosistem mangrove membutuhkan mekanisme pendanaan berkelanjutan untuk proyek restorasi.</li>
+<li><strong>Individu Pemerhati Lingkungan:</strong> Jutaan masyarakat Indonesia yang ingin berkontribusi pada aksi iklim namun tidak memiliki channel yang transparan dan terukur.</li>
+<li><strong>Korporasi (ESG Compliance):</strong> Ratusan perusahaan membutuhkan kredit karbon terverifikasi &mdash; pasar senilai USD 190 juta/tahun di Asia Tenggara.</li>
+<li><strong>Pemerintah (KLHK, KKP):</strong> Membutuhkan data terstandar untuk registrasi SRN dan pencapaian target NDC Indonesia.</li>
+</ol>
+</div>
+
+<h3>Bukti Masalah</h3>
+<p class="note">(maks. 800 karakter)</p>
+<div class="info-box">
+<ol>
+<li><strong>Data KLHK 2023:</strong> Indonesia kehilangan &plusmn;40.000 ha mangrove per tahun; tingkat keberhasilan restorasi baru 55% akibat monitoring lemah dan pendanaan tidak berkelanjutan.</li>
+<li><strong>PP 98/2021 &amp; Permen LHK 21/2022:</strong> Regulasi NEK telah terbit namun implementasi terhambat ketiadaan infrastruktur digital.</li>
+<li><strong>Studi BRIN 2024:</strong> 68% program penanaman mangrove gagal karena tidak ada mekanisme MRV yang memadai.</li>
+<li><strong>Audit BPK 2023:</strong> Overlapping anggaran restorasi antar-K/L senilai Rp 1,2 triliun.</li>
+<li><strong>Market Gap:</strong> Pasar voluntary carbon credit global USD 2 miliar (2023), Indonesia baru memanfaatkan &lt;5% potensi blue carbon-nya.</li>
+</ol>
+</div>
+<div class="page-num">4</div>
+</div>
+
+<!-- PAGE 6: PROPOSED SOLUTION -->
+<div class="page">
+<div class="header-bar"><span>ID-MAP &mdash; Infrastruktur Digital Ekosistem Karbon</span><span>DIGDAYA X Hackathon 2026</span></div>
+<h2>Proposed Solution</h2>
+
+<h3>Solusi Inti</h3>
+<p class="note">(maks. 900 karakter)</p>
+<div class="info-box">
+<p>ID-MAP adalah infrastruktur digital ekosistem karbon mangrove yang menghubungkan tiga pihak utama (Mitra, Individu, Korporasi) dalam satu platform terintegrasi dengan lima kapabilitas inti:</p>
+<ol>
+<li><strong>Carbon Project Marketplace:</strong> Platform yang mempertemukan proyek mangrove terverifikasi dengan pendana (individu via QRIS dan korporasi via carbon credit purchase).</li>
+<li><strong>MRV Engine:</strong> Sistem Monitoring, Reporting, dan Verification terintegrasi yang memenuhi standar penerbitan sertifikat karbon &mdash; berbasis citra satelit, data lapangan GPS-verified, dan estimasi AI.</li>
+<li><strong>SRN Integration Layer:</strong> Koneksi dengan Sistem Registri Nasional KLHK untuk proses registrasi proyek karbon yang terdigitalisasi.</li>
+<li><strong>Carbon Estimation AI:</strong> Model machine learning untuk estimasi carbon stock dan absorption rate per proyek.</li>
+<li><strong>Transparent Tracking:</strong> Dashboard real-time yang menampilkan aliran dana, progress proyek, dan output karbon.</li>
+</ol>
+</div>
+
+<h3>Bagaimana Solusi Bekerja?</h3>
+<p class="note">Input &rarr; Proses &rarr; Output (maks. 900 karakter)</p>
+<div class="info-box">
+<p><strong>Input:</strong> Mitra mendaftarkan proyek mangrove dengan data lokasi, luas, dan rencana penanaman. Individu berkontribusi dana via QRIS. Data lapangan dari petugas mitra (foto georeferenced, GPS). Citra satelit Sentinel-2 untuk monitoring tutupan.</p>
+<p><strong>Proses:</strong> Sistem memvalidasi proyek dan menghitung estimasi potensi karbon menggunakan AI. MRV Engine memverifikasi progress dengan cross-check data lapangan vs citra satelit. Setelah terverifikasi, sistem mengajukan registrasi ke SRN KLHK secara digital. Carbon credit diterbitkan sesuai volume serapan terverifikasi.</p>
+<p><strong>Output:</strong> Sertifikat karbon terdaftar di SRN KLHK. Carbon credit tersedia untuk dibeli korporasi. Dashboard transparan untuk semua pihak. Laporan ESG otomatis untuk korporasi pembeli.</p>
+</div>
+<div class="page-num">5</div>
+</div>
+
+<!-- PAGE 7: IMPACT & OUTCOME -->
+<div class="page">
+<div class="header-bar"><span>ID-MAP &mdash; Infrastruktur Digital Ekosistem Karbon</span><span>DIGDAYA X Hackathon 2026</span></div>
+<h2>Impact &amp; Outcome</h2>
+
+<h3>Manfaat Utama Jika Solusi Diterapkan</h3>
+<p class="note">(maks. 800 karakter)</p>
+<div class="info-box">
+<ol>
+<li><strong>Bagi Mitra (Komunitas):</strong> Akses pendanaan berkelanjutan untuk proyek mangrove, pendampingan teknis MRV, dan jalur resmi registrasi SRN &mdash; mengubah restorasi mangrove dari kegiatan sosial menjadi aktivitas ekonomi yang menghasilkan.</li>
+<li><strong>Bagi Individu (B2C):</strong> Channel transparan untuk berkontribusi pada aksi iklim dengan tracking real-time dampak kontribusi (berapa pohon ditanam, berapa CO&#8322; diserap).</li>
+<li><strong>Bagi Korporasi (B2B):</strong> Akses kredit karbon biru terverifikasi dan terdaftar SRN untuk memenuhi kewajiban ESG, lengkap dengan laporan otomatis dan audit trail.</li>
+<li><strong>Bagi Indonesia:</strong> Akselerasi pencapaian target NDC dan FOLU Net Sink 2030, monetisasi potensi blue carbon, dan penciptaan green jobs di kawasan pesisir.</li>
+</ol>
+</div>
+
+<h3>Dampak Jangka Pendek dan Menengah</h3>
+<p class="note">(maks. 600 karakter)</p>
+<table>
+<tr><th>Jangka Pendek (0&ndash;6 Bulan)</th><th>Jangka Menengah (6&ndash;24 Bulan)</th></tr>
+<tr><td>Pilot di 3 kab/kota pesisir Jawa Timur</td><td>Ekspansi ke 10 provinsi pesisir prioritas</td></tr>
+<tr><td>5 mitra komunitas terdaftar dan aktif</td><td>50+ mitra dengan proyek terverifikasi</td></tr>
+<tr><td>1.000+ kontributor individu via QRIS</td><td>50.000+ kontributor aktif</td></tr>
+<tr><td>Prototipe MRV Engine diluncurkan</td><td>Integrasi resmi dengan SRN KLHK</td></tr>
+<tr><td>Estimasi karbon untuk 500 ha</td><td>3 korporasi membeli kredit karbon pertama</td></tr>
+<tr><td>Peta baseline mangrove diperbarui</td><td>Carbon credit marketplace fully operational</td></tr>
+</table>
+<div class="page-num">6</div>
+</div>
+
+<!-- PAGE 8: INNOVATION & DIFFERENTIATION -->
+<div class="page">
+<div class="header-bar"><span>ID-MAP &mdash; Infrastruktur Digital Ekosistem Karbon</span><span>DIGDAYA X Hackathon 2026</span></div>
+<h2>Innovation &amp; Differentiation</h2>
+
+<h3>Apa yang Membuat Solusi Ini Berbeda?</h3>
+<p class="note">(maks. 700 karakter)</p>
+<div class="info-box">
+<ol>
+<li><strong>Ekosistem End-to-End:</strong> Infrastruktur lengkap dari inisiasi proyek hingga transaksi kredit karbon. Tidak ada platform lain di Indonesia yang menghubungkan seluruh rantai nilai karbon biru.</li>
+<li><strong>Crowdfunding Karbon via QRIS:</strong> Siapa saja bisa berkontribusi mulai Rp 10.000 dengan tracking dampak real-time &mdash; demokratisasi aksi iklim.</li>
+<li><strong>MRV Terintegrasi SRN:</strong> Sistem MRV didesain sejak awal untuk memenuhi persyaratan registrasi SRN KLHK sesuai PP 98/2021.</li>
+<li><strong>AI Carbon Estimation:</strong> Model ML dilatih dengan data mangrove Indonesia untuk estimasi carbon stock yang akurat.</li>
+<li><strong>Built by Practitioner:</strong> Dikembangkan oleh staf DKP yang memahami regulasi dan kebutuhan lapangan.</li>
+</ol>
+</div>
+
+<h3>Posisi Solusi Dibanding Pendekatan yang Sudah Ada</h3>
+<p class="note">(maks. 700 karakter)</p>
+<table>
+<tr><th>Fitur</th><th>Verra / Gold Standard</th><th>SIMONTANA (KLHK)</th><th>Kitabisa / Crowdfunding</th><th style="background:#0f3d2e;">ID-MAP</th></tr>
+<tr><td>Marketplace karbon</td><td>&#10003; (global)</td><td>&#10007;</td><td>&#10007;</td><td><strong>&#10003; (lokal)</strong></td></tr>
+<tr><td>Crowdfunding QRIS</td><td>&#10007;</td><td>&#10007;</td><td>&#10003; (umum)</td><td><strong>&#10003; (karbon)</strong></td></tr>
+<tr><td>MRV terintegrasi</td><td>&#10007;</td><td>Terbatas</td><td>&#10007;</td><td><strong>&#10003;</strong></td></tr>
+<tr><td>Registrasi SRN digital</td><td>&#10007;</td><td>Manual</td><td>&#10007;</td><td><strong>&#10003;</strong></td></tr>
+<tr><td>AI carbon estimation</td><td>&#10007;</td><td>&#10007;</td><td>&#10007;</td><td><strong>&#10003;</strong></td></tr>
+<tr><td>Tracking transparan</td><td>Terbatas</td><td>&#10007;</td><td>&#10003;</td><td><strong>&#10003;</strong></td></tr>
+<tr><td>Fokus blue carbon</td><td>&#10007;</td><td>&#10003;</td><td>&#10007;</td><td><strong>&#10003;</strong></td></tr>
+</table>
+<div class="page-num">7</div>
+</div>
+
+<!-- PAGE 9: TECHNICAL APPROACH -->
+<div class="page">
+<div class="header-bar"><span>ID-MAP &mdash; Infrastruktur Digital Ekosistem Karbon</span><span>DIGDAYA X Hackathon 2026</span></div>
+<h2>Technical Approach</h2>
+
+<h3>Teknologi Utama yang Digunakan</h3>
+<p class="note">(maks. 700 karakter)</p>
+<table>
+<tr><th>Layer</th><th>Teknologi</th><th>Fungsi</th></tr>
+<tr><td>Frontend</td><td>Next.js 14, React, Tailwind CSS, Leaflet.js</td><td>Dashboard &amp; marketplace UI</td></tr>
+<tr><td>Backend</td><td>Convex (real-time database), Node.js</td><td>API, real-time sync, business logic</td></tr>
+<tr><td>AI/ML</td><td>Python, Scikit-learn, XGBoost</td><td>Carbon estimation &amp; classification</td></tr>
+<tr><td>GIS</td><td>Leaflet.js, Turf.js, GeoJSON</td><td>Peta interaktif &amp; analisis spasial</td></tr>
+<tr><td>Citra Satelit</td><td>Sentinel-2, Google Earth Engine API</td><td>Monitoring tutupan multi-temporal</td></tr>
+<tr><td>Payment</td><td>QRIS Integration (Midtrans/Xendit)</td><td>Pembayaran kontribusi individu</td></tr>
+<tr><td>Auth</td><td>JWT, Role-based Access Control</td><td>Multi-role authentication (4 role)</td></tr>
+<tr><td>Deployment</td><td>Vercel, Convex Cloud</td><td>Hosting &amp; serverless backend</td></tr>
+</table>
+
+<h3>Algoritma Solusi</h3>
+<p class="note">(maks. 700 karakter)</p>
+<div class="info-box">
+<ol>
+<li><strong>Carbon Stock Estimation:</strong> Allometric equations (Komiyama et al., 2008) dikombinasikan dengan NDVI-based biomass regression untuk estimasi AGB dan BGB per hektar mangrove.</li>
+<li><strong>Absorption Rate:</strong> Model berbasis laju pertumbuhan spesies (Rhizophora, Avicennia, Sonneratia) &times; kerapatan &times; luas area untuk menghitung annual CO&#8322; sequestration (tCO&#8322;e/ha/tahun).</li>
+<li><strong>Change Detection:</strong> NDVI time-series analysis dari Sentinel-2 untuk validasi progress penanaman.</li>
+<li><strong>Restoration Suitability:</strong> XGBoost ensemble dengan variabel biofisik untuk rekomendasi zonasi.</li>
+</ol>
+</div>
+
+<h3>Pertimbangan Keamanan dan Skalabilitas</h3>
+<p class="note">(maks. 600 karakter)</p>
+<div class="info-box">
+<ul>
+<li><strong>Keamanan:</strong> JWT + RBAC untuk 4 role; enkripsi HTTPS/TLS 1.3; audit log seluruh transaksi.</li>
+<li><strong>Privasi:</strong> Data keuangan dan identitas dilindungi sesuai UU PDP No. 27/2022.</li>
+<li><strong>Integritas Karbon:</strong> Cross-check data satelit dan lapangan untuk mencegah double counting.</li>
+<li><strong>Skalabilitas:</strong> Convex real-time database + Vercel edge network; arsitektur serverless auto-scale.</li>
+</ul>
+</div>
+<div class="page-num">8</div>
+</div>
+
+<!-- PAGE 9B: MRV HYBRID SYSTEM -->
+<div class="page">
+<div class="header-bar"><span>ID-MAP &mdash; Infrastruktur Digital Ekosistem Karbon</span><span>DIGDAYA X Hackathon 2026</span></div>
+<h2>Technical Approach &mdash; Sistem MRV Berlapis</h2>
+
+<h3>Pendekatan Multi-Tier MRV</h3>
+<p>ID-MAP menggunakan pendekatan MRV berlapis (multi-tier) yang menggabungkan monitoring satelit otomatis, IoT visual monitoring, dan field reporting terstandar. Kombinasi ini memastikan data yang akurat, cost-effective, dan scalable &mdash; tidak bergantung pada satu metode saja.</p>
+
+<table>
+<tr><th>Tier</th><th>Metode</th><th>Coverage</th><th>Frekuensi</th><th>Biaya</th></tr>
+<tr><td><strong>Tier 1</strong></td><td>Satelit (Sentinel-2, NDVI otomatis)</td><td>100% proyek</td><td>Setiap 10 hari</td><td>Rp 0 (open data)</td></tr>
+<tr><td><strong>Tier 2</strong></td><td>Field Report oleh Mitra (foto + GPS)</td><td>100% proyek</td><td>Setiap 3 bulan</td><td>Rp 0 (mitra lakukan)</td></tr>
+<tr><td><strong>Tier 3</strong></td><td>IoT Camera (snapshot visual)</td><td>Proyek premium/showcase</td><td>Setiap 6 jam</td><td>Rp 12&ndash;18 juta/titik</td></tr>
+</table>
+
+<h3>Arsitektur IoT Visual Monitoring</h3>
+<div class="flow-diagram">
+<strong>[Solar Camera 4G - Lokasi 1]</strong> &rarr; 4G LTE &rarr; ┐<br>
+<strong>[Solar Camera 4G - Lokasi 2]</strong> &rarr; 4G LTE &rarr; ┼&rarr; <strong>Cloud Server (VPS)</strong> &rarr; Dashboard ID-MAP<br>
+<strong>[Solar Camera 4G - Lokasi 3]</strong> &rarr; 4G LTE &rarr; ┘<br>
+<br>
+<em>Snapshot setiap 6 jam &bull; Time-lapse bulanan otomatis &bull; Store-and-forward jika sinyal putus</em>
+</div>
+
+<h3>Spesifikasi Hardware per Titik IoT</h3>
+<table>
+<tr><th>Komponen</th><th>Spesifikasi</th><th>Estimasi Biaya</th></tr>
+<tr><td>Camera</td><td>Solar 4G camera, IP67 marine-grade (Reolink Go Plus / setara)</td><td>Rp 5&ndash;8 juta</td></tr>
+<tr><td>Power</td><td>Solar panel 60W + battery 20Ah (tahan 3&ndash;5 hari tanpa matahari)</td><td>Rp 3&ndash;5 juta</td></tr>
+<tr><td>Mounting</td><td>Tiang galvanis 3&ndash;4m, cor beton di substrat</td><td>Rp 2&ndash;3 juta</td></tr>
+<tr><td>Koneksi</td><td>SIM card 4G data (per tahun)</td><td>Rp 600rb&ndash;1,2 juta/tahun</td></tr>
+<tr><td>Cloud</td><td>Object storage (S3/MinIO) + VPS shared</td><td>Rp 500rb/bulan</td></tr>
+<tr><td colspan="2" style="font-weight:700;">Total per titik (tahun pertama)</td><td style="font-weight:700;">Rp 12&ndash;18 juta</td></tr>
+</table>
+
+<h3>Jadwal MRV Terintegrasi</h3>
+<table>
+<tr><th>Frekuensi</th><th>Metode</th><th>Data</th><th>Pelaksana</th></tr>
+<tr><td>Setiap 10 hari</td><td>Satelit (otomatis)</td><td>NDVI, perubahan tutupan, deteksi anomali</td><td>Sistem otomatis</td></tr>
+<tr><td>Setiap 6 jam</td><td>IoT Camera (otomatis)</td><td>Snapshot visual kondisi lokasi</td><td>Sistem otomatis</td></tr>
+<tr><td>Setiap 3 bulan</td><td>Field Report</td><td>Foto detail, survival rate, kerapatan, tinggi pohon</td><td>Mitra</td></tr>
+<tr><td>Setiap 6 bulan</td><td>Verifikasi Formal</td><td>Laporan MRV lengkap, carbon calculation update</td><td>ID-MAP + Mitra</td></tr>
+<tr><td>Setiap 12 bulan</td><td>Audit Independen</td><td>Third-party verification untuk carbon credit issuance</td><td>Verifikator eksternal</td></tr>
+</table>
+
+<h3>Keunggulan Pendekatan Hybrid</h3>
+<div class="two-col">
+<div class="col-box">
+<h4>Untuk Korporasi &amp; Donor</h4>
+<ul>
+<li>Bukti visual real-time (anti-fraud)</li>
+<li>Time-lapse pertumbuhan mangrove</li>
+<li>Transparansi penuh atas investasi</li>
+</ul>
+</div>
+<div class="col-box">
+<h4>Untuk Verifikasi SRN</h4>
+<ul>
+<li>Data multi-sumber (satelit + lapangan + visual)</li>
+<li>Timestamp &amp; geolocation terverifikasi</li>
+<li>Continuous evidence, bukan snapshot sesaat</li>
+</ul>
+</div>
+</div>
+
+<div class="info-box" style="margin-top:15px;">
+<p><strong>Strategi Deployment:</strong> Tahap pilot memasang IoT camera di 3&ndash;5 proyek showcase di Jawa Timur. Proyek lainnya menggunakan Tier 1 + Tier 2. Setelah terbukti efektif dan ada revenue, ekspansi IoT ke proyek-proyek yang didanai korporasi (biaya IoT bisa dibebankan ke carbon verification fee).</p>
+</div>
+<div class="page-num">9</div>
+</div>
+
+<!-- PAGE 10: IMPLEMENTATION FEASIBILITY -->
+<div class="page">
+<div class="header-bar"><span>ID-MAP &mdash; Infrastruktur Digital Ekosistem Karbon</span><span>DIGDAYA X Hackathon 2026</span></div>
+<h2>Implementation Feasibility</h2>
+
+<h3>Status Inovasi</h3>
+<div class="info-box">
+<p><strong>Tahap saat ini: Prototype / MVP (Minimum Viable Product)</strong></p>
+<p>Platform web ID-MAP telah dikembangkan sebagai MVP dengan fitur: landing page ekosistem karbon, dashboard multi-role (Admin, Mitra, Komunitas, Perusahaan), peta interaktif sebaran mangrove, sistem kontribusi QRIS (simulasi), halaman proyek dengan tracking progress, dan sistem MRV dasar.</p>
+<p>Portal web aktif: <strong>https://id-map-national.vercel.app/</strong></p>
+</div>
+
+<h3>Apakah Inovasi Realistis untuk Dibangun?</h3>
+<p class="note">(maks. 700 karakter)</p>
+<div class="info-box">
+<ul>
+<li><strong>Keahlian Tim:</strong> Full-stack developer + pemahaman regulasi karbon dari perspektif DKP.</li>
+<li><strong>Regulasi Mendukung:</strong> PP 98/2021 dan Permen LHK 21/2022 menyediakan kerangka hukum.</li>
+<li><strong>Teknologi Tersedia:</strong> Stack open source / cloud-based dengan biaya rendah.</li>
+<li><strong>Market Ready:</strong> Permintaan kredit karbon meningkat 30% YoY di Asia Tenggara.</li>
+<li><strong>MVP Sudah Jalan:</strong> Prototype live dan dapat didemonstrasikan.</li>
+</ul>
+</div>
+
+<h3>Tahapan Pengembangan</h3>
+<p class="note">(maks. 900 karakter)</p>
+<table>
+<tr><th>Fase</th><th>Durasi</th><th>Milestone</th></tr>
+<tr><td>Fase 0: Fondasi</td><td>Bulan 1&ndash;2</td><td>Setup infrastruktur, integrasi QRIS, onboarding 5 mitra pertama</td></tr>
+<tr><td>Fase 1: MVP Launch</td><td>Bulan 2&ndash;4</td><td>Platform live, 3 proyek terdaftar, kontribusi QRIS aktif</td></tr>
+<tr><td>Fase 2: MRV &amp; Pilot</td><td>Bulan 4&ndash;6</td><td>MRV Engine v1.0, pilot 3 kab/kota Jatim, validasi carbon estimation</td></tr>
+<tr><td>Fase 3: SRN Integration</td><td>Bulan 6&ndash;9</td><td>Integrasi SRN KLHK, sertifikat karbon pertama diterbitkan</td></tr>
+<tr><td>Fase 4: Marketplace</td><td>Bulan 9&ndash;12</td><td>Carbon credit marketplace aktif, 3 korporasi pertama membeli</td></tr>
+<tr><td>Fase 5: Scale-up</td><td>Bulan 12&ndash;18</td><td>Ekspansi 10 provinsi, 50+ mitra, revenue dari verification fee</td></tr>
+</table>
+<div class="page-num">10</div>
+</div>
+
+<!-- PAGE 11: BUSINESS MODEL -->
+<div class="page">
+<div class="header-bar"><span>ID-MAP &mdash; Infrastruktur Digital Ekosistem Karbon</span><span>DIGDAYA X Hackathon 2026</span></div>
+<h2>Implementation Feasibility &mdash; Bisnis Model</h2>
+
+<h3>Bisnis Model dan Keberlanjutan</h3>
+<p class="note">Business Model Canvas (maks. 1000 karakter)</p>
+
+<table>
+<tr><th style="width:200px;">Komponen</th><th>Detail</th></tr>
+<tr><td><strong>Key Partners</strong></td><td>KLHK, KKP, Dinas KP Daerah, Payment Gateway (Midtrans/Xendit), NGO Mangrove, Verifikator Independen</td></tr>
+<tr><td><strong>Key Activities</strong></td><td>Onboarding mitra, fasilitasi pendanaan, MRV execution, carbon estimation, SRN registration, marketplace operation</td></tr>
+<tr><td><strong>Key Resources</strong></td><td>Platform digital, tim developer &amp; GIS, data satelit, jaringan mitra komunitas, relasi korporasi</td></tr>
+<tr><td><strong>Value Proposition</strong></td><td>Infrastruktur lengkap dari proyek mangrove hingga kredit karbon &mdash; transparan, terverifikasi, terdaftar SRN</td></tr>
+<tr><td><strong>Customer Segments</strong></td><td>Mitra (komunitas pelaksana), Individu (donor/kontributor), Korporasi (pembeli kredit karbon)</td></tr>
+<tr><td><strong>Channels</strong></td><td>Portal web, aplikasi mobile, integrasi QRIS, partnership korporasi, workshop &amp; seminar</td></tr>
+<tr><td><strong>Revenue Streams</strong></td><td>(1) Transaction fee QRIS 2-3%, (2) Carbon verification fee per proyek, (3) Premium subscription korporasi, (4) Commission carbon credit 5-10%</td></tr>
+<tr><td><strong>Cost Structure</strong></td><td>Cloud hosting, pengembangan platform, tim operasional, pelatihan mitra, marketing</td></tr>
+</table>
+
+<div class="info-box" style="margin-top:20px;">
+<h4 style="margin-top:0;">Keberlanjutan</h4>
+<p>ID-MAP dirancang sebagai <strong>self-sustaining platform</strong>. Revenue utama berasal dari transaction fee dan carbon verification fee yang tumbuh seiring bertambahnya proyek dan transaksi. Model ini tidak bergantung pada hibah atau anggaran pemerintah untuk operasional, meskipun integrasi dengan sistem pemerintah (SRN) memperkuat legitimasi. Untuk jangka panjang, layanan premium bagi korporasi (verifikasi blue carbon, laporan ESG otomatis) menjadi sumber revenue yang scalable.</p>
+</div>
+<div class="page-num">11</div>
+</div>
+
+<!-- PAGE 12: ATTACHMENT & REFERENCE -->
+<div class="page">
+<div class="header-bar"><span>ID-MAP &mdash; Infrastruktur Digital Ekosistem Karbon</span><span>DIGDAYA X Hackathon 2026</span></div>
+<h2>Attachment &amp; Reference</h2>
+
+<h3>Struktur Data Utama ID-MAP</h3>
+<div class="two-col">
+<div class="col-box">
+<h4>1. Data Proyek Mangrove</h4>
+<ul>
+<li>Lokasi (koordinat GPS) &amp; luas area</li>
+<li>Jenis mangrove &amp; rencana penanaman</li>
+<li>Mitra pelaksana &amp; timeline</li>
+<li>Status verifikasi &amp; progress</li>
+</ul>
+</div>
+<div class="col-box">
+<h4>2. Data Kontribusi &amp; Pendanaan</h4>
+<ul>
+<li>Transaksi QRIS &amp; jumlah kontribusi</li>
+<li>Alokasi per proyek</li>
+<li>Riwayat donor &amp; total terkumpul</li>
+<li>Target pendanaan per proyek</li>
+</ul>
+</div>
+<div class="col-box">
+<h4>3. Data MRV &amp; Karbon</h4>
+<ul>
+<li>Citra satelit (NDVI time-series)</li>
+<li>Foto lapangan georeferenced</li>
+<li>Estimasi carbon stock &amp; absorption</li>
+<li>Laporan verifikasi &amp; sertifikat</li>
+</ul>
+</div>
+<div class="col-box">
+<h4>4. Data Marketplace &amp; Transaksi</h4>
+<ul>
+<li>Carbon credit inventory</li>
+<li>Harga per tCO&#8322;e</li>
+<li>Transaksi korporasi</li>
+<li>Sertifikat SRN &amp; laporan ESG</li>
+</ul>
+</div>
+</div>
+
+<h3>Referensi</h3>
+<ol style="font-size:9.5pt;">
+<li>KLHK. (2023). <em>Status Hutan dan Kehutanan Indonesia 2023.</em> Kementerian Lingkungan Hidup dan Kehutanan RI.</li>
+<li>BIG. (2023). <em>Peta Mangrove Nasional.</em> Badan Informasi Geospasial.</li>
+<li>BRIN. (2024). <em>Evaluasi Keberhasilan Restorasi Mangrove di Pesisir Jawa dan Sulawesi.</em> Jurnal Penelitian Mangrove Indonesia.</li>
+<li>PP No. 98 Tahun 2021 tentang Penyelenggaraan Nilai Ekonomi Karbon.</li>
+<li>Permen LHK No. 21 Tahun 2022 tentang Tata Laksana Penerapan Nilai Ekonomi Karbon.</li>
+<li>Perpres No. 120 Tahun 2022 tentang Percepatan Rehabilitasi Hutan dan Lahan.</li>
+<li>UU No. 27 Tahun 2022 tentang Perlindungan Data Pribadi.</li>
+<li>Komiyama, A. et al. (2008). Allometry, biomass, and productivity of mangrove forests. <em>Aquatic Botany</em>, 89(2), 128-137.</li>
+<li>IPCC. (2014). <em>2013 Supplement to the 2006 IPCC Guidelines: Wetlands.</em></li>
+<li>Friess, D.A. et al. (2022). The global mangrove watch. <em>Remote Sensing.</em></li>
+<li>Surat Edaran Menteri KKP No. 8 Tahun 2023 tentang Digitalisasi Pemantauan Ekosistem Pesisir.</li>
+</ol>
+
+<div style="margin-top:30px; text-align:center; padding:20px; background:#f0f7f4; border-radius:8px;">
+<p style="font-size:10pt; color:#666; margin:0;"><em>Dokumen ini merupakan 2nd Submission yang telah di-update sesuai repositioning ID-MAP dari platform monitoring menjadi infrastruktur digital ekosistem karbon Indonesia.</em></p>
+</div>
+<div class="page-num">12</div>
+</div>
+
+</body>
+</html>

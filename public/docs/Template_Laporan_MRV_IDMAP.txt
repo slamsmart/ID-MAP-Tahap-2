@@ -1,0 +1,59 @@
+======================================================
+TEMPLATE LAPORAN MRV (MONITORING, REPORTING, VERIFICATION)
+SESUAI STANDAR SRN PI & VERRA (VCS) - ID-MAP
+======================================================
+
+INFORMASI UMUM PROYEK
+------------------------------------------------------
+Nama Proyek          : 
+Lokasi Proyek        : 
+Nama Pemrakarsa      : 
+Periode Monitoring   : [DD/MM/YYYY] hingga [DD/MM/YYYY]
+Jenis Ekosistem      : Mangrove / Karbon Biru (Blue Carbon)
+Metodologi Referensi : [Misal: VM0007 / SRN Metodologi Kehutanan]
+
+1. DESKRIPSI PELAKSANAAN PROYEK
+------------------------------------------------------
+1.1. Ringkasan aktivitas proyek selama periode monitoring.
+1.2. Perubahan atau deviasi dari Dokumen Desain Proyek (PDD) awal.
+
+2. PENGUKURAN DAN PEMANTAUAN (MONITORING)
+------------------------------------------------------
+2.1. Parameter Monitored:
+     - Luas area tanam aktual (Ha)
+     - Tingkat kelangsungan hidup bibit (Survival Rate %)
+     - Diameter setinggi dada (DBH) sampel pohon (cm)
+     - Kerapatan pohon (Pohon/Ha)
+2.2. Metode Pengumpulan Data (Plot sampling, frekuensi, alat ukur).
+2.3. Data Remote Sensing / Citra Satelit (jika digunakan).
+
+3. ESTIMASI PENURUNAN/PENYERAPAN EMISI GRK
+------------------------------------------------------
+3.1. Baseline Emissions: Emisi dasar jika proyek tidak dilakukan (tCO2e).
+3.2. Project Emissions: Emisi yang dihasilkan selama aktivitas proyek (tCO2e).
+3.3. Leakage: Kebocoran emisi di luar batas proyek (tCO2e).
+3.4. Net GHG Emission Reductions/Removals (tCO2e): 
+     (Sesuai kalkulasi: Baseline - Project - Leakage)
+
+4. MANFAAT SOSIAL DAN LINGKUNGAN (CO-BENEFITS)
+------------------------------------------------------
+4.1. Dampak Sosial: Jumlah komunitas lokal yang terlibat, peningkatan pendapatan.
+4.2. Dampak Keanekaragaman Hayati: Spesies flora/fauna yang terpantau.
+
+5. PENJAMINAN MUTU DAN PENGENDALIAN MUTU (QA/QC)
+------------------------------------------------------
+5.1. Kalibrasi alat ukur.
+5.2. Audit internal data lapangan.
+
+6. LAMPIRAN
+------------------------------------------------------
+- Peta Titik Koordinat Sampling (SHP/KML)
+- Logbook Pengukuran Lapangan
+- Dokumentasi Foto (Timestamp & Geotagging)
+
+======================================================
+Dibuat oleh:
+[Nama Penanggung Jawab]
+[Jabatan]
+[Tanggal]
+======================================================
