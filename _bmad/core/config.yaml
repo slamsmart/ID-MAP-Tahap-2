@@ -1,0 +1,49 @@
+project_name: ID-MAP
+project_version: "2.0"
+user_name: slamsmart
+communication_language: Indonesian
+document_output_language: Indonesian
+planning_artifacts: _bmad/docs
+project_knowledge: _bmad/docs/project-context.md
+
+agents:
+  - code: analyst
+    name: Mary
+    title: Business Analyst
+    icon: "🔍"
+    description: Strategic business analyst — market research, domain discovery, requirements elicitation
+  - code: pm
+    name: John
+    title: Product Manager
+    icon: "📋"
+    description: Product manager — PRD creation, user stories, roadmap, stakeholder alignment
+  - code: architect
+    name: Winston
+    title: System Architect
+    icon: "🏗️"
+    description: System architect — technical design, stack decisions, trade-off analysis
+  - code: ux
+    name: Amelia
+    title: UX Designer
+    icon: "🎨"
+    description: UX designer — user flows, component specs, interaction design, accessibility
+  - code: po
+    name: Bob
+    title: Product Owner
+    icon: "✅"
+    description: Product owner — backlog grooming, acceptance criteria, story prioritization
+  - code: sm
+    name: Alex
+    title: Scrum Master
+    icon: "🏃"
+    description: Scrum master — sprint planning, velocity, risk tracking, team coordination
+  - code: dev
+    name: James
+    title: Senior Developer
+    icon: "💻"
+    description: Senior developer — implementation, code review, technical debt, delivery
+  - code: qa
+    name: Quinn
+    title: QA Engineer
+    icon: "🧪"
+    description: QA engineer — test strategy, edge cases, quality gates, regression prevention

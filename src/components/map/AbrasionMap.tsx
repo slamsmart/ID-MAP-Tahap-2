@@ -12,6 +12,18 @@ import {
 } from "@/lib/abrasionData";
 import { X, Waves, TreePine, ChevronDown, ChevronUp } from "lucide-react";
 
+const STORAGE_KEY = "idmap_abrasi_override";
+
+function loadSites(): AbrasionSite[] {
+  if (typeof window === "undefined") return ABRASION_SITES;
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    return stored ? JSON.parse(stored) : ABRASION_SITES;
+  } catch {
+    return ABRASION_SITES;
+  }
+}
+
 // ─────────────────────────────────────────
 // Icon factory
 // ─────────────────────────────────────────
@@ -45,7 +57,7 @@ function buildPopup(site: AbrasionSite, dotColor: string): string {
       <div style="font-weight:700;font-size:13px;margin-bottom:3px;color:#111">${site.namaPantai}</div>
       <div style="font-size:10px;color:#888;margin-bottom:6px">${site.kecamatanKab}</div>
       <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:7px">
-        <span style="background:${dotColor}22;color:${dotColor};border:1px solid ${dotColor}44;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:700">${site.prioritas}</span>
+        <span style="background:${dotColor};color:white;border:1px solid ${dotColor};padding:2px 8px;border-radius:99px;font-size:10px;font-weight:700">${site.prioritas}</span>
         <span style="background:#f3f4f6;padding:2px 7px;border-radius:4px;font-size:10px;color:#555">${site.substrat}</span>
         <span style="background:#f3f4f6;padding:2px 7px;border-radius:4px;font-size:10px;color:#555">${site.luasan}</span>
       </div>
@@ -61,11 +73,12 @@ function buildPopup(site: AbrasionSite, dotColor: string): string {
 // ─────────────────────────────────────────
 // Fit all sites on first load
 // ─────────────────────────────────────────
-function FitAll() {
+function FitAll({ sites }: { sites: AbrasionSite[] }) {
   const map = useMap();
   useEffect(() => {
+    if (sites.length === 0) return;
     const bounds = L.latLngBounds(
-      ABRASION_SITES.map((s) => [s.lat, s.lng] as [number, number])
+      sites.map((s) => [s.lat, s.lng] as [number, number])
     );
     map.fitBounds(bounds, { padding: [70, 70], maxZoom: 10 });
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -76,21 +89,21 @@ function FitAll() {
 // ─────────────────────────────────────────
 // Fly to selected site
 // ─────────────────────────────────────────
-function FlyController({ selectedNo }: { selectedNo: number | null }) {
+function FlyController({ selectedNo, sites }: { selectedNo: number | null; sites: AbrasionSite[] }) {
   const map = useMap();
   const prevRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (selectedNo === null || selectedNo === prevRef.current) return;
     prevRef.current = selectedNo;
-    const site = ABRASION_SITES.find((s) => s.no === selectedNo);
+    const site = sites.find((s) => s.no === selectedNo);
     if (site) {
       map.flyTo([site.lat, site.lng], 13, {
         duration: 1.2,
         easeLinearity: 0.5,
       });
     }
-  }, [selectedNo, map]);
+  }, [selectedNo, map, sites]);
 
   return null;
 }
@@ -101,18 +114,23 @@ function FlyController({ selectedNo }: { selectedNo: number | null }) {
 function MarkerLayer({
   selectedNo,
   onSelect,
+  sites,
 }: {
   selectedNo: number | null;
   onSelect: (no: number) => void;
+  sites: AbrasionSite[];
 }) {
   const map = useMap();
   const markersRef = useRef<Map<number, L.Marker>>(new Map());
   const onSelectRef = useRef(onSelect);
   onSelectRef.current = onSelect;
 
-  // Create markers once
+  // Create markers once (or when sites change)
   useEffect(() => {
-    ABRASION_SITES.forEach((site) => {
+    markersRef.current.forEach((m) => m.remove());
+    markersRef.current.clear();
+
+    sites.forEach((site) => {
       const cfg = PRIORITAS_CONFIG[site.prioritas];
       const marker = L.marker([site.lat, site.lng], {
         icon: makeIcon(cfg.dot, site.no, false),
@@ -128,18 +146,19 @@ function MarkerLayer({
       markersRef.current.clear();
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [map]);
+  }, [map, sites]);
 
   // Update icon whenever selection changes
   useEffect(() => {
     markersRef.current.forEach((marker, no) => {
-      const site = ABRASION_SITES.find((s) => s.no === no)!;
+      const site = sites.find((s) => s.no === no);
+      if (!site) return;
       const cfg = PRIORITAS_CONFIG[site.prioritas];
       const isSelected = selectedNo === no;
       marker.setIcon(makeIcon(cfg.dot, no, isSelected));
       if (isSelected) marker.openPopup();
     });
-  }, [selectedNo]);
+  }, [selectedNo, sites]);
 
   return null;
 }
@@ -148,11 +167,16 @@ function MarkerLayer({
 // Main exported component
 // ─────────────────────────────────────────
 export default function AbrasionMap({ onClose }: { onClose: () => void }) {
+  const [sites, setSites] = useState<AbrasionSite[]>([]);
   const [selectedNo, setSelectedNo] = useState<number | null>(null);
   const [filter, setFilter] = useState<PrioritasType | "Semua">("Semua");
   const [listOpen, setListOpen] = useState(true);
 
-  const filtered = ABRASION_SITES.filter(
+  useEffect(() => {
+    setSites(loadSites());
+  }, []);
+
+  const filtered = sites.filter(
     (s) => filter === "Semua" || s.prioritas === filter
   );
 
@@ -161,6 +185,10 @@ export default function AbrasionMap({ onClose }: { onClose: () => void }) {
   };
 
   const listH = "38vh";
+
+  const tinggi = sites.filter((s) => s.prioritas === "Tinggi").length;
+  const sedang = sites.filter((s) => s.prioritas === "Sedang").length;
+  const rendah = sites.filter((s) => s.prioritas === "Rendah–Sedang").length;
 
   return (
     <div className="absolute inset-0 z-[400] flex flex-col">
@@ -172,7 +200,7 @@ export default function AbrasionMap({ onClose }: { onClose: () => void }) {
           </div>
           <div>
             <p className="text-sm font-bold text-gray-900 leading-tight">Abrasi Pantai</p>
-            <p className="text-[10px] text-gray-500">15 lokasi · Jawa Timur</p>
+            <p className="text-[10px] text-gray-500">{sites.length} lokasi · Jawa Timur</p>
           </div>
         </div>
 
@@ -219,9 +247,9 @@ export default function AbrasionMap({ onClose }: { onClose: () => void }) {
           url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
           attribution="Tiles &copy; Esri"
         />
-        <FitAll />
-        <FlyController selectedNo={selectedNo} />
-        <MarkerLayer selectedNo={selectedNo} onSelect={handleSelect} />
+        <FitAll sites={sites} />
+        <FlyController selectedNo={selectedNo} sites={sites} />
+        <MarkerLayer selectedNo={selectedNo} onSelect={handleSelect} sites={sites} />
       </MapContainer>
 
       {/* ── Priority legend ── */}
@@ -242,9 +270,7 @@ export default function AbrasionMap({ onClose }: { onClose: () => void }) {
           )
         )}
         <div className="pt-1.5 border-t border-gray-100 text-[10px] text-gray-400">
-          {ABRASION_SITES.filter((s) => s.prioritas === "Tinggi").length} Tinggi ·{" "}
-          {ABRASION_SITES.filter((s) => s.prioritas === "Sedang").length} Sedang ·{" "}
-          {ABRASION_SITES.filter((s) => s.prioritas === "Rendah–Sedang").length} Rendah–Sedang
+          {tinggi} Tinggi · {sedang} Sedang · {rendah} Rendah–Sedang
         </div>
       </div>
 
@@ -278,15 +304,15 @@ export default function AbrasionMap({ onClose }: { onClose: () => void }) {
           <div className="flex items-center gap-4 px-4 py-2 border-b border-gray-100 text-[10px] font-medium text-gray-500">
             <span className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-red-500 inline-block" />
-              Tinggi: {ABRASION_SITES.filter((s) => s.prioritas === "Tinggi").length}
+              Tinggi: {tinggi}
             </span>
             <span className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-amber-500 inline-block" />
-              Sedang: {ABRASION_SITES.filter((s) => s.prioritas === "Sedang").length}
+              Sedang: {sedang}
             </span>
             <span className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-blue-400 inline-block" />
-              Rendah–Sedang: {ABRASION_SITES.filter((s) => s.prioritas === "Rendah–Sedang").length}
+              Rendah–Sedang: {rendah}
             </span>
           </div>
 

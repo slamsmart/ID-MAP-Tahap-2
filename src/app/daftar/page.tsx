@@ -10,7 +10,7 @@ import { api } from "../../../convex/_generated/api";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getAuthBgImage } from "@/lib/heroImageStore";
 
-const roles = ["komunitas", "mitra"] as const;
+const roles = ["sahabat", "mitra"] as const;
 type Role = (typeof roles)[number];
 
 // ─── Inner form — uses useSearchParams, must be inside <Suspense> ────────────
@@ -18,15 +18,18 @@ function RegisterForm() {
   const router = useRouter();
   const { t } = useLanguage();
   const createMutation = useMutation(api.users.create);
+  const verifyOtpMutation = useMutation(api.otpCodes.verifyOtp);
   const searchParams = useSearchParams();
 
   const [showPassword, setShowPassword] = useState(false);
+  const [step, setStep] = useState<"form" | "otp">("form");
+  const [otpValue, setOtpValue] = useState("");
 
   // Pre-select role from ?peran= URL param (e.g. /daftar?peran=mitra)
   const getInitialRole = (): Role => {
     const peran = searchParams.get("peran");
-    if (peran === "mitra" || peran === "komunitas") return peran;
-    return "komunitas";
+    if (peran === "mitra" || peran === "sahabat") return peran;
+    return "sahabat";
   };
 
   const [role, setRole] = useState<Role>(getInitialRole);
@@ -35,19 +38,21 @@ function RegisterForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [bgImage, setBgImage] = useState<string | null>(null);
+  const DEFAULT_BG = "/images/hero-mangrove.webp";
+  const [bgImage, setBgImage] = useState(DEFAULT_BG);
 
   useEffect(() => {
-    getAuthBgImage().then((img) => {
-      setBgImage(img || "/images/hero-mangrove.png");
-    });
+    getAuthBgImage()
+      .then((img) => { if (img) setBgImage(img); })
+      .catch(() => {}); // fallback ke default sudah di-set di useState
   }, []);
 
   const roleLabels: Record<Role, string> = {
-    komunitas: t("Komunitas", "Community"),
+    sahabat: t("Sahabat", "Sahabat"),
     mitra: t("Mitra", "Partner"),
   };
 
+  // Step 1: validasi form → kirim OTP ke email
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -56,7 +61,6 @@ function RegisterForm() {
       setError(t("Semua field harus diisi.", "All fields are required."));
       return;
     }
-
     if (password.length < 6) {
       setError(t("Password minimal 6 karakter.", "Password must be at least 6 characters."));
       return;
@@ -64,32 +68,46 @@ function RegisterForm() {
 
     try {
       setIsLoading(true);
-      const userId = await createMutation({
-        email,
-        password,
-        name,
-        role,
+      const res = await fetch("/api/auth/send-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, name }),
       });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error ?? t("Gagal mengirim OTP.", "Failed to send OTP."));
+        return;
+      }
+      setStep("otp");
+      setOtpValue("");
+    } catch {
+      setError(t("Koneksi gagal. Pastikan internet Anda aktif.", "Connection failed."));
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-      setSession({
-        _id: userId,
-        email,
-        name,
-        role,
-      });
+  // Step 2: verifikasi OTP → buat akun → redirect
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    if (!otpValue.trim()) {
+      setError(t("Masukkan kode OTP.", "Enter the OTP code."));
+      return;
+    }
+    try {
+      setIsLoading(true);
+      await verifyOtpMutation({ email, code: otpValue.trim() });
+
+      const userId = await createMutation({ email, password, name, role });
+      setSession({ _id: userId, email, name, role });
       router.push(getDashboardPath(role));
     } catch (err: any) {
-      if (
-        err.message &&
-        (err.message.includes("Email sudah terdaftar") ||
-          err.message.includes("DUPLICATE_EMAIL"))
-      ) {
-        setError(
-          t(
-            "Email sudah terdaftar. Silakan gunakan email lain atau masuk.",
-            "Email is already registered. Please use another email or log in."
-          )
-        );
+      const msg = err?.data?.message ?? err?.message ?? "";
+      if (msg.includes("DUPLICATE_EMAIL") || msg.includes("sudah terdaftar")) {
+        setError(t("Email sudah terdaftar. Silakan masuk.", "Email already registered. Please log in."));
+      } else if (msg.includes("OTP")) {
+        setError(msg);
       } else {
         setError(t("Terjadi kesalahan. Silakan coba lagi.", "An error occurred. Please try again."));
       }
@@ -97,14 +115,6 @@ function RegisterForm() {
       setIsLoading(false);
     }
   };
-
-  if (!bgImage) {
-    return (
-      <div className="min-h-screen bg-[#0f3d2e] flex items-center justify-center">
-        <div className="w-10 h-10 rounded-full border-4 border-emerald-200 border-t-emerald-600 animate-spin" />
-      </div>
-    );
-  }
 
   return (
     <div 

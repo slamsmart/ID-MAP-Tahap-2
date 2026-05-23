@@ -11,7 +11,7 @@ const userValidator = v.object({
   name: v.string(),
   password: v.string(),
   role: v.union(
-    v.literal("komunitas"),
+    v.literal("sahabat"),
     v.literal("mitra"),
     v.literal("verifikator"),
     v.literal("admin")
@@ -62,7 +62,7 @@ export const getByEmail = query({
 export const listByRole = query({
   args: {
     role: v.union(
-      v.literal("komunitas"),
+      v.literal("sahabat"),
       v.literal("mitra"),
       v.literal("verifikator"),
       v.literal("admin")
@@ -81,7 +81,7 @@ export const getStats = query({
   args: {},
   returns: v.object({
     total: v.number(),
-    komunitas: v.number(),
+    sahabat: v.number(),
     mitra: v.number(),
     verifikator: v.number(),
     admin: v.number(),
@@ -93,7 +93,7 @@ export const getStats = query({
     const all = await ctx.db.query("users").collect();
     return {
       total: all.length,
-      komunitas: all.filter((u) => u.role === "komunitas").length,
+      sahabat: all.filter((u) => u.role === "sahabat").length,
       mitra: all.filter((u) => u.role === "mitra").length,
       verifikator: all.filter((u) => u.role === "verifikator").length,
       admin: all.filter((u) => u.role === "admin").length,
@@ -112,7 +112,7 @@ export const create = mutation({
     name: v.string(),
     password: v.string(),
     role: v.union(
-      v.literal("komunitas"),
+      v.literal("sahabat"),
       v.literal("mitra"),
       v.literal("verifikator"),
       v.literal("admin")
@@ -136,7 +136,7 @@ export const create = mutation({
       });
     }
 
-    const needsKyc = args.role === "mitra" || args.role === "verifikator";
+    const needsKyc = args.role === "sahabat" || args.role === "mitra" || args.role === "verifikator";
 
     return await ctx.db.insert("users", {
       ...args,

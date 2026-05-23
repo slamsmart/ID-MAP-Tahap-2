@@ -1,77 +1,173 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
-import { buildMangroveContext } from "@/lib/mangroveNasionalData";
+import {
+  buildMangroveContext,
+  DATA_PROVINSI,
+  RINGKASAN_NASIONAL as R,
+  PROGRAM_RESTORASI,
+  ANCAMAN_MANGROVE,
+} from "@/lib/mangroveNasionalData";
 
-// OpenRouter — supports free models (deepseek/gemini/etc)
-const client = new OpenAI({
-  apiKey: process.env.OPENROUTER_API_KEY ?? "",
+/** Context ringkas (~40% lebih sedikit token dari buildMangroveContext() */
+function buildShortContext(): string {
+  const kritis = DATA_PROVINSI
+    .filter((p) => p.kondisi === "kritis")
+    .sort((a, b) => b.luasDegradasi - a.luasDegradasi)
+    .slice(0, 5)
+    .map((p) => `${p.provinsi}(${p.luasDegradasi.toLocaleString("id-ID")}ha,${p.persenRealisasi}%)`)
+    .join(", ");
+
+  const program = PROGRAM_RESTORASI
+    .map((p) => `${p.nama}:${Math.round((p.realisasiHektar / p.targetHektar) * 100)}%`)
+    .join(", ");
+
+  const ancaman = ANCAMAN_MANGROVE
+    .filter((a) => a.tingkat === "tinggi")
+    .map((a) => a.jenis)
+    .join(", ");
+
+  return `DATA MANGROVE 2025: luas ${R.totalLuasMangrove.toLocaleString("id-ID")}ha, degradasi ${R.luasDegradasi.toLocaleString("id-ID")}ha, realisasi restorasi ${R.persenRealisasi}% dari target ${R.targetRestorasiTotal.toLocaleString("id-ID")}ha. KKMD: ${R.jumlahKKMDProvinsi} prov/${R.jumlahKKMDKabupaten} kab. NDC 2030: ${R.TargetNDC_2030.toLocaleString("id-ID")}ha.
+KRITIS: ${kritis}.
+PROGRAM: ${program}.
+ANCAMAN: ${ancaman}.`;
+}
+
+// Provider config — NVIDIA NIM (primary) / OpenRouter (fallback)
+const NVIDIA_KEY = process.env.NVIDIA_API_KEY;
+const OPENROUTER_KEY = process.env.OPENROUTER_API_KEY;
+
+const nvidiaClient = NVIDIA_KEY
+  ? new OpenAI({
+      apiKey: NVIDIA_KEY,
+      baseURL: "https://integrate.api.nvidia.com/v1",
+    })
+  : null;
+
+const openrouterClient = new OpenAI({
+  apiKey: OPENROUTER_KEY ?? "",
   baseURL: "https://openrouter.ai/api/v1",
   defaultHeaders: {
-    "HTTP-Referer": process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
-    "X-Title": "ID-MAP Mangrove Platform",
+    "HTTP-Referer": "https://id-map.vercel.app",
+    "X-Title": "ID-MAP Mangrove Analysis",
   },
 });
 
-// Model default: DeepSeek V3 free — ganti via env OPENROUTER_MODEL
-const MODEL = process.env.OPENROUTER_MODEL ?? "deepseek/deepseek-chat:free";
+// NVIDIA NIM — model chain (diurutkan berdasarkan benchmark kecepatan)
+const NVIDIA_MODELS = [
+  "meta/llama-3.1-8b-instruct",       // 949ms  — tercepat
+  "mistralai/mistral-7b-instruct-v0.3", // 2201ms — fallback 1
+  "deepseek-ai/deepseek-v4-flash",      // 2349ms — fallback 2
+];
+
+// OpenRouter — fallback chain (confirmed available)
+const OPENROUTER_MODELS = [
+  "deepseek/deepseek-v4-flash:free",
+  "deepseek/deepseek-r1:free",
+  "meta-llama/llama-3.3-70b-instruct:free",
+  "nousresearch/hermes-3-llama-3.1-405b:free",
+  "meta-llama/llama-3.2-3b-instruct:free",
+];
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { fokus = "umum", role = "admin" } = body as {
-      fokus?: "umum" | "restorasi" | "ancaman" | "karbon" | "kkmd";
+      fokus?: "umum" | "restorasi" | "ancaman" | "karbon" | "kkmd" | "kebijakan";
       role?: string;
     };
 
-    const konteksData = buildMangroveContext();
+    const konteksData = buildShortContext();
 
     const fokulabel: Record<string, string> = {
-      umum: "analisis menyeluruh dan rekomendasi program kelanjutan ekosistem mangrove",
-      restorasi: "progress restorasi, gap pencapaian, dan akselerasi target PMN/BRGMN 2025-2030",
-      ancaman: "pemetaan ancaman kritis dan strategi mitigasi berbasis komunitas",
-      karbon: "potensi blue carbon, carbon credit, dan pembiayaan inovatif mangrove",
-      kkmd: "penguatan Kelompok Kerja Mangrove Daerah dan koordinasi multi-pihak",
+      umum: "analisis umum + rekomendasi",
+      restorasi: "progress restorasi & gap PMN/BRGMN",
+      ancaman: "ancaman kritis & mitigasi",
+      karbon: "blue carbon & carbon credit",
+      kkmd: "penguatan KKMD",
+      kebijakan: "rekomendasi kebijakan & program prioritas nasional",
     };
 
     const instruksiFokus = fokulabel[fokus] ?? fokulabel.umum;
 
-    const systemPrompt = `Kamu adalah analis ekosistem mangrove senior dari BRGMN (Badan Restorasi Gambut dan Mangrove Nasional) Indonesia. Tugas kamu adalah memberikan analisis mendalam dan rekomendasi strategis berdasarkan data real PMN, KKMD, dan BRGMN tahun 2025.
+    const isKebijakan = fokus === "kebijakan";
+    const systemPrompt = isKebijakan
+      ? `Pakar kebijakan mangrove nasional. Jawab SINGKAT, PADAT, LANGSUNG TO THE POINT.
 
-Gunakan bahasa Indonesia yang profesional namun mudah dipahami. Struktur respons dengan markdown (heading, bullet points, tabel jika perlu). Fokus pada rekomendasi yang konkret dan dapat ditindaklanjuti.
+WAJIB: Maksimal 250 kata. Tanpa pengantar/penutup.
 
-Format respons:
+Format (ikuti persis):
+## Isu Kebijakan Utama
+- isu 1
+- isu 2
+
+## Rekomendasi Kebijakan
+- kebijakan 1
+- kebijakan 2
+- kebijakan 3
+
+## Program Prioritas
+- program 1
+- program 2
+- program 3`
+      : `Analis mangrove BRGMN. Jawab SINGKAT, PADAT, LANGSUNG TO THE POINT.
+
+WAJIB: Maksimal 250 kata total. Tanpa pengantar/penutup.
+
+Format (ikuti persis):
 ## Kondisi Terkini
-(ringkasan 2-3 kalimat kondisi mangrove nasional)
+1-2 kalimat.
 
 ## Temuan Kunci
-(3-5 poin temuan paling kritis)
+- poin 1
+- poin 2
+- poin 3
 
-## Analisis [topik fokus]
-(analisis mendalam sesuai fokus)
+## Rekomendasi
+- rekomendasi 1
+- rekomendasi 2
+- rekomendasi 3`;
 
-## Rekomendasi Strategis
-(rekomendasi prioritas untuk program kelanjutan, terstruktur per horizon waktu: jangka pendek/menengah/panjang)
-
-## Sinkronisasi Data & Pelaporan
-(bagaimana platform ID-MAP dapat berkontribusi dalam sinkronisasi data mangrove nasional)`;
 
     const userMessage = `${konteksData}
 
 ---
-Berikan ${instruksiFokus} berdasarkan data di atas.
-Konteks pengguna: role "${role}" pada platform ID-MAP (sistem informasi mangrove pesisir Indonesia).
-Perhatikan khusus provinsi-provinsi kondisi kritis dan gap realisasi restorasi yang masih signifikan.`;
+Fokus: ${instruksiFokus}. Role: ${role}.`;
 
-    // Streaming response via OpenRouter
-    const stream = await client.chat.completions.create({
-      model: MODEL,
-      max_tokens: 1500,
-      stream: true,
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userMessage },
-      ],
-    });
+    // Coba provider satu per satu — NVIDIA dulu, lalu OpenRouter
+    type StreamResult = Awaited<ReturnType<typeof openrouterClient.chat.completions.create>>;
+    let stream: StreamResult | null = null;
+    let lastError: any = null;
+
+    const providers: Array<{ client: OpenAI; models: string[] }> = [
+      ...(nvidiaClient ? [{ client: nvidiaClient, models: NVIDIA_MODELS }] : []),
+      { client: openrouterClient, models: OPENROUTER_MODELS },
+    ];
+
+    outer:
+    for (const { client, models } of providers) {
+      for (const model of models) {
+        try {
+          stream = await client.chat.completions.create({
+            model,
+            max_tokens: 280,
+            temperature: 0,
+            stream: true,
+            messages: [
+              { role: "system", content: systemPrompt },
+              { role: "user", content: userMessage },
+            ],
+          });
+          break outer; // berhasil, hentikan semua loop
+        } catch (err: any) {
+          lastError = err;
+          const status = err?.status ?? err?.statusCode;
+          // Lanjut fallback jika model tidak tersedia (404) atau rate limit (429)
+          if (status !== 404 && status !== 429) throw err;
+        }
+      }
+    }
+
+    if (!stream) throw lastError ?? new Error("Semua model tidak tersedia");
 
     const encoder = new TextEncoder();
     const readable = new ReadableStream({

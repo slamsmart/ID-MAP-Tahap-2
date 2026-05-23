@@ -2,7 +2,7 @@ export interface User {
   _id: string;
   email: string;
   name: string;
-  role: "komunitas" | "mitra" | "verifikator" | "admin";
+  role: "sahabat" | "mitra" | "verifikator" | "admin";
 }
 
 const SESSION_KEY = "idmap_session";
@@ -35,6 +35,6 @@ export function getDashboardPath(role: User["role"]): string {
     case "admin": return "/admin";
     case "verifikator": return "/verifikator";
     case "mitra": return "/mitra";
-    default: return "/user";
+default: return "/user";
   }
 }

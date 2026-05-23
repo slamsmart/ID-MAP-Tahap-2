@@ -167,10 +167,13 @@ export default function Footer() {
                 <h4 className="font-display font-bold text-lg">{t("Sumber Daya", "Resources")}</h4>
               </div>
               <ul className="space-y-4 text-sm text-gray-400 font-medium">
-                {["Edukasi Carbon Credit", "FAQ", "Blog & Artikel", "Dokumentasi API"].map((item, idx) => (
-                  <li key={idx}>
-                    <Link href="#" className="flex items-center justify-between hover:text-white group">
-                      <span>{t(item, item)}</span>
+                {[
+                  { label: "Edukasi Pengelolaan Kawasan Ekosistem Pesisir", href: "/edukasi-ekosistem-pesisir" },
+                  { label: "FAQ", href: "#" },
+                ].map((item) => (
+                  <li key={item.label}>
+                    <Link href={item.href} className="flex items-center justify-between hover:text-white group">
+                      <span>{t(item.label, item.label)}</span>
                       <ChevronRight className="w-4 h-4 text-gray-600 group-hover:text-emerald-400 transition-colors" />
                     </Link>
                   </li>

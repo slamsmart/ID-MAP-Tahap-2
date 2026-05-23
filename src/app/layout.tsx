@@ -32,6 +32,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id">
+      <head>
+        {/* Preload hero image — LCP optimization */}
+        <link
+          rel="preload"
+          as="image"
+          href="/images/hero-mangrove.webp"
+          type="image/webp"
+        />
+      </head>
       <body
         className={`${plusJakarta.variable} ${inter.variable} font-sans antialiased`}
       >

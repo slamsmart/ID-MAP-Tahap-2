@@ -18,7 +18,7 @@ export default function SessionGuard({ children, allowedRoles }: { children: Rea
 
     if (allowedRoles && !allowedRoles.includes(session.role)) {
       // Redirect to their proper dashboard if they try to access another role's dashboard
-      router.push(`/${session.role === "komunitas" ? "user" : session.role === "verifikator" ? "verifikator" : session.role}`);
+      router.push(`/${session.role === "sahabat" ? "user" : session.role === "verifikator" ? "verifikator" : session.role}`);
       return;
     }
 

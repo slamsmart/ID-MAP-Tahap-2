@@ -8,10 +8,11 @@ export default defineSchema({
     name: v.string(),
     password: v.string(),
     role: v.union(
-      v.literal("komunitas"),
+      v.literal("sahabat"),
       v.literal("mitra"),
       v.literal("verifikator"),
-      v.literal("admin")
+      v.literal("admin"),
+      v.literal("corporate")
     ),
     kycStatus: v.optional(
       v.union(
@@ -54,6 +55,7 @@ export default defineSchema({
       )
     ),
     description: v.optional(v.string()),
+    serviceType: v.optional(v.string()),
     createdAt: v.number(),
   })
     .index("by_status", ["status"])
@@ -90,10 +92,17 @@ export default defineSchema({
       v.literal("Transfer"),
       v.literal("CSR")
     ),
+    paymentId: v.optional(v.string()),   // mayar.id transaction/payment ID
+    paymentStatus: v.optional(v.union(
+      v.literal("pending"),
+      v.literal("paid"),
+      v.literal("failed")
+    )),
     createdAt: v.number(),
   })
     .index("by_user", ["userId"])
-    .index("by_project", ["projectId"]),
+    .index("by_project", ["projectId"])
+    .index("by_paymentId", ["paymentId"]),
 
   // ─── Certificates ────────────────────────────────────────────────
   certificates: defineTable({
@@ -139,6 +148,14 @@ export default defineSchema({
   })
     .index("by_type", ["type"])
     .index("by_created", ["createdAt"]),
+
+  // ─── OTP Codes (Email Verification) ──────────────────────────────
+  otpCodes: defineTable({
+    email: v.string(),
+    code: v.string(),
+    expiresAt: v.number(),
+    used: v.boolean(),
+  }).index("by_email", ["email"]),
 
   // ─── Platform Stats (Aggregated) ─────────────────────────────────
   platformStats: defineTable({

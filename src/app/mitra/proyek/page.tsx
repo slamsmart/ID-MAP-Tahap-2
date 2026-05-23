@@ -20,6 +20,7 @@ interface Project {
   seedsPlanted?: number;
   mitraId?: Id<"users">;
   progress?: number;
+  serviceType?: string;
   createdAt: number;
 }
 
@@ -184,6 +185,9 @@ export default function MitraProyekPage() {
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
                         <h3 className="font-semibold text-gray-900">{p.title}</h3>
                         <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${statusBadgeClass[p.status]}`}>{p.status}</span>
+                        {p.serviceType && (
+                          <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100">{p.serviceType}</span>
+                        )}
                       </div>
                       <div className="flex flex-wrap gap-3 text-xs text-gray-500 mt-1">
                         <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{p.location}</span>

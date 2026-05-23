@@ -9,7 +9,7 @@ import Footer from "@/components/shared/Footer";
 import Link from "next/link";
 
 export default function AllProjectsPage() {
-  const projects = useQuery(api.projects.listVerified);
+  const projects = useQuery(api.projects.list);
   const { t } = useLanguage();
 
   return (
@@ -32,7 +32,7 @@ export default function AllProjectsPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {projects === undefined
               ? Array.from({ length: 8 }).map((_, i) => (
                   <div key={i} className="bg-white rounded-2xl border border-gray-100 overflow-hidden animate-pulse">
@@ -63,6 +63,11 @@ export default function AllProjectsPage() {
                       </div>
                     </div>
                     <div className="p-4">
+                      {project.serviceType && (
+                        <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100 mb-1.5">
+                          {project.serviceType}
+                        </span>
+                      )}
                       <h3 className="font-display font-semibold text-gray-900 mb-1">
                         {project.title}
                       </h3>

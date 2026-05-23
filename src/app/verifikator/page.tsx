@@ -5,8 +5,10 @@ import Link from "next/link";
 import { getSession } from "@/lib/auth";
 import { ABRASION_SITES } from "@/lib/abrasionData";
 import { TITIK_PENDARATAN_PENYU } from "@/lib/penyuData";
-import { Waves, ArrowRight, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { DATA_POKMASWAS } from "@/lib/pokmaswasData";
+import { Waves, ArrowRight, AlertTriangle, CheckCircle2, Users } from "lucide-react";
 import MangroveAIPanel from "@/components/dashboard/MangroveAIPanel";
+import EkosistemPanel from "@/components/dashboard/EkosistemPanel";
 
 export default function VerifikatorDashboard() {
   const [name, setName] = useState("Verifikator");
@@ -25,8 +27,13 @@ export default function VerifikatorDashboard() {
   const pantaiPenyu = Array.from(new Set(TITIK_PENDARATAN_PENYU.map((t) => t.pantai))).length;
   const jenisPenyu = Array.from(new Set(TITIK_PENDARATAN_PENYU.map((t) => t.jenisPenyu))).length;
 
+  const totalPokmaswas = DATA_POKMASWAS.length;
+  const kabPokmaswas = Array.from(new Set(DATA_POKMASWAS.map((p) => p.kabKota))).length;
+
   return (
     <div className="space-y-6">
+      <MangroveAIPanel role="verifikator" defaultExpanded />
+
       <div>
         <h1 className="font-bold text-2xl text-gray-900">Halo, {name}</h1>
         <p className="text-sm text-gray-500">Kelola dan verifikasi data ekosistem pesisir Jawa Timur.</p>
@@ -49,17 +56,15 @@ export default function VerifikatorDashboard() {
           <p className="font-bold text-2xl text-teal-700">{totalPenyu}</p>
           <p className="text-[10px] text-gray-400">{pantaiPenyu} pantai · {jenisPenyu} jenis</p>
         </div>
-        <div className="bg-white rounded-xl border border-gray-100 p-4">
-          <p className="text-xs text-gray-500 mb-1">Status</p>
-          <p className="font-bold text-sm text-emerald-600 flex items-center gap-1">
-            <CheckCircle2 className="w-4 h-4" /> Data Aktif
-          </p>
-          <p className="text-[10px] text-gray-400">Terakhir diperbarui hari ini</p>
+        <div className="bg-white rounded-xl border border-emerald-100 p-4">
+          <p className="text-xs text-emerald-600 mb-1">Pokmaswas</p>
+          <p className="font-bold text-2xl text-emerald-700">{totalPokmaswas}</p>
+          <p className="text-[10px] text-gray-400">{kabPokmaswas} kab/kota · Jawa Timur</p>
         </div>
       </div>
 
       {/* Quick access */}
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid md:grid-cols-3 gap-6">
         {/* Abrasi */}
         <div className="bg-white rounded-xl border border-gray-100 p-5 space-y-4">
           <div className="flex items-center justify-between">
@@ -120,6 +125,35 @@ export default function VerifikatorDashboard() {
             })}
           </div>
         </div>
+
+        {/* Pokmaswas */}
+        <div className="bg-white rounded-xl border border-gray-100 p-5 space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center text-xl">
+                👤
+              </div>
+              <div>
+                <h3 className="font-bold text-gray-900 text-sm">Data Pokmaswas</h3>
+                <p className="text-[10px] text-gray-500">{totalPokmaswas} kelompok · {kabPokmaswas} kab/kota</p>
+              </div>
+            </div>
+            <Link href="/verifikator/pokmaswas" className="flex items-center gap-1 text-xs text-emerald-600 font-semibold hover:text-emerald-700">
+              Kelola <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+          <div className="space-y-2">
+            {Array.from(new Set(DATA_POKMASWAS.map((d) => d.kabKota))).map((kab) => {
+              const count = DATA_POKMASWAS.filter((d) => d.kabKota === kab).length;
+              return (
+                <div key={kab} className="flex items-center justify-between text-xs">
+                  <span className="text-gray-700">{kab}</span>
+                  <span className="font-bold text-emerald-700">{count} kelompok</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
 
       {/* Recent alert */}
@@ -134,7 +168,7 @@ export default function VerifikatorDashboard() {
         </div>
       </div>
 
-      <MangroveAIPanel role="verifikator" defaultExpanded />
+      <EkosistemPanel />
     </div>
   );
 }

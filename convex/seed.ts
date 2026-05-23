@@ -24,7 +24,10 @@ export const seedAll = mutation({
       email: "user@idmap.id",
       password: "user123",
       name: "Andi Pratama",
-      role: "komunitas",
+      role: "sahabat",
+      kycStatus: "terverifikasi",
+      organization: "Komunitas Peduli Mangrove",
+      phone: "0812-0000-0001",
       createdAt: Date.now(),
     });
 
@@ -80,10 +83,10 @@ export const seedAll = mutation({
 
     // ─── Seed Projects ───────────────────────────────────────────
     const proj1 = await ctx.db.insert("projects", {
-      title: "Reboisasi Mangrove Banyuwangi",
+      title: "Rehabilitasi Mangrove Banyuwangi",
       location: "Banyuwangi, Jawa Timur",
       province: "Jawa Timur",
-      image: "/images/mangrove-banyuwangi.jpg",
+      image: "https://images.unsplash.com/photo-1569163139394-de4e5f43e5ca?w=800&auto=format&fit=crop",
       status: "Terverifikasi",
       co2Absorption: 100000,
       area: 150,
@@ -91,15 +94,16 @@ export const seedAll = mutation({
       mitraId: mitraId,
       progress: 68,
       srnStatus: "Terdaftar",
-      description: "Proyek reboisasi mangrove di pesisir Banyuwangi untuk meningkatkan serapan karbon.",
+      serviceType: "Rehabilitasi Mangrove",
+      description: "Rehabilitasi kawasan mangrove terdegradasi di pesisir Banyuwangi untuk meningkatkan serapan karbon dan keanekaragaman hayati.",
       createdAt: Date.now() - 86400000 * 30,
     });
 
     const proj2 = await ctx.db.insert("projects", {
-      title: "Konservasi Mangrove Kalimantan",
+      title: "Penyulaman Mangrove Kapuas Hulu",
       location: "Kapuas Hulu, Kalimantan Barat",
       province: "Kalimantan Barat",
-      image: "/images/mangrove-kalimantan.jpg",
+      image: "https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?w=800&auto=format&fit=crop",
       status: "Dalam Proses",
       co2Absorption: 350000,
       area: 85,
@@ -107,53 +111,74 @@ export const seedAll = mutation({
       mitraId: mitraId,
       progress: 45,
       srnStatus: "Pending",
-      description: "Konservasi hutan mangrove di kawasan Kapuas Hulu.",
+      serviceType: "Penyulaman Mangrove",
+      description: "Penyulaman bibit mangrove di kawasan riparian Kapuas Hulu untuk meningkatkan kepadatan tegakan.",
       createdAt: Date.now() - 86400000 * 20,
     });
 
     const proj3 = await ctx.db.insert("projects", {
-      title: "Mangrove Pantai Utara",
+      title: "Monev Mangrove Pesisir Demak",
       location: "Demak, Jawa Tengah",
       province: "Jawa Tengah",
-      image: "/images/mangrove-demak.jpg",
+      image: "https://images.unsplash.com/photo-1573655349936-de5f098b6689?w=800&auto=format&fit=crop",
       status: "Terverifikasi",
       co2Absorption: 80000,
       area: 60,
       seedsPlanted: 200760,
       progress: 80,
       srnStatus: "Terdaftar",
-      description: "Penanaman mangrove di pesisir utara Jawa.",
+      serviceType: "Jasa Pemantauan Monev Mangrove",
+      description: "Monitoring dan evaluasi kesehatan ekosistem mangrove di pesisir utara Jawa Tengah secara berkala.",
       createdAt: Date.now() - 86400000 * 45,
     });
 
     const proj4 = await ctx.db.insert("projects", {
-      title: "Blue Carbon Mangrove",
+      title: "Decarbonisasi Aquaculture Sumba",
       location: "Sumba, Nusa Tenggara Timur",
       province: "Nusa Tenggara Timur",
-      image: "/images/mangrove-sumba.jpg",
+      image: "https://images.unsplash.com/photo-1565118531796-763e5082d113?w=800&auto=format&fit=crop",
       status: "Terverifikasi",
       co2Absorption: 120000,
       area: 200,
       seedsPlanted: 300000,
       progress: 55,
       srnStatus: "Terdaftar",
-      description: "Proyek blue carbon di kepulauan Sumba.",
+      serviceType: "Decarbonisasi Aquaculture",
+      description: "Integrasi mangrove dalam tambak udang untuk mengurangi emisi karbon dan meningkatkan produktivitas berkelanjutan.",
       createdAt: Date.now() - 86400000 * 60,
     });
 
+    const proj5 = await ctx.db.insert("projects", {
+      title: "Rehabilitasi Habitat Penyu Bali",
+      location: "Badung, Bali",
+      province: "Bali",
+      image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop",
+      status: "Dalam Proses",
+      co2Absorption: 45000,
+      area: 30,
+      seedsPlanted: 120000,
+      mitraId: mitraId,
+      progress: 35,
+      srnStatus: "Pending",
+      serviceType: "Perbaikan Habitat Penyu",
+      description: "Perbaikan habitat peneluran penyu dan ekosistem mangrove pesisir Bali untuk perlindungan spesies dilindungi.",
+      createdAt: Date.now() - 86400000 * 15,
+    });
+
     await ctx.db.insert("projects", {
-      title: "Restorasi Mangrove Teluk Bintuni",
-      location: "Teluk Bintuni, Papua Barat",
-      province: "Papua Barat",
-      image: "/images/mangrove-papua.jpg",
+      title: "Pemberdayaan Pokmaswas Malang Selatan",
+      location: "Malang Selatan, Jawa Timur",
+      province: "Jawa Timur",
+      image: "https://images.unsplash.com/photo-1559827291-72f4c2d42bc8?w=800&auto=format&fit=crop",
       status: "Draft",
-      co2Absorption: 200000,
-      area: 200,
+      co2Absorption: 60000,
+      area: 45,
       seedsPlanted: 0,
       mitraId: mitraId,
-      progress: 15,
+      progress: 10,
       srnStatus: "Belum",
-      description: "Rencana restorasi mangrove di Teluk Bintuni.",
+      serviceType: "Pemberdayaan Masyarakat Pesisir",
+      description: "Penguatan kapasitas Pokmaswas di pesisir Malang Selatan untuk pengawasan dan pengelolaan ekosistem mangrove.",
       createdAt: Date.now() - 86400000 * 5,
     });
 
@@ -243,26 +268,26 @@ export const seedAll = mutation({
 
     // ─── Seed System Activities ──────────────────────────────────
     await ctx.db.insert("systemActivities", {
-      text: 'Proyek "Reboisasi Mangrove Banyuwangi" disetujui dan terdaftar di SRN',
+      text: 'Proyek "Rehabilitasi Mangrove Banyuwangi" disetujui dan terdaftar di SRN',
       type: "project",
       createdAt: Date.now() - 86400000 * 1,
     });
 
     await ctx.db.insert("systemActivities", {
-      text: 'Verifikasi MRV untuk proyek "Konservasi Hutan Kapuas Hulu" selesai',
+      text: 'Verifikasi MRV untuk proyek "Monev Mangrove Pesisir Demak" selesai',
       type: "verification",
       createdAt: Date.now() - 86400000 * 2,
     });
 
     await ctx.db.insert("systemActivities", {
-      text: 'PT. Hijau Lestari membeli 10.000 tCO₂e dari proyek "Agroforestry Kopi"',
+      text: 'PT. Hijau Lestari membeli 10.000 tCO₂e dari proyek "Rehabilitasi Mangrove Banyuwangi"',
       type: "transaction",
       createdAt: Date.now() - 86400000 * 3,
     });
 
     // ─── Seed Platform Stats ─────────────────────────────────────
     await ctx.db.insert("platformStats", {
-      key: "komunitas_terlibat",
+      key: "sahabat_terlibat",
       value: "12.456",
       numericValue: 12456,
       updatedAt: Date.now(),
@@ -379,7 +404,7 @@ export const seedAll = mutation({
       submittedAt: Date.now() - 86400000 * 3,
     });
 
-    return "Seed berhasil! Users: 6, Projects: 5, Transactions: 3, Contributions: 3, MRV: 3, Activities: 3, Stats: 4, KYC Docs: 8";
+    return "Seed berhasil! Users: 6, Projects: 6, Transactions: 3, Contributions: 3, MRV: 3, Activities: 3, Stats: 4, KYC Docs: 8";
   },
 });
 
@@ -408,7 +433,11 @@ export const resetAndSeed = mutation({
     });
     const userId = await ctx.db.insert("users", {
       email: "user@idmap.id", password: "user123",
-      name: "Andi Pratama", role: "komunitas", createdAt: Date.now(),
+      name: "Andi Pratama", role: "sahabat",
+      kycStatus: "terverifikasi",
+      organization: "Komunitas Peduli Mangrove",
+      phone: "0812-0000-0001",
+      createdAt: Date.now(),
     });
     const verifikatorId = await ctx.db.insert("users", {
       email: "verifikator@idmap.id", password: "verif123",
@@ -439,43 +468,57 @@ export const resetAndSeed = mutation({
     });
 
     const proj1 = await ctx.db.insert("projects", {
-      title: "Reboisasi Mangrove Banyuwangi", location: "Banyuwangi, Jawa Timur",
-      province: "Jawa Timur", image: "/images/mangrove-banyuwangi.jpg",
+      title: "Rehabilitasi Mangrove Banyuwangi", location: "Banyuwangi, Jawa Timur",
+      province: "Jawa Timur", image: "https://images.unsplash.com/photo-1569163139394-de4e5f43e5ca?w=800&auto=format&fit=crop",
       status: "Terverifikasi", co2Absorption: 100000, area: 150,
       seedsPlanted: 500000, mitraId, progress: 68, srnStatus: "Terdaftar",
-      description: "Proyek reboisasi mangrove di pesisir Banyuwangi.",
+      serviceType: "Rehabilitasi Mangrove",
+      description: "Rehabilitasi kawasan mangrove terdegradasi di pesisir Banyuwangi untuk meningkatkan serapan karbon dan keanekaragaman hayati.",
       createdAt: Date.now() - 86400000 * 30,
     });
     const proj2 = await ctx.db.insert("projects", {
-      title: "Konservasi Mangrove Kalimantan", location: "Kapuas Hulu, Kalimantan Barat",
-      province: "Kalimantan Barat", image: "/images/mangrove-kalimantan.jpg",
+      title: "Penyulaman Mangrove Kapuas Hulu", location: "Kapuas Hulu, Kalimantan Barat",
+      province: "Kalimantan Barat", image: "https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?w=800&auto=format&fit=crop",
       status: "Dalam Proses", co2Absorption: 350000, area: 85,
       seedsPlanted: 285000, mitraId, progress: 45, srnStatus: "Pending",
-      description: "Konservasi hutan mangrove di kawasan Kapuas Hulu.",
+      serviceType: "Penyulaman Mangrove",
+      description: "Penyulaman bibit mangrove di kawasan riparian Kapuas Hulu untuk meningkatkan kepadatan tegakan.",
       createdAt: Date.now() - 86400000 * 20,
     });
     const proj3 = await ctx.db.insert("projects", {
-      title: "Mangrove Pantai Utara", location: "Demak, Jawa Tengah",
-      province: "Jawa Tengah", image: "/images/mangrove-demak.jpg",
+      title: "Monev Mangrove Pesisir Demak", location: "Demak, Jawa Tengah",
+      province: "Jawa Tengah", image: "https://images.unsplash.com/photo-1573655349936-de5f098b6689?w=800&auto=format&fit=crop",
       status: "Terverifikasi", co2Absorption: 80000, area: 60,
       seedsPlanted: 200760, progress: 80, srnStatus: "Terdaftar",
-      description: "Penanaman mangrove di pesisir utara Jawa.",
+      serviceType: "Jasa Pemantauan Monev Mangrove",
+      description: "Monitoring dan evaluasi kesehatan ekosistem mangrove di pesisir utara Jawa Tengah secara berkala.",
       createdAt: Date.now() - 86400000 * 45,
     });
-    await ctx.db.insert("projects", {
-      title: "Blue Carbon Mangrove", location: "Sumba, Nusa Tenggara Timur",
-      province: "Nusa Tenggara Timur", image: "/images/mangrove-sumba.jpg",
+    const proj4 = await ctx.db.insert("projects", {
+      title: "Decarbonisasi Aquaculture Sumba", location: "Sumba, Nusa Tenggara Timur",
+      province: "Nusa Tenggara Timur", image: "https://images.unsplash.com/photo-1565118531796-763e5082d113?w=800&auto=format&fit=crop",
       status: "Terverifikasi", co2Absorption: 120000, area: 200,
       seedsPlanted: 300000, progress: 55, srnStatus: "Terdaftar",
-      description: "Proyek blue carbon di kepulauan Sumba.",
+      serviceType: "Decarbonisasi Aquaculture",
+      description: "Integrasi mangrove dalam tambak udang untuk mengurangi emisi karbon dan meningkatkan produktivitas berkelanjutan.",
       createdAt: Date.now() - 86400000 * 60,
     });
+    const proj5 = await ctx.db.insert("projects", {
+      title: "Rehabilitasi Habitat Penyu Bali", location: "Badung, Bali",
+      province: "Bali", image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop",
+      status: "Dalam Proses", co2Absorption: 45000, area: 30,
+      seedsPlanted: 120000, mitraId, progress: 35, srnStatus: "Pending",
+      serviceType: "Perbaikan Habitat Penyu",
+      description: "Perbaikan habitat peneluran penyu dan ekosistem mangrove pesisir Bali untuk perlindungan spesies dilindungi.",
+      createdAt: Date.now() - 86400000 * 15,
+    });
     await ctx.db.insert("projects", {
-      title: "Restorasi Mangrove Teluk Bintuni", location: "Teluk Bintuni, Papua Barat",
-      province: "Papua Barat", image: "/images/mangrove-papua.jpg",
-      status: "Draft", co2Absorption: 200000, area: 200,
-      seedsPlanted: 0, mitraId, progress: 15, srnStatus: "Belum",
-      description: "Rencana restorasi mangrove di Teluk Bintuni.",
+      title: "Pemberdayaan Pokmaswas Malang Selatan", location: "Malang Selatan, Jawa Timur",
+      province: "Jawa Timur", image: "https://images.unsplash.com/photo-1559827291-72f4c2d42bc8?w=800&auto=format&fit=crop",
+      status: "Draft", co2Absorption: 60000, area: 45,
+      seedsPlanted: 0, mitraId, progress: 10, srnStatus: "Belum",
+      serviceType: "Pemberdayaan Masyarakat Pesisir",
+      description: "Penguatan kapasitas Pokmaswas di pesisir Malang Selatan untuk pengawasan dan pengelolaan ekosistem mangrove.",
       createdAt: Date.now() - 86400000 * 5,
     });
 
@@ -503,11 +546,11 @@ export const resetAndSeed = mutation({
     await ctx.db.insert("mrvReports", { projectId: proj1, period: "Q1 2026", type: "Reporting", status: "Dalam Proses", createdAt: Date.now() - 86400000 * 15 });
     await ctx.db.insert("mrvReports", { projectId: proj1, period: "Q1 2026", type: "Verification", status: "Menunggu", createdAt: Date.now() - 86400000 * 5 });
 
-    await ctx.db.insert("systemActivities", { text: 'Proyek "Reboisasi Mangrove Banyuwangi" disetujui dan terdaftar di SRN', type: "project", createdAt: Date.now() - 86400000 });
-    await ctx.db.insert("systemActivities", { text: 'Verifikasi MRV untuk proyek "Konservasi Hutan Kapuas Hulu" selesai', type: "verification", createdAt: Date.now() - 86400000 * 2 });
-    await ctx.db.insert("systemActivities", { text: 'PT. Hijau Lestari membeli 10.000 tCO₂e dari proyek "Agroforestry Kopi"', type: "transaction", createdAt: Date.now() - 86400000 * 3 });
+    await ctx.db.insert("systemActivities", { text: 'Proyek "Rehabilitasi Mangrove Banyuwangi" disetujui dan terdaftar di SRN', type: "project", createdAt: Date.now() - 86400000 });
+    await ctx.db.insert("systemActivities", { text: 'Verifikasi MRV untuk proyek "Monev Mangrove Pesisir Demak" selesai', type: "verification", createdAt: Date.now() - 86400000 * 2 });
+    await ctx.db.insert("systemActivities", { text: 'PT. Hijau Lestari membeli 10.000 tCO₂e dari proyek "Rehabilitasi Mangrove Banyuwangi"', type: "transaction", createdAt: Date.now() - 86400000 * 3 });
 
-    await ctx.db.insert("platformStats", { key: "komunitas_terlibat", value: "12.456", numericValue: 12456, updatedAt: Date.now() });
+    await ctx.db.insert("platformStats", { key: "sahabat_terlibat", value: "12.456", numericValue: 12456, updatedAt: Date.now() });
     await ctx.db.insert("platformStats", { key: "bibit_ditanam", value: "1.285.760", numericValue: 1285760, updatedAt: Date.now() });
     await ctx.db.insert("platformStats", { key: "serapan_karbon", value: "823.456", numericValue: 823456, updatedAt: Date.now() });
     await ctx.db.insert("platformStats", { key: "potensi_nilai_carbon", value: "Rp 98,65 M", numericValue: 98650000000, updatedAt: Date.now() });
@@ -519,6 +562,6 @@ export const resetAndSeed = mutation({
     await ctx.db.insert("kycDocuments", { userId: mitraPendingId, type: "NIB", documentName: "NIB_Kelompok_Tani.pdf", status: "Menunggu", submittedAt: Date.now() - 86400000 * 2 });
     await ctx.db.insert("kycDocuments", { userId: mitraRejectedId, type: "KTP", documentName: "KTP_Verifikator_Lapangan.pdf", status: "Ditolak", reviewNote: "Dokumen tidak jelas, upload ulang", reviewedBy: adminId, reviewedAt: Date.now() - 86400000 * 5, submittedAt: Date.now() - 86400000 * 8 });
 
-    return "Reset & Seed berhasil! Users: 6, Projects: 5, Transactions: 3, Contributions: 3, MRV: 3, Activities: 3, Stats: 4, KYC Docs: 6";
+    return "Reset & Seed berhasil! Users: 6, Projects: 6, Transactions: 3, Contributions: 3, MRV: 3, Activities: 3, Stats: 4, KYC Docs: 6";
   },
 });

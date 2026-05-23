@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
-type RoleFilter = "semua" | "komunitas" | "mitra" | "verifikator" | "admin";
+type RoleFilter = "semua" | "sahabat" | "mitra" | "verifikator" | "admin";
 type KycFilter = "semua" | "belum" | "menunggu" | "terverifikasi" | "ditolak";
 
 const kycBadge = (status?: string) => {
@@ -75,7 +75,7 @@ export default function PenggunaPage() {
     },
     {
       label: "Komunitas",
-      value: userStats ? new Intl.NumberFormat("id-ID").format(userStats.komunitas) : "—",
+      value: userStats ? new Intl.NumberFormat("id-ID").format(userStats.sahabat) : "—",
       icon: UserCheck,
       color: "text-emerald-600 bg-emerald-50",
     },
@@ -157,7 +157,7 @@ export default function PenggunaPage() {
           className="px-3 py-2.5 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
         >
           <option value="semua">Semua Role</option>
-          <option value="komunitas">Komunitas</option>
+          <option value="sahabat">Komunitas</option>
           <option value="mitra">Mitra</option>
           <option value="verifikator">Verifikator</option>
           <option value="admin">Admin</option>

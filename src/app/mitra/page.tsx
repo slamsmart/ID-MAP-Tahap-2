@@ -8,7 +8,7 @@ import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import { formatNumber, formatRupiah } from "@/lib/utils";
-import MangroveAIPanel from "@/components/dashboard/MangroveAIPanel";
+import EkosistemPanel from "@/components/dashboard/EkosistemPanel";
 
 export default function MitraDashboard() {
   const [session, setSession] = useState<User | null>(null);
@@ -25,7 +25,6 @@ export default function MitraDashboard() {
 
   const activeProjectsCount = projects?.filter(p => p.status !== "Draft").length || 0;
   const totalSeeds = projects?.reduce((sum, p) => sum + (p.seedsPlanted || 0), 0) || 0;
-  const totalCo2 = projects?.reduce((sum, p) => sum + p.co2Absorption, 0) || 0;
 
   // Calculate funds received by checking transactions for this mitra's projects
   const mitraProjectIds = projects?.map(p => p._id) || [];
@@ -38,7 +37,6 @@ export default function MitraDashboard() {
   const stats = [
     { label: "Proyek Aktif", value: formatNumber(activeProjectsCount), icon: FolderTree, color: "bg-emerald-50 text-emerald-700" },
     { label: "Bibit Ditanam", value: formatNumber(totalSeeds), icon: Sprout, color: "bg-green-50 text-green-700" },
-    { label: "Serapan CO₂e", value: `${formatNumber(totalCo2)} ton`, icon: BarChart3, color: "bg-blue-50 text-blue-700" },
     { label: "Dana Diterima", value: formatRupiah(fundsReceived), icon: Wallet, color: "bg-amber-50 text-amber-700" },
   ];
 
@@ -194,7 +192,7 @@ export default function MitraDashboard() {
         </div>
       </div>
 
-      <MangroveAIPanel role="mitra" defaultExpanded />
+      <EkosistemPanel />
     </div>
   );
 }

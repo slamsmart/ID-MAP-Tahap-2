@@ -13,6 +13,7 @@ import type * as certificates from "../certificates.js";
 import type * as contributions from "../contributions.js";
 import type * as kyc from "../kyc.js";
 import type * as mrvReports from "../mrvReports.js";
+import type * as otpCodes from "../otpCodes.js";
 import type * as platformStats from "../platformStats.js";
 import type * as projects from "../projects.js";
 import type * as seed from "../seed.js";
@@ -31,6 +32,7 @@ declare const fullApi: ApiFromModules<{
   contributions: typeof contributions;
   kyc: typeof kyc;
   mrvReports: typeof mrvReports;
+  otpCodes: typeof otpCodes;
   platformStats: typeof platformStats;
   projects: typeof projects;
   seed: typeof seed;

@@ -8,20 +8,20 @@ import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import { formatNumber, formatRupiah } from "@/lib/utils";
-import MangroveAIPanel from "@/components/dashboard/MangroveAIPanel";
+import EkosistemPanel from "@/components/dashboard/EkosistemPanel";
 
 const articles = [
   {
-    title: "Apa itu Carbon Credit?",
-    desc: "Pelajari dasar-dasar carbon credit dan manfaatnya.",
-  },
-  {
     title: "Mengapa Mangrove Penting?",
-    desc: "Temukan peran penting mangrove untuk iklim.",
+    desc: "Temukan peran penting mangrove untuk iklim dan ekosistem pesisir.",
   },
   {
-    title: "Bagaimana Proyek Diverifikasi?",
-    desc: "Proses verifikasi proyek karbon di ID-MAP.",
+    title: "Program Restorasi Mangrove",
+    desc: "Kenali program PMN dan BRGMN dalam pemulihan mangrove nasional.",
+  },
+  {
+    title: "Cara Melaporkan Kerusakan",
+    desc: "Panduan melaporkan abrasi dan kerusakan mangrove di wilayah Anda.",
   },
 ];
 
@@ -116,12 +116,6 @@ export default function UserDashboard() {
                         {formatRupiah(recentContribution.amount)}
                       </p>
                     </div>
-                    <div>
-                      <span className="text-gray-400">CO₂e Didukung</span>
-                      <p className="font-display font-semibold text-gray-800">
-                        {recentContribution.co2Equivalent.toFixed(2)} ton CO₂e
-                      </p>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -154,7 +148,7 @@ export default function UserDashboard() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-gray-800 truncate">
-                          {proj ? proj.title : "Proyek Karbon"}
+                          {proj ? proj.title : "Proyek Mangrove"}
                         </p>
                         <div className="flex items-center gap-1 text-xs text-gray-400">
                           <MapPin className="w-3 h-3" />
@@ -164,9 +158,6 @@ export default function UserDashboard() {
                       <div className="text-right">
                         <p className="text-[10px] text-gray-400">
                           {new Date(item.createdAt).toLocaleDateString('id-ID')}
-                        </p>
-                        <p className="text-xs font-medium text-emerald-600">
-                          {item.co2Equivalent.toFixed(2)} ton CO₂e
                         </p>
                       </div>
                     </div>
@@ -187,7 +178,7 @@ export default function UserDashboard() {
           {/* QR Scanner */}
           <div className="bg-emerald-50 rounded-xl border border-emerald-200 p-5">
             <h3 className="font-display font-semibold text-emerald-900 text-center mb-3">
-              Scan Proyek Karbon
+              Scan Proyek Mangrove
             </h3>
             <p className="text-xs text-center text-gray-500 mb-4">
               Dukung Proyek Terverifikasi
@@ -284,22 +275,7 @@ export default function UserDashboard() {
         </div>
       </div>
 
-      {/* CTA Banner */}
-      <div className="bg-gradient-to-r from-emerald-800 to-emerald-700 rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="text-white">
-          <h3 className="font-display font-bold text-xl mb-1">
-            Terus Dukung Proyek Karbon Indonesia
-          </h3>
-          <p className="text-sm text-emerald-200">
-            Setiap aksi kecil Anda, berdampak besar untuk masa depan bumi.
-          </p>
-        </div>
-        <button className="px-6 py-2.5 bg-white text-emerald-900 font-display font-bold rounded-xl hover:bg-emerald-50 transition-colors whitespace-nowrap text-sm">
-          Scan Proyek Sekarang
-        </button>
-      </div>
-
-      <MangroveAIPanel role="komunitas" defaultExpanded />
+      <EkosistemPanel />
     </div>
   );
 }

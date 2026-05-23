@@ -3,6 +3,7 @@
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import MangroveAIPanel from "@/components/dashboard/MangroveAIPanel";
+import EkosistemPanel from "@/components/dashboard/EkosistemPanel";
 import {
   FolderTree,
   Leaf,
@@ -18,10 +19,14 @@ import {
   XCircle,
   Waves,
   TreePine,
+  Phone,
 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { Fragment, useState } from "react";
+
+const fmtID = new Intl.NumberFormat("id-ID");
 import { ABRASION_SITES, PRIORITAS_CONFIG, type PrioritasType } from "@/lib/abrasionData";
+import { DATA_POKMASWAS, KABKOTA_WARNA } from "@/lib/pokmaswasData";
 
 export default function AdminDashboard() {
   const projectStats = useQuery(api.projects.getStats);
@@ -34,6 +39,8 @@ export default function AdminDashboard() {
 
   const [abrasionFilter, setAbrasionFilter] = useState<PrioritasType | "Semua">("Semua");
   const [expandedSite, setExpandedSite] = useState<number | null>(null);
+  const [pokmaswasFilter, setPokmaswasFilter] = useState<string>("Semua");
+  const [pokmaswasSearch, setPokmaswasSearch] = useState("");
 
   const isLoading = projectStats === undefined || txStats === undefined;
 
@@ -46,15 +53,6 @@ export default function AdminDashboard() {
       color: "bg-emerald-50 text-emerald-700",
     },
     {
-      label: "Total Serapan",
-      value: projectStats
-        ? `${(projectStats.totalCo2 / 1000000).toFixed(1)} jt ton CO₂e`
-        : "—",
-      change: `${projectStats?.inProgressProjects ?? 0} dalam proses`,
-      icon: Leaf,
-      color: "bg-blue-50 text-blue-700",
-    },
-    {
       label: "Total Transaksi",
       value: txStats
         ? `Rp ${(txStats.totalAmount / 1000000000).toFixed(1)} M`
@@ -65,7 +63,7 @@ export default function AdminDashboard() {
     },
     {
       label: "Total Pengguna",
-      value: users ? new Intl.NumberFormat("id-ID").format(users.length) : "—",
+      value: users ? fmtID.format(users.length) : "—",
       change: "Semua role",
       icon: Users,
       color: "bg-orange-50 text-orange-700",
@@ -78,6 +76,8 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-6">
+      <MangroveAIPanel role="admin" defaultExpanded />
+
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {statsCards.map((card) => (
@@ -114,15 +114,17 @@ export default function AdminDashboard() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-gray-800 truncate">{project.title}</p>
-                  <div className="flex items-center gap-1 text-xs text-gray-500">
-                    <MapPin className="w-3 h-3" />
-                    {project.location}
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <div className="flex items-center gap-1 text-xs text-gray-500">
+                      <MapPin className="w-3 h-3" />
+                      {project.location}
+                    </div>
+                    {project.serviceType && (
+                      <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100">{project.serviceType}</span>
+                    )}
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-xs text-gray-500">
-                    {new Intl.NumberFormat("id-ID").format(project.co2Absorption)} tCO₂e
-                  </p>
                   <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${
                     project.status === "Terverifikasi"
                       ? "bg-emerald-100 text-emerald-700"
@@ -153,7 +155,7 @@ export default function AdminDashboard() {
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-gray-800">{tx.companyName}</p>
                   <p className="text-xs text-gray-500">
-                    Beli {new Intl.NumberFormat("id-ID").format(tx.co2Amount)} tCO₂e
+                    {new Date(tx._creationTime).toLocaleDateString("id-ID")}
                   </p>
                 </div>
                 <p className="text-sm font-display font-semibold text-gray-800">
@@ -311,9 +313,8 @@ export default function AdminDashboard() {
                   const cfg = PRIORITAS_CONFIG[site.prioritas];
                   const isExpanded = expandedSite === site.no;
                   return (
-                    <>
+                    <Fragment key={site.no}>
                       <tr
-                        key={site.no}
                         onClick={() => setExpandedSite(isExpanded ? null : site.no)}
                         className="border-b border-gray-50 hover:bg-gray-50 cursor-pointer transition-colors"
                       >
@@ -368,7 +369,7 @@ export default function AdminDashboard() {
                           </td>
                         </tr>
                       )}
-                    </>
+                    </Fragment>
                   );
                 })}
             </tbody>
@@ -376,7 +377,143 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <MangroveAIPanel role="admin" defaultExpanded />
+      {/* Pokmaswas Table */}
+      {(() => {
+        const kabList = ["Semua", ...Array.from(new Set(DATA_POKMASWAS.map((d) => d.kabKota)))];
+        const filteredPokmaswas = DATA_POKMASWAS.filter((d) => {
+          const matchKab = pokmaswasFilter === "Semua" || d.kabKota === pokmaswasFilter;
+          const q = pokmaswasSearch.toLowerCase();
+          const matchSearch = !q || d.namaKelompok.toLowerCase().includes(q) || d.ketua.toLowerCase().includes(q) || d.alamat.toLowerCase().includes(q);
+          return matchKab && matchSearch;
+        });
+        return (
+          <div className="bg-white rounded-xl border border-gray-100">
+            {/* Header */}
+            <div className="flex flex-wrap items-center justify-between gap-3 p-5 border-b border-gray-100">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 bg-emerald-50 rounded-lg flex items-center justify-center text-lg">👤</div>
+                <div>
+                  <h3 className="font-display font-semibold text-gray-800">Data Pokmaswas</h3>
+                  <p className="text-xs text-gray-400">Kelompok Masyarakat Pengawas · Jawa Timur</p>
+                </div>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                {Object.entries(KABKOTA_WARNA).map(([kab, warna]) => (
+                  <div key={kab} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border" style={{ backgroundColor: `${warna}15`, borderColor: `${warna}40` }}>
+                    <span className="w-2 h-2 rounded-full" style={{ backgroundColor: warna }} />
+                    <span className="text-xs font-semibold" style={{ color: warna }}>
+                      {kab}: {DATA_POKMASWAS.filter((d) => d.kabKota === kab).length}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Filter + Search */}
+            <div className="flex flex-wrap items-center gap-2 px-5 py-3 border-b border-gray-50">
+              <span className="text-xs text-gray-500 font-medium">Filter:</span>
+              {kabList.map((kab) => (
+                <button
+                  key={kab}
+                  onClick={() => setPokmaswasFilter(kab)}
+                  className={`px-3 py-1 rounded-full text-xs font-semibold border transition-all ${
+                    pokmaswasFilter === kab
+                      ? kab === "Semua"
+                        ? "bg-gray-900 text-white border-gray-900"
+                        : "text-white border-transparent"
+                      : "bg-white text-gray-500 border-gray-200 hover:border-gray-300"
+                  }`}
+                  style={
+                    pokmaswasFilter === kab && kab !== "Semua"
+                      ? { backgroundColor: KABKOTA_WARNA[kab], borderColor: KABKOTA_WARNA[kab] }
+                      : {}
+                  }
+                >
+                  {kab === "Semua" ? "Semua" : kab}
+                </button>
+              ))}
+              <input
+                type="text"
+                placeholder="Cari kelompok / ketua..."
+                value={pokmaswasSearch}
+                onChange={(e) => setPokmaswasSearch(e.target.value)}
+                className="ml-auto px-3 py-1.5 border border-gray-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-emerald-400 w-48"
+              />
+            </div>
+
+            {/* Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-gray-100 bg-gray-50/50">
+                    <th className="text-left text-xs text-gray-400 font-semibold px-5 py-3 w-8">#</th>
+                    <th className="text-left text-xs text-gray-400 font-semibold px-3 py-3 hidden sm:table-cell">Kab/Kota</th>
+                    <th className="text-left text-xs text-gray-400 font-semibold px-3 py-3">Nama Kelompok</th>
+                    <th className="text-left text-xs text-gray-400 font-semibold px-3 py-3 hidden md:table-cell">Alamat</th>
+                    <th className="text-left text-xs text-gray-400 font-semibold px-3 py-3">Ketua</th>
+                    <th className="text-left text-xs text-gray-400 font-semibold px-3 py-3 hidden lg:table-cell">No. HP</th>
+                    <th className="text-left text-xs text-gray-400 font-semibold px-3 py-3 hidden lg:table-cell">Koordinat</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredPokmaswas.map((item) => {
+                    const warna = KABKOTA_WARNA[item.kabKota] ?? "#6b7280";
+                    return (
+                      <tr key={item.no} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+                        <td className="px-5 py-3 text-xs text-gray-400 font-mono">{item.no}</td>
+                        <td className="px-3 py-3 hidden sm:table-cell">
+                          <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ backgroundColor: warna, color: "white" }}>
+                            {item.kabKota}
+                          </span>
+                        </td>
+                        <td className="px-3 py-3">
+                          <div className="flex items-center gap-2">
+                            <span className="text-base">👤</span>
+                            <span className="font-medium text-gray-800 text-sm">{item.namaKelompok}</span>
+                          </div>
+                        </td>
+                        <td className="px-3 py-3 hidden md:table-cell">
+                          <div className="flex items-center gap-1 text-xs text-gray-500">
+                            <MapPin className="w-3 h-3 flex-shrink-0" />
+                            {item.alamat}
+                          </div>
+                        </td>
+                        <td className="px-3 py-3">
+                          <div className="flex items-center gap-1.5 text-xs text-gray-700">
+                            <Users className="w-3 h-3 text-gray-400 flex-shrink-0" />
+                            {item.ketua}
+                          </div>
+                        </td>
+                        <td className="px-3 py-3 hidden lg:table-cell">
+                          {item.noHp ? (
+                            <div className="flex items-center gap-1 text-xs text-gray-500 whitespace-nowrap">
+                              <Phone className="w-3 h-3 flex-shrink-0" />
+                              {item.noHp}
+                            </div>
+                          ) : (
+                            <span className="text-xs text-gray-300">—</span>
+                          )}
+                        </td>
+                        <td className="px-3 py-3 hidden lg:table-cell">
+                          <span className="text-xs font-mono text-gray-500">{item.lat}, {item.lon}</span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+              {filteredPokmaswas.length === 0 && (
+                <div className="py-8 text-center text-gray-400 text-sm">Tidak ada data Pokmaswas.</div>
+              )}
+            </div>
+            <div className="px-5 py-3 border-t border-gray-50 text-xs text-gray-400">
+              Menampilkan {filteredPokmaswas.length} dari {DATA_POKMASWAS.length} kelompok
+            </div>
+          </div>
+        );
+      })()}
+
+      <EkosistemPanel />
     </div>
   );
 }

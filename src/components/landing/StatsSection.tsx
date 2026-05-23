@@ -8,13 +8,12 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function StatsSection() {
   const projectStats = useQuery(api.projects.getStats);
-  const users = useQuery(api.users.list);
+  const userStats = useQuery(api.users.getStats);
   const { t } = useLanguage();
 
-  const isLoading = projectStats === undefined || users === undefined;
+  const isLoading = projectStats === undefined || userStats === undefined;
 
-  // Real data calculations
-  const totalUsers = users?.length || 0;
+  const totalUsers = userStats?.total || 0;
   const totalSeeds = projectStats?.totalSeeds || 0;
   const totalCo2 = projectStats?.totalCo2 || 0;
   
@@ -23,8 +22,8 @@ export default function StatsSection() {
 
   const statsList = [
     {
-      key: "komunitas_terlibat",
-      label: t("Komunitas Terlibat", "Communities Involved"),
+      key: "sahabat_terlibat",
+      label: t("Sahabat Terlibat", "Sahabat Involved"),
       value: formatNumber(totalUsers),
       suffix: t("Orang", "People"),
       icon: Users,

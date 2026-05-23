@@ -5,7 +5,7 @@ import { ArrowRight, ShieldCheck } from "lucide-react";
 import { getHeroImage } from "@/lib/heroImageStore";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-const DEFAULT_IMAGE = "/images/hero-mangrove.png";
+const DEFAULT_IMAGE = "/images/hero-mangrove.webp";
 
 export default function HeroSection() {
   const [heroImage, setHeroImage] = useState<string | null>(null);

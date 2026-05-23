@@ -6,21 +6,20 @@ import {
   Leaf,
   TrendingUp,
   AlertTriangle,
-  Droplets,
   Users,
   ChevronDown,
   ChevronUp,
   RefreshCw,
   BarChart3,
+  ScrollText,
 } from "lucide-react";
 import {
   DATA_PROVINSI,
   PROGRAM_RESTORASI,
   RINGKASAN_NASIONAL,
-  DATA_BLUE_CARBON,
 } from "@/lib/mangroveNasionalData";
 
-type Fokus = "umum" | "restorasi" | "ancaman" | "karbon" | "kkmd";
+type Fokus = "umum" | "restorasi" | "ancaman" | "kkmd" | "kebijakan";
 
 interface MangroveAIPanelProps {
   role?: string;
@@ -31,8 +30,8 @@ const fokusOptions: { value: Fokus; label: string; icon: React.ElementType }[] =
   { value: "umum", label: "Analisis Umum", icon: Brain },
   { value: "restorasi", label: "Progress Restorasi", icon: TrendingUp },
   { value: "ancaman", label: "Peta Ancaman", icon: AlertTriangle },
-  { value: "karbon", label: "Blue Carbon", icon: Droplets },
   { value: "kkmd", label: "Penguatan KKMD", icon: Users },
+  { value: "kebijakan", label: "Kebijakan & Program", icon: ScrollText },
 ];
 
 // Quick stat cards
@@ -57,13 +56,6 @@ const STATS = [
     sub: `dari ${DATA_PROVINSI.length} provinsi`,
     color: "bg-red-50 text-red-700",
     border: "border-red-200",
-  },
-  {
-    label: "Blue Carbon",
-    value: `USD ${DATA_BLUE_CARBON.potensiPendapatanBlueCarbon_MUSD}jt`,
-    sub: "potensi/tahun",
-    color: "bg-teal-50 text-teal-700",
-    border: "border-teal-200",
   },
 ];
 
@@ -202,21 +194,108 @@ export default function MangroveAIPanel({
 
       {isExpanded && (
         <div className="border-t border-gray-100">
-          {/* Quick Stats */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 p-4 bg-gray-50/50">
-            {STATS.map((s) => (
-              <div
-                key={s.label}
-                className={`rounded-lg border p-3 ${s.border} bg-white`}
-              >
-                <p className="text-xs text-gray-500 mb-0.5">{s.label}</p>
-                <p className={`text-base font-bold ${s.color.split(" ")[1]}`}>{s.value}</p>
-                <p className="text-xs text-gray-400">{s.sub}</p>
-              </div>
-            ))}
-          </div>
-
           <div className="p-4 space-y-4">
+            {/* AI Section — di atas stats */}
+            <div className="border border-dashed border-emerald-200 rounded-xl p-4 bg-emerald-50/30">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <Leaf className="w-4 h-4 text-emerald-600" />
+                  <p className="text-xs font-semibold text-emerald-800">Rekomendasi AI</p>
+                </div>
+                {hasGenerated && !isLoading && (
+                  <button
+                    onClick={handleGenerate}
+                    className="flex items-center gap-1 text-xs text-emerald-600 hover:text-emerald-700"
+                  >
+                    <RefreshCw className="w-3 h-3" />
+                    Perbarui
+                  </button>
+                )}
+              </div>
+
+              {/* Fokus selector */}
+              <div className="flex flex-wrap gap-1.5 mb-3">
+                {fokusOptions.map((opt) => {
+                  const Icon = opt.icon;
+                  return (
+                    <button
+                      key={opt.value}
+                      onClick={() => {
+                        setFokus(opt.value);
+                        if (hasGenerated) {
+                          setHasGenerated(false);
+                          setAiText("");
+                        }
+                      }}
+                      className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium transition-colors ${
+                        fokus === opt.value
+                          ? "bg-emerald-700 text-white"
+                          : "bg-white text-gray-600 border border-gray-200 hover:border-emerald-300"
+                      }`}
+                    >
+                      <Icon className="w-3 h-3" />
+                      {opt.label}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Generate button / result */}
+              {!hasGenerated ? (
+                <button
+                  onClick={handleGenerate}
+                  disabled={isLoading}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-70"
+                >
+                  <Brain className="w-4 h-4" />
+                  Generate Analisis AI
+                </button>
+              ) : (
+                <div className="bg-white rounded-lg border border-emerald-100 p-3 min-h-[80px] relative">
+                  {isLoading && aiText === "" ? (
+                    <div className="flex flex-col items-center justify-center gap-3 py-6">
+                      <div className="w-8 h-8 border-3 border-emerald-400 border-t-transparent rounded-full animate-spin" style={{ borderWidth: "3px" }} />
+                      <div className="text-center">
+                        <p className="text-sm font-semibold text-emerald-700">Mohon Menunggu...</p>
+                        <p className="text-xs text-gray-400 mt-0.5">Sedang menganalisis data mangrove nasional</p>
+                      </div>
+                      <div className="flex gap-1 mt-1">
+                        <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+                        <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+                        <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                      </div>
+                    </div>
+                  ) : error ? (
+                    <p className="text-xs text-red-600">{error}</p>
+                  ) : (
+                    <div className="relative">
+                      <MarkdownText text={aiText} />
+                      {isLoading && (
+                        <div className="flex items-center gap-2 mt-2 text-xs text-emerald-600">
+                          <div className="w-3 h-3 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin flex-shrink-0" />
+                          <span>Sedang menulis...</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Quick Stats Mangrove Nasional */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 bg-gray-50/50 rounded-lg p-3">
+              {STATS.map((s) => (
+                <div
+                  key={s.label}
+                  className={`rounded-lg border p-3 ${s.border} bg-white`}
+                >
+                  <p className="text-xs text-gray-500 mb-0.5">{s.label}</p>
+                  <p className={`text-base font-bold ${s.color.split(" ")[1]}`}>{s.value}</p>
+                  <p className="text-xs text-gray-400">{s.sub}</p>
+                </div>
+              ))}
+            </div>
+
             {/* Program Overview */}
             <div>
               <div className="flex items-center gap-2 mb-3">
@@ -270,82 +349,6 @@ export default function MangroveAIPanel({
                   </span>
                 ))}
               </div>
-            </div>
-
-            {/* AI Section */}
-            <div className="border border-dashed border-emerald-200 rounded-xl p-4 bg-emerald-50/30">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <Leaf className="w-4 h-4 text-emerald-600" />
-                  <p className="text-xs font-semibold text-emerald-800">Rekomendasi AI Claude</p>
-                </div>
-                {hasGenerated && !isLoading && (
-                  <button
-                    onClick={handleGenerate}
-                    className="flex items-center gap-1 text-xs text-emerald-600 hover:text-emerald-700"
-                  >
-                    <RefreshCw className="w-3 h-3" />
-                    Perbarui
-                  </button>
-                )}
-              </div>
-
-              {/* Fokus selector */}
-              <div className="flex flex-wrap gap-1.5 mb-3">
-                {fokusOptions.map((opt) => {
-                  const Icon = opt.icon;
-                  return (
-                    <button
-                      key={opt.value}
-                      onClick={() => {
-                        setFokus(opt.value);
-                        if (hasGenerated) {
-                          setHasGenerated(false);
-                          setAiText("");
-                        }
-                      }}
-                      className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium transition-colors ${
-                        fokus === opt.value
-                          ? "bg-emerald-700 text-white"
-                          : "bg-white text-gray-600 border border-gray-200 hover:border-emerald-300"
-                      }`}
-                    >
-                      <Icon className="w-3 h-3" />
-                      {opt.label}
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Generate button / result */}
-              {!hasGenerated ? (
-                <button
-                  onClick={handleGenerate}
-                  disabled={isLoading}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-70"
-                >
-                  <Brain className="w-4 h-4" />
-                  Generate Analisis AI
-                </button>
-              ) : (
-                <div className="bg-white rounded-lg border border-emerald-100 p-3 min-h-[80px]">
-                  {isLoading && aiText === "" ? (
-                    <div className="flex items-center gap-2 text-xs text-gray-400">
-                      <div className="w-4 h-4 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin" />
-                      Menganalisis data mangrove nasional...
-                    </div>
-                  ) : error ? (
-                    <p className="text-xs text-red-600">{error}</p>
-                  ) : (
-                    <div className="relative">
-                      <MarkdownText text={aiText} />
-                      {isLoading && (
-                        <span className="inline-block w-1.5 h-4 bg-emerald-500 animate-pulse ml-0.5 align-middle" />
-                      )}
-                    </div>
-                  )}
-                </div>
-              )}
             </div>
 
             <p className="text-xs text-gray-400 text-right">

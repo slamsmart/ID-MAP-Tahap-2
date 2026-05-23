@@ -16,9 +16,9 @@ export interface AbrasionSite {
 }
 
 export const PRIORITAS_CONFIG: Record<PrioritasType, { bg: string; text: string; border: string; dot: string; label: string }> = {
-  "Tinggi":       { bg: "bg-red-100",    text: "text-red-700",    border: "border-red-200",    dot: "#ef4444", label: "Tinggi" },
-  "Sedang":       { bg: "bg-amber-100",  text: "text-amber-700",  border: "border-amber-200",  dot: "#f59e0b", label: "Sedang" },
-  "Rendah–Sedang":{ bg: "bg-blue-100",   text: "text-blue-700",   border: "border-blue-200",   dot: "#3b82f6", label: "Rendah–Sedang" },
+  "Tinggi":       { bg: "bg-red-600",    text: "text-white",  border: "border-red-700",    dot: "#ef4444", label: "Tinggi" },
+  "Sedang":       { bg: "bg-amber-500",  text: "text-white",  border: "border-amber-600",  dot: "#f59e0b", label: "Sedang" },
+  "Rendah–Sedang":{ bg: "bg-blue-500",   text: "text-white",  border: "border-blue-600",   dot: "#3b82f6", label: "Rendah–Sedang" },
 };
 
 export const SUBSTRAT_ICON: Record<SubstratType, string> = {

@@ -7,6 +7,18 @@ import L from "leaflet";
 import { TITIK_PENDARATAN_PENYU, PENYU_WARNA, type TitikPenyu } from "@/lib/penyuData";
 import { X, Shell, AlertTriangle, Calendar, MapPin } from "lucide-react";
 
+const STORAGE_KEY = "idmap_penyu_override";
+
+function loadData(): TitikPenyu[] {
+  if (typeof window === "undefined") return TITIK_PENDARATAN_PENYU;
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    return stored ? JSON.parse(stored) : TITIK_PENDARATAN_PENYU;
+  } catch {
+    return TITIK_PENDARATAN_PENYU;
+  }
+}
+
 function createTurtleIcon(warna: string) {
   return L.divIcon({
     className: "",
@@ -26,14 +38,16 @@ function createTurtleIcon(warna: string) {
   });
 }
 
-function FitBounds() {
+function FitBounds({ data }: { data: TitikPenyu[] }) {
   const map = useMap();
   useEffect(() => {
+    if (data.length === 0) return;
     const bounds = L.latLngBounds(
-      TITIK_PENDARATAN_PENYU.map((t) => [t.lat, t.lon] as [number, number])
+      data.map((t) => [t.lat, t.lon] as [number, number])
     );
     map.fitBounds(bounds, { padding: [60, 60] });
-  }, [map]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return null;
 }
 
@@ -42,15 +56,20 @@ interface TurtleLayerProps {
 }
 
 export default function TurtleLayer({ onClose }: TurtleLayerProps) {
+  const [data, setData] = useState<TitikPenyu[]>([]);
   const [selectedPantai, setSelectedPantai] = useState<string | null>(null);
 
-  const pantaiList = Array.from(new Set(TITIK_PENDARATAN_PENYU.map((t) => t.pantai)));
+  useEffect(() => {
+    setData(loadData());
+  }, []);
+
+  const pantaiList = Array.from(new Set(data.map((t) => t.pantai)));
 
   const filtered = selectedPantai
-    ? TITIK_PENDARATAN_PENYU.filter((t) => t.pantai === selectedPantai)
-    : TITIK_PENDARATAN_PENYU;
+    ? data.filter((t) => t.pantai === selectedPantai)
+    : data;
 
-  const totalSarang = TITIK_PENDARATAN_PENYU.length;
+  const totalSarang = data.length;
 
   return (
     <div className="absolute inset-0 z-[400] flex flex-col">
@@ -75,7 +94,7 @@ export default function TurtleLayer({ onClose }: TurtleLayerProps) {
             Semua
           </button>
           {pantaiList.map((p) => {
-            const jenis = TITIK_PENDARATAN_PENYU.find((t) => t.pantai === p)?.namaIkon ?? "Penyu Lekang";
+            const jenis = data.find((t) => t.pantai === p)?.namaIkon ?? "Penyu Lekang";
             const warna = PENYU_WARNA[jenis] ?? "#6b7280";
             return (
               <button
@@ -115,7 +134,7 @@ export default function TurtleLayer({ onClose }: TurtleLayerProps) {
           attribution="Tiles &copy; Esri"
         />
 
-        <FitBounds />
+        <FitBounds data={data} />
 
         {filtered.map((titik) => {
           const warna = PENYU_WARNA[titik.namaIkon] ?? "#6b7280";

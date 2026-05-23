@@ -1,6 +1,6 @@
 "use client";
 
-import { Save, Shield, Bell, Globe, Database, Key, RefreshCw, AlertTriangle, CheckCircle } from "lucide-react";
+import { Save, Shield, Bell, Globe, Database, RefreshCw, AlertTriangle, CheckCircle } from "lucide-react";
 import { useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { useState } from "react";
@@ -93,35 +93,6 @@ export default function PengaturanAdminPage() {
                 <div className={`w-11 h-6 rounded-full cursor-pointer ${n.enabled ? "bg-emerald-500" : "bg-gray-200"}`}>
                   <div className={`w-5 h-5 bg-white rounded-full shadow mt-0.5 ${n.enabled ? "ml-[22px]" : "ml-0.5"}`} />
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl border border-gray-100 p-6">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center"><Database className="w-5 h-5 text-purple-600" /></div>
-            <div>
-              <h3 className="font-display font-semibold text-gray-900">Integrasi API</h3>
-              <p className="text-xs text-gray-500">Koneksi ke layanan eksternal</p>
-            </div>
-          </div>
-          <div className="space-y-3">
-            {[
-              { label: "SRN KLHK API", status: "Terhubung", key: "srn_api_****" },
-              { label: "QRIS Payment Gateway", status: "Terhubung", key: "qris_****" },
-              { label: "Copernicus Satellite API", status: "Terhubung", key: "cop_****" },
-              { label: "LAPAN Remote Sensing", status: "Konfigurasi", key: "—" },
-            ].map((api) => (
-              <div key={api.label} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
-                <div className="flex items-center gap-3">
-                  <Key className="w-4 h-4 text-gray-400" />
-                  <div>
-                    <p className="text-sm font-medium text-gray-700">{api.label}</p>
-                    <p className="text-xs text-gray-400 font-mono">{api.key}</p>
-                  </div>
-                </div>
-                <span className={`px-2 py-1 rounded-full text-xs font-medium ${api.status === "Terhubung" ? "bg-emerald-100 text-emerald-700" : "bg-yellow-100 text-yellow-700"}`}>{api.status}</span>
               </div>
             ))}
           </div>

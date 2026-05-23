@@ -23,6 +23,7 @@ const projectValidator = v.object({
     v.union(v.literal("Belum"), v.literal("Pending"), v.literal("Terdaftar"))
   ),
   description: v.optional(v.string()),
+  serviceType: v.optional(v.string()),
   createdAt: v.number(),
 });
 
@@ -121,6 +122,10 @@ export const update = mutation({
     projectId: v.id("projects"),
     title: v.optional(v.string()),
     location: v.optional(v.string()),
+    province: v.optional(v.string()),
+    description: v.optional(v.string()),
+    image: v.optional(v.string()),
+    serviceType: v.optional(v.string()),
     status: v.optional(
       v.union(
         v.literal("Draft"),

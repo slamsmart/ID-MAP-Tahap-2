@@ -77,7 +77,7 @@ export default function DampakPage() {
       <div className="bg-emerald-900 rounded-xl p-6 text-white">
         <h3 className="font-display font-semibold text-lg mb-2">Tingkatkan Dampak Anda!</h3>
         <p className="text-emerald-200 text-sm mb-4">Setiap dukungan melalui QRIS langsung berkontribusi ke proyek mangrove yang terverifikasi. Semakin banyak Anda mendukung, semakin besar dampak positif Anda.</p>
-        <a href="/daftar?peran=komunitas" className="inline-block px-6 py-2.5 bg-white text-emerald-900 rounded-lg text-sm font-semibold hover:bg-emerald-50 transition">
+        <a href="/daftar?peran=sahabat" className="inline-block px-6 py-2.5 bg-white text-emerald-900 rounded-lg text-sm font-semibold hover:bg-emerald-50 transition">
           Dukung Sekarang
         </a>
       </div>

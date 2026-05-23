@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowRight, CheckCircle2 } from "lucide-react";
+import Image from "next/image";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function ThreeRolesSection() {
@@ -8,14 +9,14 @@ export default function ThreeRolesSection() {
 
   const sections = [
     {
-      title: t("Komunitas", "Community"),
+      title: t("Sahabat", "Sahabat"),
       bullets: [
         t("Kontribusi mudah via QRIS", "Easy contribution via QRIS"),
         t("Pantau dampak real-time", "Monitor impact in real-time"),
         t("Transparan dan terpercaya", "Transparent and trusted"),
       ],
       cta: t("Dukung Sekarang", "Support Now"),
-      href: "/daftar?peran=komunitas",
+      href: "/daftar?peran=sahabat",
       image: "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&w=700&q=80",
     },
     {
@@ -36,8 +37,8 @@ export default function ThreeRolesSection() {
         t("Laporan ESG otomatis", "Automated ESG reports"),
         t("Dukungan kepatuhan regulasi", "Regulatory compliance support"),
       ],
-      cta: t("Lihat Solusi Corporate", "View Corporate Solutions"),
-      href: "/daftar?peran=perusahaan",
+      cta: t("Hubungi Kami", "Contact Us"),
+      href: "https://wa.me/6281234561017",
       image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=700&q=80",
     },
   ];
@@ -67,11 +68,13 @@ export default function ThreeRolesSection() {
                 <h3 className="text-xl font-bold text-[#0f3d2e]">
                   {section.title}
                 </h3>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                  <Image
                   src={section.image}
                   alt={section.title}
+                  width={96}
+                  height={96}
                   className="h-24 w-24 rounded-xl object-cover flex-shrink-0"
+                  loading="lazy"
                 />
               </div>
 
@@ -87,6 +90,8 @@ export default function ThreeRolesSection() {
               <div className="mt-6 pt-4">
                 <a
                   href={section.href}
+                  target={section.href.startsWith("https://wa.me") ? "_blank" : undefined}
+                  rel={section.href.startsWith("https://wa.me") ? "noopener noreferrer" : undefined}
                   className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white bg-[#1f6f54] hover:bg-[#0f3d2e] transition-colors"
                 >
                   {section.cta}

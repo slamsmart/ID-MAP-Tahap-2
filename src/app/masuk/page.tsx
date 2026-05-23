@@ -10,11 +10,11 @@ import { api } from "../../../convex/_generated/api";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getAuthBgImage } from "@/lib/heroImageStore";
 
-const roles = ["komunitas", "mitra", "verifikator", "admin"] as const;
+const roles = ["sahabat", "mitra", "verifikator", "admin"] as const;
 type Role = (typeof roles)[number];
 
 const roleHints: Record<Role, { email: string; password: string }> = {
-  komunitas: { email: "user@idmap.id", password: "user123" },
+  sahabat: { email: "user@idmap.id", password: "user123" },
   mitra: { email: "mitra@idmap.id", password: "mitra123" },
   verifikator: { email: "verifikator@idmap.id", password: "verif123" },
   admin: { email: "admin@idmap.id", password: "admin123" },
@@ -25,28 +25,29 @@ export default function LoginPage() {
   const { language, setLanguage, t } = useLanguage();
   const loginMutation = useMutation(api.users.login);
   const [showPassword, setShowPassword] = useState(false);
-  const [role, setRole] = useState<Role>("komunitas");
+  const [role, setRole] = useState<Role>("sahabat");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [bgImage, setBgImage] = useState<string | null>(null);
+  const DEFAULT_BG = "/images/hero-mangrove.webp";
+  const [bgImage, setBgImage] = useState(DEFAULT_BG);
 
   useEffect(() => {
-    getAuthBgImage().then((img) => {
-      setBgImage(img || "/images/hero-mangrove.png");
-    });
+    getAuthBgImage()
+      .then((img) => { if (img) setBgImage(img); })
+      .catch(() => {});
   }, []);
 
   const roleLabels: Record<Role, string> = {
-    komunitas: t("Komunitas", "Community"),
+    sahabat: t("Sahabat", "Sahabat"),
     mitra: t("Mitra", "Partner"),
     verifikator: t("Verifikator", "Verifier"),
     admin: "Admin",
   };
 
   const roleDescriptions: Record<Role, string> = {
-    komunitas: t("Akses dashboard komunitas & sertifikat", "Access community dashboard & certificates"),
+    sahabat: t("Donasi QRIS, pantau dampak, & sertifikat", "QRIS donation, impact tracking & certificates"),
     mitra: t("Kelola proyek mitra & laporan MRV", "Manage partner projects & MRV reports"),
     verifikator: t("Kelola & verifikasi data abrasi pantai dan penyu", "Manage & verify coastal abrasion and turtle data"),
     admin: t("Panel administrasi penuh", "Full administration panel"),
@@ -90,14 +91,6 @@ export default function LoginPage() {
     setPassword(hint.password);
     setError("");
   };
-
-  if (!bgImage) {
-    return (
-      <div className="min-h-screen bg-[#0f3d2e] flex items-center justify-center">
-        <div className="w-10 h-10 rounded-full border-4 border-emerald-200 border-t-emerald-600 animate-spin" />
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen flex">

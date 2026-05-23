@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import { Menu, X, UserCircle, LogOut } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -33,11 +34,13 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-emerald-900/10">
       <div className="mx-auto max-w-7xl px-6 py-4 flex items-center justify-between">
         <Link href="/" className="flex items-center" aria-label="ID-MAP - Mangrove & Pesisir untuk Ekosistem Karbon Indonesia">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/images/logo.png"
+          <Image
+            src="/images/logo.webp"
             alt="ID-MAP"
+            width={180}
+            height={56}
             className="h-12 md:h-14 w-auto object-contain"
+            priority
           />
         </Link>
 

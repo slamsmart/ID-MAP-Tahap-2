@@ -2,7 +2,7 @@
 
 import {
   ChevronLeft, ChevronRight, Calculator, PenTool, Layers, Info,
-  Loader2, Leaf, Car, Plane, Home, Globe, Waves,
+  Loader2, Leaf, Car, Plane, Home, Globe, Waves, Users,
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -35,6 +35,15 @@ const AbrasionMap = dynamic(() => import("@/components/map/AbrasionMap"), {
   ),
 });
 
+const PokmaswasLayer = dynamic(() => import("@/components/map/PokmaswasLayer"), {
+  ssr: false,
+  loading: () => (
+    <div className="absolute inset-0 flex items-center justify-center bg-[#0F2E2A] z-[400]">
+      <Loader2 className="h-8 w-8 text-emerald-400 animate-spin" />
+    </div>
+  ),
+});
+
 const EE_APP_URL =
   "https://ee-dimassyarifworkspace.projects.earthengine.app/view/mangrove-health-indeks-jatim";
 
@@ -54,6 +63,7 @@ export default function JelajahiPetaMangrovePage() {
   const [mhiCategory, setMhiCategory] = useState<"excellent" | "moderate" | "poor">("excellent");
   const [isAbrasionOpen, setIsAbrasionOpen] = useState(false);
   const [isTurtleLayerOpen, setIsTurtleLayerOpen] = useState(false);
+  const [isPokmaswasOpen, setIsPokmaswasOpen] = useState(false);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -113,7 +123,7 @@ export default function JelajahiPetaMangrovePage() {
             {isDrawing ? "Sedang Menggambar..." : "Gambar Polygon"}
           </button>
           <button
-            onClick={() => { setIsAbrasionOpen(!isAbrasionOpen); setIsTurtleLayerOpen(false); }}
+            onClick={() => { setIsAbrasionOpen(!isAbrasionOpen); setIsTurtleLayerOpen(false); setIsPokmaswasOpen(false); }}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all duration-300 text-xs sm:text-sm font-bold border ${
               isAbrasionOpen
                 ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20 border-orange-400"
@@ -124,7 +134,7 @@ export default function JelajahiPetaMangrovePage() {
             <span className="hidden sm:inline">Abrasi Pantai</span>
           </button>
           <button
-            onClick={() => { setIsTurtleLayerOpen(!isTurtleLayerOpen); setIsAbrasionOpen(false); }}
+            onClick={() => { setIsTurtleLayerOpen(!isTurtleLayerOpen); setIsAbrasionOpen(false); setIsPokmaswasOpen(false); }}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all duration-300 text-xs sm:text-sm font-bold border ${
               isTurtleLayerOpen
                 ? "bg-teal-500 text-white shadow-lg shadow-teal-500/20 border-teal-400"
@@ -133,6 +143,17 @@ export default function JelajahiPetaMangrovePage() {
           >
             <span className="text-base leading-none">🐢</span>
             <span className="hidden sm:inline">Penyu</span>
+          </button>
+          <button
+            onClick={() => { setIsPokmaswasOpen(!isPokmaswasOpen); setIsAbrasionOpen(false); setIsTurtleLayerOpen(false); }}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all duration-300 text-xs sm:text-sm font-bold border ${
+              isPokmaswasOpen
+                ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/20 border-emerald-400"
+                : "bg-[#062d22] text-white hover:bg-emerald-600 border-[#235850] hover:border-emerald-400"
+            }`}
+          >
+            <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            <span className="hidden sm:inline">Pokmaswas</span>
           </button>
         </div>
 
@@ -403,6 +424,11 @@ export default function JelajahiPetaMangrovePage() {
           {/* Turtle Layer - full Leaflet map with satellite tiles */}
           {isTurtleLayerOpen && (
             <TurtleLayer onClose={() => setIsTurtleLayerOpen(false)} />
+          )}
+
+          {/* Pokmaswas Layer */}
+          {isPokmaswasOpen && (
+            <PokmaswasLayer onClose={() => setIsPokmaswasOpen(false)} />
           )}
         </div>
       </div>

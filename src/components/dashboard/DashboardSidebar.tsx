@@ -10,7 +10,6 @@ import {
   Globe,
   Users,
   ArrowRightLeft,
-  Building2,
   BarChart3,
   Settings,
   Leaf,
@@ -24,6 +23,7 @@ import {
   ImageIcon,
   ShieldCheck,
   Waves,
+  Brain,
 } from "lucide-react";
 
 interface SidebarItem {
@@ -34,19 +34,18 @@ interface SidebarItem {
 
 const adminItems: SidebarItem[] = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/admin" },
+  { icon: Brain, label: "Analisis AI", href: "/admin/analisis-ai" },
   { icon: FolderTree, label: "Proyek", href: "/admin/proyek" },
   { icon: CheckCircle, label: "Verifikasi KYC", href: "/admin/verifikasi" },
-  { icon: Globe, label: "SRN Registry", href: "/admin/srn" },
   { icon: Users, label: "Pengguna", href: "/admin/pengguna" },
   { icon: ArrowRightLeft, label: "Transaksi", href: "/admin/transaksi" },
-  { icon: Building2, label: "Corporate", href: "/admin/corporate" },
-  { icon: BarChart3, label: "Laporan & Analitik", href: "/admin/laporan" },
   { icon: ImageIcon, label: "Header Image", href: "/admin/header" },
   { icon: Settings, label: "Pengaturan", href: "/admin/pengaturan" },
 ];
 
 const userItems: SidebarItem[] = [
   { icon: LayoutDashboard, label: "Beranda", href: "/user" },
+  { icon: Brain, label: "Analisis AI", href: "/user/analisis-ai" },
   { icon: FolderTree, label: "Proyek", href: "/user/proyek" },
   { icon: Globe, label: "Riwayat Scan", href: "/user/riwayat" },
   { icon: ArrowRightLeft, label: "Donasi & Kontribusi", href: "/user/donasi" },
@@ -58,11 +57,11 @@ const userItems: SidebarItem[] = [
 
 const mitraItems: SidebarItem[] = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/mitra" },
+  { icon: Brain, label: "Analisis AI", href: "/mitra/analisis-ai" },
   { icon: ShieldCheck, label: "Verifikasi KYC", href: "/mitra/kyc" },
   { icon: FolderTree, label: "Proyek Saya", href: "/mitra/proyek" },
   { icon: Sprout, label: "Tambah Proyek", href: "/mitra/proyek-baru" },
   { icon: CheckCircle, label: "MRV & Verifikasi", href: "/mitra/mrv" },
-  { icon: Globe, label: "Registrasi SRN", href: "/mitra/srn" },
   { icon: Wallet, label: "Pendanaan", href: "/mitra/pendanaan" },
   { icon: FileText, label: "Laporan", href: "/mitra/laporan" },
   { icon: Settings, label: "Pengaturan", href: "/mitra/pengaturan" },
@@ -70,8 +69,11 @@ const mitraItems: SidebarItem[] = [
 
 const verifikatorItems: SidebarItem[] = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/verifikator" },
+  { icon: Brain, label: "Analisis AI", href: "/verifikator/analisis-ai" },
   { icon: Waves, label: "Data Abrasi Pantai", href: "/verifikator/abrasi" },
   { icon: Globe, label: "Titik Pendaratan Penyu", href: "/verifikator/penyu" },
+  { icon: Users, label: "Data Pokmaswas", href: "/verifikator/pokmaswas" },
+  { icon: ImageIcon, label: "Thumbnail Layanan", href: "/verifikator/thumbnail-layanan" },
   { icon: Settings, label: "Pengaturan", href: "/verifikator/pengaturan" },
 ];
 

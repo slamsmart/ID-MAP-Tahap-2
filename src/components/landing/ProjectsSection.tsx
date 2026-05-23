@@ -2,11 +2,12 @@
 
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
+import Image from "next/image";
 import { ChevronLeft, ChevronRight, ArrowRight, MapPin } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function ProjectsSection() {
-  const projects = useQuery(api.projects.listVerified);
+  const projects = useQuery(api.projects.list);
   const { t } = useLanguage();
 
   return (
@@ -21,7 +22,7 @@ export default function ProjectsSection() {
               <ChevronRight className="w-5 h-5 text-gray-600" aria-hidden="true" />
             </button>
             <h2 className="font-display font-bold text-2xl md:text-3xl text-gray-900">
-              {t("Proyek Mangrove Karbon Terverifikasi", "Verified Mangrove Carbon Projects")}
+              {t("Proyek Layanan Ekosistem Mangrove", "Mangrove Ecosystem Service Projects")}
             </h2>
           </div>
           <a
@@ -33,9 +34,9 @@ export default function ProjectsSection() {
           </a>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {projects === undefined
-            ? Array.from({ length: 4 }).map((_, i) => (
+            ? Array.from({ length: 6 }).map((_, i) => (
                 <div key={i} className="bg-white rounded-2xl border border-gray-100 overflow-hidden animate-pulse">
                   <div className="h-48 bg-gray-200" />
                   <div className="p-4 space-y-2">
@@ -45,17 +46,19 @@ export default function ProjectsSection() {
                   </div>
                 </div>
               ))
-            : projects.slice(0, 4).map((project) => (
+            : projects.slice(0, 6).map((project) => (
                 <div
                   key={project._id}
                   className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
                 >
                   <div className="relative h-48 overflow-hidden">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                    <Image
                       src={project.image}
                       alt={project.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      loading="lazy"
                     />
                     <div className="absolute top-3 right-3">
                       <span className="px-2 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
@@ -64,6 +67,11 @@ export default function ProjectsSection() {
                     </div>
                   </div>
                   <div className="p-4">
+                    {project.serviceType && (
+                      <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100 mb-1.5">
+                        {project.serviceType}
+                      </span>
+                    )}
                     <h3 className="font-display font-semibold text-gray-900 mb-1">
                       {project.title}
                     </h3>
