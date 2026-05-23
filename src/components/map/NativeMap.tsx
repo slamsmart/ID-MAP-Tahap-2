@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { MapContainer, TileLayer, Polygon, useMapEvents, Marker, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Polygon, useMapEvents, CircleMarker, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import * as turf from "@turf/turf";
@@ -108,10 +108,11 @@ export default function NativeMap({ onAreaCalculated, transparent, carbonStock =
   const [points, setPoints] = useState<[number, number][]>([]);
   const [isFinished, setIsFinished] = useState(false);
 
-  const center: [number, number] = [-7.45, 112.85]; // Pesisir Sidoarjo/Surabaya - area mangrove Jatim
+  const center: [number, number] = [-7.45, 112.85];
+  const defaultZoom = transparent ? 16 : 13;
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    if (!transparent && typeof window !== "undefined") {
       delete (L.Icon.Default.prototype as any)._getIconUrl;
       L.Icon.Default.mergeOptions({
         iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
@@ -119,16 +120,25 @@ export default function NativeMap({ onAreaCalculated, transparent, carbonStock =
         shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
       });
     }
-  }, []);
+  }, [transparent]);
 
   useEffect(() => {
     if (transparent && typeof document !== "undefined") {
       const style = document.createElement("style");
       style.id = "leaflet-transparent-style";
       style.textContent = `
-        .leaflet-transparent-map { background: transparent !important; }
-        .leaflet-transparent-map .leaflet-tile-pane { display: none !important; }
-        .leaflet-transparent-map .leaflet-control-attribution { display: none !important; }
+        .leaflet-container.leaflet-transparent-map,
+        .leaflet-container.leaflet-transparent-map .leaflet-pane,
+        .leaflet-container.leaflet-transparent-map .leaflet-map-pane,
+        .leaflet-container.leaflet-transparent-map .leaflet-shadow-pane,
+        .leaflet-container.leaflet-transparent-map .leaflet-overlay-pane,
+        .leaflet-container.leaflet-transparent-map .leaflet-marker-pane {
+          background: transparent !important;
+          background-color: transparent !important;
+        }
+        .leaflet-container.leaflet-transparent-map .leaflet-tile-pane { display: none !important; }
+        .leaflet-container.leaflet-transparent-map .leaflet-control-attribution { display: none !important; }
+        .leaflet-container.leaflet-transparent-map .leaflet-control-zoom { display: none !important; }
       `;
       document.head.appendChild(style);
       return () => {
@@ -151,12 +161,14 @@ export default function NativeMap({ onAreaCalculated, transparent, carbonStock =
   }, [points]);
 
   return (
-    <div className="relative w-full h-full">
+    <div className="relative w-full h-full" style={{ background: "transparent" }}>
       <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[400] bg-white/90 backdrop-blur-sm px-6 py-3 rounded-full shadow-lg border border-gray-100 flex items-center gap-4">
         <span className="text-sm font-medium text-gray-700">
-          {isFinished 
-            ? "Area Terukur. Hapus untuk mengulang." 
-            : "Klik di peta untuk menggambar area (minimal 3 titik)."}
+          {isFinished
+            ? "Area Terukur. Hapus untuk mengulang."
+            : points.length === 0
+              ? "Scroll untuk zoom, drag untuk geser, klik untuk tandai titik."
+              : `${points.length} titik — klik lanjut, atau tekan SELESAI (min. 3 titik).`}
         </span>
         <div className="flex gap-2">
           {points.length >= 3 && !isFinished && (
@@ -182,10 +194,16 @@ export default function NativeMap({ onAreaCalculated, transparent, carbonStock =
 
       <MapContainer
         center={center}
-        zoom={13}
+        zoom={defaultZoom}
         className={`w-full h-full ${transparent ? "leaflet-transparent-map" : ""}`}
-        style={{ width: "100%", height: "100%", background: transparent ? "transparent" : undefined }}
-        zoomControl={false}
+        style={{ width: "100%", height: "100%", background: "transparent", backgroundColor: "transparent" }}
+        zoomControl={!transparent}
+        dragging={true}
+        scrollWheelZoom={true}
+        doubleClickZoom={false}
+        touchZoom={true}
+        boxZoom={false}
+        keyboard={false}
       >
         {!transparent && (
           <TileLayer
@@ -203,17 +221,22 @@ export default function NativeMap({ onAreaCalculated, transparent, carbonStock =
               color: "#ffffff",
               weight: 3,
               fillColor: isFinished ? "#10b981" : "#3b82f6",
-              fillOpacity: isFinished ? 0.3 : 0.2,
+              fillOpacity: isFinished ? 0.35 : 0.25,
               dashArray: isFinished ? undefined : "8, 8",
             }}
           />
         )}
-        
+
         {points.map((p, i) => (
-          <Marker key={i} position={p} />
+          <CircleMarker
+            key={i}
+            center={p}
+            radius={6}
+            pathOptions={{ color: "#059669", fillColor: "#ffffff", fillOpacity: 1, weight: 2 }}
+          />
         ))}
 
-        {/* Carbon Stock Label on polygon - REMOVED, value shown only in calculator panel */}
+        {/* Carbon Stock Label on polygon - value shown only in calculator panel */}
       </MapContainer>
     </div>
   );

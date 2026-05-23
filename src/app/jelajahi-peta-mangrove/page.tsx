@@ -346,10 +346,10 @@ export default function JelajahiPetaMangrovePage() {
             />
           </div>
 
-          {/* Polygon Drawing - separate Leaflet with satellite imagery */}
+          {/* Polygon Drawing - transparent Leaflet overlay, MHI stays visible */}
           {isDrawing && (
             <div className="absolute inset-0 z-[350]">
-              <NativeMap onAreaCalculated={setAreaHa} />
+              <NativeMap onAreaCalculated={setAreaHa} transparent={true} />
             </div>
           )}
         </div>
