@@ -24,15 +24,22 @@ export default function Footer() {
     <footer className="bg-[#0a1c15] text-white">
       {/* CTA Banner */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="relative overflow-hidden rounded-[32px] p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 border border-white/10"
-             style={{ background: "linear-gradient(135deg, #064e3b 0%, #059669 100%)" }}>
-          
-          {/* Decorative Waves (Pure CSS representation) */}
-          <div className="absolute inset-0 opacity-20 pointer-events-none" 
-               style={{ backgroundImage: "radial-gradient(circle at 100% 50%, transparent 20%, rgba(255,255,255,0.1) 21%, rgba(255,255,255,0.1) 34%, transparent 35%, transparent), radial-gradient(circle at 0% 50%, transparent 20%, rgba(255,255,255,0.1) 21%, rgba(255,255,255,0.1) 34%, transparent 35%, transparent)", backgroundSize: "100px 150px" }} />
+        <div className="relative overflow-hidden rounded-[32px] p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8"
+             style={{
+               background: "rgba(255, 255, 255, 0.05)",
+               backdropFilter: "blur(24px)",
+               WebkitBackdropFilter: "blur(24px)",
+               border: "1px solid rgba(255, 255, 255, 0.15)",
+               boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.12), inset 0 -1px 0 rgba(0, 0, 0, 0.2)",
+             }}>
 
           <div className="relative z-10 flex flex-col sm:flex-row items-start gap-6 w-full md:w-auto">
-            <div className="hidden sm:flex w-20 h-20 rounded-full border border-white/20 items-center justify-center bg-white/10 shrink-0 shadow-lg">
+            <div className="hidden sm:flex w-20 h-20 rounded-full items-center justify-center shrink-0 shadow-lg"
+                 style={{
+                   background: "rgba(255,255,255,0.08)",
+                   border: "1px solid rgba(255,255,255,0.18)",
+                   boxShadow: "inset 0 1px 0 rgba(255,255,255,0.15)",
+                 }}>
               <Leaf className="w-10 h-10 text-emerald-300" />
             </div>
             <div>
