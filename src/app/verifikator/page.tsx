@@ -6,6 +6,7 @@ import { getSession } from "@/lib/auth";
 import { ABRASION_SITES } from "@/lib/abrasionData";
 import { TITIK_PENDARATAN_PENYU } from "@/lib/penyuData";
 import { Waves, ArrowRight, AlertTriangle, CheckCircle2 } from "lucide-react";
+import MangroveAIPanel from "@/components/dashboard/MangroveAIPanel";
 
 export default function VerifikatorDashboard() {
   const [name, setName] = useState("Verifikator");
@@ -132,6 +133,8 @@ export default function VerifikatorDashboard() {
           </p>
         </div>
       </div>
+
+      <MangroveAIPanel role="verifikator" />
     </div>
   );
 }

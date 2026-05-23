@@ -8,6 +8,7 @@ import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import { formatNumber, formatRupiah } from "@/lib/utils";
+import MangroveAIPanel from "@/components/dashboard/MangroveAIPanel";
 
 export default function MitraDashboard() {
   const [session, setSession] = useState<User | null>(null);
@@ -192,6 +193,8 @@ export default function MitraDashboard() {
           </div>
         </div>
       </div>
+
+      <MangroveAIPanel role="mitra" />
     </div>
   );
 }

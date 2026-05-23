@@ -8,6 +8,7 @@ import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import { formatNumber, formatRupiah } from "@/lib/utils";
+import MangroveAIPanel from "@/components/dashboard/MangroveAIPanel";
 
 const articles = [
   {
@@ -297,6 +298,8 @@ export default function UserDashboard() {
           Scan Proyek Sekarang
         </button>
       </div>
+
+      <MangroveAIPanel role="komunitas" />
     </div>
   );
 }

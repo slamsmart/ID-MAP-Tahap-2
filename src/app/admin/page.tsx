@@ -2,6 +2,7 @@
 
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
+import MangroveAIPanel from "@/components/dashboard/MangroveAIPanel";
 import {
   FolderTree,
   Leaf,
@@ -374,6 +375,8 @@ export default function AdminDashboard() {
           </table>
         </div>
       </div>
+
+      <MangroveAIPanel role="admin" />
     </div>
   );
 }
