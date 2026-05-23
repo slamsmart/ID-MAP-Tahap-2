@@ -376,7 +376,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <MangroveAIPanel role="admin" />
+      <MangroveAIPanel role="admin" defaultExpanded />
     </div>
   );
 }

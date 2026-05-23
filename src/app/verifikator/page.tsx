@@ -134,7 +134,7 @@ export default function VerifikatorDashboard() {
         </div>
       </div>
 
-      <MangroveAIPanel role="verifikator" />
+      <MangroveAIPanel role="verifikator" defaultExpanded />
     </div>
   );
 }

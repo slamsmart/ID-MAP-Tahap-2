@@ -194,7 +194,7 @@ export default function MitraDashboard() {
         </div>
       </div>
 
-      <MangroveAIPanel role="mitra" />
+      <MangroveAIPanel role="mitra" defaultExpanded />
     </div>
   );
 }

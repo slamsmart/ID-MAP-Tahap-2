@@ -299,7 +299,7 @@ export default function UserDashboard() {
         </button>
       </div>
 
-      <MangroveAIPanel role="komunitas" />
+      <MangroveAIPanel role="komunitas" defaultExpanded />
     </div>
   );
 }

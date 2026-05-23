@@ -12,8 +12,8 @@ const client = new OpenAI({
   },
 });
 
-// Model default: DeepSeek V3 free (bisa ganti via env OPENROUTER_MODEL)
-const MODEL = process.env.OPENROUTER_MODEL ?? "deepseek/deepseek-v4-flash:free";
+// Model default: DeepSeek V3 free — ganti via env OPENROUTER_MODEL
+const MODEL = process.env.OPENROUTER_MODEL ?? "deepseek/deepseek-chat:free";
 
 export async function POST(request: NextRequest) {
   try {
@@ -97,9 +97,11 @@ Perhatikan khusus provinsi-provinsi kondisi kritis dan gap realisasi restorasi y
     });
   } catch (error: any) {
     console.error("Mangrove AI error:", error);
-    return NextResponse.json(
-      { error: error.message ?? "Terjadi kesalahan pada analisis AI" },
-      { status: 500 }
-    );
+    const status = error?.status ?? error?.statusCode ?? 500;
+    const message =
+      error?.message?.includes("402") || status === 402
+        ? "Model AI sedang tidak tersedia. Coba lagi dalam beberapa saat."
+        : (error?.message ?? "Terjadi kesalahan pada analisis AI");
+    return NextResponse.json({ error: message }, { status: status === 402 ? 503 : 500 });
   }
 }
