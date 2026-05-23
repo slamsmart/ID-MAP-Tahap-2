@@ -2,7 +2,7 @@ export interface User {
   _id: string;
   email: string;
   name: string;
-  role: "komunitas" | "mitra" | "perusahaan" | "admin";
+  role: "komunitas" | "mitra" | "verifikator" | "admin";
 }
 
 const SESSION_KEY = "idmap_session";
@@ -33,7 +33,7 @@ export function logout(): void {
 export function getDashboardPath(role: User["role"]): string {
   switch (role) {
     case "admin": return "/admin";
-    case "perusahaan": return "/corporate";
+    case "verifikator": return "/verifikator";
     case "mitra": return "/mitra";
     default: return "/user";
   }

@@ -13,7 +13,7 @@ const userValidator = v.object({
   role: v.union(
     v.literal("komunitas"),
     v.literal("mitra"),
-    v.literal("perusahaan"),
+    v.literal("verifikator"),
     v.literal("admin")
   ),
   kycStatus: v.optional(
@@ -64,7 +64,7 @@ export const listByRole = query({
     role: v.union(
       v.literal("komunitas"),
       v.literal("mitra"),
-      v.literal("perusahaan"),
+      v.literal("verifikator"),
       v.literal("admin")
     ),
   },
@@ -83,7 +83,7 @@ export const getStats = query({
     total: v.number(),
     komunitas: v.number(),
     mitra: v.number(),
-    perusahaan: v.number(),
+    verifikator: v.number(),
     admin: v.number(),
     kycMenunggu: v.number(),
     kycTerverifikasi: v.number(),
@@ -95,7 +95,7 @@ export const getStats = query({
       total: all.length,
       komunitas: all.filter((u) => u.role === "komunitas").length,
       mitra: all.filter((u) => u.role === "mitra").length,
-      perusahaan: all.filter((u) => u.role === "perusahaan").length,
+      verifikator: all.filter((u) => u.role === "verifikator").length,
       admin: all.filter((u) => u.role === "admin").length,
       kycMenunggu: all.filter((u) => u.kycStatus === "menunggu").length,
       kycTerverifikasi: all.filter((u) => u.kycStatus === "terverifikasi").length,
@@ -114,7 +114,7 @@ export const create = mutation({
     role: v.union(
       v.literal("komunitas"),
       v.literal("mitra"),
-      v.literal("perusahaan"),
+      v.literal("verifikator"),
       v.literal("admin")
     ),
     phone: v.optional(v.string()),
@@ -136,7 +136,7 @@ export const create = mutation({
       });
     }
 
-    const needsKyc = args.role === "mitra" || args.role === "perusahaan";
+    const needsKyc = args.role === "mitra" || args.role === "verifikator";
 
     return await ctx.db.insert("users", {
       ...args,

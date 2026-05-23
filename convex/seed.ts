@@ -29,14 +29,14 @@ export const seedAll = mutation({
     });
 
     const corpId = await ctx.db.insert("users", {
-      email: "corp@idmap.id",
-      password: "corp123",
-      name: "PT Hijau Lestari",
-      role: "perusahaan",
+      email: "verifikator@idmap.id",
+      password: "verif123",
+      name: "Tim Verifikator Pesisir",
+      role: "verifikator",
       kycStatus: "terverifikasi",
-      organization: "PT Hijau Lestari",
-      phone: "021-5550001",
-      address: "Jl. Sudirman No. 1, Jakarta Selatan",
+      organization: "BPSPL Denpasar",
+      phone: "031-5550001",
+      address: "Jl. Ikan Dorang No. 1, Surabaya",
       createdAt: Date.now(),
     });
 
@@ -65,16 +65,16 @@ export const seedAll = mutation({
       createdAt: Date.now(),
     });
 
-    // Extra perusahaan with rejected KYC for demo
+    // Extra verifikator with rejected KYC for demo
     const corpRejectedId = await ctx.db.insert("users", {
-      email: "pending@corp.id",
-      password: "pending123",
-      name: "PT Borneo Green",
-      role: "perusahaan",
+      email: "verif2@idmap.id",
+      password: "verif456",
+      name: "Verifikator Lapangan",
+      role: "verifikator",
       kycStatus: "ditolak",
-      organization: "PT Borneo Green",
-      phone: "021-5550099",
-      address: "Jl. Gatot Subroto No. 88, Jakarta",
+      organization: "Dinas Kelautan Jatim",
+      phone: "031-5550099",
+      address: "Jl. Ahmad Yani No. 88, Surabaya",
       createdAt: Date.now(),
     });
 

@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
-type RoleFilter = "semua" | "komunitas" | "mitra" | "perusahaan" | "admin";
+type RoleFilter = "semua" | "komunitas" | "mitra" | "verifikator" | "admin";
 type KycFilter = "semua" | "belum" | "menunggu" | "terverifikasi" | "ditolak";
 
 const kycBadge = (status?: string) => {
@@ -38,8 +38,8 @@ const roleBadge = (role: string) => {
       return "bg-red-100 text-red-700";
     case "mitra":
       return "bg-blue-100 text-blue-700";
-    case "perusahaan":
-      return "bg-purple-100 text-purple-700";
+    case "verifikator":
+      return "bg-teal-100 text-teal-700";
     default:
       return "bg-emerald-100 text-emerald-700";
   }
@@ -86,8 +86,8 @@ export default function PenggunaPage() {
       color: "text-blue-600 bg-blue-50",
     },
     {
-      label: "Perusahaan",
-      value: userStats ? new Intl.NumberFormat("id-ID").format(userStats.perusahaan) : "—",
+      label: "Verifikator",
+      value: userStats ? new Intl.NumberFormat("id-ID").format(userStats.verifikator) : "—",
       icon: Building2,
       color: "text-purple-600 bg-purple-50",
     },
@@ -159,7 +159,7 @@ export default function PenggunaPage() {
           <option value="semua">Semua Role</option>
           <option value="komunitas">Komunitas</option>
           <option value="mitra">Mitra</option>
-          <option value="perusahaan">Perusahaan</option>
+          <option value="verifikator">Verifikator</option>
           <option value="admin">Admin</option>
         </select>
         <select

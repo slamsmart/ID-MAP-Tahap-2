@@ -10,7 +10,7 @@ export default defineSchema({
     role: v.union(
       v.literal("komunitas"),
       v.literal("mitra"),
-      v.literal("perusahaan"),
+      v.literal("verifikator"),
       v.literal("admin")
     ),
     kycStatus: v.optional(

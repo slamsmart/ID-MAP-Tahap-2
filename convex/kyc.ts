@@ -203,10 +203,10 @@ export const submitDocument = mutation({
     if (!user) {
       throw new ConvexError({ code: "NOT_FOUND", message: "User tidak ditemukan" });
     }
-    if (user.role !== "mitra" && user.role !== "perusahaan") {
+    if (user.role !== "mitra" && user.role !== "verifikator") {
       throw new ConvexError({
         code: "INVALID_ROLE",
-        message: "Hanya mitra dan perusahaan yang perlu KYC",
+        message: "Hanya mitra dan verifikator yang perlu KYC",
       });
     }
 

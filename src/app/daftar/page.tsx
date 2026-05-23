@@ -10,7 +10,7 @@ import { api } from "../../../convex/_generated/api";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getAuthBgImage } from "@/lib/heroImageStore";
 
-const roles = ["komunitas", "mitra", "perusahaan"] as const;
+const roles = ["komunitas", "mitra"] as const;
 type Role = (typeof roles)[number];
 
 // ─── Inner form — uses useSearchParams, must be inside <Suspense> ────────────
@@ -25,7 +25,7 @@ function RegisterForm() {
   // Pre-select role from ?peran= URL param (e.g. /daftar?peran=mitra)
   const getInitialRole = (): Role => {
     const peran = searchParams.get("peran");
-    if (peran === "mitra" || peran === "perusahaan" || peran === "komunitas") return peran;
+    if (peran === "mitra" || peran === "komunitas") return peran;
     return "komunitas";
   };
 
@@ -46,7 +46,6 @@ function RegisterForm() {
   const roleLabels: Record<Role, string> = {
     komunitas: t("Komunitas", "Community"),
     mitra: t("Mitra", "Partner"),
-    perusahaan: t("Perusahaan", "Corporate"),
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -157,9 +156,7 @@ function RegisterForm() {
           <form onSubmit={handleSubmit} className="space-y-4" noValidate>
             <div>
               <label htmlFor="register-name" className="text-sm font-medium text-gray-700 block mb-1">
-                {role === "perusahaan"
-                  ? t("Nama Perusahaan", "Company Name")
-                  : role === "mitra"
+                {role === "mitra"
                   ? t("Nama Organisasi / Mitra", "Organization / Partner Name")
                   : t("Nama Lengkap", "Full Name")}
               </label>
@@ -171,9 +168,7 @@ function RegisterForm() {
                 aria-invalid={!!error}
                 aria-describedby={error ? "register-error" : undefined}
                 placeholder={
-                  role === "perusahaan"
-                    ? "PT. Nama Perusahaan"
-                    : role === "mitra"
+                  role === "mitra"
                     ? t("Nama organisasi atau lembaga", "Organization or institution name")
                     : t("Nama lengkap Anda", "Your full name")
                 }
@@ -195,19 +190,6 @@ function RegisterForm() {
               />
             </div>
 
-            {role === "perusahaan" && (
-              <div>
-                <label htmlFor="register-npwp" className="text-sm font-medium text-gray-700 block mb-1">
-                  {t("NPWP Perusahaan", "Company Tax ID (NPWP)")}
-                </label>
-                <input
-                  id="register-npwp"
-                  type="text"
-                  placeholder="00.000.000.0-000.000"
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                />
-              </div>
-            )}
 
             {role === "mitra" && (
               <>

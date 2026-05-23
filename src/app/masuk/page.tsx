@@ -10,13 +10,13 @@ import { api } from "../../../convex/_generated/api";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getAuthBgImage } from "@/lib/heroImageStore";
 
-const roles = ["komunitas", "mitra", "perusahaan", "admin"] as const;
+const roles = ["komunitas", "mitra", "verifikator", "admin"] as const;
 type Role = (typeof roles)[number];
 
 const roleHints: Record<Role, { email: string; password: string }> = {
   komunitas: { email: "user@idmap.id", password: "user123" },
   mitra: { email: "mitra@idmap.id", password: "mitra123" },
-  perusahaan: { email: "corp@idmap.id", password: "corp123" },
+  verifikator: { email: "verifikator@idmap.id", password: "verif123" },
   admin: { email: "admin@idmap.id", password: "admin123" },
 };
 
@@ -41,14 +41,14 @@ export default function LoginPage() {
   const roleLabels: Record<Role, string> = {
     komunitas: t("Komunitas", "Community"),
     mitra: t("Mitra", "Partner"),
-    perusahaan: t("Perusahaan", "Corporate"),
+    verifikator: t("Verifikator", "Verifier"),
     admin: "Admin",
   };
 
   const roleDescriptions: Record<Role, string> = {
     komunitas: t("Akses dashboard komunitas & sertifikat", "Access community dashboard & certificates"),
     mitra: t("Kelola proyek mitra & laporan MRV", "Manage partner projects & MRV reports"),
-    perusahaan: t("Dashboard ESG & pembelian kredit karbon", "ESG dashboard & carbon credit purchases"),
+    verifikator: t("Kelola & verifikasi data abrasi pantai dan penyu", "Manage & verify coastal abrasion and turtle data"),
     admin: t("Panel administrasi penuh", "Full administration panel"),
   };
 

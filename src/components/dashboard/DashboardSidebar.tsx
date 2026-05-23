@@ -23,6 +23,7 @@ import {
   Sprout,
   ImageIcon,
   ShieldCheck,
+  Waves,
 } from "lucide-react";
 
 interface SidebarItem {
@@ -55,17 +56,6 @@ const userItems: SidebarItem[] = [
   { icon: Settings, label: "Pengaturan", href: "/user/pengaturan" },
 ];
 
-const corporateItems: SidebarItem[] = [
-  { icon: LayoutDashboard, label: "Dashboard", href: "/corporate" },
-  { icon: FolderTree, label: "Portofolio Karbon", href: "/corporate/portofolio" },
-  { icon: ArrowRightLeft, label: "Beli Carbon Credit", href: "/corporate/beli" },
-  { icon: BarChart3, label: "Estimasi & Kewajiban", href: "/corporate/estimasi" },
-  { icon: ArrowRightLeft, label: "Transaksi", href: "/corporate/transaksi" },
-  { icon: CheckCircle, label: "Dokumen & Sertifikat", href: "/corporate/dokumen" },
-  { icon: Globe, label: "Laporan ESG", href: "/corporate/esg" },
-  { icon: Settings, label: "Pengaturan", href: "/corporate/pengaturan" },
-];
-
 const mitraItems: SidebarItem[] = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/mitra" },
   { icon: ShieldCheck, label: "Verifikasi KYC", href: "/mitra/kyc" },
@@ -78,8 +68,15 @@ const mitraItems: SidebarItem[] = [
   { icon: Settings, label: "Pengaturan", href: "/mitra/pengaturan" },
 ];
 
+const verifikatorItems: SidebarItem[] = [
+  { icon: LayoutDashboard, label: "Dashboard", href: "/verifikator" },
+  { icon: Waves, label: "Data Abrasi Pantai", href: "/verifikator/abrasi" },
+  { icon: Globe, label: "Titik Pendaratan Penyu", href: "/verifikator/penyu" },
+  { icon: Settings, label: "Pengaturan", href: "/verifikator/pengaturan" },
+];
+
 interface DashboardSidebarProps {
-  type: "admin" | "user" | "corporate" | "mitra";
+  type: "admin" | "user" | "verifikator" | "mitra";
 }
 
 export default function DashboardSidebar({ type }: DashboardSidebarProps) {
@@ -92,7 +89,7 @@ export default function DashboardSidebar({ type }: DashboardSidebarProps) {
       ? userItems
       : type === "mitra"
       ? mitraItems
-      : corporateItems;
+      : verifikatorItems;
 
   const sidebarContent = (
     <>

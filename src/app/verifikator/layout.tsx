@@ -1,11 +1,7 @@
 import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
 import SessionGuard from "@/components/shared/SessionGuard";
 
-export default function CorporateLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function VerifikatorLayout({ children }: { children: React.ReactNode }) {
   return (
     <SessionGuard allowedRoles={["verifikator"]}>
       <div className="flex min-h-screen bg-gray-50">
