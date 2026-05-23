@@ -1,8 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
-import Anthropic from "@anthropic-ai/sdk";
+import OpenAI from "openai";
 import { buildMangroveContext } from "@/lib/mangroveNasionalData";
 
-const client = new Anthropic();
+// OpenRouter — supports free models (deepseek/gemini/etc)
+const client = new OpenAI({
+  apiKey: process.env.OPENROUTER_API_KEY ?? "",
+  baseURL: "https://openrouter.ai/api/v1",
+  defaultHeaders: {
+    "HTTP-Referer": process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+    "X-Title": "ID-MAP Mangrove Platform",
+  },
+});
+
+// Model default: DeepSeek V3 free (bisa ganti via env OPENROUTER_MODEL)
+const MODEL = process.env.OPENROUTER_MODEL ?? "deepseek/deepseek-chat-v3-0324:free";
 
 export async function POST(request: NextRequest) {
   try {
@@ -51,12 +62,15 @@ Berikan ${instruksiFokus} berdasarkan data di atas.
 Konteks pengguna: role "${role}" pada platform ID-MAP (sistem informasi mangrove pesisir Indonesia).
 Perhatikan khusus provinsi-provinsi kondisi kritis dan gap realisasi restorasi yang masih signifikan.`;
 
-    // Streaming response
-    const stream = await client.messages.stream({
-      model: "claude-opus-4-6",
+    // Streaming response via OpenRouter
+    const stream = await client.chat.completions.create({
+      model: MODEL,
       max_tokens: 1500,
-      system: systemPrompt,
-      messages: [{ role: "user", content: userMessage }],
+      stream: true,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userMessage },
+      ],
     });
 
     const encoder = new TextEncoder();
@@ -64,12 +78,8 @@ Perhatikan khusus provinsi-provinsi kondisi kritis dan gap realisasi restorasi y
       async start(controller) {
         try {
           for await (const chunk of stream) {
-            if (
-              chunk.type === "content_block_delta" &&
-              chunk.delta.type === "text_delta"
-            ) {
-              controller.enqueue(encoder.encode(chunk.delta.text));
-            }
+            const text = chunk.choices[0]?.delta?.content ?? "";
+            if (text) controller.enqueue(encoder.encode(text));
           }
           controller.close();
         } catch (err) {
