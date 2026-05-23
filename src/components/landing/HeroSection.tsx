@@ -35,16 +35,15 @@ export default function HeroSection() {
           </div>
 
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-[1.1] tracking-tight text-white drop-shadow-sm">
-            {t("Infrastruktur Digital", "Digital Infrastructure")}<br/>
-            <span className="text-[#6ee7b7]">{t("Mangrove & Pesisir", "Mangrove & Coastal")}</span>{" "}
-            {t("untuk", "for")}<br/>
-            {t("Ekosistem Karbon Indonesia", "Indonesia's Carbon Ecosystem")}
+            {t("Satu Platform.", "One Platform.")}<br/>
+            {t("Seluruh Ekosistem Mangrove", "The Entire Mangrove Ecosystem")}<br/>
+            <span className="text-[#6ee7b7]">{t("Indonesia.", "Indonesia.")}</span>
           </h1>
 
           <p className="mt-6 max-w-2xl text-lg md:text-xl leading-relaxed text-white drop-shadow-sm font-medium">
             {t(
-              "Menghubungkan kontribusi masyarakat, pengembangan proyek mangrove, dan kebutuhan carbon credit perusahaan.",
-              "Connecting community contributions, mangrove project development, and corporate carbon credit needs."
+              "Data terintegrasi untuk pemantauan, rehabilitasi, dan keberlanjutan pesisir nusantara.",
+              "Integrated data for monitoring, rehabilitation, and coastal sustainability of the archipelago."
             )}
           </p>
 
