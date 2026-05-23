@@ -1,17 +1,28 @@
 "use client";
 
-import { 
-  ChevronLeft, ChevronRight, Calculator, PenTool, Layers, Info, 
-  Loader2, Leaf, Car, Plane, Home, Globe
+import {
+  ChevronLeft, ChevronRight, Calculator, PenTool, Layers, Info,
+  Loader2, Leaf, Car, Plane, Home, Globe, Waves, ChevronDown, ChevronUp,
+  AlertTriangle, TreePine, X, Shell
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import { ABRASION_SITES, PRIORITAS_CONFIG, type PrioritasType } from "@/lib/abrasionData";
 
 const NativeMap = dynamic(() => import("@/components/map/NativeMap"), {
   ssr: false,
   loading: () => (
     <div className="w-full h-full flex flex-col items-center justify-center bg-transparent">
+      <Loader2 className="h-8 w-8 text-emerald-400 animate-spin" />
+    </div>
+  ),
+});
+
+const TurtleLayer = dynamic(() => import("@/components/map/TurtleLayer"), {
+  ssr: false,
+  loading: () => (
+    <div className="absolute inset-0 flex items-center justify-center bg-[#0F2E2A] z-[400]">
       <Loader2 className="h-8 w-8 text-emerald-400 animate-spin" />
     </div>
   ),
@@ -34,6 +45,10 @@ export default function JelajahiPetaMangrovePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isDrawing, setIsDrawing] = useState(false);
   const [mhiCategory, setMhiCategory] = useState<"excellent" | "moderate" | "poor">("excellent");
+  const [isAbrasionOpen, setIsAbrasionOpen] = useState(false);
+  const [abrasionFilter, setAbrasionFilter] = useState<PrioritasType | "Semua">("Semua");
+  const [selectedSite, setSelectedSite] = useState<number | null>(null);
+  const [isTurtleLayerOpen, setIsTurtleLayerOpen] = useState(false);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -79,18 +94,40 @@ export default function JelajahiPetaMangrovePage() {
           </div>
         </div>
 
-        {/* Center: Single Button - Gambar Polygon */}
-        <div className="flex items-center shrink-0 mx-auto">
+        {/* Center: Action buttons */}
+        <div className="flex items-center gap-2 shrink-0 mx-auto">
           <button
             onClick={() => setIsDrawing(!isDrawing)}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-xl transition-all duration-300 text-xs sm:text-sm font-bold border ${
-              isDrawing 
-                ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/20 border-emerald-400" 
+              isDrawing
+                ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/20 border-emerald-400"
                 : "bg-[#062d22] text-white hover:bg-emerald-600 border-[#235850] hover:border-emerald-400"
             }`}
           >
             <PenTool className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             {isDrawing ? "Sedang Menggambar..." : "Gambar Polygon"}
+          </button>
+          <button
+            onClick={() => setIsAbrasionOpen(!isAbrasionOpen)}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all duration-300 text-xs sm:text-sm font-bold border ${
+              isAbrasionOpen
+                ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20 border-orange-400"
+                : "bg-[#062d22] text-white hover:bg-orange-600 border-[#235850] hover:border-orange-400"
+            }`}
+          >
+            <Waves className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            <span className="hidden sm:inline">Abrasi Pantai</span>
+          </button>
+          <button
+            onClick={() => setIsTurtleLayerOpen(!isTurtleLayerOpen)}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all duration-300 text-xs sm:text-sm font-bold border ${
+              isTurtleLayerOpen
+                ? "bg-teal-500 text-white shadow-lg shadow-teal-500/20 border-teal-400"
+                : "bg-[#062d22] text-white hover:bg-teal-600 border-[#235850] hover:border-teal-400"
+            }`}
+          >
+            <span className="text-base leading-none">🐢</span>
+            <span className="hidden sm:inline">Penyu</span>
           </button>
         </div>
 
@@ -306,6 +343,115 @@ export default function JelajahiPetaMangrovePage() {
           </div>
         </div>
 
+        {/* ===== ABRASION PANEL: Bottom slide-up panel ===== */}
+        <div className={`absolute bottom-0 left-0 right-0 z-[510] transition-transform duration-300 ${isAbrasionOpen ? "translate-y-0" : "translate-y-full"}`}>
+          <div className="bg-white/97 backdrop-blur-md border-t border-gray-200 shadow-2xl" style={{ maxHeight: "45vh" }}>
+            {/* Panel Header */}
+            <div className="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-gray-100">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center">
+                  <Waves className="w-4 h-4 text-orange-600" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-gray-900 text-sm">Prioritas Rehabilitasi Abrasi Pantai</h3>
+                  <p className="text-[10px] text-gray-500">15 lokasi pantai · Jawa Timur</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                {/* Priority filter */}
+                <div className="hidden sm:flex items-center gap-1.5">
+                  {(["Semua", "Tinggi", "Sedang", "Rendah–Sedang"] as const).map((f) => (
+                    <button
+                      key={f}
+                      onClick={() => setAbrasionFilter(f)}
+                      className={`px-2.5 py-1 rounded-full text-[10px] font-bold border transition-all ${
+                        abrasionFilter === f
+                          ? f === "Tinggi" ? "bg-red-100 text-red-700 border-red-200" :
+                            f === "Sedang" ? "bg-amber-100 text-amber-700 border-amber-200" :
+                            f === "Rendah–Sedang" ? "bg-blue-100 text-blue-700 border-blue-200" :
+                            "bg-gray-800 text-white border-gray-800"
+                          : "bg-white text-gray-500 border-gray-200 hover:border-gray-300"
+                      }`}
+                    >
+                      {f}
+                    </button>
+                  ))}
+                </div>
+                <button onClick={() => setIsAbrasionOpen(false)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* Stats Row */}
+            <div className="flex items-center gap-4 px-4 sm:px-6 py-2 border-b border-gray-50 text-[10px] font-medium">
+              <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-red-500 inline-block" />Tinggi: {ABRASION_SITES.filter(s => s.prioritas === "Tinggi").length} lokasi</span>
+              <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-amber-500 inline-block" />Sedang: {ABRASION_SITES.filter(s => s.prioritas === "Sedang").length} lokasi</span>
+              <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-blue-400 inline-block" />Rendah–Sedang: {ABRASION_SITES.filter(s => s.prioritas === "Rendah–Sedang").length} lokasi</span>
+            </div>
+
+            {/* Scrollable Site List */}
+            <div className="overflow-y-auto" style={{ maxHeight: "calc(45vh - 100px)" }}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-gray-100">
+                {ABRASION_SITES
+                  .filter(s => abrasionFilter === "Semua" || s.prioritas === abrasionFilter)
+                  .map((site) => {
+                    const cfg = PRIORITAS_CONFIG[site.prioritas];
+                    const isSelected = selectedSite === site.no;
+                    return (
+                      <div
+                        key={site.no}
+                        onClick={() => setSelectedSite(isSelected ? null : site.no)}
+                        className={`bg-white p-3 cursor-pointer hover:bg-gray-50 transition-colors ${isSelected ? "ring-2 ring-inset ring-orange-400" : ""}`}
+                      >
+                        <div className="flex items-start justify-between gap-2 mb-1.5">
+                          <div className="flex items-center gap-2 min-w-0">
+                            <span className="text-[10px] font-mono text-gray-400 flex-shrink-0">#{site.no}</span>
+                            <span className="text-xs font-bold text-gray-900 truncate">{site.namaPantai}</span>
+                          </div>
+                          <span className={`flex-shrink-0 text-[9px] font-bold px-2 py-0.5 rounded-full ${cfg.bg} ${cfg.text}`}>
+                            {site.prioritas}
+                          </span>
+                        </div>
+                        <p className="text-[10px] text-gray-500 mb-1.5 truncate">{site.kecamatanKab}</p>
+                        <div className="flex items-center gap-3 text-[10px] text-gray-600">
+                          <span className="bg-gray-100 rounded px-1.5 py-0.5">{site.substrat}</span>
+                          <span>{site.luasan}</span>
+                        </div>
+                        {isSelected && (
+                          <div className="mt-2 pt-2 border-t border-gray-100 space-y-1.5">
+                            <div>
+                              <span className="text-[9px] font-semibold text-gray-400 uppercase tracking-wider">Indikasi: </span>
+                              <span className="text-[10px] text-gray-600">{site.indikasiAbrasi}</span>
+                            </div>
+                            {site.kondisiSesudah !== "-" && (
+                              <div>
+                                <span className="text-[9px] font-semibold text-gray-400 uppercase tracking-wider">Kondisi: </span>
+                                <span className="text-[10px] text-gray-600">{site.kondisiSesudah}</span>
+                              </div>
+                            )}
+                            <div>
+                              <span className="text-[9px] font-semibold text-emerald-600 uppercase tracking-wider flex items-center gap-1 mb-0.5">
+                                <TreePine className="w-3 h-3" /> Rekomendasi Tanaman
+                              </span>
+                              <ul className="space-y-0.5">
+                                {site.tanamanRekomendasi.map((t, i) => (
+                                  <li key={i} className="text-[10px] text-emerald-700 flex items-center gap-1">
+                                    <span className="w-1 h-1 rounded-full bg-emerald-400 flex-shrink-0" />{t}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* ===== MAIN MAP AREA ===== */}
         <div className="w-full h-full relative bg-[#062d22]" style={{ zIndex: 0, isolation: "isolate" }}>
           {/* MHI Earth Engine iframe (always visible as base layer) */}
@@ -351,6 +497,11 @@ export default function JelajahiPetaMangrovePage() {
             <div className="absolute inset-0 z-[350]">
               <NativeMap onAreaCalculated={setAreaHa} transparent={true} />
             </div>
+          )}
+
+          {/* Turtle Layer - full Leaflet map with satellite tiles */}
+          {isTurtleLayerOpen && (
+            <TurtleLayer onClose={() => setIsTurtleLayerOpen(false)} />
           )}
         </div>
       </div>
