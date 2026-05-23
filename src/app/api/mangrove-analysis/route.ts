@@ -13,7 +13,7 @@ const client = new OpenAI({
 });
 
 // Model default: DeepSeek V3 free (bisa ganti via env OPENROUTER_MODEL)
-const MODEL = process.env.OPENROUTER_MODEL ?? "deepseek/deepseek-chat-v3-0324:free";
+const MODEL = process.env.OPENROUTER_MODEL ?? "deepseek/deepseek-v4-flash:free";
 
 export async function POST(request: NextRequest) {
   try {
