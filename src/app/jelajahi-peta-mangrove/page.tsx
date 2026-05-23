@@ -67,7 +67,7 @@ export default function JelajahiPetaMangrovePage() {
           <div>
             <h1 className="font-display font-bold text-white text-base sm:text-lg tracking-wide flex flex-wrap items-center gap-1 sm:gap-2">
               MANGROVE
-              <span className="font-light text-emerald-400">CARBON STOCK MAP</span>
+              <span className="font-light text-emerald-400">HEALTH INDEX & COASTAL ECOSYSTEM</span>
             </h1>
             <div className="flex items-center gap-1.5 text-[9px] sm:text-[10px] text-emerald-100/50 uppercase tracking-wider font-medium mt-0.5">
               <span>Powered by</span>
@@ -342,7 +342,7 @@ export default function JelajahiPetaMangrovePage() {
               }}
               allow="geolocation; fullscreen"
               onLoad={() => setIsLoading(false)}
-              title="Mangrove Carbon Stock Map - Jawa Timur"
+              title="Mangrove Health Index & Coastal Ecosystem - Jawa Timur"
             />
           </div>
 
