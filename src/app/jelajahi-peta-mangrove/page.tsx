@@ -35,6 +35,15 @@ const AbrasionMap = dynamic(() => import("@/components/map/AbrasionMap"), {
   ),
 });
 
+const PokmaswasLayer = dynamic(() => import("@/components/map/PokmaswasLayer"), {
+  ssr: false,
+  loading: () => (
+    <div className="absolute inset-0 flex items-center justify-center bg-[#0F2E2A] z-[400]">
+      <Loader2 className="h-8 w-8 text-emerald-400 animate-spin" />
+    </div>
+  ),
+});
+
 const EE_APP_URL =
   "https://ee-dimassyarifworkspace.projects.earthengine.app/view/mangrove-health-indeks-jatim";
 
@@ -54,6 +63,7 @@ export default function JelajahiPetaMangrovePage() {
   const [mhiCategory, setMhiCategory] = useState<"excellent" | "moderate" | "poor">("excellent");
   const [isAbrasionOpen, setIsAbrasionOpen] = useState(false);
   const [isTurtleLayerOpen, setIsTurtleLayerOpen] = useState(false);
+  const [isPokmaswasLayerOpen, setIsPokmaswasLayerOpen] = useState(false);
   const [isLayerDropdownOpen, setIsLayerDropdownOpen] = useState(false);
 
   useEffect(() => {
@@ -119,7 +129,7 @@ export default function JelajahiPetaMangrovePage() {
             <button
               onClick={() => setIsLayerDropdownOpen((v) => !v)}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all duration-300 text-xs sm:text-sm font-bold border ${
-                isLayerDropdownOpen || isAbrasionOpen || isTurtleLayerOpen
+                isLayerDropdownOpen || isAbrasionOpen || isTurtleLayerOpen || isPokmaswasLayerOpen
                   ? "bg-teal-500 text-white shadow-lg shadow-teal-500/20 border-teal-400"
                   : "bg-[#062d22] text-white hover:bg-teal-600 border-[#235850] hover:border-teal-400"
               }`}
@@ -139,6 +149,7 @@ export default function JelajahiPetaMangrovePage() {
                     onClick={() => {
                       setIsAbrasionOpen(true);
                       setIsTurtleLayerOpen(false);
+                      setIsPokmaswasLayerOpen(false);
                       setIsLayerDropdownOpen(false);
                     }}
                     className={`w-full flex items-center gap-2.5 px-3 py-2.5 text-sm font-semibold text-left transition-colors hover:bg-orange-50 ${
@@ -154,6 +165,7 @@ export default function JelajahiPetaMangrovePage() {
                     onClick={() => {
                       setIsTurtleLayerOpen(true);
                       setIsAbrasionOpen(false);
+                      setIsPokmaswasLayerOpen(false);
                       setIsLayerDropdownOpen(false);
                     }}
                     className={`w-full flex items-center gap-2.5 px-3 py-2.5 text-sm font-semibold text-left transition-colors hover:bg-teal-50 ${
@@ -165,9 +177,31 @@ export default function JelajahiPetaMangrovePage() {
                     </div>
                     Penyu
                   </button>
+                  <button
+                    onClick={() => {
+                      setIsPokmaswasLayerOpen(true);
+                      setIsAbrasionOpen(false);
+                      setIsTurtleLayerOpen(false);
+                      setIsLayerDropdownOpen(false);
+                    }}
+                    className={`w-full flex items-center gap-2.5 px-3 py-2.5 text-sm font-semibold text-left transition-colors hover:bg-emerald-50 ${
+                      isPokmaswasLayerOpen ? "bg-emerald-50 text-emerald-600" : "text-gray-700"
+                    }`}
+                  >
+                    <div className="w-7 h-7 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0 text-base">
+                      🛡️
+                    </div>
+                    Pokmaswas
+                  </button>
                   <div className="h-px bg-gray-100 mx-3 my-1" />
                   <p className="px-3 pb-2.5 text-[10px] text-gray-400">
-                    {isAbrasionOpen ? "Abrasi Pantai aktif" : isTurtleLayerOpen ? "Penyu aktif" : "Tidak ada layer aktif"}
+                    {isAbrasionOpen
+                      ? "Abrasi Pantai aktif"
+                      : isTurtleLayerOpen
+                      ? "Penyu aktif"
+                      : isPokmaswasLayerOpen
+                      ? "Pokmaswas aktif"
+                      : "Tidak ada layer aktif"}
                   </p>
                 </div>
               </>
@@ -422,6 +456,11 @@ export default function JelajahiPetaMangrovePage() {
           {/* Turtle Layer - full Leaflet map with satellite tiles */}
           {isTurtleLayerOpen && (
             <TurtleLayer onClose={() => setIsTurtleLayerOpen(false)} />
+          )}
+
+          {/* Pokmaswas Layer - kelompok pengawas masyarakat */}
+          {isPokmaswasLayerOpen && (
+            <PokmaswasLayer onClose={() => setIsPokmaswasLayerOpen(false)} />
           )}
         </div>
       </div>
