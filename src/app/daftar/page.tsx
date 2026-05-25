@@ -196,6 +196,16 @@ function RegisterForm() {
                 </p>
               </div>
 
+              <div className="bg-amber-50 border border-amber-200 text-amber-800 text-xs px-3 py-2.5 rounded-lg mb-4 flex items-start gap-2">
+                <span aria-hidden>📬</span>
+                <span>
+                  {t(
+                    "Email tidak masuk? Mohon cek folder Spam / Promosi pada Gmail Anda.",
+                    "Didn't receive it? Please check your Spam / Promotions folder."
+                  )}
+                </span>
+              </div>
+
               {error && (
                 <div role="alert" className="bg-red-50 text-red-600 text-sm px-4 py-2.5 rounded-lg mb-4 flex items-center gap-2">
                   <span>⚠</span><span>{error}</span>
