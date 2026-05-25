@@ -27,6 +27,9 @@ yarn-error.log*
 
 # local env files
 .env*.local
+.env.production
+.env.development
+convex_deploy.txt
 
 # local API/provider credentials
 public/auth.json

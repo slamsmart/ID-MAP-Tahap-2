@@ -86,7 +86,8 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : "Gagal membuat QRIS";
-    console.error("Create QRIS error:", msg);
-    return NextResponse.json({ error: msg }, { status: 500 });
+    const stack = error instanceof Error ? error.stack : undefined;
+    console.error("Create QRIS error:", msg, stack);
+    return NextResponse.json({ error: msg, stack, debug: true }, { status: 500 });
   }
 }
