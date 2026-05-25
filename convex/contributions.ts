@@ -153,7 +153,19 @@ export const confirmPayment = mutation({
   },
   returns: v.null(),
   handler: async (ctx, args) => {
+    const contrib = await ctx.db.get(args.contributionId);
+    if (!contrib) return null;
+    // Idempotent: only increment funding once per contribution
+    if (contrib.paymentStatus === "paid") return null;
+
     await ctx.db.patch(args.contributionId, { paymentStatus: "paid" });
+
+    // Increment funding raised on the linked project
+    const project = await ctx.db.get(contrib.projectId);
+    if (project) {
+      const next = (project.fundingRaised ?? 0) + contrib.amount;
+      await ctx.db.patch(contrib.projectId, { fundingRaised: next });
+    }
     return null;
   },
 });
@@ -169,8 +181,17 @@ export const confirmByPaymentId = mutation({
       .query("contributions")
       .withIndex("by_paymentId", (q) => q.eq("paymentId", args.paymentId))
       .first();
-    if (contrib) {
-      await ctx.db.patch(contrib._id, { paymentStatus: "paid" });
+    if (!contrib) return null;
+    // Idempotent: only increment funding once per contribution
+    if (contrib.paymentStatus === "paid") return null;
+
+    await ctx.db.patch(contrib._id, { paymentStatus: "paid" });
+
+    // Increment funding raised on the linked project
+    const project = await ctx.db.get(contrib.projectId);
+    if (project) {
+      const next = (project.fundingRaised ?? 0) + contrib.amount;
+      await ctx.db.patch(contrib.projectId, { fundingRaised: next });
     }
     return null;
   },

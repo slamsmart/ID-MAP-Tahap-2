@@ -21,6 +21,8 @@ interface Project {
   mitraId?: Id<"users">;
   progress?: number;
   serviceType?: string;
+  fundingTarget?: number;
+  fundingRaised?: number;
   createdAt: number;
 }
 
@@ -216,6 +218,34 @@ export default function MitraProyekPage() {
                       </div>
                     </div>
                   </div>
+
+                  {/* Funding row (Pokmaswas campaign) */}
+                  {typeof p.fundingTarget === "number" && p.fundingTarget > 0 && (() => {
+                    const raised = p.fundingRaised ?? 0;
+                    const target = p.fundingTarget;
+                    const pct = Math.min(100, Math.round((raised / target) * 100));
+                    const fmtRp = (n: number) =>
+                      new Intl.NumberFormat("id-ID", {
+                        style: "currency",
+                        currency: "IDR",
+                        maximumFractionDigits: 0,
+                      }).format(n);
+                    return (
+                      <div className="mt-3 pt-3 border-t border-emerald-100 bg-emerald-50/50 -mx-4 sm:-mx-6 px-4 sm:px-6 py-3">
+                        <div className="flex items-baseline justify-between mb-1">
+                          <p className="text-xs font-medium text-emerald-700">Pendanaan</p>
+                          <p className="text-xs font-semibold text-emerald-700">{pct}%</p>
+                        </div>
+                        <div className="h-1.5 bg-emerald-100 rounded-full overflow-hidden">
+                          <div className="h-full bg-gradient-to-r from-emerald-500 to-teal-500 transition-all duration-500" style={{ width: `${pct}%` }} />
+                        </div>
+                        <p className="text-xs text-gray-600 mt-1.5">
+                          <span className="font-semibold text-emerald-800">{fmtRp(raised)}</span>
+                          <span className="text-gray-400"> dari {fmtRp(target)}</span>
+                        </p>
+                      </div>
+                    );
+                  })()}
                 </div>
               </div>
             </div>

@@ -234,6 +234,45 @@ export default function DonasiCepatPage() {
                 </div>
               )}
             </div>
+
+            {/* Funding progress (Pokmaswas campaign) */}
+            {typeof project.fundingTarget === "number" && project.fundingTarget > 0 && (() => {
+              const raised = project.fundingRaised ?? 0;
+              const target = project.fundingTarget;
+              const pct = Math.min(100, Math.round((raised / target) * 100));
+              const fmt = (n: number) =>
+                new Intl.NumberFormat("id-ID", {
+                  style: "currency",
+                  currency: "IDR",
+                  maximumFractionDigits: 0,
+                }).format(n);
+              return (
+                <div className="mt-4 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-4 border border-emerald-100">
+                  <div className="flex items-baseline justify-between mb-1.5">
+                    <span className="text-xs font-medium text-emerald-700">
+                      Pendanaan terkumpul
+                    </span>
+                    <span className="text-[10px] text-emerald-600 font-semibold">
+                      {pct}%
+                    </span>
+                  </div>
+                  <div className="h-2 bg-emerald-100 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-emerald-500 to-teal-500 transition-all duration-500"
+                      style={{ width: `${pct}%` }}
+                    />
+                  </div>
+                  <div className="flex items-baseline justify-between mt-2">
+                    <p className="text-sm font-bold text-emerald-800">
+                      {fmt(raised)}
+                    </p>
+                    <p className="text-[11px] text-gray-500">
+                      dari {fmt(target)}
+                    </p>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         </div>
 

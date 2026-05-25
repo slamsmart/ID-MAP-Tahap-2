@@ -56,6 +56,8 @@ export default defineSchema({
     ),
     description: v.optional(v.string()),
     serviceType: v.optional(v.string()),
+    fundingTarget: v.optional(v.number()),  // IDR
+    fundingRaised: v.optional(v.number()),  // IDR (default 0)
     createdAt: v.number(),
   })
     .index("by_status", ["status"])

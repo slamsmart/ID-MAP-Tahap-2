@@ -24,6 +24,8 @@ const projectValidator = v.object({
   ),
   description: v.optional(v.string()),
   serviceType: v.optional(v.string()),
+  fundingTarget: v.optional(v.number()),
+  fundingRaised: v.optional(v.number()),
   createdAt: v.number(),
 });
 
@@ -104,6 +106,7 @@ export const create = mutation({
     seedsPlanted: v.optional(v.number()),
     mitraId: v.optional(v.id("users")),
     description: v.optional(v.string()),
+    fundingTarget: v.optional(v.number()),
   },
   returns: v.id("projects"),
   handler: async (ctx, args) => {
@@ -112,6 +115,7 @@ export const create = mutation({
       status: "Draft",
       progress: 0,
       srnStatus: "Belum",
+      fundingRaised: 0,
       createdAt: Date.now(),
     });
   },
@@ -138,6 +142,7 @@ export const update = mutation({
     srnStatus: v.optional(
       v.union(v.literal("Belum"), v.literal("Pending"), v.literal("Terdaftar"))
     ),
+    fundingTarget: v.optional(v.number()),
   },
   returns: v.null(),
   handler: async (ctx, args) => {
@@ -149,6 +154,26 @@ export const update = mutation({
       await ctx.db.patch(projectId, cleanUpdates);
     }
     return null;
+  },
+});
+
+export const incrementFunding = mutation({
+  args: {
+    projectId: v.id("projects"),
+    amount: v.number(),
+  },
+  returns: v.number(),
+  handler: async (ctx, args) => {
+    const project = await ctx.db.get(args.projectId);
+    if (!project) {
+      throw new ConvexError({
+        code: "NOT_FOUND",
+        message: "Proyek tidak ditemukan",
+      });
+    }
+    const next = (project.fundingRaised ?? 0) + args.amount;
+    await ctx.db.patch(args.projectId, { fundingRaised: next });
+    return next;
   },
 });
 

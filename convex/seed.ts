@@ -565,3 +565,97 @@ export const resetAndSeed = mutation({
     return "Reset & Seed berhasil! Users: 6, Projects: 6, Transactions: 3, Contributions: 3, MRV: 3, Activities: 3, Stats: 4, KYC Docs: 6";
   },
 });
+
+// ─── Seed Pokmaswas verified projects with funding targets ──────────
+// Idempotent: skips projects that already exist (matched by title).
+// Run: npx convex run seed:seedPokmaswasProjects
+export const seedPokmaswasProjects = mutation({
+  args: {},
+  returns: v.string(),
+  handler: async (ctx) => {
+    // Find a mitra user to attach as owner (optional)
+    const mitra = await ctx.db
+      .query("users")
+      .withIndex("by_role", (q) => q.eq("role", "mitra"))
+      .first();
+    const mitraId = mitra?._id;
+
+    const FUNDING_TARGET = 100_000_000; // Rp 100 jt
+
+    const projects = [
+      {
+        title: "GOAL CMC 3 Warna",
+        location: "Pantai Clungup, Sumbermanjing Wetan, Malang Selatan",
+        province: "Jawa Timur",
+        image:
+          "https://images.unsplash.com/photo-1569163139394-de4e4f43e4e3?w=800&q=80&auto=format&fit=crop",
+        co2Absorption: 75000,
+        area: 30,
+        seedsPlanted: 50000,
+        description:
+          "Restorasi mangrove dan rehabilitasi pantai oleh Pokmaswas Gatra Olah Alam Lestari (GOAL) di Clungup Mangrove Conservation 3 Warna. Fokus pelestarian Pantai Clungup, Gatra dan Mini.",
+        serviceType: "Penanaman Mangrove",
+        fundingTarget: FUNDING_TARGET,
+        fundingRaised: 0,
+      },
+      {
+        title: "Pemulihan Mangrove Pantai Bama",
+        location: "Pantai Bama, Taman Nasional Baluran, Banyuwangi",
+        province: "Jawa Timur",
+        image:
+          "https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?w=800&q=80&auto=format&fit=crop",
+        co2Absorption: 60000,
+        area: 25,
+        seedsPlanted: 40000,
+        description:
+          "Rehabilitasi ekosistem mangrove sekitar Pantai Bama oleh Pokmaswas setempat untuk perlindungan habitat satwa pesisir dan pencegahan abrasi.",
+        serviceType: "Rehabilitasi Mangrove",
+        fundingTarget: FUNDING_TARGET,
+        fundingRaised: 0,
+      },
+      {
+        title: "Konservasi Teluk Pangpang",
+        location: "Teluk Pangpang, Muncar, Banyuwangi",
+        province: "Jawa Timur",
+        image:
+          "https://images.unsplash.com/photo-1573655349936-de6bed86f839?w=800&q=80&auto=format&fit=crop",
+        co2Absorption: 90000,
+        area: 35,
+        seedsPlanted: 60000,
+        description:
+          "Konservasi mangrove dan pemberdayaan Pokmaswas di kawasan Teluk Pangpang Muncar untuk mendukung perikanan berkelanjutan dan blue carbon.",
+        serviceType: "Konservasi Mangrove",
+        fundingTarget: FUNDING_TARGET,
+        fundingRaised: 0,
+      },
+    ];
+
+    let inserted = 0;
+    let skipped = 0;
+    const ids: string[] = [];
+
+    for (const p of projects) {
+      const existing = await ctx.db
+        .query("projects")
+        .filter((q) => q.eq(q.field("title"), p.title))
+        .first();
+      if (existing) {
+        skipped++;
+        ids.push(existing._id);
+        continue;
+      }
+      const id = await ctx.db.insert("projects", {
+        ...p,
+        status: "Terverifikasi",
+        progress: 5,
+        srnStatus: "Belum",
+        mitraId,
+        createdAt: Date.now(),
+      });
+      inserted++;
+      ids.push(id);
+    }
+
+    return `Pokmaswas seed: ${inserted} inserted, ${skipped} skipped. IDs: ${ids.join(", ")}`;
+  },
+});
