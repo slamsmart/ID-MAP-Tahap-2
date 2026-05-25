@@ -24,6 +24,7 @@ import {
   ShieldCheck,
   Waves,
   Brain,
+  PanelBottom,
 } from "lucide-react";
 
 interface SidebarItem {
@@ -71,10 +72,12 @@ const mitraItems: SidebarItem[] = [
 const verifikatorItems: SidebarItem[] = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/verifikator" },
   { icon: Brain, label: "Analisis AI", href: "/verifikator/analisis-ai" },
+  { icon: FolderTree, label: "Audit Proyek", href: "/verifikator/proyek" },
   { icon: Waves, label: "Data Abrasi Pantai", href: "/verifikator/abrasi" },
   { icon: Globe, label: "Titik Pendaratan Penyu", href: "/verifikator/penyu" },
   { icon: Users, label: "Data Pokmaswas", href: "/verifikator/pokmaswas" },
   { icon: ImageIcon, label: "Konten Layanan", href: "/verifikator/thumbnail-layanan" },
+  { icon: PanelBottom, label: "Footer Brand", href: "/verifikator/footer" },
   { icon: Settings, label: "Pengaturan", href: "/verifikator/pengaturan" },
 ];
 
