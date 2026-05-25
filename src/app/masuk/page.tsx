@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Leaf, Eye, EyeOff, Globe, ArrowRight, ShieldCheck, Lock, Mail } from "lucide-react";
 import { setSession, getDashboardPath, User } from "@/lib/auth";
@@ -29,6 +29,12 @@ const demoNames: Record<Role, string> = {
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const nextPath = searchParams.get("next");
+  const safeNext =
+    nextPath && nextPath.startsWith("/") && !nextPath.startsWith("//")
+      ? nextPath
+      : null;
   const { language, setLanguage, t } = useLanguage();
   const loginMutation = useMutation(api.users.login);
   const createUserMutation = useMutation(api.users.create);
@@ -98,7 +104,7 @@ export default function LoginPage() {
           name: demoNames[demoRole],
           role: demoRole,
         });
-        router.push(getDashboardPath(demoRole));
+        router.push(safeNext ?? getDashboardPath(demoRole));
         return;
       }
 
@@ -108,7 +114,7 @@ export default function LoginPage() {
         name: user.name,
         role: user.role
       });
-      router.push(getDashboardPath(user.role));
+      router.push(safeNext ?? getDashboardPath(user.role));
     } catch (err) {
       setError(t("Terjadi kesalahan. Silakan coba lagi.", "An error occurred. Please try again."));
     } finally {
@@ -148,11 +154,12 @@ export default function LoginPage() {
 
         <div className="relative z-10 flex flex-col justify-between p-10 w-full">
           {/* Top: Logo */}
-          <Link href="/" className="inline-flex items-center gap-3 group">
-            <div className="w-11 h-11 bg-white/15 backdrop-blur-xl rounded-xl flex items-center justify-center border border-white/20 group-hover:bg-white/20 transition-all shadow-lg">
-              <Leaf className="w-5 h-5 text-emerald-300" />
-            </div>
-            <span className="font-extrabold text-xl text-white tracking-tight">ID-MAP</span>
+          <Link href="/" className="inline-flex items-center justify-center group">
+            <img
+              src="/images/logo2.webp"
+              alt="ID-MAP"
+              className="w-14 h-14 rounded-full object-contain bg-white/95 shadow-lg group-hover:scale-105 transition-transform"
+            />
           </Link>
 
           {/* Center: Hero text */}

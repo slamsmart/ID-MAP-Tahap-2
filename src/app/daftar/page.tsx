@@ -3,7 +3,7 @@
 import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Leaf, Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import { setSession, getDashboardPath, User } from "@/lib/auth";
 import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
@@ -110,7 +110,12 @@ function RegisterForm() {
 
       const userId = await createMutation({ email, password, name, role });
       setSession({ _id: userId, email, name, role });
-      router.push(getDashboardPath(role));
+      // Honor ?next= redirect param (e.g. when user clicked "Donate" from landing)
+      const nextPath = searchParams.get("next");
+      const safeNext = nextPath && nextPath.startsWith("/") && !nextPath.startsWith("//")
+        ? nextPath
+        : null;
+      router.push(safeNext ?? getDashboardPath(role));
     } catch (err: any) {
       // ConvexError bisa berupa string (err.data) atau object (err.data.message)
       const msg =
@@ -169,13 +174,12 @@ function RegisterForm() {
 
       <div className="w-full max-w-md relative z-10">
         <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2">
-            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg shadow-black/10">
-              <Leaf className="w-6 h-6 text-emerald-800" />
-            </div>
-            <span className="font-display font-bold text-3xl text-white drop-shadow-md tracking-tight">
-              ID-MAP
-            </span>
+          <Link href="/" className="inline-flex items-center justify-center">
+            <img
+              src="/images/logo2.webp"
+              alt="ID-MAP"
+              className="w-20 h-20 rounded-full object-contain shadow-lg shadow-black/10 bg-white"
+            />
           </Link>
           <p className="text-sm font-medium text-emerald-50 mt-2 drop-shadow-sm">{t("Buat akun baru", "Create a new account")}</p>
         </div>

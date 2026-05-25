@@ -35,11 +35,11 @@ export default function Navbar() {
       <div className="mx-auto max-w-7xl px-6 py-4 flex items-center justify-between">
         <Link href="/" className="flex items-center" aria-label="ID-MAP - Mangrove & Pesisir untuk Ekosistem Karbon Indonesia">
           <Image
-            src="/images/logo.webp"
+            src="/images/logo2.webp"
             alt="ID-MAP"
-            width={360}
+            width={112}
             height={112}
-            className="h-20 md:h-28 w-auto object-contain"
+            className="h-14 md:h-16 w-auto object-contain"
             priority
           />
         </Link>
