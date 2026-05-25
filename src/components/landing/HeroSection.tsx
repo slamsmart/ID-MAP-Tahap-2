@@ -42,8 +42,8 @@ export default function HeroSection() {
 
           <p className="mt-6 max-w-2xl text-lg md:text-xl leading-relaxed text-white drop-shadow-sm font-medium">
             {t(
-              "Data terintegrasi untuk pemantauan, rehabilitasi, dan keberlanjutan pesisir nusantara.",
-              "Integrated data for monitoring, rehabilitation, and coastal sustainability of the archipelago."
+              "Data terintegrasi untuk pemantauan restorasi lingkungan, rehabilitasi, dan keberlanjutan pesisir nusantara.",
+              "Integrated data for environmental restoration monitoring, rehabilitation, and coastal sustainability of the archipelago."
             )}
           </p>
 
