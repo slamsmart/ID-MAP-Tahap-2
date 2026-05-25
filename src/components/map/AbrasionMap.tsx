@@ -252,28 +252,6 @@ export default function AbrasionMap({ onClose }: { onClose: () => void }) {
         <MarkerLayer selectedNo={selectedNo} onSelect={handleSelect} sites={sites} />
       </MapContainer>
 
-      {/* ── Priority legend ── */}
-      <div
-        className="absolute right-5 z-[500] bg-white/97 backdrop-blur-md rounded-xl shadow-lg border border-gray-100 px-4 py-3 space-y-2 transition-all duration-300"
-        style={{ bottom: listOpen ? `calc(${listH} + 16px)` : "80px" }}
-      >
-        <p className="text-[9px] font-bold text-gray-500 uppercase tracking-wider">Prioritas</p>
-        {(Object.entries(PRIORITAS_CONFIG) as [PrioritasType, typeof PRIORITAS_CONFIG[PrioritasType]][]).map(
-          ([prio, cfg]) => (
-            <div key={prio} className="flex items-center gap-2">
-              <div
-                className="w-4 h-4 rounded-full border-[2px] border-white shadow-sm flex-shrink-0"
-                style={{ backgroundColor: cfg.dot }}
-              />
-              <span className="text-[11px] text-gray-700 font-medium">{prio}</span>
-            </div>
-          )
-        )}
-        <div className="pt-1.5 border-t border-gray-100 text-[10px] text-gray-400">
-          {tinggi} Tinggi · {sedang} Sedang · {rendah} Rendah–Sedang
-        </div>
-      </div>
-
       {/* ── Bottom list panel ── */}
       <div
         className={`absolute bottom-0 left-0 right-0 z-[500] transition-transform duration-300 ${

@@ -4,18 +4,21 @@ import { ConvexError } from "convex/values";
 
 // ─── Shared Validator ──────────────────────────────────────────────
 
+const roleValidator = v.union(
+  v.literal("sahabat"),
+  v.literal("mitra"),
+  v.literal("verifikator"),
+  v.literal("admin"),
+  v.literal("corporate")
+);
+
 const userValidator = v.object({
   _id: v.id("users"),
   _creationTime: v.number(),
   email: v.string(),
   name: v.string(),
   password: v.string(),
-  role: v.union(
-    v.literal("sahabat"),
-    v.literal("mitra"),
-    v.literal("verifikator"),
-    v.literal("admin")
-  ),
+  role: roleValidator,
   kycStatus: v.optional(
     v.union(
       v.literal("belum"),
@@ -60,14 +63,7 @@ export const getByEmail = query({
 });
 
 export const listByRole = query({
-  args: {
-    role: v.union(
-      v.literal("sahabat"),
-      v.literal("mitra"),
-      v.literal("verifikator"),
-      v.literal("admin")
-    ),
-  },
+  args: { role: roleValidator },
   returns: v.array(userValidator),
   handler: async (ctx, args) => {
     return await ctx.db
@@ -85,6 +81,7 @@ export const getStats = query({
     mitra: v.number(),
     verifikator: v.number(),
     admin: v.number(),
+    corporate: v.number(),
     kycMenunggu: v.number(),
     kycTerverifikasi: v.number(),
     kycDitolak: v.number(),
@@ -97,6 +94,7 @@ export const getStats = query({
       mitra: all.filter((u) => u.role === "mitra").length,
       verifikator: all.filter((u) => u.role === "verifikator").length,
       admin: all.filter((u) => u.role === "admin").length,
+      corporate: all.filter((u) => u.role === "corporate").length,
       kycMenunggu: all.filter((u) => u.kycStatus === "menunggu").length,
       kycTerverifikasi: all.filter((u) => u.kycStatus === "terverifikasi").length,
       kycDitolak: all.filter((u) => u.kycStatus === "ditolak").length,
@@ -111,12 +109,7 @@ export const create = mutation({
     email: v.string(),
     name: v.string(),
     password: v.string(),
-    role: v.union(
-      v.literal("sahabat"),
-      v.literal("mitra"),
-      v.literal("verifikator"),
-      v.literal("admin")
-    ),
+    role: roleValidator,
     phone: v.optional(v.string()),
     organization: v.optional(v.string()),
     address: v.optional(v.string()),
@@ -136,7 +129,7 @@ export const create = mutation({
       });
     }
 
-    const needsKyc = args.role === "sahabat" || args.role === "mitra" || args.role === "verifikator";
+    const needsKyc = args.role === "sahabat" || args.role === "mitra" || args.role === "verifikator" || args.role === "corporate";
 
     return await ctx.db.insert("users", {
       ...args,

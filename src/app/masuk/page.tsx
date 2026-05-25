@@ -20,10 +20,18 @@ const roleHints: Record<Role, { email: string; password: string }> = {
   admin: { email: "admin@idmap.id", password: "admin123" },
 };
 
+const demoNames: Record<Role, string> = {
+  sahabat: "Andi Pratama",
+  mitra: "Mitra Proyek Mangrove",
+  verifikator: "Tim Verifikator Pesisir",
+  admin: "Admin ID-MAP",
+};
+
 export default function LoginPage() {
   const router = useRouter();
   const { language, setLanguage, t } = useLanguage();
   const loginMutation = useMutation(api.users.login);
+  const createUserMutation = useMutation(api.users.create);
   const [showPassword, setShowPassword] = useState(false);
   const [role, setRole] = useState<Role>("sahabat");
   const [email, setEmail] = useState("");
@@ -67,7 +75,30 @@ export default function LoginPage() {
       const user = await loginMutation({ email, password });
       
       if (!user) {
-        setError(t("Email atau password salah.", "Invalid email or password."));
+        const demoRole = roles.find((r) => {
+          const hint = roleHints[r];
+          return hint.email === email.trim().toLowerCase() && hint.password === password;
+        });
+
+        if (!demoRole) {
+          setError(t("Email atau password salah.", "Invalid email or password."));
+          return;
+        }
+
+        const userId = await createUserMutation({
+          email: roleHints[demoRole].email,
+          password: roleHints[demoRole].password,
+          name: demoNames[demoRole],
+          role: demoRole,
+        });
+
+        setSession({
+          _id: userId,
+          email: roleHints[demoRole].email,
+          name: demoNames[demoRole],
+          role: demoRole,
+        });
+        router.push(getDashboardPath(demoRole));
         return;
       }
 

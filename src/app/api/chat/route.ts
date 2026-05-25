@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const NVIDIA_API_URL = "https://integrate.api.nvidia.com/v1/chat/completions";
-const MODEL = "nvidia/llama-3.3-nemotron-super-49b-v1";
+// Fallback chain — diurutkan berdasarkan kecepatan TTFT
+const NVIDIA_MODELS = [
+  "meta/llama-3.1-8b-instruct",          // ~949ms  — primary
+  "mistralai/mistral-7b-instruct-v0.3",  // ~2201ms — fallback 1
+  "deepseek-ai/deepseek-v4-flash",       // ~2349ms — fallback 2
+];
 
 const SYSTEM_PROMPT = `Kamu adalah ID-MAP Assistant, Customer Service resmi platform ID-MAP (Indonesian Mangrove Action Platform).
 
@@ -46,29 +51,42 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Request tidak valid" }, { status: 400 });
   }
 
-  const userMessages = (body.messages ?? []).slice(-10); // max 10 pesan terakhir
+  const userMessages = (body.messages ?? []).slice(-6); // max 6 pesan terakhir
 
-  const nvidiaRes = await fetch(NVIDIA_API_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      model: MODEL,
-      messages: [
-        { role: "system", content: SYSTEM_PROMPT },
-        ...userMessages,
-      ],
-      temperature: 0.6,
-      max_tokens: 1024,
-      stream: true,
-    }),
-  });
+  // Coba model satu per satu — berhenti saat berhasil
+  let nvidiaRes: Response | null = null;
+  let lastError = "";
+  for (const model of NVIDIA_MODELS) {
+    try {
+      const res = await fetch(NVIDIA_API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model,
+          messages: [
+            { role: "system", content: SYSTEM_PROMPT },
+            ...userMessages,
+          ],
+          temperature: 0.6,
+          max_tokens: 800,
+          stream: true,
+        }),
+      });
+      if (res.ok) { nvidiaRes = res; break; }
+      const status = res.status;
+      lastError = `${model} → HTTP ${status}`;
+      // Lanjut fallback hanya untuk 404 (model tidak ada) atau 429 (rate limit)
+      if (status !== 404 && status !== 429) break;
+    } catch (e: any) {
+      lastError = e?.message ?? String(e);
+    }
+  }
 
-  if (!nvidiaRes.ok) {
-    const err = await nvidiaRes.text();
-    console.error("NVIDIA API error:", err);
+  if (!nvidiaRes) {
+    console.error("Semua model gagal:", lastError);
     return NextResponse.json({ error: "Gagal menghubungi AI" }, { status: 502 });
   }
 
@@ -83,20 +101,25 @@ export async function POST(req: NextRequest) {
     async start(controller) {
       const reader = nvidiaRes.body!.getReader();
       const decoder = new TextDecoder();
+      let lineBuffer = ""; // buffer SSE lines yang belum lengkap
       try {
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
-          const raw = decoder.decode(value, { stream: true });
-          if (raw.includes("data: [DONE]")) break;
+
+          lineBuffer += decoder.decode(value, { stream: true });
+
+          // Simpan baris terakhir yang mungkin belum lengkap
+          const lines = lineBuffer.split("\n");
+          lineBuffer = lines.pop() ?? "";
 
           // Parse SSE lines, filter teks delta, strip markdown
-          const lines = raw.split("\n");
           let filtered = "";
+          let isDone = false;
           for (const line of lines) {
             if (!line.startsWith("data: ")) { filtered += line + "\n"; continue; }
             const json = line.slice(6).trim();
-            if (json === "[DONE]") break;
+            if (json === "[DONE]") { isDone = true; break; }
             try {
               const parsed = JSON.parse(json);
               const delta = parsed?.choices?.[0]?.delta?.content;
@@ -107,10 +130,11 @@ export async function POST(req: NextRequest) {
                 filtered += line + "\n";
               }
             } catch {
-              filtered += line + "\n";
+              // baris parsial — sudah di-handle oleh lineBuffer, skip
             }
           }
-          controller.enqueue(encoder.encode(filtered));
+          if (filtered) controller.enqueue(encoder.encode(filtered));
+          if (isDone) break;
         }
       } finally {
         controller.close();

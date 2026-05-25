@@ -7,7 +7,6 @@ import { ABRASION_SITES } from "@/lib/abrasionData";
 import { TITIK_PENDARATAN_PENYU } from "@/lib/penyuData";
 import { DATA_POKMASWAS } from "@/lib/pokmaswasData";
 import { Waves, ArrowRight, AlertTriangle, CheckCircle2, Users } from "lucide-react";
-import MangroveAIPanel from "@/components/dashboard/MangroveAIPanel";
 import EkosistemPanel from "@/components/dashboard/EkosistemPanel";
 
 export default function VerifikatorDashboard() {
@@ -32,8 +31,6 @@ export default function VerifikatorDashboard() {
 
   return (
     <div className="space-y-6">
-      <MangroveAIPanel role="verifikator" defaultExpanded />
-
       <div>
         <h1 className="font-bold text-2xl text-gray-900">Halo, {name}</h1>
         <p className="text-sm text-gray-500">Kelola dan verifikasi data ekosistem pesisir Jawa Timur.</p>

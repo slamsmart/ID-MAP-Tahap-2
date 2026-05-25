@@ -1,352 +1,227 @@
-# SYSTEM_MAP.md
+# SYSTEM_MAP.md — ID-MAP v2.0
+
+> Navigation map for AI agents and developers. Read this before any architecture-level work.
+> Last updated: 2026-05-23 (BMAD Phase I Party Mode)
+
+---
 
 ## Relationship With AGENTS.md
-This file is the architectural navigation map for the current project.
 
-- `SYSTEM_MAP.md` defines architecture, file locations, entrypoints, runtime flow, and module boundaries.
-- `AGENTS.md` defines agent behavior, editing discipline, safety rules, and response style.
+- `SYSTEM_MAP.md` → architecture, file locations, entrypoints, runtime flow, module boundaries
+- `AGENTS.md` → agent behavior, editing discipline, safety rules, response style
 
-If there is a conflict:
-- Follow `SYSTEM_MAP.md` for architecture, file locations, entrypoints, and runtime flow.
-- Follow `AGENTS.md` for execution behavior, coding discipline, safety rules, and response style.
-- Do not rewrite architecture unless explicitly requested.
-
----
-
-## Purpose
-Use this document to:
-- avoid blind code scanning
-- minimize token usage
-- enable fast analysis using trace-by-entrypoint and trace-by-flow
-- keep implementation aligned with the current architecture
-
----
-
-## How To Use This Map
-- Fill this file with current project facts, not guesses.
-- Update it whenever entrypoints, flows, or boundaries change.
-- Keep it short enough to scan quickly.
-- Prefer file paths, modules, routes, services, and data owners over prose.
-- Treat this file as the first stop for architecture, tracing, and safe editing.
-
----
-
-## Mandatory Map Check
-Read `SYSTEM_MAP.md` before work when the task involves:
-- architecture or module boundaries
-- locating files, entrypoints, or runtime flow
-- multi-module debugging or tracing
-- refactor planning beyond a local fix
-- integration analysis across multiple apps, services, or layers
-
-For small local edits, isolated bugfixes, or single-file content tasks:
-- read `SYSTEM_MAP.md` only if it materially helps find the right entrypoint or boundary
-- do not force a full architecture read when the task is already localized
-
-When read, use `SYSTEM_MAP.md` as the main architectural reference.
-
----
-
-## Strict Exclusions
-
-### Dependencies
-`node_modules`, `.venv`, `venv`, `env`, `vendor`, `Pods`, `target`, `.gradle`, `bin`, `obj`, `pkg`
-
-### Build / IDE / Cache
-`dist`, `build`, `.git`, `.vscode`, `.idea`, `__pycache__`, `tmp`, `coverage`, `.next`, `.nuxt`, `.cache`, `.turbo`
-
-### Artifacts
-`out`, `*.log`, `*.lock`, `*.min.*`, `*.map`, generated bundles, compiled assets
-
----
-
-## Analysis Method
-
-Default tracing flow:
-
-`Trigger / Entry Point`
--> `UI / Route / Handler`
--> `Service / Use Case / Controller`
--> `Repository / Query / Gateway`
--> `DB / API / Queue / File I/O / External Service`
-
-Adapt this flow to the current project type:
-- web app
-- backend API
-- mobile app
-- worker / queue system
-- monorepo / multi-service system
-
----
-
-## Rules
-- Start from the most likely entrypoint first.
-- Read only the smallest relevant context needed.
-- Prefer public interfaces, exported modules, and entry handlers before internal details.
-- Avoid full file reads when symbol-level tracing is enough.
-- Expand search gradually: file -> folder -> module -> wider repo.
-- Do not scan the whole repo unless the task is an audit or the root cause is still unknown.
+Conflict resolution: SYSTEM_MAP wins for architecture; AGENTS.md wins for behavior.
 
 ---
 
 ## Project Snapshot
-- Project name:
-- Project type:
-- Primary users:
-- Primary goal:
-- Repo type: single app / monorepo / service / library / other
-- Main risks: auth / billing / data integrity / infra / compliance / performance / other
+
+- **Project name**: ID-MAP (Indonesia Mangrove Action Platform)
+- **Project type**: Multi-role SaaS web platform
+- **Primary users**: Sahabat (donors), Mitra (NGO), Verifikator, Corporate, Admin
+- **Primary goal**: Carbon credit marketplace + mangrove project management + community donations
+- **Repo type**: Single app (Next.js + Convex monorepo style)
+- **Main risks**: auth security, payment integrity, data MRV fraud, regulatory compliance
 
 ---
 
 ## Tech Stack
-- Frontend:
-- Backend:
-- Database:
-- Auth:
-- Storage:
-- Queue / Jobs:
-- Infra / Hosting:
-- Observability:
-- Testing:
-- External integrations:
+
+- **Frontend**: Next.js 14 (App Router), React 18, TypeScript 5
+- **Backend**: Convex (serverless functions + reactive DB)
+- **Database**: Convex DB (document store, auto-indexed)
+- **Auth**: Custom session (localStorage) + OTP email + Convex user validation
+- **Storage**: Convex File Storage + Cloudinary (images/docs)
+- **Queue / Jobs**: None yet (planned: Convex scheduled functions)
+- **Infra / Hosting**: Vercel (frontend) + Convex Cloud (backend)
+- **Observability**: None yet (planned: Sentry)
+- **Testing**: None yet (planned: Playwright E2E, Vitest unit)
+- **External integrations**: Mayar.id (payment), Cloudinary, OpenRouter (AI), Leaflet (maps)
 
 ---
 
 ## Top-Level Layout
-- Main app folder:
-- API / service folder:
-- Shared library folder:
-- Infra / deployment folder:
-- Scripts / tooling folder:
-- Tests folder:
-- Generated artifacts to ignore:
+
+```
+ID-MAP-Final/
+├── src/app/          # Next.js pages (App Router)
+├── src/components/   # React components
+├── src/lib/          # Utilities, auth, static GIS data
+├── src/contexts/     # React contexts (Language)
+├── convex/           # Backend (schema, queries, mutations, actions)
+├── public/           # Static assets
+├── _bmad/            # BMAD planning artifacts (not deployed)
+└── scripts/          # Dev/build scripts
+```
+
+- **Main app folder**: `src/app/`
+- **API / service folder**: `src/app/api/` (Next.js route handlers) + `convex/` (Convex backend)
+- **Shared library folder**: `src/lib/`, `src/components/shared/`
+- **Scripts / tooling folder**: `scripts/`
+- **Generated artifacts to ignore**: `convex/_generated/`, `.next/`, `node_modules/`
 
 ---
 
 ## Entry Points
-- Web app entry:
-- API entry:
-- Worker entry:
-- CLI / scripts entry:
-- Auth entry:
-- Admin / dashboard entry:
-- Public docs entry:
-- Runtime config files:
+
+- **Web app entry**: `src/app/layout.tsx` → `src/app/ConvexClientProvider.tsx`
+- **API entry**: `src/app/api/` (auth, payment, cloudinary-upload, mangrove-analysis, chat)
+- **Worker entry**: None (Convex handles background via `internalMutation`)
+- **CLI / scripts entry**: `scripts/` + `convex/seed.ts` (via `npx convex run`)
+- **Auth entry**: `src/app/masuk/page.tsx` → `POST /api/auth/login` → `src/lib/auth.ts`
+- **Admin / dashboard entry**: `src/app/admin/page.tsx` (protected by SessionGuard)
+- **Runtime config files**: `.env.local`, `next.config.mjs`, `convex/tsconfig.json`
 
 ---
 
 ## Runtime Flows
 
 ### App Bootstrap Flow
-- Entry:
-- Providers / middleware:
-- Config loaded:
-- Global side effects:
-- Output:
+- Entry: `src/app/layout.tsx`
+- Providers: `ConvexClientProvider` (wraps all pages with Convex React client)
+- Global side effects: LanguageContext, Navbar (Suspense)
+- Output: Hydrated React tree with Convex subscription active
 
 ### Auth Flow
-- Entry:
-- Identity source:
-- Session / token storage:
-- Guard / middleware:
-- Authorization boundary:
-- Failure path:
+- Entry: `src/app/masuk/page.tsx`
+- Identity source: Convex `users` table (email + password)
+- Session storage: `localStorage["idmap_session"]` = `{_id, email, name, role}`
+- Guard: `src/components/shared/SessionGuard.tsx` (reads localStorage, redirects if no session)
+- Authorization boundary: Per-route in SessionGuard + layout-level redirect
+- Failure path: `→ /masuk`
 
-### Main Business Flow
-- Trigger:
-- UI / route:
-- Service / handler:
-- Persistence / integration:
-- Output:
+### Main Business Flow (Donation)
+- Trigger: User clicks "Donasi" on project card
+- UI: `/user/donasi` or modal overlay
+- Service: `POST /api/payment/initiate` → Mayar.id API → returns QR URL
+- Webhook: `POST /api/payment/webhook` → verify signature → `convex/contributions.ts:create`
+- Output: `contributions` record created, certificate queued
 
 ### Payment / Billing Flow
-- Trigger:
-- Provider:
-- Validation:
-- Webhook / callback:
-- Data updates:
+- Trigger: Donation or carbon credit purchase
+- Provider: Mayar.id (QRIS + Transfer)
+- Validation: Webhook signature verification (TD-10: not yet implemented)
+- Webhook / callback: `POST /api/payment/webhook`
+- Data updates: `contributions.paymentStatus = "paid"` or `transactions.status = "Selesai"`
 
-### Notification Flow
-- Trigger:
-- Channel:
-- Delivery service:
-- Retry / failure path:
-
-### Background Job Flow
-- Trigger:
-- Queue / scheduler:
-- Worker:
-- Persistence:
-- Observability:
+### AI Analysis Flow
+- Trigger: User sends message in MangroveAIPanel
+- Service: `POST /api/mangrove-analysis`
+- External: OpenRouter API (deepseek/deepseek-v4-flash:free → gemini fallback)
+- Output: Streaming text response to component
 
 ---
 
 ## Boundaries
-- UI / Presentation:
-- Client State:
-- API / Transport:
-- Domain Logic:
-- Persistence:
-- External Services:
-- Shared Utilities:
 
----
-
-## Ownership Map
-- Product / UI owner:
-- Backend / API owner:
-- Data / schema owner:
-- Auth / security owner:
-- Infra / deployment owner:
-- Observability owner:
+- **UI / Presentation**: `src/app/`, `src/components/`
+- **Client State**: React `useState`, Convex `useQuery` reactive subscriptions
+- **API / Transport**: `src/app/api/*` (Next.js route handlers)
+- **Domain Logic**: `convex/*.ts` (queries + mutations)
+- **Persistence**: Convex DB + Convex File Storage + Cloudinary
+- **External Services**: Mayar.id, OpenRouter, Cloudinary
+- **Shared Utilities**: `src/lib/`, `src/contexts/`
 
 ---
 
 ## Integration Points
-- Auth provider:
-- Payment provider:
-- Email / SMS:
-- File storage:
-- Search:
-- Maps / GIS:
-- AI / ML:
-- Analytics:
-- Third-party APIs:
+
+- **Auth provider**: Custom (OTP email)
+- **Payment provider**: Mayar.id (`MAYAR_API_KEY`, `MAYAR_WEBHOOK_SECRET`)
+- **Email / SMS**: Not yet wired (OTP uses placeholder) — plan: Resend or Nodemailer
+- **File storage**: Cloudinary (`CLOUDINARY_*`) + Convex File Storage
+- **Maps / GIS**: Leaflet.js (client-only) + static data in `src/lib/*Data.ts`
+- **AI / ML**: OpenRouter (`OPENROUTER_API_KEY`) via `/api/mangrove-analysis`
+- **Analytics**: None yet
 
 ---
 
 ## Key Files
-- `AGENTS.md`: agent behavior and safety rules
-- `SYSTEM_MAP.md`: architecture navigation map
-- `mcp.json`: local MCP server registry for this workspace
-- `[path/to/root-entry]`: root app or service entry
-- `[path/to/api-entry]`: main API/router/controller entry
-- `[path/to/auth-entry]`: auth boundary
-- `[path/to/data-model]`: schema or model source of truth
-- `[path/to/main-service]`: core business logic
-- `[path/to/config]`: runtime config source
-- `[path/to/tests]`: critical test or fixture location
+
+| File | Purpose |
+|------|---------|
+| `convex/schema.ts` | Database schema — source of truth for all tables |
+| `convex/seed.ts` | Dev seed data — `npx convex run seed:resetAndSeed` |
+| `convex/users.ts` | User CRUD, auth helpers |
+| `convex/projects.ts` | Project CRUD, status transitions |
+| `convex/contributions.ts` | Donation records, payment status |
+| `src/lib/auth.ts` | Session get/set/clear, role types, dashboard routing |
+| `src/components/shared/SessionGuard.tsx` | Route protection, role-based redirect |
+| `src/components/shared/Navbar.tsx` | Top navigation, auth state |
+| `src/app/api/auth/` | OTP, login, register API routes |
+| `src/app/api/payment/` | Mayar.id payment initiation + webhook |
+| `src/app/api/mangrove-analysis/route.ts` | OpenRouter AI proxy |
+| `next.config.mjs` | Next.js config (image domains, etc.) |
 
 ---
 
 ## Data Model Notes
-- Core entities:
-- Primary relationships:
-- High-write areas:
-- High-read areas:
-- Sensitive data:
-- Consistency / transaction constraints:
+
+- **Core entities**: users, projects, contributions, transactions, certificates, kycDocuments, mrvReports, otpCodes, platformStats, systemActivities
+- **Primary relationships**: users → projects (mitra), users → contributions (sahabat), projects → contributions, projects → transactions, projects → mrvReports
+- **High-write areas**: contributions (donations), otpCodes (auth), systemActivities (audit log)
+- **High-read areas**: projects (public listing), platformStats (admin dashboard)
+- **Sensitive data**: users.password (CRITICAL: must be hashed — TD-01), kycDocuments (PII)
+- **Role values**: `"sahabat" | "mitra" | "verifikator" | "admin" | "corporate"` — NOT `"komunitas"`
 
 ---
 
 ## Critical User Journeys
-- User journey 1:
-- User journey 2:
-- Admin / operator journey:
-- Failure recovery journey:
+
+1. **Sahabat donation**: `/daftar` → OTP → `/user` → browse project → donasi QRIS → sertifikat
+2. **Mitra project**: KYC → create project → MRV submission → SRN registration
+3. **Corporate carbon**: register → browse verified projects → buy credit → ESG certificate
+4. **Admin KYC flow**: review pending KYC → approve/reject → user notified
 
 ---
 
-## Database Standards
-- Minimum I/O
-- Efficient indexing
-- Avoid N+1 queries
-- Optimize joins, filters, and pagination
-- Separate transactional paths from reporting paths when needed
+## Technical Debt Registry
 
----
-
-## Testing Map
-- Unit test location:
-- Integration test location:
-- E2E test location:
-- Test data / fixtures:
-- Critical flows that must be validated after edits:
+| ID | Issue | Severity | Status | Epic |
+|----|-------|----------|--------|------|
+| TD-01 | Password plaintext di DB | CRITICAL | Open | E0/S004 |
+| TD-02 | `"komunitas"` role in auth.ts | HIGH | Open | E0/S001 |
+| TD-03 | `.tmp` files in repo | HIGH | Open | E0/S002 |
+| TD-04 | No migrations system | HIGH | Open | E0/S005 |
+| TD-05 | No test coverage | HIGH | Open | E1+ |
+| TD-06 | Static GIS data (not DB) | MEDIUM | Open | E7 |
+| TD-07 | No rate limiting on auth | HIGH | Open | E1/S009 |
+| TD-08 | No input sanitization | HIGH | Open | E1/S010 |
+| TD-09 | `corporate` not in schema | MEDIUM | Open | E0/S003 |
+| TD-10 | Webhook signature not verified | HIGH | Open | E4 |
 
 ---
 
 ## Deployment Map
-- Environments:
-- Deployment platform:
-- Build pipeline:
-- Secret management:
-- Runtime config:
-- Rollback path:
 
----
-
-## File Documentation Rules
-For important files, document:
-
-Purpose:
-Caller:
-Dependencies:
-Main Functions:
-Side Effects:
-
-Use short source-based statements only.
-Do not invent architecture that is not present in code.
+- **Environments**: local (npm run dev) → preview (Vercel PR deploy) → production (Vercel main)
+- **Deployment platform**: Vercel (Next.js) + Convex Cloud
+- **Build pipeline**: `next build` → Vercel CI
+- **Secret management**: Vercel Environment Variables + `.env.local` (gitignored)
+- **Rollback path**: Vercel instant rollback to previous deployment
 
 ---
 
 ## Pre-Edit Trace Note
+
 Before substantive edits, note:
 
-Target file:
-Entrypoint:
-Flow:
-Upstream callers:
-Downstream dependencies:
-Risk:
-
-Prefer one-line notes anchored to actual files, modules, or routes.
-
----
-
-## Change Impact Checklist
-- Upstream callers affected:
-- Downstream dependencies affected:
-- Schema or migration impact:
-- Env/config impact:
-- Auth/permission impact:
-- Performance impact:
-- Test impact:
-- Docs impact:
-
----
-
-## Token Optimization Rules
-- Do not scan the entire repo by default.
-- Start from the target route, service, controller, job, or module.
-- Avoid reading generated output unless the task is artifact-specific.
-- Prefer targeted retrieval over broad exploration.
-- Summarize findings instead of dumping raw context.
-- Use this map first when the task needs architecture or flow tracing.
-
----
-
-## Project-Specific Notes
-- Domain terms:
-- Compliance / regulatory constraints:
-- Security constraints:
-- Performance constraints:
-- Team conventions:
-
----
-
-## Open Questions / Known Gaps
-- Assumptions currently in use:
-- Unknown entrypoints or flows:
-- Areas needing runtime verification:
-- Areas likely to drift if not updated:
+```
+Target file: [file]
+Entrypoint: [route or trigger]
+Flow: [brief flow trace]
+Upstream callers: [who calls this]
+Downstream dependencies: [what this calls]
+Risk: [schema impact / auth impact / payment impact]
+```
 
 ---
 
 ## Maintenance Rule
-Update `SYSTEM_MAP.md` when any of these change:
-- entrypoints
-- architecture boundaries
-- major runtime flows
-- external integrations
-- deployment shape
+
+Update this file when any of these change:
+- entrypoints, routes added/removed
+- new external service integrations
+- schema tables added/removed
+- deployment shape changes
+- new role added to system

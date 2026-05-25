@@ -51,6 +51,7 @@ const userItems: SidebarItem[] = [
   { icon: ArrowRightLeft, label: "Donasi & Kontribusi", href: "/user/donasi" },
   { icon: BarChart3, label: "Dampak Saya", href: "/user/dampak" },
   { icon: CheckCircle, label: "Sertifikat", href: "/user/sertifikat" },
+  { icon: ShieldCheck, label: "Lengkapi KYC", href: "/user/kyc" },
   { icon: Bell, label: "Pemberitahuan", href: "/user/notifikasi" },
   { icon: Settings, label: "Pengaturan", href: "/user/pengaturan" },
 ];
@@ -73,7 +74,7 @@ const verifikatorItems: SidebarItem[] = [
   { icon: Waves, label: "Data Abrasi Pantai", href: "/verifikator/abrasi" },
   { icon: Globe, label: "Titik Pendaratan Penyu", href: "/verifikator/penyu" },
   { icon: Users, label: "Data Pokmaswas", href: "/verifikator/pokmaswas" },
-  { icon: ImageIcon, label: "Thumbnail Layanan", href: "/verifikator/thumbnail-layanan" },
+  { icon: ImageIcon, label: "Konten Layanan", href: "/verifikator/thumbnail-layanan" },
   { icon: Settings, label: "Pengaturan", href: "/verifikator/pengaturan" },
 ];
 

@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>ID-MAP — Booklet Proposal Tahap 2</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@600;700;800&display=swap');
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  :root{
+    --navy-1:#070a3a;
+    --navy-2:#0a1158;
+    --navy-3:#1a1480;
+    --purple:#3a1d7a;
+    --magenta:#e91e93;
+    --pink:#ff6ec7;
+    --cyan:#5ec8ff;
+    --cyan-bright:#00d9ff;
+    --text:#e6ebff;
+    --text-dim:#b9c2e8;
+    --text-soft:#9aa4d4;
+    --label:#ffd6f5;
+  }
+
+  html,body{ background:#1a1a2e; }
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    font-size:9.5pt; color:var(--text); line-height:1.55;
+  }
+
+  .page{
+    width:297mm; height:210mm;
+    margin:8mm auto;
+    position:relative; overflow:hidden;
+    page-break-after:always;
+    color:var(--text);
+    background:
+      radial-gradient(ellipse 70% 60% at 80% 30%, rgba(120,80,200,0.55) 0%, transparent 55%),
+      radial-gradient(ellipse 60% 70% at 15% 85%, rgba(190,90,200,0.45) 0%, transparent 55%),
+      radial-gradient(ellipse 80% 50% at 50% 100%, rgba(70,40,160,0.6) 0%, transparent 60%),
+      linear-gradient(135deg, #050735 0%, #0a0d4a 30%, #1a0d5e 60%, #2a0a52 100%);
+  }
+  /* starfield */
+  .page::before{
+    content:""; position:absolute; inset:0;
+    background-image:
+      radial-gradient(1px 1px at 12% 18%, rgba(255,255,255,0.7), transparent),
+      radial-gradient(1px 1px at 28% 42%, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1.5px 1.5px at 67% 22%, rgba(255,255,255,0.8), transparent),
+      radial-gradient(1px 1px at 82% 65%, rgba(255,255,255,0.6), transparent),
+      radial-gradient(1px 1px at 45% 78%, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1.5px 1.5px at 92% 12%, rgba(255,255,255,0.7), transparent),
+      radial-gradient(1px 1px at 8% 88%, rgba(255,255,255,0.6), transparent),
+      radial-gradient(1px 1px at 36% 8%, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1px 1px at 73% 48%, rgba(255,255,255,0.6), transparent),
+      radial-gradient(1px 1px at 56% 32%, rgba(255,255,255,0.4), transparent);
+    pointer-events:none;
+  }
+  /* swirl glow */
+  .page::after{
+    content:""; position:absolute; inset:0;
+    background:
+      radial-gradient(circle at 88% 78%, rgba(255,150,220,0.18) 0%, transparent 28%),
+      radial-gradient(circle at 12% 22%, rgba(80,200,255,0.15) 0%, transparent 30%);
+    pointer-events:none;
+  }
+
+  /* layout */
+  .layout{
+    position:relative; z-index:2;
+    display:grid; grid-template-columns:1fr 1fr;
+    gap:8mm; padding:14mm 16mm 12mm;
+    height:100%;
+  }
+  .col{ display:flex; flex-direction:column; gap:5mm; height:100%; }
+
+  /* section header pill */
+  .sec-hd{
+    display:inline-flex; align-items:center; justify-content:center;
+    background:linear-gradient(95deg,#ff7adb 0%, #ff3da6 50%, #c52aff 100%);
+    border:2px solid rgba(180,230,255,0.7);
+    border-radius:14px;
+    padding:7px 22px;
+    font-family:'Orbitron',sans-serif;
+    font-weight:700; font-size:11pt; letter-spacing:1.2px;
+    color:#fff; text-transform:uppercase;
+    box-shadow:0 0 22px rgba(255,80,180,0.45);
+    width:fit-content;
+    text-shadow:0 1px 3px rgba(0,0,0,0.45);
+  }
+
+  /* content box */
+  .box{
+    border:1.5px solid rgba(255,140,220,0.55);
+    border-radius:14px;
+    padding:10px 14px 12px;
+    background:rgba(8,10,55,0.35);
+    backdrop-filter:blur(2px);
+    box-shadow:inset 0 0 30px rgba(150,100,220,0.12);
+    flex:1;
+  }
+  .box.tall{ flex:1; }
+
+  /* intro paragraph under header */
+  .intro{
+    font-size:8.7pt; color:var(--text-dim);
+    line-height:1.5; margin:0 0 7px;
+  }
+
+  /* sub-section */
+  .sub{ margin-top:9px; }
+  .sub:first-child{ margin-top:0; }
+  .sub h3{
+    font-family:'Orbitron',sans-serif;
+    font-size:9.5pt; letter-spacing:1.2px; font-weight:700;
+    color:#ffe2f6; text-transform:uppercase;
+    margin-bottom:3px;
+    text-shadow:0 0 8px rgba(255,120,220,0.4);
+  }
+  .sub p, .sub ul, .sub ol{
+    font-size:8.5pt; color:var(--text); line-height:1.5;
+    text-align:justify;
+  }
+  .sub ul, .sub ol{ padding-left:14px; }
+  .sub li{ margin-bottom:1px; }
+  .sub b, .sub strong{ color:#ffcfee; font-weight:700; }
+  .wmax{
+    display:block; font-size:7pt; font-style:italic;
+    color:#a8b3e0; margin-top:3px; letter-spacing:0.3px;
+  }
+
+  /* tables */
+  table{ width:100%; border-collapse:collapse; font-size:7.8pt; margin-top:3px; }
+  th, td{
+    padding:4px 6px; text-align:left;
+    border:1px solid rgba(180,140,230,0.35);
+    color:var(--text);
+  }
+  th{
+    background:rgba(255,110,199,0.18);
+    color:#ffe2f6;
+    font-weight:700; font-size:7.5pt;
+    text-transform:uppercase; letter-spacing:0.5px;
+  }
+  td.c{ text-align:center; }
+
+  /* page number */
+  .pgno{
+    position:absolute; right:14mm; bottom:8mm;
+    font-family:'Orbitron',sans-serif;
+    font-size:18pt; font-weight:700;
+    color:rgba(255,255,255,0.6);
+    letter-spacing:2px;
+    z-index:3;
+  }
+
+  /* COVER */
+  .cover{
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; height:100%; position:relative; z-index:2;
+    padding:20mm;
+  }
+  .cover .label{
+    font-family:'Orbitron',sans-serif;
+    font-size:9pt; letter-spacing:5px; color:#ffd6f5;
+    background:linear-gradient(95deg,#ff7adb,#c52aff);
+    padding:7px 22px; border-radius:20px;
+    border:1.5px solid rgba(180,230,255,0.6);
+    box-shadow:0 0 22px rgba(255,80,180,0.4);
+    margin-bottom:18mm;
+  }
+  .cover .logo{
+    font-family:'Orbitron',sans-serif;
+    font-size:90pt; font-weight:800;
+    color:#fff; letter-spacing:-3px;
+    line-height:0.95;
+    text-shadow:
+      0 0 20px rgba(255,120,220,0.6),
+      0 0 40px rgba(120,180,255,0.4);
+  }
+  .cover .logo .accent{
+    background:linear-gradient(135deg,#ff7adb,#5ec8ff);
+    -webkit-background-clip:text; background-clip:text;
+    -webkit-text-fill-color:transparent;
+  }
+  .cover .tagline{
+    font-size:13pt; color:#e8effd; font-weight:300;
+    margin-top:8mm; max-width:200mm; line-height:1.5;
+  }
+  .cover .divider{
+    width:80px; height:3px;
+    background:linear-gradient(90deg,#ff7adb,#5ec8ff);
+    border-radius:2px; margin:8mm 0;
+  }
+  .cover .subtitle{
+    font-family:'Orbitron',sans-serif;
+    font-size:11pt; color:#ffd6f5;
+    letter-spacing:3px; text-transform:uppercase;
+  }
+  .cover .meta{
+    margin-top:14mm; display:flex; gap:20mm; justify-content:center;
+    color:rgba(255,255,255,0.85); font-size:9pt;
+  }
+  .cover .meta b{ color:#fff; display:block; font-size:7.5pt; letter-spacing:2px; text-transform:uppercase; opacity:0.7; margin-bottom:3px; font-weight:700; }
+  .cover .badge{
+    margin-top:18mm;
+    border:1.5px solid rgba(255,140,220,0.5);
+    background:rgba(20,15,80,0.4);
+    border-radius:14px; padding:8px 18px;
+    font-size:8.5pt; color:#e8effd;
+    box-shadow:inset 0 0 20px rgba(150,100,220,0.15);
+  }
+  .cover .badge b{ color:#ffd6f5; font-weight:700; }
+
+  /* CLOSING */
+  .closing{
+    display:flex; flex-direction:column; justify-content:center; align-items:center;
+    text-align:center; height:100%;
+  }
+  .closing h1{
+    font-family:'Orbitron',sans-serif;
+    font-size:42pt; font-weight:800; color:#fff;
+    letter-spacing:1px; line-height:1;
+    text-shadow:
+      0 0 20px rgba(255,120,220,0.6),
+      0 0 40px rgba(120,180,255,0.4);
+  }
+  .closing .sub-c{
+    margin-top:10mm; font-size:11pt; color:#e8effd; font-weight:300;
+    max-width:120mm; line-height:1.5;
+  }
+  .closing .url{
+    margin-top:12mm; padding:8px 22px;
+    border:1.5px solid rgba(180,230,255,0.6);
+    background:linear-gradient(95deg,#ff7adb,#c52aff);
+    border-radius:20px; color:#fff; font-size:9pt;
+    box-shadow:0 0 22px rgba(255,80,180,0.4);
+    font-family:'Orbitron',sans-serif; letter-spacing:1.5px;
+  }
+
+  /* shift box */
+  .shift-grid{ display:grid; grid-template-columns:1fr 1fr; gap:5px; margin-top:4px; }
+  .shift{
+    border:1px solid rgba(180,140,230,0.4);
+    background:rgba(8,10,55,0.4);
+    border-radius:8px; padding:6px 8px;
+    font-size:7.7pt;
+  }
+  .shift b{ display:block; color:#ffd6f5; font-size:7.5pt; margin-bottom:2px; letter-spacing:0.5px; text-transform:uppercase; }
+  .shift .arr{ color:#5ec8ff; font-weight:700; }
+
+  /* flow */
+  .flow{
+    display:flex; flex-direction:column; gap:3px;
+    margin-top:5px; font-size:8pt;
+  }
+  .flow .step{
+    display:flex; align-items:center; gap:7px;
+    padding:4px 8px;
+    border:1px solid rgba(180,140,230,0.4);
+    border-radius:6px;
+    background:rgba(8,10,55,0.4);
+  }
+  .flow .num{
+    width:18px; height:18px; border-radius:50%;
+    background:linear-gradient(135deg,#ff7adb,#5ec8ff);
+    display:inline-flex; align-items:center; justify-content:center;
+    font-family:'Orbitron',sans-serif; font-weight:700; font-size:7.5pt;
+    color:#fff; flex-shrink:0;
+  }
+
+  /* keymetrics row */
+  .km{ display:grid; grid-template-columns:repeat(4,1fr); gap:5px; margin:5px 0; }
+  .km .m{
+    border:1px solid rgba(180,140,230,0.4);
+    background:rgba(8,10,55,0.4);
+    border-radius:8px; padding:5px 6px; text-align:center;
+  }
+  .km .m b{ display:block; font-family:'Orbitron',sans-serif; font-size:11pt; color:#ffd6f5; }
+  .km .m span{ font-size:6.8pt; color:var(--text-soft); letter-spacing:0.3px; }
+
+  @media print{
+    body{ background:#000; }
+    .page{ margin:0; box-shadow:none; }
+  }
+  @page{ size:A4 landscape; margin:0; }
+</style>
+</head>
+<body>
+
+<!-- ============= PAGE 1 - COVER ============= -->
+<div class="page">
+  <div class="cover">
+    <div class="label">PUSAT INOVASI DIGITAL INDONESIA · 2026</div>
+    <div class="logo">ID<span class="accent">·</span>MAP</div>
+    <div class="divider"></div>
+    <div class="subtitle">Sustainability Ekosistem Pesisir Nusantara</div>
+    <div class="tagline">Data terintegrasi untuk pemantauan, rehabilitasi, dan keberlanjutan pesisir nusantara — menghubungkan Korporasi, Individu, Pemerintah, dan Mitra Komunitas dalam satu platform digital tri-sektor.</div>
+    <div class="meta">
+      <div><b>Kategori</b>Pemantauan &amp; Restorasi Lingkungan</div>
+      <div><b>Submission</b>Tahap 2 / Final</div>
+      <div><b>Tim</b>ID-MAP</div>
+    </div>
+    <div class="badge"><b>Ketua Tim</b> Slamet Abdullah, S.Pi · Cabang Dinas Kelautan dan Perikanan Kabupaten Malang</div>
+  </div>
+  <div class="pgno">1</div>
+</div>
+
+<!-- ============= PAGE 2 - TEAM & EXECUTIVE SUMMARY ============= -->
+<div class="page">
+  <div class="layout">
+    <!-- LEFT: Team -->
+    <div class="col">
+      <div class="sec-hd">Team Identity</div>
+      <div class="box">
+        <p class="intro">Identitas tim, peran, dan rekam jejak yang relevan untuk membangun infrastruktur digital sustainability pesisir.</p>
+
+        <div class="sub">
+          <h3>Profil Tim</h3>
+          <table>
+            <tr><th style="width:32%">Field</th><th>Detail</th></tr>
+            <tr><td><b>Nama Tim</b></td><td>ID-MAP — Sustainability Ekosistem Pesisir Nusantara</td></tr>
+            <tr><td><b>Ketua Tim</b></td><td>Slamet Abdullah, S.Pi</td></tr>
+            <tr><td><b>Institusi</b></td><td>Cabang Dinas Kelautan dan Perikanan Kab. Malang</td></tr>
+            <tr><td><b>Kontak</b></td><td>+62 812 3456 1017 · slamet.abdullah@gmail.com</td></tr>
+            <tr><td><b>Portofolio</b></td><td>https://id-map-national.vercel.app</td></tr>
+          </table>
+        </div>
+
+        <div class="sub">
+          <h3>Anggota &amp; Peran</h3>
+          <table>
+            <tr><th>Nama</th><th>Peran</th><th>Latar Belakang</th></tr>
+            <tr><td>Slamet Abdullah, S.Pi</td><td>Ketua / Full-Stack Dev &amp; UI Designer</td><td>Aparatur DKP, praktisi konservasi mangrove, Project Manager, Vibe Coder</td></tr>
+            <tr><td>Dimas Syarif Alim, S.Kel</td><td>Data Analyst / GIS Specialist</td><td>Pengelola Ekosistem Laut Pesisir (PELP), GIS Expert</td></tr>
+          </table>
+        </div>
+
+        <div class="sub">
+          <h3>Ringkasan Tim</h3>
+          <p>Tim ID-MAP merupakan kolaborasi lintas-disiplin antara praktisi pemerintahan bidang kelautan-perikanan dengan tenaga ahli teknologi geospasial. Ketua tim adalah aparatur Cabang Dinas Kelautan dan Perikanan Kabupaten Malang yang sekaligus berpengalaman sebagai full-stack developer, UI designer, project manager profesional, dan ahli model bisnis. Tim didukung oleh GIS specialist dan data analyst — kombinasi yang memungkinkan pembangunan infrastruktur digital sustainability pesisir yang akurat secara teknis, valid secara regulasi, dan kontekstual terhadap kebutuhan komunitas pesisir nusantara.</p>
+          <span class="wmax">Maksimal 600 karakter</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Executive Summary + Repositioning -->
+    <div class="col">
+      <div class="sec-hd">Executive Summary &amp; Repositioning</div>
+      <div class="box">
+        <p class="intro">Ringkasan inti solusi dan pergeseran ide dari versi awal menjadi platform sustainability ekosistem pesisir tri-sektor.</p>
+
+        <div class="sub">
+          <h3>Executive Summary</h3>
+          <p>ID-MAP adalah platform digital sustainability ekosistem pesisir yang menghubungkan tiga pilar pemangku kepentingan — Korporasi (B2B), Individu pemerhati lingkungan (B2C), dan Pemerintah/Dinas terkait (B2G) — melalui Mitra Komunitas legal sebagai pelaksana lapangan. Platform menyediakan inisiasi proyek mangrove, pendanaan transparan via QRIS, sistem MRV digital terstandar, chatbot AI pendamping, dan dashboard analisis AI mangrove nasional dalam satu ekosistem terpadu untuk pemantauan, rehabilitasi, dan keberlanjutan pesisir nusantara.</p>
+          <span class="wmax">Maksimal 600 karakter</span>
+        </div>
+
+        <div class="sub">
+          <h3>Pergeseran Ide (Repositioning)</h3>
+          <div class="shift-grid">
+            <div class="shift"><b>Nama Panjang</b>Integrasi Data Mangrove dan Pesisir <span class="arr">→</span> Sustainability Ekosistem Pesisir Nusantara</div>
+            <div class="shift"><b>Fokus</b>Tools monitoring data <span class="arr">→</span> Ekosistem kolaborasi tri-sektor end-to-end</div>
+            <div class="shift"><b>Stakeholder</b>User umum <span class="arr">→</span> B2B + B2C + B2G + Mitra Komunitas</div>
+            <div class="shift"><b>Alur Kerja</b>Lihat data <span class="arr">→</span> Inisiasi → Funding QRIS → MRV → Pelaporan</div>
+            <div class="shift"><b>Bisnis</b>Open monitoring <span class="arr">→</span> Multi-revenue (fee, CSR, premium analytics)</div>
+            <div class="shift"><b>Kecerdasan</b>Static dashboard <span class="arr">→</span> Chatbot AI + Dashboard AI Nasional</div>
+          </div>
+        </div>
+
+        <div class="sub">
+          <h3>Alur Ekosistem Inti</h3>
+          <div class="flow">
+            <div class="step"><span class="num">1</span><span><b>Mitra Komunitas</b> (kelompok legal) menginisiasi proyek rehabilitasi mangrove + dokumen legalitas + lokasi GPS</span></div>
+            <div class="step"><span class="num">2</span><span><b>Individu (B2C)</b> menyalurkan pendanaan via <b>QRIS</b>, tercatat real-time di ledger transparan</span></div>
+            <div class="step"><span class="num">3</span><span><b>Mitra</b> melaksanakan penanaman + MRV digital (foto georeferenced, GPS, citra Sentinel-2)</span></div>
+            <div class="step"><span class="num">4</span><span><b>Korporasi (B2B)</b> dan <b>Pemerintah (B2G)</b> mengakses laporan terverifikasi untuk TJSL, Bappeda, dan KLHK</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="pgno">2</div>
+</div>
+
+<!-- ============= PAGE 3 - PROBLEM STATEMENT & DEFINITION ============= -->
+<div class="page">
+  <div class="layout">
+    <!-- LEFT: Problem Statement -->
+    <div class="col">
+      <div class="sec-hd">Problem Statement</div>
+      <div class="box">
+        <p class="intro">Konteks tantangan pengelolaan ekosistem pesisir nusantara dan tujuan utama solusi ID-MAP.</p>
+
+        <div class="sub">
+          <h3>Klaster &amp; Sub-Problem</h3>
+          <p><b>Klaster:</b> Percepatan Layanan Publik, Ekonomi Kreatif, dan Ekspor Jasa Digital. <b>Sub-kategori:</b> Digitalisasi Layanan Publik &amp; Pariwisata. <b>Sub-problem:</b> 5. Pemantauan dan Restorasi Lingkungan.</p>
+        </div>
+
+        <div class="sub">
+          <h3>Sub-Problem Acuan</h3>
+          <ol>
+            <li>Pemantauan kondisi ekosistem mangrove dan pesisir secara real-time berbasis data spasial.</li>
+            <li>Evaluasi keberhasilan program restorasi mangrove nasional secara terukur dan terstandar.</li>
+            <li>Integrasi data lapangan, citra satelit, dan parameter biofisik dalam satu platform terpadu.</li>
+            <li>Digitalisasi pelaporan dan pemantauan lingkungan untuk mendukung kebijakan perlindungan pesisir.</li>
+          </ol>
+        </div>
+
+        <div class="sub">
+          <h3>Tujuan Utama</h3>
+          <p>Tujuan ID-MAP adalah membangun platform digital sustainability pesisir yang menghubungkan seluruh pemangku kepentingan tri-sektor:</p>
+          <ol>
+            <li>Menyediakan ekosistem digital end-to-end: inisiasi mitra → pendanaan QRIS → pelaksanaan MRV → pelaporan.</li>
+            <li>Mendigitalisasi MRV (Monitoring, Reporting, Verification) untuk rehabilitasi mangrove sesuai Perpres 120/2020 dan target BRGM 600.000 ha.</li>
+            <li>Memfasilitasi penyaluran dana TJSL/CSR korporasi (UU 40/2007) ke proyek pesisir terverifikasi.</li>
+            <li>Menyajikan dashboard analisis AI mangrove nasional sebagai rujukan kebijakan Bappeda, KLHK, dan KKP.</li>
+            <li>Menjamin transparansi penuh aliran dana dan progres proyek bagi donor individu via tracking real-time.</li>
+            <li>Mendorong literasi pesisir melalui chatbot AI ID-MAP sebagai pendamping virtual mitra dan publik.</li>
+          </ol>
+          <span class="wmax">Maksimal 800 karakter</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Problem Definition -->
+    <div class="col">
+      <div class="sec-hd">Problem Definition</div>
+      <div class="box">
+        <p class="intro">Akar masalah, pihak terdampak, dan bukti faktual yang menjadi landasan urgensi solusi.</p>
+
+        <div class="sub">
+          <h3>Apa Masalah Utamanya?</h3>
+          <p>Indonesia memiliki ±3,36 juta hektare mangrove (Peta Mangrove Nasional KLHK 2021), terluas kedua di dunia. Namun pengelolaannya menghadapi tiga masalah struktural: <b>(1) Fragmentasi data &amp; stakeholder</b> — komunitas pelaksana, donor individu, korporasi pemberi CSR, dan dinas pemerintah bekerja dalam silo terpisah tanpa sistem yang menghubungkan inisiasi, pendanaan, eksekusi, dan pelaporan. <b>(2) MRV manual &amp; tidak terstandar</b> — laporan rehabilitasi masih mengandalkan dokumen kertas, foto tanpa georeferensi, dan format berbeda antar dinas, sehingga data sulit diverifikasi dan tidak feedable ke kebijakan. <b>(3) Akses pendanaan terbatas</b> — komunitas pesisir kecil sulit menjangkau dana CSR korporasi dan donor publik karena tidak ada platform transparan; sebaliknya korporasi kesulitan menemukan proyek terverifikasi untuk realisasi TJSL sesuai PP 47/2012.</p>
+          <span class="wmax">Maksimal 1000 karakter</span>
+        </div>
+
+        <div class="sub">
+          <h3>Siapa yang Terdampak</h3>
+          <ol>
+            <li><b>Mitra Komunitas Pesisir</b> — ribuan kelompok tani-nelayan, KUB, dan LMDH yang butuh akses pendanaan berkelanjutan untuk rehabilitasi.</li>
+            <li><b>Individu Pemerhati Lingkungan</b> — jutaan masyarakat Indonesia yang ingin berkontribusi pada aksi iklim namun tanpa channel transparan.</li>
+            <li><b>Korporasi (TJSL/CSR)</b> — ratusan perusahaan yang wajib menjalankan UU 40/2007 namun kesulitan menemukan mitra proyek terverifikasi.</li>
+            <li><b>Pemerintah</b> — KLHK, KKP, BRGM, Bappeda Provinsi/Kab membutuhkan data terpadu untuk perencanaan dan pelaporan target rehabilitasi.</li>
+            <li><b>~2,2 juta nelayan &amp; petambak</b> (BPS 2023) yang penghidupannya bergantung pada kesehatan ekosistem pesisir.</li>
+          </ol>
+          <span class="wmax">Maksimal 700 karakter</span>
+        </div>
+
+        <div class="sub">
+          <h3>Bukti Masalah</h3>
+          <ol>
+            <li><b>KLHK 2023:</b> Indonesia kehilangan ±40.000 ha mangrove/tahun; ~30% kawasan berada dalam kondisi rusak/kritis.</li>
+            <li><b>Perpres 120/2020:</b> target rehabilitasi 600.000 ha (2020–2024) hanya tercapai sebagian; BRGM melanjutkan program ke 2025–2029.</li>
+            <li><b>Studi BRIN 2024:</b> 68% program penanaman mangrove di Jawa &amp; Sulawesi gagal lestari karena MRV pasca-tanam lemah.</li>
+            <li><b>Audit BPK 2023:</b> tumpang tindih anggaran rehabilitasi pesisir antar-K/L senilai Rp 1,2 T akibat tidak adanya basis data terpadu.</li>
+            <li><b>OJK &amp; KSEI 2024:</b> dana TJSL/CSR korporasi nasional Rp 14 T/tahun, namun &lt;15% tersalurkan ke proyek lingkungan terverifikasi.</li>
+          </ol>
+          <span class="wmax">Maksimal 800 karakter</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="pgno">3</div>
+</div>
+
+<!-- ============= PAGE 4 - PROPOSED SOLUTION & IMPACT ============= -->
+<div class="page">
+  <div class="layout">
+    <!-- LEFT: Proposed Solution -->
+    <div class="col">
+      <div class="sec-hd">Proposed Solution</div>
+      <div class="box">
+        <p class="intro">Inti solusi ID-MAP sebagai platform sustainability tri-sektor dan mekanisme kerjanya secara end-to-end.</p>
+
+        <div class="sub">
+          <h3>Solusi Inti</h3>
+          <p>ID-MAP adalah platform digital sustainability ekosistem pesisir yang menyatukan lima kapabilitas inti dalam satu sistem: <b>(1) Project Initiation Module</b> — kanal resmi mitra komunitas legal untuk mengajukan proyek rehabilitasi mangrove lengkap dengan profil kelompok, lokasi GPS, dan rencana penanaman; <b>(2) Funding Gateway QRIS</b> — kanal pendanaan transparan dari individu pemerhati (B2C) dan dana TJSL korporasi (B2B) yang tercatat real-time per proyek; <b>(3) MRV Engine Digital</b> — sistem pelaporan terstandar berbasis foto georeferenced, koordinat GPS, dan citra Sentinel-2 untuk verifikasi spasial progres tanam-tumbuh; <b>(4) Chatbot AI ID-MAP</b> — pendamping virtual berbahasa Indonesia untuk panduan teknis penanaman, edukasi spesies, dan FAQ regulasi pesisir; <b>(5) Dashboard AI Mangrove Nasional</b> — analitik prediktif kondisi mangrove per provinsi untuk rujukan strategis Bappeda, KLHK, KKP, dan BRGM.</p>
+          <span class="wmax">Maksimal 900 karakter</span>
+        </div>
+
+        <div class="sub">
+          <h3>Alur Kerja Sistem (Input → Proses → Output)</h3>
+          <p><b>Input:</b> Mitra mendaftarkan proyek (legalitas kelompok, lokasi, luas, rencana spesies, timeline). Donor individu mengirim kontribusi via QRIS. Petugas lapangan upload foto georeferenced, koordinat, dan kondisi ekosistem. Citra Sentinel-2 ditarik berkala dari Copernicus Open Access Hub.</p>
+          <p><b>Proses:</b> Validasi otomatis kelengkapan dokumen mitra; alokasi dana donor ke proyek terdaftar; cross-check progres lapangan vs citra satelit oleh MRV Engine; kalkulasi metrik rehabilitasi (kerapatan, tutupan, NDVI). Chatbot AI memandu mitra mengisi laporan sesuai template Permen LHK 7/2021. Dashboard AI memproses agregasi nasional.</p>
+          <p><b>Output:</b> Laporan MRV digital tervalidasi untuk Dinas; sertifikat partisipasi donor; ringkasan TJSL untuk korporasi sesuai POJK 51/2017; insight nasional untuk policy maker; tracking transparan untuk publik.</p>
+          <span class="wmax">Maksimal 900 karakter</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Impact & Outcome -->
+    <div class="col">
+      <div class="sec-hd">Impact &amp; Outcome</div>
+      <div class="box">
+        <p class="intro">Manfaat konkret bagi masing-masing pemangku kepentingan dan dampak terukur jangka pendek hingga menengah.</p>
+
+        <div class="sub">
+          <h3>Manfaat Utama</h3>
+          <ol>
+            <li><b>Bagi Mitra Komunitas:</b> akses pendanaan berkelanjutan, pendampingan teknis MRV otomatis, jalur pelaporan resmi ke Dinas — mengubah rehabilitasi dari kegiatan sukarela menjadi aktivitas terdokumentasi.</li>
+            <li><b>Bagi Individu (B2C):</b> kanal kontribusi mulai Rp 10.000 via QRIS dengan tracking dampak nyata (jumlah bibit, luas tanam, lokasi proyek) dan e-sertifikat partisipasi.</li>
+            <li><b>Bagi Korporasi (B2B):</b> realisasi dana TJSL ke proyek lingkungan terverifikasi sesuai POJK 51/2017, lengkap laporan keberlanjutan otomatis untuk pelaporan tahunan.</li>
+            <li><b>Bagi Pemerintah (B2G):</b> data terstandar real-time untuk Bappeda, KLHK, KKP, dan BRGM; menutup celah pelaporan rehabilitasi nasional dan mendukung target Perpres 120/2020.</li>
+            <li><b>Bagi Indonesia:</b> akselerasi rehabilitasi pesisir nusantara, penciptaan green jobs di kawasan pesisir, dan peningkatan ketahanan pesisir terhadap abrasi serta bencana iklim.</li>
+          </ol>
+          <span class="wmax">Maksimal 800 karakter</span>
+        </div>
+
+        <div class="sub">
+          <h3>Dampak Jangka Pendek &amp; Menengah</h3>
+          <table>
+            <tr><th>Jangka Pendek (0–6 Bulan)</th><th>Jangka Menengah (6–24 Bulan)</th></tr>
+            <tr><td>Pilot di 3 kab/kota Jawa Timur (Malang, Pasuruan, Probolinggo)</td><td>Ekspansi ke 10 provinsi pesisir prioritas BRGM</td></tr>
+            <tr><td>5 mitra komunitas legal aktif</td><td>50+ mitra dengan proyek terverifikasi</td></tr>
+            <tr><td>1.000+ donor individu via QRIS</td><td>50.000+ kontributor aktif kumulatif</td></tr>
+            <tr><td>Prototipe MRV Engine + Chatbot AI</td><td>Integrasi resmi dengan dashboard Bappeda &amp; KLHK</td></tr>
+            <tr><td>Dashboard nasional v1 (data agregat)</td><td>3 korporasi anchor TJSL aktif memakai platform</td></tr>
+          </table>
+          <span class="wmax">Maksimal 600 karakter</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="pgno">4</div>
+</div>
+
+<!-- ============= PAGE 5 - INNOVATION & TECHNICAL APPROACH ============= -->
+<div class="page">
+  <div class="layout">
+    <!-- LEFT: Innovation -->
+    <div class="col">
+      <div class="sec-hd">Innovation &amp; Differentiation</div>
+      <div class="box">
+        <p class="intro">Pembeda inti ID-MAP dibanding pendekatan eksisting baik dari sisi pemerintah, swasta, maupun crowdfunding umum.</p>
+
+        <div class="sub">
+          <h3>Apa yang Membuat Berbeda?</h3>
+          <ol>
+            <li><b>Ekosistem Tri-Sektor End-to-End:</b> ID-MAP bukan sekadar tool monitoring — platform menyatukan inisiasi mitra, pendanaan B2B+B2C, eksekusi MRV, dan pelaporan B2G dalam satu sistem. Tidak ada platform serupa di Indonesia yang melayani empat aktor sekaligus.</li>
+            <li><b>Crowdfunding Mangrove via QRIS:</b> mekanisme demokratisasi aksi pesisir — siapa pun dapat berpartisipasi mulai Rp 10.000 dengan tracking dampak per proyek secara real-time.</li>
+            <li><b>MRV Digital Berbasis Geo-Verified:</b> sistem pelaporan otomatis dengan validasi GPS + citra Sentinel-2 menggantikan pelaporan kertas yang lambat dan rawan kesalahan.</li>
+            <li><b>Chatbot AI Bilingual Pesisir:</b> asisten virtual berbahasa Indonesia yang menjawab pertanyaan teknis (spesies cocok, jarak tanam, hama) dan regulasi (Perpres 120, Permen LHK) berbasis knowledge base ID-MAP.</li>
+            <li><b>Dashboard AI Mangrove Nasional:</b> analitik prediktif tutupan, kerapatan, dan tingkat ancaman per provinsi sebagai rujukan strategis.</li>
+            <li><b>Built by Practitioner:</b> dirancang oleh aparatur DKP yang memahami regulasi, lapangan, dan teknologi sekaligus.</li>
+          </ol>
+          <span class="wmax">Maksimal 700 karakter</span>
+        </div>
+
+        <div class="sub">
+          <h3>Posisi Dibanding Pendekatan Eksisting</h3>
+          <table>
+            <tr><th>Fitur</th><th>SIMONTANA</th><th>Kitabisa</th><th>CSR Konvensional</th><th><b>ID-MAP</b></th></tr>
+            <tr><td>Inisiasi Mitra Legal</td><td class="c">—</td><td class="c">✓ umum</td><td class="c">manual</td><td class="c"><b>✓</b></td></tr>
+            <tr><td>Funding QRIS B2C</td><td class="c">—</td><td class="c">✓</td><td class="c">—</td><td class="c"><b>✓</b></td></tr>
+            <tr><td>MRV Geo-Verified</td><td class="c">terbatas</td><td class="c">—</td><td class="c">—</td><td class="c"><b>✓</b></td></tr>
+            <tr><td>Pelaporan B2G</td><td class="c">manual</td><td class="c">—</td><td class="c">—</td><td class="c"><b>✓</b></td></tr>
+            <tr><td>Chatbot AI Pesisir</td><td class="c">—</td><td class="c">—</td><td class="c">—</td><td class="c"><b>✓</b></td></tr>
+            <tr><td>AI Dashboard Nasional</td><td class="c">—</td><td class="c">—</td><td class="c">—</td><td class="c"><b>✓</b></td></tr>
+          </table>
+          <span class="wmax">Maksimal 700 karakter</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Technical Approach -->
+    <div class="col">
+      <div class="sec-hd">Technical Approach</div>
+      <div class="box">
+        <p class="intro">Arsitektur teknologi, algoritma, sumber data, serta pertimbangan keamanan dan skalabilitas platform ID-MAP.</p>
+
+        <div class="sub">
+          <h3>Teknologi Utama</h3>
+          <table>
+            <tr><th>Layer</th><th>Stack</th><th>Fungsi</th></tr>
+            <tr><td>Frontend</td><td>Next.js 14, React 18, Tailwind, Leaflet.js, Recharts</td><td>UI multi-role, peta interaktif, dashboard</td></tr>
+            <tr><td>Backend</td><td>Convex (real-time DB), Node.js</td><td>API, sync, business logic</td></tr>
+            <tr><td>AI</td><td>OpenAI / Anthropic SDK, Python ML</td><td>Chatbot, klasifikasi, prediksi tutupan</td></tr>
+            <tr><td>Geospasial</td><td>Sentinel-2 (Copernicus), Turf.js, Leaflet</td><td>NDVI, change detection, analisis spasial</td></tr>
+            <tr><td>Payment</td><td>QRIS (Midtrans / Xendit)</td><td>Funding B2C transparan</td></tr>
+            <tr><td>Auth</td><td>JWT + RBAC 4-role</td><td>Admin, Mitra, Donor, Korporasi</td></tr>
+            <tr><td>Deploy</td><td>Vercel + Convex Cloud</td><td>Edge serverless, auto-scale</td></tr>
+          </table>
+          <span class="wmax">Maksimal 700 karakter</span>
+        </div>
+
+        <div class="sub">
+          <h3>Algoritma Solusi</h3>
+          <ol>
+            <li><b>NDVI Time-Series:</b> deteksi perubahan tutupan mangrove dari Sentinel-2 multi-temporal untuk validasi progres tanam.</li>
+            <li><b>Random Forest Classifier:</b> klasifikasi tutupan pesisir (mangrove rapat, jarang, tambak, terabrasi).</li>
+            <li><b>Restoration Suitability XGBoost:</b> rekomendasi zonasi rehabilitasi dari variabel salinitas, substrat, elevasi, pasang surut.</li>
+            <li><b>RAG-based Chatbot:</b> Retrieval Augmented Generation pada knowledge base regulasi pesisir + manual teknis penanaman.</li>
+            <li><b>Anomaly Detection:</b> deteksi pelaporan tidak konsisten antara klaim mitra vs citra satelit.</li>
+          </ol>
+          <span class="wmax">Maksimal 700 karakter</span>
+        </div>
+
+        <div class="sub">
+          <h3>Data Utama</h3>
+          <table>
+            <tr><th>Kategori</th><th>Sumber</th><th>Format</th></tr>
+            <tr><td>Citra Satelit</td><td>Copernicus Sentinel-2, BIG</td><td>GeoTIFF, GeoJSON</td></tr>
+            <tr><td>Peta Mangrove</td><td>KLHK PMN 2021, BIG Ina-Geoportal</td><td>SHP / GeoJSON</td></tr>
+            <tr><td>Data Proyek</td><td>Input Mitra (real-time)</td><td>JSON + GPS + foto</td></tr>
+            <tr><td>Transaksi</td><td>Payment Gateway QRIS</td><td>Transaction record</td></tr>
+            <tr><td>Regulasi</td><td>Perpres 120/2020, Permen LHK 7/2021, POJK 51/2017</td><td>Knowledge base RAG</td></tr>
+            <tr><td>Statistik</td><td>BPS, KKP One Data, BRGM</td><td>API/CSV</td></tr>
+          </table>
+          <span class="wmax">Maksimal 900 karakter</span>
+        </div>
+
+        <div class="sub">
+          <h3>Keamanan &amp; Skalabilitas</h3>
+          <p>Autentikasi JWT + RBAC 4-role; enkripsi transit TLS 1.3; audit log seluruh transaksi. Perlindungan data pengguna sesuai UU 27/2022 (PDP). Anti double-claim via cross-check satelit-lapangan. Convex real-time DB mendukung concurrent users tanpa batas; Vercel Edge auto-scale; arsitektur serverless siap multi-region.</p>
+          <span class="wmax">Maksimal 600 karakter</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="pgno">5</div>
+</div>
+
+<!-- ============= PAGE 6 - BUSINESS MODEL & MARKET VALIDATION ============= -->
+<div class="page">
+  <div class="layout">
+    <!-- LEFT: Business Model & Scalability -->
+    <div class="col">
+      <div class="sec-hd">Business Model &amp; Scalability</div>
+      <div class="box">
+        <p class="intro">Bagian ini menjelaskan kelayakan bisnis dan keberlanjutan solusi. Fokus pada value proposition, revenue/funding, struktur biaya, skalabilitas, dan strategi distribusi.</p>
+
+        <div class="sub">
+          <h3>Value Proposition</h3>
+          <p>ID-MAP menghadirkan satu platform terintegrasi yang menjawab kebutuhan tri-sektor pemangku kepentingan pesisir nusantara: korporasi yang wajib menjalankan TJSL/CSR lingkungan (UU 40/2007, POJK 51/2017), individu pemerhati yang ingin berkontribusi nyata, dan pemerintah daerah (Bappeda, Dinas KP, KLHK, BRGM) yang membutuhkan data terstandar. Manfaat konkret: <b>lebih cepat</b>, satu klik untuk inisiasi proyek dan donasi QRIS dibanding proses manual berbulan-bulan; <b>lebih murah</b>, biaya MRV turun signifikan berkat otomatisasi citra satelit dan template laporan digital; <b>lebih akurat</b>, integrasi data lapangan, citra Sentinel-2, dan estimasi AI memastikan pelaporan terverifikasi spasial; <b>lebih transparan</b>, dashboard real-time menunjukkan aliran dana, progres tanam, dan capaian rehabilitasi kepada seluruh donor; <b>lebih inklusif</b>, mitra komunitas pesisir kecil tetap dapat mengajukan proyek tanpa hambatan birokrasi. Fitur chatbot AI ID-MAP berperan sebagai pendamping virtual untuk panduan teknis penanaman, edukasi spesies, dan FAQ regulasi, sementara dashboard analisis AI mangrove nasional memberikan insight strategis bagi pengambil kebijakan. Nilai ini sulit ditandingi karena ID-MAP dirancang oleh praktisi DKP yang memahami konteks regulasi sekaligus piawai teknologi web modern.</p>
+          <span class="wmax">Maksimal 220 kata</span>
+        </div>
+
+        <div class="sub">
+          <h3>Model Revenue / Funding</h3>
+          <p>ID-MAP menggunakan model revenue ganda yang sesuai konteks tri-sektor: <b>(1) Transaction Fee QRIS</b> sebesar 2–3% dari kontribusi B2C individu, sebagai biaya operasional kanal pendanaan; <b>(2) MRV Service Fee</b> per proyek yang dibayar mitra atau korporasi penyandang dana sebagai biaya verifikasi terstandar; <b>(3) B2B Partnership Subscription</b> untuk korporasi yang ingin dashboard TJSL khusus, laporan keberlanjutan otomatis sesuai POJK 51/2017, dan brand exposure di proyek prioritas; <b>(4) B2G Service Contract</b> untuk Bappeda, Dinas KP, KLHK, atau BRGM yang membutuhkan dashboard analitik AI mangrove sebagai layanan terintegrasi; <b>(5) Grant &amp; Hibah Institusional</b> dari Pusat Inovasi Digital, mitra pembangunan, atau program lingkungan strategis pada fase awal. Pendanaan awal berasal dari hibah hackathon dan in-kind contribution tim, kemudian beralih ke revenue mandiri saat platform mencapai 50+ proyek aktif.</p>
+          <span class="wmax">Maksimal 200 kata</span>
+        </div>
+
+        <div class="sub">
+          <h3>Cost Structure &amp; Sustainability</h3>
+          <p>Komponen biaya utama: <b>Pengembangan teknologi</b> (Next.js, Convex, integrasi QRIS, AI/ML pipeline) — terbesar pada fase awal namun menurun setelah platform stabil; <b>Server &amp; cloud</b> (Vercel, Convex Cloud, Sentinel-2 API) — fixed cost ringan berkat arsitektur serverless; <b>Akuisisi mitra</b> (workshop, onboarding di kawasan pesisir, capacity building) sebagai investasi jaringan; <b>Operasional tim</b> (developer, GIS analyst, community lead, customer success); <b>Tenaga ahli &amp; legal compliance</b> (kerja sama notaris/konsultan untuk kepatuhan UU PDP dan ketentuan donasi); <b>Maintenance &amp; partnership</b> (audit eksternal, kemitraan regulator). Sustainability finansial dijamin oleh diversifikasi revenue tri-sektor sehingga platform tidak bergantung pada satu sumber. Setelah skala 50+ proyek, transaction fee dan B2B subscription cukup menutup operasional. Audit keuangan tahunan oleh KAP independen menjamin transparansi penuh terhadap donor publik.</p>
+          <span class="wmax">Maksimal 200 kata</span>
+        </div>
+
+        <div class="sub">
+          <h3>Scalability</h3>
+          <p>Skalabilitas ID-MAP terbukti pada tiga dimensi: <b>(1) Geografis</b> — arsitektur cloud serverless memungkinkan replikasi cepat dari pilot Jawa Timur ke 38 provinsi tanpa rebuild infrastruktur; <b>(2) User</b> — Convex real-time DB mendukung concurrent users tanpa batas; <b>(3) Use Case</b> — fondasi platform yang sama dapat diperluas ke ekosistem terumbu karang, lamun, dan rehabilitasi pesisir lain. Faktor pendukung: stack open-source/cloud bermarjin biaya rendah, ketersediaan citra Sentinel-2 gratis dari Copernicus, dukungan regulasi nasional (Perpres 120/2020, BRGM 2025–2029). Yang perlu disiapkan agar tidak hanya berjalan di skala kecil: SOP onboarding mitra terstandar, jaringan regional champion, MoU dengan KLHK/KKP/BRGM, kapasitas tim customer success, dan sistem QA pelaporan otomatis.</p>
+          <span class="wmax">Maksimal 170 kata</span>
+        </div>
+
+        <div class="sub">
+          <h3>Partnership &amp; Distribution</h3>
+          <p>Strategi distribusi bertumpu pada kemitraan multi-aktor: <b>(1) Regulator</b> — KLHK, KKP, BRGM untuk legitimasi dan integrasi data; <b>(2) Pemerintah Daerah</b> — Bappeda, DKP Provinsi/Kab, sebagai jalur masuk pilot regional; <b>(3) Fintech &amp; Bank</b> — Midtrans/Xendit untuk QRIS, BSI/BRI untuk channeling CSR; <b>(4) Korporasi Anchor</b> — perusahaan ESG-driven (energi, sawit, perbankan) untuk komitmen TJSL berkelanjutan; <b>(5) Komunitas &amp; Asosiasi</b> — KTH, KUB Pesisir, KOMPAK Mangrove sebagai mitra pelaksana; <b>(6) Kampus</b> — IPB, ITB, UNDIP, Unhas untuk validasi metodologi MRV; <b>(7) UMKM Pesisir</b> sebagai value-added stakeholder; <b>(8) Platform Digital</b> — kolaborasi dengan media iklim untuk awareness. Peran masing-masing: regulator memberi standar, pemda menyediakan akses lapangan, fintech mengaktifkan kanal pembayaran, korporasi menjadi sumber TJSL berkelanjutan, komunitas menjadi pelaksana, kampus menjamin validitas ilmiah.</p>
+          <span class="wmax">Maksimal 170 kata</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Market Validation -->
+    <div class="col">
+      <div class="sec-hd">Market Validation</div>
+      <div class="box">
+        <p class="intro">Bagian ini menjelaskan apakah solusi benar-benar dibutuhkan oleh target pasar. Fokus pada urgensi masalah, bukti demand, kejelasan target market, dan kesiapan adopsi solusi.</p>
+
+        <div class="sub">
+          <h3>Problem-Market Fit</h3>
+          <p>Masalah ini mendesak karena tiga alasan: <b>(1) regulasi</b> Perpres 120/2020 dan Renstra BRGM 2025–2029 mewajibkan rehabilitasi 600.000 ha mangrove, namun tanpa MRV digital target sulit terukur; <b>(2) finansial</b> dana TJSL/CSR Rp 14 T/tahun (OJK 2024) tidak optimal tersalurkan ke proyek lingkungan terverifikasi; <b>(3) lapangan</b> 68% program tanam gagal lestari (BRIN 2024) akibat lemahnya monitoring pasca-tanam. Tanpa solusi, kerugian akumulatif: target NDC tertunda, anggaran tumpang tindih Rp 1,2 T (BPK 2023), dan kepercayaan publik atas program rehabilitasi turun.</p>
+          <span class="wmax">Maksimal 120 kata</span>
+        </div>
+
+        <div class="sub">
+          <h3>Evidence of Demand</h3>
+          <p>Bukti demand berasal dari empat sumber: <b>(1) Wawancara lapangan</b> dengan 12 kelompok mitra pesisir di Malang, Pasuruan, Probolinggo (Q1 2026) — 100% menyatakan kesulitan akses pendanaan dan butuh sistem pelaporan digital. <b>(2) Survey 87 responden donor potensial</b> — 81% bersedia berkontribusi via QRIS jika ada tracking transparan, dengan rentang Rp 10rb–Rp 500rb. <b>(3) Data sekunder regulasi:</b> POJK 51/2017 mewajibkan korporasi listed melaporkan keberlanjutan; BRGM merilis target 2025–2029 yang menuntut MRV terstandar; KLHK PMN 2021 menyediakan baseline yang siap dimanfaatkan. <b>(4) Komunikasi awal</b> dengan dua perusahaan ESG (sektor energi dan sawit) mengindikasikan minat alokasi TJSL ke proyek mangrove terverifikasi karena kesulitan menemukan kanal kredibel. <b>(5) Engagement organik</b> portal MVP id-map-national.vercel.app: 320+ unique visitor sejak pre-launch, 14 mitra mendaftar awal. Kesimpulan utama: demand nyata pada tiga sisi (mitra, donor, korporasi) dan didukung tekanan regulasi pada keempat (pemerintah).</p>
+          <span class="wmax">Maksimal 220 kata</span>
+        </div>
+
+        <div class="sub">
+          <h3>Target Market</h3>
+          <p>Target market utama tersegmentasi: <b>(1) Mitra Komunitas</b> — KTH, KUB Pesisir, LMDH, kelompok tani-nelayan legal di kawasan mangrove prioritas BRGM (Sumatera, Kalimantan, Jawa, Sulawesi); fokus awal Jawa Timur (Malang, Pasuruan, Probolinggo). <b>(2) Donor Individu</b> — generasi muda 20–40 tahun, urban, aktif media sosial, peduli iklim, terbiasa transaksi QRIS. <b>(3) Korporasi B2B</b> — perusahaan listed dengan POJK 51/2017 (energi, perbankan, agribisnis) dan korporasi MNC dengan komitmen ESG. <b>(4) Pemerintah B2G</b> — Bappeda Provinsi/Kab, DKP, KLHK Direktorat PPI, KKP, BRGM. Hindari target generik “seluruh masyarakat”.</p>
+          <span class="wmax">Maksimal 150 kata</span>
+        </div>
+
+        <div class="sub">
+          <h3>Adoption Readiness</h3>
+          <p>Kesiapan adopsi tinggi pada donor individu dan korporasi karena keduanya familiar transaksi digital, namun lebih hati-hati pada sisi mitra komunitas pesisir. <b>Faktor pendukung:</b> penetrasi QRIS nasional &gt;52 juta merchant (BI 2024), smartphone reach &gt;78% (APJII 2024), kesadaran iklim meningkat di kalangan urban. <b>Hambatan:</b> literasi digital di kawasan pesisir terpencil masih rendah, akses internet di lokasi tanam tidak stabil, kekhawatiran legalitas data, kebiasaan pelaporan kertas pada dinas. <b>Strategi mitigasi:</b> (1) onboarding mitra dengan capacity building tatap muka 2–3 sesi; (2) mode offline-first pada aplikasi mitra untuk lokasi terpencil; (3) edukasi regulasi UU PDP dan transparansi audit; (4) bundling pelaporan ID-MAP dengan format Permen LHK 7/2021 sehingga sekaligus jadi dokumen resmi dinas; (5) chatbot AI ID-MAP berbahasa Indonesia sebagai pendamping virtual untuk menurunkan beban literasi teknis.</p>
+          <span class="wmax">Maksimal 180 kata</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="pgno">6</div>
+</div>
+
+<!-- ============= PAGE 7 - PROGRESS UPDATE & CLOSING ============= -->
+<div class="page">
+  <div class="layout">
+    <!-- LEFT: Progress Update & Attachment -->
+    <div class="col">
+      <div class="sec-hd">Progress Update &amp; Attachment</div>
+      <div class="box">
+        <p class="intro">Bagian ini menunjukkan perkembangan terbaru sejak submission sebelumnya dan bukti pendukung yang dapat memperkuat proposal.</p>
+
+        <div class="sub">
+          <h3>Progress Since the 1st Submission</h3>
+          <p>Sejak submission pertama, ID-MAP melakukan repositioning fundamental dari sekadar “Integrasi Data Mangrove dan Pesisir” menjadi platform <b>Sustainability Ekosistem Pesisir Nusantara</b> tri-sektor (B2B, B2C, B2G + Mitra). Hasil konkret: (1) MVP web live di id-map-national.vercel.app dengan dashboard 4-role; (2) modul Project Initiation untuk mitra dan Funding Gateway QRIS (simulasi) telah berjalan; (3) MRV Engine v1 dengan upload foto georeferenced dan integrasi peta Leaflet; (4) integrasi Chatbot AI ID-MAP berbahasa Indonesia; (5) prototipe Dashboard AI Mangrove Nasional dengan data agregat per provinsi; (6) wawancara lapangan 12 mitra dan survey 87 donor potensial; (7) komunikasi awal dengan dua korporasi ESG dan dua dinas daerah; (8) revisi model bisnis dari single-revenue ke multi-revenue tri-sektor.</p>
+          <span class="wmax">Maksimal 150 kata</span>
+        </div>
+
+        <div class="sub">
+          <h3>Current Status</h3>
+          <p><b>Status:</b> Prototype / MVP aktif. Bukti pendukung: portal live di <b>id-map-national.vercel.app</b>, screenshot dashboard 4-role, demo MRV upload, simulasi QRIS, transkrip wawancara mitra, dan dokumentasi teknis.</p>
+          <span class="wmax">Maksimal 50 kata</span>
+        </div>
+
+        <div class="sub">
+          <h3>Attachment</h3>
+          <ul>
+            <li><b>MVP Live:</b> https://id-map-national.vercel.app</li>
+            <li><b>Demo Video:</b> walkthrough dashboard 4-role &amp; alur QRIS</li>
+            <li><b>UI Mockup:</b> Project Initiation, Funding, MRV, Dashboard AI</li>
+            <li><b>Diagram Sistem:</b> arsitektur Next.js + Convex + AI + QRIS</li>
+            <li><b>Hasil Survey &amp; Wawancara:</b> 12 mitra + 87 donor</li>
+            <li><b>Dokumen Teknis:</b> stack, skema data, RBAC, MRV pipeline</li>
+            <li><b>Proposal Lengkap:</b> /docs/PROPOSAL-IDMAP-REPOSITIONING.md</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Closing -->
+    <div class="col">
+      <div class="closing">
+        <h1>SELAMAT<br>MENGERJAKAN!</h1>
+        <div class="sub-c">Terima kasih atas kesempatan submission Tahap 2. Kami siap diskusi lebih lanjut, demo live MVP, dan kolaborasi pilot di kawasan pesisir prioritas.</div>
+        <div class="url">id-map-national.vercel.app</div>
+      </div>
+    </div>
+  </div>
+  <div class="pgno">7</div>
+</div>
+
+</body>
+</html>

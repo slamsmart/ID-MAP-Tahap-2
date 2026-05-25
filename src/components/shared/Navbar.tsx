@@ -37,9 +37,9 @@ export default function Navbar() {
           <Image
             src="/images/logo.webp"
             alt="ID-MAP"
-            width={180}
-            height={56}
-            className="h-12 md:h-14 w-auto object-contain"
+            width={260}
+            height={80}
+            className="h-16 md:h-20 w-auto object-contain"
             priority
           />
         </Link>

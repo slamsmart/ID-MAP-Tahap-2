@@ -285,7 +285,7 @@ export default function KelolaPokmaswasPage() {
                 <th className="text-left text-xs text-gray-400 font-semibold px-3 py-3 hidden md:table-cell">Alamat</th>
                 <th className="text-left text-xs text-gray-400 font-semibold px-3 py-3">Ketua</th>
                 <th className="text-left text-xs text-gray-400 font-semibold px-3 py-3 hidden lg:table-cell">No. HP</th>
-                <th className="text-left text-xs text-gray-400 font-semibold px-3 py-3 hidden lg:table-cell">Koordinat</th>
+                <th className="text-left text-xs text-gray-400 font-semibold px-3 py-3 hidden md:table-cell">Koordinat</th>
                 <th className="text-left text-xs text-gray-400 font-semibold px-3 py-3 w-16">Aksi</th>
               </tr>
             </thead>
@@ -335,7 +335,7 @@ export default function KelolaPokmaswasPage() {
                         <span className="text-gray-300 text-xs">—</span>
                       )}
                     </td>
-                    <td className="px-3 py-3 hidden lg:table-cell">
+                    <td className="px-3 py-3 hidden md:table-cell">
                       <span className="text-xs font-mono text-gray-400">{item.lat}, {item.lon}</span>
                     </td>
                     <td className="px-3 py-3">

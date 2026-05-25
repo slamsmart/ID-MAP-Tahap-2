@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ID-MAP — Satu Platform, Seluruh Ekosistem Mangrove Indonesia</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800&display=swap');
+
+  :root {
+    --g900: #0f3d2e; --g800: #14532d; --g700: #15803d;
+    --g600: #16a34a; --g500: #22c55e; --g400: #4ade80;
+    --g100: #dcfce7; --g50:  #f0fdf4;
+    --b600: #0284c7; --b100: #e0f2fe;
+    --o600: #d97706; --o100: #fef3c7;
+    --r600: #dc2626; --r50:  #fef2f2;
+    --t600: #0d9488; --t50:  #f0fdfa;
+    --s900: #0f172a; --s800: #1e293b; --s700: #334155;
+    --s600: #475569; --s400: #94a3b8; --s200: #e2e8f0;
+    --s100: #f1f5f9; --s50:  #f8fafc; --w: #ffffff;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family:'Inter',system-ui,sans-serif;
+    font-size:10pt; color:var(--s800);
+    background:#d1d5db; line-height:1.6;
+  }
+
+  /* PAGE */
+  .page {
+    width:210mm; min-height:297mm; background:var(--w);
+    margin:10mm auto; padding:0;
+    box-shadow:0 4px 24px rgba(0,0,0,.15);
+    position:relative; overflow:hidden;
+    page-break-after:always;
+    display:flex; flex-direction:column;
+  }
+
+  /* ─── COVER ─── */
+  .cover {
+    min-height:297mm; background:var(--g900);
+    display:flex; flex-direction:column; position:relative; overflow:hidden;
+  }
+  .cover-bg {
+    position:absolute; inset:0;
+    background:
+      radial-gradient(ellipse 80% 60% at 70% 20%, rgba(34,197,94,.18) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 80% at 10% 80%, rgba(13,148,136,.15) 0%, transparent 55%),
+      linear-gradient(160deg, #0f3d2e 0%, #0d3327 50%, #0a2820 100%);
+  }
+  .cover-waves {
+    position:absolute; bottom:0; left:0; right:0;
+    height:120px; opacity:.12;
+    background:repeating-linear-gradient(
+      0deg,
+      transparent, transparent 18px,
+      rgba(74,222,128,.4) 18px, rgba(74,222,128,.4) 20px
+    );
+  }
+  .cover-inner { position:relative; z-index:1; display:flex; flex-direction:column; height:100%; padding:18mm 18mm 0; }
+  .cover-label {
+    display:inline-flex; align-items:center; gap:6px;
+    background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2);
+    color:rgba(255,255,255,.85); font-size:7pt; font-weight:600;
+    letter-spacing:2px; text-transform:uppercase;
+    padding:5px 12px; border-radius:20px; margin-bottom:14px; width:fit-content;
+  }
+  .cover-logo {
+    font-family:'Playfair Display',serif;
+    font-size:56pt; font-weight:800; color:#fff;
+    line-height:.9; letter-spacing:-2px;
+  }
+  .cover-logo .accent { color:var(--g400); }
+  .cover-subtitle {
+    font-size:11.5pt; color:rgba(255,255,255,.78); font-weight:400;
+    margin-top:8px; line-height:1.5; max-width:135mm;
+  }
+  .cover-divider {
+    width:48px; height:3px; background:var(--g400);
+    border-radius:2px; margin:10mm 0 8mm;
+  }
+  .cover-title {
+    font-size:15pt; font-weight:700; color:#fff; line-height:1.35;
+    max-width:140mm;
+  }
+  .cover-tagline {
+    font-size:9pt; color:rgba(255,255,255,.6); margin-top:5px;
+  }
+  .cover-cards {
+    display:grid; grid-template-columns:repeat(3,1fr);
+    gap:8px; margin:10mm 0;
+  }
+  .ccard {
+    background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15);
+    border-radius:10px; padding:10px 12px; text-align:center;
+  }
+  .ccard .em { font-size:18pt; margin-bottom:3px; }
+  .ccard .cn { font-size:8pt; font-weight:700; color:#fff; }
+  .ccard .cs { font-size:6.5pt; color:rgba(255,255,255,.55); margin-top:2px; }
+  .cover-footer {
+    margin-top:auto; padding:8mm 18mm;
+    background:rgba(0,0,0,.25); border-top:1px solid rgba(255,255,255,.08);
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .cover-footer-left { color:rgba(255,255,255,.7); font-size:8pt; }
+  .cover-footer-left strong { color:#fff; display:block; font-size:9pt; }
+  .cv { background:var(--g400); color:var(--g900); font-weight:800;
+    font-size:7.5pt; padding:4px 10px; border-radius:6px; letter-spacing:.5px; }
+
+  /* ─── INNER PAGES ─── */
+  .inner { padding:15mm 17mm; flex:1; display:flex; flex-direction:column; }
+  .ph { /* page header */
+    display:flex; justify-content:space-between; align-items:center;
+    padding-bottom:7px; border-bottom:2px solid var(--g500); margin-bottom:11px;
+  }
+  .ph .brand { font-weight:800; font-size:8.5pt; color:var(--g700); letter-spacing:1px; }
+  .ph .clabel { font-size:7pt; color:var(--s400); }
+
+  .ch { margin-bottom:7mm; } /* chapter heading */
+  .ch-num { font-size:7pt; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--g600); margin-bottom:3px; }
+  .ch h2 { font-family:'Playfair Display',serif; font-size:19pt; font-weight:700; color:var(--s900); line-height:1.2; }
+  .ch p { font-size:9.5pt; color:var(--s600); margin-top:4px; line-height:1.5; }
+
+  h3 { font-size:10.5pt; font-weight:700; color:var(--g800);
+    margin:6mm 0 2.5mm; display:flex; align-items:center; gap:6px; }
+  h3::before { content:''; display:inline-block; width:4px; height:13px;
+    background:var(--g500); border-radius:2px; flex-shrink:0; }
+  h4 { font-size:9pt; font-weight:700; color:var(--s800); margin:4mm 0 1.5mm; }
+  p { margin-bottom:3.5mm; font-size:9pt; line-height:1.65; color:var(--s700); }
+  ul,ol { padding-left:15px; margin-bottom:3.5mm; }
+  li { margin-bottom:1.8mm; font-size:9pt; line-height:1.55; color:var(--s700); }
+  li strong { color:var(--s900); }
+
+  /* Callout */
+  .box { border-radius:10px; padding:10px 13px; margin:3.5mm 0; font-size:9pt; }
+  .box-g { background:var(--g50); border-left:4px solid var(--g500); color:var(--g900); }
+  .box-b { background:var(--b100); border-left:4px solid var(--b600); color:#0c4a6e; }
+  .box-o { background:var(--o100); border-left:4px solid var(--o600); color:#78350f; }
+  .box-r { background:var(--r50); border-left:4px solid var(--r600); color:#7f1d1d; }
+  .box strong { font-weight:700; display:block; margin-bottom:2px; }
+
+  /* Table */
+  table { width:100%; border-collapse:collapse; margin:3.5mm 0; font-size:8.5pt; }
+  th { background:var(--g800); color:#fff; font-weight:600; padding:6px 9px; text-align:left; font-size:7.5pt; }
+  td { padding:5.5px 9px; border-bottom:1px solid var(--s200); color:var(--s700); vertical-align:top; }
+  tr:nth-child(even) td { background:var(--s50); }
+
+  /* Stat cards */
+  .sgrid { display:grid; gap:7px; margin:3.5mm 0; }
+  .s2 { grid-template-columns:repeat(2,1fr); }
+  .s3 { grid-template-columns:repeat(3,1fr); }
+  .s4 { grid-template-columns:repeat(4,1fr); }
+  .sc { background:var(--s50); border:1px solid var(--s200); border-radius:10px; padding:9px 11px; }
+  .sc .num { font-size:15pt; font-weight:800; color:var(--g700); line-height:1; }
+  .sc .lbl { font-size:7.5pt; color:var(--s500,#6b7280); margin-top:2px; }
+  .sc .sub { font-size:7pt; color:var(--s400); margin-top:1px; }
+
+  /* Flow */
+  .flow { display:flex; align-items:stretch; gap:0; margin:3.5mm 0;
+    background:var(--g50); border-radius:10px; overflow:hidden; }
+  .fs { flex:1; padding:8px 10px; text-align:center; font-size:8pt;
+    font-weight:600; color:var(--g800); border-right:1px solid rgba(34,197,94,.25);
+    background:var(--w); margin:6px 0 6px 6px; border-radius:8px; }
+  .fs:last-child { margin-right:6px; border-right:none; }
+  .fs .sub { font-size:6.5pt; color:var(--s500,#6b7280); font-weight:400; margin-top:2px; }
+  .fa { color:var(--g500); font-size:11pt; font-weight:700;
+    display:flex; align-items:center; padding:0 2px; flex-shrink:0; }
+
+  /* Badge */
+  .b { display:inline-block; font-size:7pt; font-weight:700;
+    padding:2px 7px; border-radius:20px; }
+  .bg { background:var(--g100); color:var(--g800); }
+  .bb { background:var(--b100); color:#0369a1; }
+  .bo { background:var(--o100); color:#92400e; }
+  .br { background:var(--r50); color:#991b1b; }
+  .bt { background:var(--t50); color:var(--t600); }
+
+  /* Two/three col */
+  .two { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:3mm 0; }
+  .three { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin:3mm 0; }
+
+  /* Role card */
+  .rcard { border-radius:10px; padding:12px; border:1px solid var(--s200); }
+  .rcard .rtitle { font-size:10pt; font-weight:700; color:var(--s900); margin-bottom:4px; display:flex; align-items:center; gap:6px; }
+  .rcard p { font-size:8.5pt; margin-bottom:3mm; }
+  .rcard ul { font-size:8.5pt; }
+
+  /* Service card */
+  .svc { border-radius:10px; border:1px solid var(--s200); overflow:hidden; }
+  .svc-top { padding:10px 12px; }
+  .svc-top .stitle { font-size:9pt; font-weight:700; color:var(--s900); margin-bottom:3px; }
+  .svc-top p { font-size:8.5pt; color:var(--s600); margin:0; }
+  .svc-vals { display:grid; grid-template-columns:repeat(3,1fr);
+    border-top:1px solid var(--s200); background:var(--s50); }
+  .sv { padding:7px 6px; text-align:center; border-right:1px solid var(--s200); }
+  .sv:last-child { border-right:none; }
+  .sv .vv { font-size:9pt; font-weight:800; color:var(--g800); }
+  .sv .vl { font-size:6.5pt; color:var(--s400); margin-top:1px; }
+
+  /* Timeline */
+  .tl { margin:3.5mm 0; }
+  .tli { display:flex; gap:10px; margin-bottom:5mm; }
+  .tld { width:26px; height:26px; flex-shrink:0;
+    background:var(--g600); border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    color:#fff; font-size:8pt; font-weight:700; }
+  .tlc { flex:1; padding-top:3px; }
+  .tlc h4 { margin:0 0 1px; font-size:9pt; }
+  .tlc .tlp { font-size:7.5pt; color:var(--g600); font-weight:600; margin-bottom:2px; }
+  .tlc p { font-size:8.5pt; margin:0; color:var(--s600); }
+
+  /* TOC */
+  .toc-ch { display:flex; justify-content:space-between; align-items:baseline;
+    padding:5px 0 3px; border-bottom:1px solid var(--s300,#cbd5e1);
+    margin-top:4mm; font-weight:700; font-size:9.5pt; color:var(--s900); }
+  .toc-sub { display:flex; justify-content:space-between; align-items:baseline;
+    padding:3px 0 3px 10px; border-bottom:1px dotted var(--s200);
+    font-size:8.5pt; color:var(--s600); }
+  .tp { color:var(--g600); font-weight:700; font-size:9pt; }
+
+  /* Separator */
+  hr { border:none; border-top:1px solid var(--s200); margin:4mm 0; }
+
+  /* Footer */
+  .pf { margin-top:auto; padding-top:4mm; border-top:1px solid var(--s200);
+    display:flex; justify-content:space-between; align-items:center;
+    font-size:7pt; color:var(--s400); }
+  .dot { width:5px; height:5px; background:var(--g400); border-radius:50%;
+    display:inline-block; margin:0 3px; }
+
+  .small { font-size:8pt; color:var(--s500,#6b7280); }
+  .spacer { margin-top:5mm; }
+
+  @media print {
+    body { background:white; }
+    .page { margin:0; box-shadow:none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════ COVER ══════════ -->
+<div class="page">
+<div class="cover">
+  <div class="cover-bg"></div>
+  <div class="cover-waves"></div>
+  <div class="cover-inner">
+    <div class="cover-label">🌿 Platform Digital Ekosistem Pesisir Indonesia · 2026</div>
+    <div class="cover-logo">ID-<span class="accent">MAP</span></div>
+    <div class="cover-subtitle">Indonesia Mangrove Action Platform<br>Data terintegrasi untuk pemantauan, rehabilitasi, dan keberlanjutan pesisir nusantara.</div>
+    <div class="cover-divider"></div>
+    <div class="cover-title">Satu Platform.<br>Seluruh Ekosistem Mangrove Indonesia.</div>
+    <div class="cover-tagline">Booklet Platform · Tahap 2 · v1.0 · Mei 2026</div>
+
+    <div class="cover-cards">
+      <div class="ccard"><div class="em">🌿</div><div class="cn">Rehabilitasi</div><div class="cs">Penanaman &amp; pemulihan mangrove</div></div>
+      <div class="ccard"><div class="em">🌊</div><div class="cn">Abrasi Pantai</div><div class="cs">Monitoring &amp; pengendalian erosi</div></div>
+      <div class="ccard"><div class="em">🐢</div><div class="cn">Habitat Penyu</div><div class="cs">Perlindungan satwa pesisir</div></div>
+      <div class="ccard"><div class="em">👥</div><div class="cn">Pokmaswas</div><div class="cs">Pemberdayaan masyarakat pesisir</div></div>
+      <div class="ccard"><div class="em">📊</div><div class="cn">MRV Digital</div><div class="cs">Monitoring, Reporting, Verification</div></div>
+      <div class="ccard"><div class="em">🤖</div><div class="cn">Analisis AI</div><div class="cs">Dashboard &amp; AI mangrove nasional</div></div>
+    </div>
+  </div>
+
+  <div class="cover-footer">
+    <div class="cover-footer-left">
+      <strong>Slamet Abdullah, S.Pi</strong>
+      Cabang Dinas Kelautan dan Perikanan Kab. Malang<br>
+      &amp; Dimas Syarif Alim, S.Kel — GIS Specialist
+    </div>
+    <div style="text-align:right">
+      <div style="color:rgba(255,255,255,.6);font-size:7.5pt;margin-bottom:5px">id-map-national.vercel.app</div>
+      <div class="cv">TAHAP 2 · v1.0</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════ DAFTAR ISI ══════════ -->
+<div class="page">
+<div class="inner">
+  <div class="ph"><span class="brand">ID-MAP</span><span class="clabel">Daftar Isi</span></div>
+  <div class="ch">
+    <div class="ch-num">Daftar Isi</div>
+    <h2>Panduan Platform ID-MAP</h2>
+    <p>Booklet ini menjelaskan platform ID-MAP secara aplikatif — dari masalah pesisir yang dihadapi, solusi yang ditawarkan, cara kerja nyata di lapangan, hingga peran setiap pihak yang terlibat.</p>
+  </div>
+
+  <div class="toc-ch"><span>BAB 1 · Konteks &amp; Masalah</span><span class="tp">3</span></div>
+  <div class="toc-sub"><span>1.1 Kondisi Pesisir Indonesia</span><span class="tp">3</span></div>
+  <div class="toc-sub"><span>1.2 Masalah Nyata di Lapangan</span><span class="tp">3</span></div>
+  <div class="toc-sub"><span>1.3 Siapa yang Paling Terdampak</span><span class="tp">4</span></div>
+
+  <div class="toc-ch"><span>BAB 2 · Tentang ID-MAP</span><span class="tp">5</span></div>
+  <div class="toc-sub"><span>2.1 Apa itu ID-MAP</span><span class="tp">5</span></div>
+  <div class="toc-sub"><span>2.2 Perjalanan Ide Platform</span><span class="tp">5</span></div>
+  <div class="toc-sub"><span>2.3 Visi, Misi &amp; Tagline</span><span class="tp">5</span></div>
+
+  <div class="toc-ch"><span>BAB 3 · Enam Layanan Platform</span><span class="tp">6</span></div>
+  <div class="toc-sub"><span>3.1 Rehabilitasi Mangrove</span><span class="tp">6</span></div>
+  <div class="toc-sub"><span>3.2 Penyulaman Mangrove</span><span class="tp">6</span></div>
+  <div class="toc-sub"><span>3.3 Monev &amp; MRV Digital</span><span class="tp">7</span></div>
+  <div class="toc-sub"><span>3.4 Decarbonisasi Aquaculture</span><span class="tp">7</span></div>
+  <div class="toc-sub"><span>3.5 Perbaikan Habitat Penyu</span><span class="tp">7</span></div>
+  <div class="toc-sub"><span>3.6 Pemberdayaan Masyarakat Pesisir</span><span class="tp">7</span></div>
+
+  <div class="toc-ch"><span>BAB 4 · Tiga Peran Utama</span><span class="tp">8</span></div>
+  <div class="toc-sub"><span>4.1 Sahabat — Individu &amp; Pemerhati Lingkungan</span><span class="tp">8</span></div>
+  <div class="toc-sub"><span>4.2 Mitra — Komunitas &amp; NGO Pelaksana</span><span class="tp">9</span></div>
+  <div class="toc-sub"><span>4.3 Perusahaan — Korporasi &amp; CSR</span><span class="tp">9</span></div>
+  <div class="toc-sub"><span>4.4 Verifikator — Petugas &amp; Peneliti Lapangan</span><span class="tp">9</span></div>
+
+  <div class="toc-ch"><span>BAB 5 · Cara Kerja Platform</span><span class="tp">10</span></div>
+  <div class="toc-sub"><span>5.1 Alur Kerja Lengkap</span><span class="tp">10</span></div>
+  <div class="toc-sub"><span>5.2 Peta Interaktif: Abrasi, Penyu, Pokmaswas</span><span class="tp">11</span></div>
+  <div class="toc-sub"><span>5.3 Dashboard per Peran</span><span class="tp">11</span></div>
+  <div class="toc-sub"><span>5.4 AI Chatbot &amp; Analisis Mangrove Nasional</span><span class="tp">12</span></div>
+
+  <div class="toc-ch"><span>BAB 6 · Model Kolaborasi (B2C, B2B, B2G)</span><span class="tp">13</span></div>
+  <div class="toc-ch"><span>BAB 7 · Dampak Nyata untuk Komunitas Pesisir</span><span class="tp">14</span></div>
+  <div class="toc-ch"><span>BAB 8 · Roadmap &amp; Status Platform</span><span class="tp">15</span></div>
+  <div class="toc-ch"><span>BAB 9 · Tim &amp; Mitra Platform</span><span class="tp">16</span></div>
+
+  <div class="pf">
+    <span>ID-MAP · Indonesia Mangrove Action Platform</span>
+    <span><span class="dot"></span>Daftar Isi</span>
+  </div>
+</div>
+</div>
+
+<!-- ══════════ BAB 1: KONTEKS & MASALAH ══════════ -->
+<div class="page">
+<div class="inner">
+  <div class="ph"><span class="brand">ID-MAP</span><span class="clabel">BAB 1 · Konteks &amp; Masalah</span></div>
+  <div class="ch">
+    <div class="ch-num">BAB 1</div>
+    <h2>Konteks &amp; Masalah Pesisir Indonesia</h2>
+    <p>Indonesia memiliki garis pantai terpanjang kedua di dunia — namun kekayaan ini menghadapi tekanan degradasi yang mengancam penghidupan jutaan masyarakat pesisir.</p>
+  </div>
+
+  <h3>1.1 Kondisi Pesisir Indonesia</h3>
+  <div class="sgrid s4">
+    <div class="sc"><div class="num">3,36</div><div class="lbl">Juta ha mangrove</div><div class="sub">No. 2 terluas di dunia (20,4%)</div></div>
+    <div class="sc"><div class="num">99.093</div><div class="lbl">km Garis Pantai</div><div class="sub">Terpanjang kedua di dunia</div></div>
+    <div class="sc"><div class="num">600 rb</div><div class="lbl">Ha terdegradasi</div><div class="sub">Butuh rehabilitasi segera</div></div>
+    <div class="sc"><div class="num">60 jt+</div><div class="lbl">Nelayan Indonesia</div><div class="sub">Bergantung pada ekosistem pesisir</div></div>
+  </div>
+
+  <p>Ekosistem pesisir Indonesia — mangrove, padang lamun, terumbu karang, estuari — adalah fondasi kehidupan yang menyangga ratusan juta jiwa. Hutan mangrove saja menjadi rumah pemijahan ikan, penyangga abrasi, dan sumber penghidupan komunitas nelayan, petambak, dan Pokmaswas di seluruh nusantara.</p>
+
+  <div class="box box-r">
+    <strong>Krisis yang Sering Tidak Terlihat</strong>
+    Indonesia kehilangan lebih dari 40.000 ha mangrove per tahun. 68% program penanaman gagal dalam jangka panjang karena tidak ada sistem monitoring pasca-tanam (BRIN, 2024). Bukan karena tidak ada bibit — tapi karena tidak ada sistem yang memastikan keberlangsungannya.
+  </div>
+
+  <h3>1.2 Masalah Nyata di Lapangan</h3>
+
+  <div class="three">
+    <div style="background:var(--r50);border:1px solid #fecaca;border-radius:10px;padding:11px">
+      <div style="font-size:20pt;margin-bottom:5px">🌊</div>
+      <h4 style="color:#7f1d1d;margin:0 0 5px">Abrasi Tidak Terpantau</h4>
+      <p style="font-size:8.5pt;margin:0;color:var(--s700)">Data titik abrasi tersebar di berbagai instansi, tidak teragregasi. Petugas lapangan tidak tahu lokasi mana paling kritis dan butuh intervensi segera.</p>
+    </div>
+    <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:11px">
+      <div style="font-size:20pt;margin-bottom:5px">👥</div>
+      <h4 style="color:#7c2d12;margin:0 0 5px">Komunitas Tidak Terhubung</h4>
+      <p style="font-size:8.5pt;margin:0;color:var(--s700)">Pokmaswas, nelayan, dan kelompok pesisir bekerja tanpa sistem pelaporan yang terhubung. Data lapangan mereka tidak masuk ke sistem resmi manapun.</p>
+    </div>
+    <div style="background:var(--g50);border:1px solid var(--g100);border-radius:10px;padding:11px">
+      <div style="font-size:20pt;margin-bottom:5px">📋</div>
+      <h4 style="color:var(--g800);margin:0 0 5px">MRV Manual &amp; Mahal</h4>
+      <p style="font-size:8.5pt;margin:0;color:var(--s700)">Monitoring, Reporting, Verification masih dilakukan manual dengan Excel dan survei lapangan yang tidak terstandar. Tidak ada basis data terpadu untuk evaluasi program.</p>
+    </div>
+    <div style="background:var(--b100);border:1px solid #bae6fd;border-radius:10px;padding:11px">
+      <div style="font-size:20pt;margin-bottom:5px">💸</div>
+      <h4 style="color:#0c4a6e;margin:0 0 5px">Pendanaan Tidak Transparan</h4>
+      <p style="font-size:8.5pt;margin:0;color:var(--s700)">Masyarakat yang ingin berkontribusi tidak punya jalur yang jelas dan terpercaya. Tidak ada tracking dampak nyata dari setiap donasi yang masuk.</p>
+    </div>
+    <div style="background:#fdf4ff;border:1px solid #e9d5ff;border-radius:10px;padding:11px">
+      <div style="font-size:20pt;margin-bottom:5px">🗺️</div>
+      <h4 style="color:#581c87;margin:0 0 5px">Data Spasial Terfragmentasi</h4>
+      <p style="font-size:8.5pt;margin:0;color:var(--s700)">Informasi penyu, abrasi, dan kawasan mangrove tersebar di KLHK, KKP, BIG, dan dinas daerah — tidak pernah terintegrasi dalam satu peta yang bisa diakses bersama.</p>
+    </div>
+    <div style="background:var(--t50);border:1px solid #99f6e4;border-radius:10px;padding:11px">
+      <div style="font-size:20pt;margin-bottom:5px">🐟</div>
+      <h4 style="color:var(--t600);margin:0 0 5px">Tambak vs Mangrove</h4>
+      <p style="font-size:8.5pt;margin:0;color:var(--s700)">Konversi mangrove menjadi tambak terus terjadi tanpa solusi yang mengintegrasikan keduanya. Tidak ada platform yang memfasilitasi budidaya silvofishery yang berkelanjutan.</p>
+    </div>
+  </div>
+
+  <h3>1.3 Siapa yang Paling Terdampak</h3>
+  <table>
+    <tr><th>Pihak</th><th>Jumlah / Skala</th><th>Dampak Konkret</th></tr>
+    <tr><td><strong>Nelayan &amp; Petambak Pesisir</strong></td><td>±2,2 juta jiwa bergantung langsung</td><td>Kehilangan tempat cari nafkah ketika ekosistem rusak; rumah terancam abrasi</td></tr>
+    <tr><td><strong>Pokmaswas (Kelompok Pengawas)</strong></td><td>500+ kelompok aktif di Indonesia</td><td>Kerja keras tanpa tools digital; laporan tidak masuk sistem resmi; sulit dapat dukungan</td></tr>
+    <tr><td><strong>NGO &amp; Komunitas Konservasi</strong></td><td>Ratusan kelompok di 34 provinsi</td><td>Proyek restorasi stagnan karena tidak punya sistem pelaporan MRV yang diakui</td></tr>
+    <tr><td><strong>Masyarakat Kota Peduli Lingkungan</strong></td><td>Jutaan potensi kontributor</td><td>Ingin berkontribusi tapi tidak ada saluran yang transparan dan terukur</td></tr>
+    <tr><td><strong>Petugas Dinas KP &amp; Lingkungan</strong></td><td>Ratusan instansi daerah</td><td>Tidak ada platform terpadu untuk input dan monitoring data ekosistem pesisir</td></tr>
+  </table>
+
+  <div class="pf">
+    <span>ID-MAP · Indonesia Mangrove Action Platform</span>
+    <span><span class="dot"></span>Hal. 3–4</span>
+  </div>
+</div>
+</div>
+
+<!-- ══════════ BAB 2: TENTANG ID-MAP ══════════ -->
+<div class="page">
+<div class="inner">
+  <div class="ph"><span class="brand">ID-MAP</span><span class="clabel">BAB 2 · Tentang ID-MAP</span></div>
+  <div class="ch">
+    <div class="ch-num">BAB 2</div>
+    <h2>Tentang ID-MAP</h2>
+    <p>Platform digital yang lahir dari pengalaman nyata di lapangan — bukan dari ruang rapat korporasi, tapi dari keprihatinan seorang petugas dinas yang melihat langsung rapuhnya ekosistem pesisir kita.</p>
+  </div>
+
+  <h3>2.1 Apa itu ID-MAP?</h3>
+  <p><strong>ID-MAP (Indonesia Mangrove Action Platform)</strong> adalah platform infrastruktur digital yang menghubungkan kontribusi masyarakat, pengembangan proyek mangrove oleh komunitas, pemantauan ekosistem oleh verifikator lapangan, dan dukungan korporasi — dalam satu sistem terpadu yang transparan dan berdampak nyata.</p>
+
+  <div class="two">
+    <div class="box box-g">
+      <strong>Visi</strong>
+      Menjadi platform infrastruktur terdepan yang mendukung pemulihan ekosistem pesisir Indonesia secara transparan, inklusif, dan berkelanjutan — dengan komunitas pesisir sebagai ujung tombak pelaksanaan.
+    </div>
+    <div class="box box-b">
+      <strong>Misi</strong>
+      Mempercepat restorasi mangrove Indonesia melalui digitalisasi MRV, pemberdayaan komunitas Pokmaswas, koneksi pendanaan publik via QRIS, dan penyediaan data spasial terintegrasi bagi seluruh stakeholder.
+    </div>
+  </div>
+
+  <div class="box box-g" style="text-align:center;padding:12px">
+    <strong style="font-size:12pt;font-family:'Playfair Display',serif;font-weight:700">"Satu Platform. Seluruh Ekosistem Mangrove Indonesia."</strong>
+    <div style="font-size:8.5pt;font-weight:400;margin-top:4px">Data terintegrasi untuk pemantauan, rehabilitasi, dan keberlanjutan pesisir nusantara.</div>
+  </div>
+
+  <h3>2.2 Perjalanan Ide Platform</h3>
+  <div class="tl">
+    <div class="tli">
+      <div class="tld">1</div>
+      <div class="tlc">
+        <div class="tlp">GENESIS · 2025 — Integrasi Data</div>
+        <h4>Dari Keprihatinan Lapangan</h4>
+        <p>Sebagai petugas Dinas Kelautan dan Perikanan, founder melihat langsung: data mangrove tersebar di berbagai instansi, Pokmaswas tidak punya tools digital, dan penanaman yang dilakukan susah payah gagal karena tidak ada monitoring. Ide awal: <em>satu portal agregasi data mangrove Indonesia.</em></p>
+      </div>
+    </div>
+    <div class="tli">
+      <div class="tld">2</div>
+      <div class="tlc">
+        <div class="tlp">EVOLUSI · Pertengahan 2025 — Platform Aksi</div>
+        <h4>Data Saja Tidak Cukup</h4>
+        <p>Pemahaman berkembang: data tanpa aksi tidak menggerakkan perubahan. Platform diperluas menjadi alat aksi nyata — dashboard multi-role, peta interaktif abrasi-penyu-pokmaswas, donasi via QRIS, dan MRV digital. Tagline bergeser ke <em>"data terintegrasi untuk pemantauan, rehabilitasi, dan keberlanjutan pesisir."</em></p>
+      </div>
+    </div>
+    <div class="tli">
+      <div class="tld">3</div>
+      <div class="tlc">
+        <div class="tlp">SAAT INI · 2026 — Ekosistem Kolaborasi</div>
+        <h4>Menghubungkan Semua Pihak</h4>
+        <p>ID-MAP kini menghubungkan lima peran: Sahabat (donor individu), Mitra (komunitas pelaksana), Verifikator (peneliti dan petugas dinas), Perusahaan (CSR corporate), dan Admin. Semuanya dalam satu platform dengan peta interaktif, AI analisis, dan live chat berbasis AI.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>2.3 Mengapa ID-MAP Berbeda?</h3>
+  <table>
+    <tr><th>Aspek</th><th>Pendekatan Lama</th><th>ID-MAP</th></tr>
+    <tr><td><strong>Data ekosistem</strong></td><td>Tersebar di banyak instansi, tidak terintegrasi</td><td>Satu peta interaktif: abrasi, penyu, pokmaswas — real-time</td></tr>
+    <tr><td><strong>Laporan MRV</strong></td><td>Manual, Excel, tidak terstandar</td><td>Digital, berstandar, audit trail, terhubung ke SRN KLHK</td></tr>
+    <tr><td><strong>Pendanaan restorasi</strong></td><td>Tidak transparan, sulit dijangkau individu</td><td>QRIS mulai Rp 10.000, tracking dampak per kontribusi</td></tr>
+    <tr><td><strong>Peran Pokmaswas</strong></td><td>Tidak diintegrasikan ke sistem digital</td><td>Punya dashboard, input data, dan pengakuan resmi</td></tr>
+    <tr><td><strong>Built by</strong></td><td>Produk dari "menara gading"</td><td>Dibangun oleh petugas DKP yang tahu masalah dari dalam</td></tr>
+  </table>
+
+  <div class="pf">
+    <span>ID-MAP · Indonesia Mangrove Action Platform</span>
+    <span><span class="dot"></span>Hal. 5</span>
+  </div>
+</div>
+</div>
+
+<!-- ══════════ BAB 3: ENAM LAYANAN ══════════ -->
+<div class="page">
+<div class="inner">
+  <div class="ph"><span class="brand">ID-MAP</span><span class="clabel">BAB 3 · Enam Layanan Platform</span></div>
+  <div class="ch">
+    <div class="ch-num">BAB 3</div>
+    <h2>Enam Layanan Platform</h2>
+    <p>Dari penanaman bibit hingga perlindungan penyu — enam layanan yang mencakup seluruh aspek pemulihan dan perlindungan ekosistem pesisir Indonesia.</p>
+  </div>
+
+  <div class="sgrid s2" style="gap:8px">
+
+    <div class="svc">
+      <div class="svc-top" style="border-left:4px solid #15803d">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
+          <div style="width:32px;height:32px;background:#15803d;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14pt">🌿</div>
+          <div><span class="b bg">Ekosistem</span><div class="stitle">Rehabilitasi Mangrove</div></div>
+        </div>
+        <p>Penanaman dan pemulihan kawasan mangrove terdegradasi dengan pendekatan berbasis ekosistem dan partisipasi masyarakat lokal. Pemilihan jenis mangrove lokal sesuai kondisi substrat dan salinitas.</p>
+      </div>
+      <div class="svc-vals">
+        <div class="sv"><div class="vv">600 rb ha</div><div class="vl">Target PMN Nasional</div></div>
+        <div class="sv"><div class="vv">47,8%</div><div class="vl">Realisasi s/d 2024</div></div>
+        <div class="sv"><div class="vv">9 Provinsi</div><div class="vl">Prioritas Restorasi</div></div>
+      </div>
+    </div>
+
+    <div class="svc">
+      <div class="svc-top" style="border-left:4px solid #0d9488">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
+          <div style="width:32px;height:32px;background:#0d9488;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14pt">🌱</div>
+          <div><span class="b bt">Revegetasi</span><div class="stitle">Penyulaman Mangrove</div></div>
+        </div>
+        <p>Pengisian kembali tanaman yang mati atau rusak untuk memastikan kepadatan tegakan dan keberhasilan tumbuh jangka panjang. Monitoring survival rate setiap 3 bulan menggunakan platform.</p>
+      </div>
+      <div class="svc-vals">
+        <div class="sv"><div class="vv">85%+</div><div class="vl">Target Survival Rate</div></div>
+        <div class="sv"><div class="vv">120+ Spesies</div><div class="vl">Mangrove Lokal</div></div>
+        <div class="sv"><div class="vv">3 Bulan</div><div class="vl">Siklus Monitoring</div></div>
+      </div>
+    </div>
+
+    <div class="svc">
+      <div class="svc-top" style="border-left:4px solid #2563eb">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
+          <div style="width:32px;height:32px;background:#2563eb;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14pt">📊</div>
+          <div><span class="b bb">Teknologi</span><div class="stitle">Monev &amp; MRV Digital</div></div>
+        </div>
+        <p>Pemantauan, evaluasi, dan pelaporan berkala menggunakan citra satelit Sentinel-2 resolusi 10 meter dan survei lapangan terstandar. Laporan MRV terintegrasi langsung ke dashboard dan terdaftar SRN KLHK.</p>
+      </div>
+      <div class="svc-vals">
+        <div class="sv"><div class="vv">10 m</div><div class="vl">Resolusi Satelit</div></div>
+        <div class="sv"><div class="vv">MRV Ready</div><div class="vl">SRN KLHK</div></div>
+        <div class="sv"><div class="vv">Audit Trail</div><div class="vl">Laporan Digital</div></div>
+      </div>
+    </div>
+
+    <div class="svc">
+      <div class="svc-top" style="border-left:4px solid #0891b2">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
+          <div style="width:32px;height:32px;background:#0891b2;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14pt">🐟</div>
+          <div><span class="b" style="background:#cffafe;color:#164e63">Silvofishery</span><div class="stitle">Decarbonisasi Aquaculture</div></div>
+        </div>
+        <p>Integrasi mangrove pada tambak budidaya (silvofishery) untuk mereduksi dampak lingkungan dan meningkatkan produktivitas ekosistem pesisir secara berkelanjutan. Petambak tetap produktif, mangrove tetap lestari.</p>
+      </div>
+      <div class="svc-vals">
+        <div class="sv"><div class="vv">Silvofishery</div><div class="vl">Model Terintegrasi</div></div>
+        <div class="sv"><div class="vv">Lebih Produktif</div><div class="vl">Tambak &amp; Mangrove</div></div>
+        <div class="sv"><div class="vv">Berkelanjutan</div><div class="vl">Jangka Panjang</div></div>
+      </div>
+    </div>
+
+    <div class="svc">
+      <div class="svc-top" style="border-left:4px solid #d97706">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
+          <div style="width:32px;height:32px;background:#d97706;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14pt">🐢</div>
+          <div><span class="b bo">Konservasi</span><div class="stitle">Perbaikan Habitat Penyu</div></div>
+        </div>
+        <p>Pemulihan kawasan pantai bersarang penyu melalui rehabilitasi vegetasi pesisir, patroli 24/7, dan pengelolaan kawasan berbasis konservasi. Data titik pendaratan penyu terintegrasi di peta platform.</p>
+      </div>
+      <div class="svc-vals">
+        <div class="sv"><div class="vv">5 Spesies</div><div class="vl">Penyu Dilindungi</div></div>
+        <div class="sv"><div class="vv">Patroli 24/7</div><div class="vl">Pantai Bersarang</div></div>
+        <div class="sv"><div class="vv">Zero Poaching</div><div class="vl">Target Program</div></div>
+      </div>
+    </div>
+
+    <div class="svc">
+      <div class="svc-top" style="border-left:4px solid #7c3aed">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
+          <div style="width:32px;height:32px;background:#7c3aed;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14pt">👥</div>
+          <div><span class="b" style="background:#ede9fe;color:#4c1d95">Komunitas</span><div class="stitle">Pemberdayaan Masyarakat Pesisir</div></div>
+        </div>
+        <p>Penguatan kapasitas Pokmaswas dan masyarakat pesisir melalui pelatihan, pendampingan, dan sistem informasi pengawasan ekosistem mandiri. Komunitas tidak lagi jadi objek, tapi subjek pengelolaan.</p>
+      </div>
+      <div class="svc-vals">
+        <div class="sv"><div class="vv">500+ Kelompok</div><div class="vl">Pokmaswas Aktif</div></div>
+        <div class="sv"><div class="vv">Bersertifikat</div><div class="vl">Training Resmi</div></div>
+        <div class="sv"><div class="vv">Dashboard</div><div class="vl">Pelaporan Digital</div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="pf">
+    <span>ID-MAP · Indonesia Mangrove Action Platform</span>
+    <span><span class="dot"></span>Hal. 6–7</span>
+  </div>
+</div>
+</div>
+
+<!-- ══════════ BAB 4: TIGA PERAN ══════════ -->
+<div class="page">
+<div class="inner">
+  <div class="ph"><span class="brand">ID-MAP</span><span class="clabel">BAB 4 · Peran-Peran di Platform</span></div>
+  <div class="ch">
+    <div class="ch-num">BAB 4</div>
+    <h2>Tiga Peran Utama + Verifikator</h2>
+    <p>"Tiga Peran, Satu Ekosistem" — ID-MAP menghubungkan individu, komunitas, dan perusahaan untuk menciptakan dampak lingkungan nyata bagi masyarakat pesisir.</p>
+  </div>
+
+  <div class="two">
+    <div class="rcard" style="border-color:var(--g200,#bbf7d0)">
+      <div class="rtitle">🌿 <span class="b bg">Sahabat</span></div>
+      <h4 style="margin-top:5px">Individu &amp; Pemerhati Lingkungan</h4>
+      <p><em>"Saya ingin berbuat untuk lingkungan tapi tidak tahu caranya."</em> — Sahabat adalah siapa saja yang ingin berkontribusi pada pemulihan pesisir, dari mahasiswa, ibu rumah tangga, hingga profesional kota yang peduli lingkungan.</p>
+      <ul>
+        <li>Daftar akun dengan email + verifikasi OTP</li>
+        <li><strong>Kontribusi via QRIS</strong> mulai Rp 10.000 ke proyek mangrove pilihan</li>
+        <li>Pantau dampak nyata real-time: berapa bibit ditanam, garis pantai terlindungi</li>
+        <li>Download <strong>sertifikat kontribusi digital</strong> bernama personal</li>
+        <li>Dashboard "Dampak Saya": bibit didukung, pantai terlindungi, spesies terjaga</li>
+      </ul>
+    </div>
+    <div class="rcard" style="border-color:#bfdbfe">
+      <div class="rtitle">🤝 <span class="b bb">Mitra</span></div>
+      <h4 style="margin-top:5px">Komunitas, NGO &amp; Kelompok Pelaksana</h4>
+      <p><em>"Proyek kami sudah ada tapi sulit dapat pendanaan karena tidak ada sistem pelaporan yang proper."</em> — Mitra adalah komunitas pesisir legal, NGO, Pokmaswas, atau instansi yang menginisiasi dan melaksanakan proyek mangrove.</p>
+      <ul>
+        <li>Onboarding &amp; verifikasi dokumen KYC (KTP/NIB/Akta kelompok)</li>
+        <li>Buat &amp; kelola proyek mangrove: lokasi, luas, jenis, target bibit</li>
+        <li>Terima <strong>pendanaan QRIS</strong> dari donor individu secara transparan</li>
+        <li>Submit laporan <strong>MRV digital</strong> per kuartal dengan foto lapangan GPS</li>
+        <li>Dashboard: proyek aktif, bibit ditanam, dana diterima, status MRV</li>
+        <li>Daftarkan proyek ke <strong>SRN KLHK</strong> melalui platform</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="two">
+    <div class="rcard" style="border-color:#fde68a">
+      <div class="rtitle">🏢 <span class="b bo">Perusahaan</span></div>
+      <h4 style="margin-top:5px">Korporasi &amp; CSR Manager</h4>
+      <p><em>"Kami butuh program CSR yang terukur dan bisa dilaporkan ke stakeholder."</em> — Perusahaan dapat mendukung proyek mangrove terverifikasi dan mendapatkan laporan dampak yang siap digunakan untuk pelaporan keberlanjutan.</p>
+      <ul>
+        <li>Register sebagai perusahaan (profil &amp; verifikasi NIB/NPWP)</li>
+        <li>Browse proyek mangrove terverifikasi di seluruh Indonesia</li>
+        <li>Dukung proyek &amp; dapatkan <strong>invoice resmi + sertifikat</strong></li>
+        <li>Dashboard ESG portfolio: total bibit, luas kawasan didukung, dampak ekosistem</li>
+        <li>Laporan keberlanjutan otomatis siap untuk pelaporan CSR</li>
+      </ul>
+    </div>
+    <div class="rcard" style="border-color:#a5f3fc">
+      <div class="rtitle">🔬 <span class="b bt">Verifikator</span></div>
+      <h4 style="margin-top:5px">Petugas Dinas &amp; Peneliti Lapangan</h4>
+      <p><em>"Data lapangan saya hilang di spreadsheet, tidak ada yang bisa akses."</em> — Verifikator adalah petugas dinas, peneliti LIPI/BRIN, atau akademisi yang memverifikasi data ekosistem dan mengelola informasi spasial pesisir.</p>
+      <ul>
+        <li>Input &amp; kelola data <strong>titik abrasi pantai</strong> beserta tingkat prioritas</li>
+        <li>Update data <strong>titik pendaratan penyu</strong>: spesies, pantai, jumlah sarang</li>
+        <li>Kelola data <strong>Pokmaswas</strong>: nama kelompok, lokasi, kontak, kab/kota</li>
+        <li>Review &amp; approve laporan MRV dari mitra</li>
+        <li>Dashboard statistik: abrasi tinggi/sedang/rendah, sebaran penyu, peta Pokmaswas</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="box box-g" style="margin-top:4mm">
+    <strong>Admin Platform</strong>
+    Admin mengelola seluruh operasional platform: approve KYC pengguna baru, manajemen proyek, pengaturan harga platform, dan dashboard statistik keseluruhan. Admin juga mengelola konten layanan homepage yang bisa diubah langsung dari dashboard tanpa coding.
+  </div>
+
+  <div class="pf">
+    <span>ID-MAP · Indonesia Mangrove Action Platform</span>
+    <span><span class="dot"></span>Hal. 8–9</span>
+  </div>
+</div>
+</div>
+
+<!-- ══════════ BAB 5: CARA KERJA ══════════ -->
+<div class="page">
+<div class="inner">
+  <div class="ph"><span class="brand">ID-MAP</span><span class="clabel">BAB 5 · Cara Kerja Platform</span></div>
+  <div class="ch">
+    <div class="ch-num">BAB 5</div>
+    <h2>Cara Kerja Platform</h2>
+    <p>Dari inisiasi proyek oleh komunitas pesisir, pendanaan dari individu via QRIS, pelaksanaan lapangan, hingga laporan MRV yang terverifikasi — semua dalam satu alur digital yang terhubung.</p>
+  </div>
+
+  <h3>5.1 Alur Kerja Lengkap</h3>
+
+  <div class="flow" style="flex-wrap:wrap;gap:4px">
+    <div class="fs">🤝 Mitra<div class="sub">Komunitas/NGO daftar + KYC dokumen legal</div></div>
+    <div class="fa">→</div>
+    <div class="fs">📋 Buat Proyek<div class="sub">Isi detail: lokasi, luas, jenis mangrove, target bibit</div></div>
+    <div class="fa">→</div>
+    <div class="fs">✅ Verifikasi<div class="sub">Admin review &amp; setujui proyek masuk listing</div></div>
+    <div class="fa">→</div>
+    <div class="fs">💳 QRIS<div class="sub">Individu donasi via QRIS, dana masuk ke proyek</div></div>
+    <div class="fa">→</div>
+    <div class="fs">🌱 Lapangan<div class="sub">Mitra tanam, upload foto GPS &amp; laporan berkala</div></div>
+    <div class="fa">→</div>
+    <div class="fs">📊 MRV<div class="sub">Laporan diverifikasi oleh verifikator/peneliti</div></div>
+    <div class="fa">→</div>
+    <div class="fs">🏛️ SRN<div class="sub">Proyek terdaftar di Sistem Registri Nasional KLHK</div></div>
+    <div class="fa">→</div>
+    <div class="fs">📜 Sertifikat<div class="sub">Donor &amp; korporasi terima sertifikat kontribusi resmi</div></div>
+  </div>
+
+  <h3>5.2 Flow Donasi Sahabat (B2C — Paling Sederhana)</h3>
+  <div class="two">
+    <div style="background:var(--s50);border-radius:8px;padding:10px">
+      <div style="font-size:7.5pt;line-height:1.9;color:var(--s700)">
+        <strong>1.</strong> Buka <em>id-map-national.vercel.app</em><br>
+        <strong>2.</strong> Klik "Daftar" → isi nama + email<br>
+        <strong>3.</strong> Masukkan kode OTP 6 digit dari email<br>
+        <strong>4.</strong> Masuk dashboard Sahabat<br>
+        <strong>5.</strong> Pilih proyek mangrove yang aktif<br>
+        <strong>6.</strong> Pilih nominal: Rp 10rb / 50rb / 100rb / Custom<br>
+        <strong>7.</strong> Scan QR Code via QRIS di HP<br>
+        <strong>8.</strong> Konfirmasi otomatis → tampil toast sukses 🌿<br>
+        <strong>9.</strong> Sertifikat tersedia di menu "Sertifikat"<br>
+        <strong>10.</strong> Dashboard "Dampak Saya" langsung terupdate
+      </div>
+    </div>
+    <div>
+      <h4>Yang Diterima Sahabat</h4>
+      <ul style="font-size:8.5pt">
+        <li><strong>Sertifikat digital</strong> ber-nama, tanggal, dan proyek yang didukung</li>
+        <li><strong>Tracking dampak</strong>: jumlah bibit, km garis pantai terlindungi</li>
+        <li><strong>Update progress</strong> proyek secara berkala</li>
+        <li>Manfaat ekosistem nyata: kepiting bakau, habitat ikan, redaman gelombang</li>
+      </ul>
+      <div class="box box-g" style="margin-top:3mm">
+        <strong>Dampak per Kontribusi Sahabat</strong>
+        Setiap bibit yang didukung membantu memulihkan garis pantai dan melindungi komunitas pesisir dari abrasi. Data Rp 10.000 setara ±5 bibit mangrove yang terjaga 3 tahun pertama dengan monitoring platform.
+      </div>
+    </div>
+  </div>
+
+  <h3>5.3 Peta Interaktif: Abrasi, Penyu &amp; Pokmaswas</h3>
+  <p>Fitur paling khas ID-MAP adalah peta interaktif nasional yang mengintegrasikan tiga layer data ekosistem pesisir yang sebelumnya tersebar di berbagai instansi:</p>
+
+  <div class="three">
+    <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:10px">
+      <div style="font-size:18pt;margin-bottom:4px">🌊</div>
+      <h4 style="margin:0 0 4px;color:#7c2d12">Layer Abrasi Pantai</h4>
+      <p style="font-size:8.5pt;margin:0;color:var(--s700)">Titik lokasi abrasi seluruh pantai Jawa Timur dengan tingkat prioritas: Tinggi (merah), Sedang (kuning), Rendah–Sedang (biru). Verifikator bisa input dan update data langsung dari dashboard.</p>
+      <div style="margin-top:6px;display:flex;gap:4px;flex-wrap:wrap">
+        <span class="b br">Tinggi</span>
+        <span class="b bo">Sedang</span>
+        <span class="b bb">Rendah</span>
+      </div>
+    </div>
+    <div style="background:var(--t50);border:1px solid #99f6e4;border-radius:10px;padding:10px">
+      <div style="font-size:18pt;margin-bottom:4px">🐢</div>
+      <h4 style="margin:0 0 4px;color:var(--t600)">Layer Titik Penyu</h4>
+      <p style="font-size:8.5pt;margin:0;color:var(--s700)">Sebaran titik pendaratan penyu di pantai-pantai penting: spesies yang mendaratkan telur, nama pantai, jumlah sarang, dan jadwal patroli. Data dikelola verifikator via dashboard.</p>
+      <div style="margin-top:6px"><span class="b bt">5 Spesies Dilindungi</span></div>
+    </div>
+    <div style="background:var(--g50);border:1px solid var(--g100);border-radius:10px;padding:10px">
+      <div style="font-size:18pt;margin-bottom:4px">👥</div>
+      <h4 style="margin:0 0 4px;color:var(--g800)">Layer Pokmaswas</h4>
+      <p style="font-size:8.5pt;margin:0;color:var(--s700)">Sebaran kelompok Pokmaswas aktif di kab/kota: nama kelompok, lokasi, kontak. Memudahkan koordinasi antar kelompok dan instansi yang ingin berkolaborasi.</p>
+      <div style="margin-top:6px"><span class="b bg">500+ Kelompok Aktif</span></div>
+    </div>
+  </div>
+
+  <div class="box box-b" style="margin-top:3mm">
+    <strong>Fitur Tambahan Peta</strong>
+    Toggle basemap OpenStreetMap ↔ Citra Satelit Esri. Klik marker untuk popup detail. Filter per kabupaten. Data diperbarui real-time oleh verifikator lapangan. Dapat diakses publik tanpa login di menu "Jelajahi Peta Mangrove".
+  </div>
+
+  <div class="pf">
+    <span>ID-MAP · Indonesia Mangrove Action Platform</span>
+    <span><span class="dot"></span>Hal. 10–11</span>
+  </div>
+</div>
+</div>
+
+<!-- ══════════ BAB 5 lanjutan: DASHBOARD & AI ══════════ -->
+<div class="page">
+<div class="inner">
+  <div class="ph"><span class="brand">ID-MAP</span><span class="clabel">BAB 5 · Cara Kerja (lanjutan)</span></div>
+
+  <h3>5.4 Dashboard per Peran</h3>
+  <p>Setiap peran memiliki dashboard yang disesuaikan dengan kebutuhan dan tanggung jawab masing-masing — tidak ada informasi berlebih yang membingungkan.</p>
+
+  <table>
+    <tr><th>Peran</th><th>Fitur Utama Dashboard</th><th>Data yang Ditampilkan</th></tr>
+    <tr>
+      <td><strong>🌿 Sahabat</strong></td>
+      <td>Dampak saya, riwayat donasi, sertifikat, browse proyek, donasi baru</td>
+      <td>Bibit didukung, garis pantai terlindungi, abrasi dicegah, spesies terjaga</td>
+    </tr>
+    <tr>
+      <td><strong>🤝 Mitra</strong></td>
+      <td>Kelola proyek, submit MRV, lihat pendanaan masuk, laporan, SRN status</td>
+      <td>Proyek aktif, bibit ditanam, dana diterima, status MRV per proyek</td>
+    </tr>
+    <tr>
+      <td><strong>🔬 Verifikator</strong></td>
+      <td>Kelola data abrasi/penyu/pokmaswas, review MRV mitra, update peta</td>
+      <td>Total lokasi abrasi, sarang penyu per pantai, kelompok Pokmaswas per kab/kota</td>
+    </tr>
+    <tr>
+      <td><strong>🏢 Perusahaan</strong></td>
+      <td>Browse proyek, dukung proyek, ESG portfolio, download sertifikat &amp; laporan</td>
+      <td>Total bibit didukung, luas kawasan, proyek aktif, laporan keberlanjutan</td>
+    </tr>
+    <tr>
+      <td><strong>⚙️ Admin</strong></td>
+      <td>Approve KYC, kelola proyek, manajemen pengguna, pengaturan platform, statistik</td>
+      <td>Total users, proyek aktif, transaksi, aktivitas terbaru, statistik nasional</td>
+    </tr>
+  </table>
+
+  <h3>5.5 AI Chatbot &amp; Analisis Mangrove Nasional</h3>
+
+  <div class="two">
+    <div>
+      <h4>💬 ID-MAP Assistant (Live Chat)</h4>
+      <p style="font-size:8.5pt">Chatbot AI yang selalu tersedia di pojok kanan bawah platform — siap menjawab pertanyaan tentang program mangrove, cara mendaftar, cara donasi, informasi Pokmaswas, dan ekosistem pesisir. Dijawab dalam bahasa Indonesia yang ramah dan profesional.</p>
+      <ul style="font-size:8.5pt">
+        <li>Tanya cara kontribusi &amp; donasi via QRIS</li>
+        <li>Cari informasi tentang program PMN, BRGMN, KKMD</li>
+        <li>Tanya kondisi mangrove di provinsi tertentu</li>
+        <li>Panduan pendaftaran &amp; penggunaan platform</li>
+      </ul>
+      <p class="small">Berbasis NVIDIA NIM llama-3.1-8b dengan fallback chain ke mistral-7b dan deepseek — responsif dan reliable.</p>
+    </div>
+    <div>
+      <h4>🤖 Analisis AI Mangrove Nasional</h4>
+      <p style="font-size:8.5pt">Panel analisis di semua dashboard yang menghasilkan rekomendasi berbasis data kondisi mangrove nasional (PMN, KKMD, BRGMN 2025). Tersedia 5 fokus analisis:</p>
+      <ul style="font-size:8.5pt">
+        <li><strong>Analisis Umum</strong> — kondisi terkini &amp; temuan kunci nasional</li>
+        <li><strong>Progress Restorasi</strong> — gap PMN/BRGMN &amp; realisasi provinsi</li>
+        <li><strong>Peta Ancaman</strong> — ancaman kritis &amp; strategi mitigasi</li>
+        <li><strong>Penguatan KKMD</strong> — kelompok kerja mangrove daerah</li>
+        <li><strong>Kebijakan &amp; Program</strong> — rekomendasi prioritas nasional</li>
+      </ul>
+      <p class="small">Response streaming real-time — tidak perlu tunggu lama, teks muncul bertahap.</p>
+    </div>
+  </div>
+
+  <h3>5.6 Autentikasi &amp; Keamanan</h3>
+  <div class="two">
+    <ul style="font-size:8.5pt">
+      <li>Daftar dengan email + verifikasi <strong>OTP 6 digit</strong> (berlaku 10 menit)</li>
+      <li>Multi-role: satu platform, 5 dashboard berbeda sesuai peran</li>
+      <li>Session berbasis localStorage dengan enkripsi</li>
+    </ul>
+    <ul style="font-size:8.5pt">
+      <li>Upload dokumen KYC via Cloudinary (signed, maks 5MB)</li>
+      <li>Payment webhook dari Mayar.id dengan verifikasi signature</li>
+      <li>HTTPS/TLS seluruh komunikasi data</li>
+    </ul>
+  </div>
+
+  <div class="pf">
+    <span>ID-MAP · Indonesia Mangrove Action Platform</span>
+    <span><span class="dot"></span>Hal. 12</span>
+  </div>
+</div>
+</div>
+
+<!-- ══════════ BAB 6: MODEL KOLABORASI ══════════ -->
+<div class="page">
+<div class="inner">
+  <div class="ph"><span class="brand">ID-MAP</span><span class="clabel">BAB 6 · Model Kolaborasi</span></div>
+  <div class="ch">
+    <div class="ch-num">BAB 6</div>
+    <h2>Model Kolaborasi Platform</h2>
+    <p>ID-MAP menghubungkan tiga segmen besar secara simultan — individu yang peduli lingkungan, komunitas pelaksana di lapangan, dan institusi yang butuh data dan program terukur.</p>
+  </div>
+
+  <h3>B2C — Business to Community (Individu)</h3>
+  <div class="two">
+    <div class="box box-g">
+      <strong>Siapa Mereka?</strong>
+      Mahasiswa, ibu rumah tangga, profesional muda, pegiat lingkungan, siapa saja yang ingin berkontribusi pada kelestarian pesisir Indonesia tapi tidak tahu caranya.
+    </div>
+    <div class="box box-g">
+      <strong>Apa yang Ditawarkan?</strong>
+      Donasi mulai Rp 10.000 via QRIS. Transparansi penuh — setiap rupiah terlacak ke proyek spesifik. Sertifikat personal. Dashboard dampak nyata. Tidak ada minimum, tidak ada proses panjang.
+    </div>
+  </div>
+
+  <h3>B2B — Business to Business (Korporasi)</h3>
+  <div class="two">
+    <div class="box box-o">
+      <strong>Siapa Mereka?</strong>
+      Perusahaan yang memiliki kewajiban CSR, target keberlanjutan, atau ingin mendukung program restorasi mangrove yang terukur dan dapat dilaporkan kepada investor dan pemangku kepentingan.
+    </div>
+    <div class="box box-o">
+      <strong>Apa yang Ditawarkan?</strong>
+      Proyek terverifikasi SRN. Invoice resmi. Laporan ESG otomatis. Dashboard portfolio yang menampilkan total bibit, luas kawasan, dan dampak ekosistem yang bisa langsung digunakan untuk annual report.
+    </div>
+  </div>
+
+  <h3>B2G — Business to Government (Pemerintah &amp; Dinas)</h3>
+  <div class="two">
+    <div class="box box-b">
+      <strong>Siapa Mereka?</strong>
+      Bappeda kabupaten/kota, Dinas Kelautan dan Perikanan daerah, KKMD (Kelompok Kerja Mangrove Daerah), instansi terkait yang membutuhkan data ekosistem pesisir untuk perencanaan wilayah.
+    </div>
+    <div class="box box-b">
+      <strong>Apa yang Ditawarkan?</strong>
+      Data peta abrasi, penyu, dan Pokmaswas terintegrasi. Laporan MRV terstandar yang bisa digunakan untuk pelaporan ke pusat. Sistem monitoring berbasis digital yang menggantikan survei manual yang mahal.
+    </div>
+  </div>
+
+  <h3>Mitra — Komunitas sebagai Pelaksana</h3>
+  <div class="box box-g">
+    <strong>Posisi Strategis Mitra</strong>
+    Komunitas — Pokmaswas, kelompok tani pesisir, NGO lokal — adalah jembatan antara pendanaan dan aksi nyata di lapangan. Mereka yang paling tahu kondisi lokal, paling tahu jenis mangrove yang cocok, dan paling berkepentingan atas keberhasilan restorasi. ID-MAP membekali mereka dengan tools digital yang sebelumnya hanya bisa diakses lembaga besar: dashboard proyek, MRV digital, dan jalur pendanaan transparan.
+  </div>
+
+  <table>
+    <tr><th>Model</th><th>Pihak Terlibat</th><th>Nilai yang Ditukarkan</th><th>Output</th></tr>
+    <tr><td><strong>B2C</strong></td><td>Individu ↔ Mitra Komunitas</td><td>Dana kecil (QRIS) ↔ Dampak nyata + sertifikat</td><td>Bibit terpelihara, habitat pulih</td></tr>
+    <tr><td><strong>B2B</strong></td><td>Korporasi ↔ Mitra Komunitas</td><td>CSR fund ↔ Laporan terverifikasi + sertifikat</td><td>Program CSR terukur, ekosistem pulih</td></tr>
+    <tr><td><strong>B2G</strong></td><td>Dinas/Bappeda ↔ Platform</td><td>Integrasi data ↔ Dashboard spasial pesisir</td><td>Data perencanaan wilayah akurat</td></tr>
+    <tr><td><strong>Mitra</strong></td><td>Komunitas ↔ Platform</td><td>Eksekusi lapangan ↔ Tools digital + pendanaan</td><td>Proyek berjalan, komunitas berdaya</td></tr>
+  </table>
+
+  <div class="pf">
+    <span>ID-MAP · Indonesia Mangrove Action Platform</span>
+    <span><span class="dot"></span>Hal. 13</span>
+  </div>
+</div>
+</div>
+
+<!-- ══════════ BAB 7: DAMPAK NYATA ══════════ -->
+<div class="page">
+<div class="inner">
+  <div class="ph"><span class="brand">ID-MAP</span><span class="clabel">BAB 7 · Dampak Nyata untuk Komunitas Pesisir</span></div>
+  <div class="ch">
+    <div class="ch-num">BAB 7</div>
+    <h2>Dampak Nyata untuk Komunitas Pesisir</h2>
+    <p>Platform ini bukan sekadar aplikasi — ini adalah alat pemberdayaan nyata bagi masyarakat yang hidupnya bergantung pada pesisir. Setiap fitur dirancang untuk menjawab masalah konkret yang dialami Pokmaswas, nelayan, dan komunitas mangrove.</p>
+  </div>
+
+  <h3>7.1 Yang Berubah untuk Komunitas Pesisir</h3>
+
+  <table>
+    <tr><th>Sebelum ID-MAP</th><th>Sesudah ID-MAP</th></tr>
+    <tr><td>Pokmaswas mencatat data di buku tulis, hilang saat banjir</td><td>Data digital, tersimpan cloud, bisa diakses kapan saja dari HP</td></tr>
+    <tr><td>Laporan MRV dibuat manual di Word, dikirim via WhatsApp</td><td>Form digital dengan foto GPS, audit trail, langsung masuk dashboard verifikator</td></tr>
+    <tr><td>Kelompok tanam mangrove, tidak ada yang tahu hasilnya setahun kemudian</td><td>Monitoring per 3 bulan, survival rate terpantau, laporan ke SRN KLHK</td></tr>
+    <tr><td>Donatur transfer ke rekening pribadi ketua, tidak ada bukti penggunaan</td><td>Setiap donasi QRIS terlacak ke proyek, sertifikat otomatis, laporan transparan</td></tr>
+    <tr><td>Data abrasi pantai hanya ada di Dinas, tidak bisa dibagikan ke komunitas</td><td>Peta abrasi terbuka di platform, komunitas tahu pantai mana paling kritis</td></tr>
+    <tr><td>Korporasi CSR tidak tahu mau salurkan dana ke mana yang terpercaya</td><td>Direktori proyek terverifikasi, laporan ESG otomatis, sertifikat resmi</td></tr>
+  </table>
+
+  <h3>7.2 Dampak Konkret per Ekosistem</h3>
+
+  <div class="sgrid s2">
+    <div class="sc" style="border-color:var(--g200,#bbf7d0)">
+      <div style="font-size:16pt;margin-bottom:4px">🌿</div>
+      <div class="lbl" style="font-weight:700;color:var(--s900);font-size:9pt">Rehabilitasi Berhasil</div>
+      <p style="font-size:8.5pt;margin:4px 0 0;color:var(--s600)">Survival rate naik dari rata-rata 45% (tanpa monitoring) menjadi 85%+ (dengan MRV digital platform). Penanaman tidak sia-sia.</p>
+    </div>
+    <div class="sc" style="border-color:#bae6fd">
+      <div style="font-size:16pt;margin-bottom:4px">🌊</div>
+      <div class="lbl" style="font-weight:700;color:var(--s900);font-size:9pt">Abrasi Terkendali</div>
+      <p style="font-size:8.5pt;margin:4px 0 0;color:var(--s600)">Titik abrasi prioritas tinggi teridentifikasi lebih cepat. Intervensi dini mencegah kehilangan garis pantai lebih lanjut yang mengancam permukiman nelayan.</p>
+    </div>
+    <div class="sc" style="border-color:#99f6e4">
+      <div style="font-size:16pt;margin-bottom:4px">🐢</div>
+      <div class="lbl" style="font-weight:700;color:var(--s900);font-size:9pt">Penyu Terlindungi</div>
+      <p style="font-size:8.5pt;margin:4px 0 0;color:var(--s600)">Data titik pendaratan penyu terpetakan dan diperbarui real-time. Patroli lebih efektif karena komunitas tahu di mana sarang aktif berada.</p>
+    </div>
+    <div class="sc" style="border-color:#ede9fe">
+      <div style="font-size:16pt;margin-bottom:4px">👥</div>
+      <div class="lbl" style="font-weight:700;color:var(--s900);font-size:9pt">Pokmaswas Berdaya</div>
+      <p style="font-size:8.5pt;margin:4px 0 0;color:var(--s600)">Kelompok pengawas punya tools digital setara lembaga besar. Data mereka masuk ke sistem resmi, suara mereka didengar oleh dinas dan korporasi.</p>
+    </div>
+  </div>
+
+  <h3>7.3 Data Dampak dari Platform (Kondisi Terkini)</h3>
+
+  <div class="sgrid s4">
+    <div class="sc"><div class="num">7</div><div class="lbl">Sahabat Terlibat</div><div class="sub">Platform aktif awal</div></div>
+    <div class="sc"><div class="num">1,28 jt</div><div class="lbl">Bibit Mangrove</div><div class="sub">Ditanam seluruh platform</div></div>
+    <div class="sc"><div class="num">850 rb</div><div class="lbl">Ton CO₂e</div><div class="sub">Serapan karbon terhitung</div></div>
+    <div class="sc"><div class="num">55,25 M</div><div class="lbl">IDR Potensi Nilai</div><div class="sub">Karbon tersertifikasi</div></div>
+  </div>
+
+  <div class="box box-g">
+    <strong>Satu Kontribusi Kecil, Dampak Nyata Berlapis</strong>
+    Rp 10.000 dari kota → 5 bibit mangrove di pesisir → 1 m² pantai terlindungi dari abrasi → habitat kepiting bakau terjaga → sumber nafkah nelayan bertahan. Platform ini membuat rantai dampak tersebut transparan dan terukur untuk semua pihak.
+  </div>
+
+  <div class="pf">
+    <span>ID-MAP · Indonesia Mangrove Action Platform</span>
+    <span><span class="dot"></span>Hal. 14</span>
+  </div>
+</div>
+</div>
+
+<!-- ══════════ BAB 8: ROADMAP ══════════ -->
+<div class="page">
+<div class="inner">
+  <div class="ph"><span class="brand">ID-MAP</span><span class="clabel">BAB 8 · Roadmap &amp; Status Platform</span></div>
+  <div class="ch">
+    <div class="ch-num">BAB 8</div>
+    <h2>Roadmap &amp; Status Platform</h2>
+    <p>Platform sudah live dan dapat diakses — bukan sekadar rencana. Berikut status fitur yang sudah berjalan dan yang sedang dikembangkan.</p>
+  </div>
+
+  <h3>8.1 Status Saat Ini — Yang Sudah Berjalan</h3>
+  <div class="box box-g">
+    <strong>Platform Live: id-map-national.vercel.app</strong>
+    MVP aktif dengan: Landing page lengkap · Dashboard 5 role · Peta interaktif mangrove (abrasi, penyu, pokmaswas) · Donasi QRIS via Mayar.id · Sistem MRV dasar · AI Analysis Panel · Live Chat AI · KYC flow · Sertifikat digital · Proyek listing.
+  </div>
+
+  <table>
+    <tr><th>Fitur</th><th>Status</th><th>Keterangan</th></tr>
+    <tr><td>Landing Page + Navbar bilingual</td><td><span class="b bg">✓ Live</span></td><td>Penuh fitur, responsif mobile &amp; desktop</td></tr>
+    <tr><td>Peta Interaktif (abrasi/penyu/pokmaswas)</td><td><span class="b bg">✓ Live</span></td><td>Leaflet.js, toggle layer, basemap satelit</td></tr>
+    <tr><td>Dashboard 5 Peran (Sahabat, Mitra, Verifikator, Corporate, Admin)</td><td><span class="b bg">✓ Live</span></td><td>Routing &amp; session guard per role</td></tr>
+    <tr><td>Donasi QRIS (Mayar.id)</td><td><span class="b bg">✓ Live</span></td><td>Webhook konfirmasi, sertifikat otomatis</td></tr>
+    <tr><td>MRV Digital (submit laporan)</td><td><span class="b bg">✓ Live</span></td><td>Form + upload dokumen, status tracking</td></tr>
+    <tr><td>AI Chatbot Live Chat</td><td><span class="b bg">✓ Live</span></td><td>NVIDIA NIM + fallback chain, streaming SSE</td></tr>
+    <tr><td>Analisis AI Mangrove Nasional</td><td><span class="b bg">✓ Live</span></td><td>5 fokus analisis, data PMN/KKMD/BRGMN</td></tr>
+    <tr><td>KYC Dokumen (upload &amp; review)</td><td><span class="b bg">✓ Live</span></td><td>Cloudinary signed upload, admin review</td></tr>
+    <tr><td>Password hashing (bcrypt)</td><td><span class="b bo">🔄 Sprint 1</span></td><td>Security improvement sedang dikerjakan</td></tr>
+    <tr><td>Rate limiting auth endpoints</td><td><span class="b bo">🔄 Sprint 1</span></td><td>Anti-brute-force protection</td></tr>
+    <tr><td>Integrasi SRN KLHK digital</td><td><span class="b bb">📋 Planned</span></td><td>Setelah API SRN tersedia dari KLHK</td></tr>
+    <tr><td>Mobile App (iOS/Android)</td><td><span class="b bb">📋 v3.0</span></td><td>Roadmap jangka panjang</td></tr>
+  </table>
+
+  <h3>8.2 Target 6 Bulan ke Depan</h3>
+  <div class="sgrid s4">
+    <div class="sc"><div class="num">20</div><div class="lbl">Mitra NGO terdaftar</div><div class="sub">Terverifikasi aktif</div></div>
+    <div class="sc"><div class="num">10</div><div class="lbl">Proyek berjalan</div><div class="sub">Dengan MRV digital</div></div>
+    <div class="sc"><div class="num">500</div><div class="lbl">Sahabat aktif</div><div class="sub">Donasi rutin via QRIS</div></div>
+    <div class="sc"><div class="num">5</div><div class="lbl">Korporasi partner</div><div class="sub">CSR terverifikasi</div></div>
+  </div>
+
+  <h3>8.3 Indikator Kesehatan Platform</h3>
+  <div class="two">
+    <ul style="font-size:8.5pt">
+      <li><strong>Uptime platform:</strong> ≥99.5%</li>
+      <li><strong>Waktu approve KYC:</strong> ≤48 jam</li>
+      <li><strong>Payment success rate:</strong> ≥98%</li>
+    </ul>
+    <ul style="font-size:8.5pt">
+      <li><strong>AI response time:</strong> ≤3 detik (first token)</li>
+      <li><strong>Peta render time:</strong> ≤2 detik</li>
+      <li><strong>First Contentful Paint:</strong> ≤1.5 detik</li>
+    </ul>
+  </div>
+
+  <div class="pf">
+    <span>ID-MAP · Indonesia Mangrove Action Platform</span>
+    <span><span class="dot"></span>Hal. 15</span>
+  </div>
+</div>
+</div>
+
+<!-- ══════════ BAB 9: TIM & MITRA ══════════ -->
+<div class="page">
+<div class="inner">
+  <div class="ph"><span class="brand">ID-MAP</span><span class="clabel">BAB 9 · Tim &amp; Mitra Platform</span></div>
+  <div class="ch">
+    <div class="ch-num">BAB 9</div>
+    <h2>Tim &amp; Mitra Platform</h2>
+    <p>Dibangun oleh praktisi, bukan oleh konsultan dari luar. Tim kecil dengan kompetensi lintas disiplin yang benar-benar memahami masalah ekosistem pesisir dari dalam.</p>
+  </div>
+
+  <h3>9.1 Profil Tim</h3>
+  <div class="two">
+    <div style="background:var(--g50);border:1px solid var(--g100);border-radius:12px;padding:14px">
+      <div style="text-align:center;font-size:32pt;margin-bottom:8px">👨‍💼</div>
+      <div style="text-align:center;margin-bottom:10px">
+        <div style="font-size:11pt;font-weight:700;color:var(--s900)">Slamet Abdullah, S.Pi</div>
+        <div style="font-size:8pt;color:var(--g700);font-weight:600">Ketua Tim · Full-Stack Developer &amp; UI Designer</div>
+        <div style="font-size:7.5pt;color:var(--s500,#6b7280);margin-top:2px">Cabang Dinas KP Kab. Malang</div>
+      </div>
+      <p style="font-size:8.5pt;text-align:center;margin:0 0 8px">Vibe coder yang sekaligus petugas dinas lapangan. Memahami masalah ekosistem pesisir secara langsung dan mewujudkannya sebagai solusi digital.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:4px;justify-content:center">
+        <span class="b bg">Petugas DKP</span>
+        <span class="b bg">Konservasi Pesisir</span>
+        <span class="b bb">Full-Stack Dev</span>
+        <span class="b bb">UI/UX Design</span>
+        <span class="b bo">Project Mgmt</span>
+        <span class="b bt">GIS Dasar</span>
+      </div>
+    </div>
+    <div style="background:var(--b100);border:1px solid #bae6fd;border-radius:12px;padding:14px">
+      <div style="text-align:center;font-size:32pt;margin-bottom:8px">👨‍🔬</div>
+      <div style="text-align:center;margin-bottom:10px">
+        <div style="font-size:11pt;font-weight:700;color:var(--s900)">Dimas Syarif Alim, S.Kel</div>
+        <div style="font-size:8pt;color:#0369a1;font-weight:600">Data Analyst &amp; GIS Specialist</div>
+        <div style="font-size:7.5pt;color:var(--s500,#6b7280);margin-top:2px">Pengelola Ekosistem dan Laut Pesisir (PELP)</div>
+      </div>
+      <p style="font-size:8.5pt;text-align:center;margin:0 0 8px">Spesialis data spasial dan ekosistem pesisir. Memastikan data peta, monitoring, dan analisis ekosistem pada platform akurat dan berstandar.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:4px;justify-content:center">
+        <span class="b bb">GIS Expert</span>
+        <span class="b bb">Remote Sensing</span>
+        <span class="b bg">Ekosistem Laut</span>
+        <span class="b bg">Data Analytics</span>
+        <span class="b bt">Sentinel-2 GEE</span>
+      </div>
+    </div>
+  </div>
+
+  <h3>9.2 Mitra Platform</h3>
+  <table>
+    <tr><th>Mitra</th><th>Kategori</th><th>Peran dalam Ekosistem ID-MAP</th></tr>
+    <tr><td><strong>Kementerian LHK (KLHK)</strong></td><td>Pemerintah</td><td>Regulator utama; mengelola SRN sesuai PP 98/2021; standar MRV nasional</td></tr>
+    <tr><td><strong>KKP / KKPD</strong></td><td>Pemerintah</td><td>Pengelolaan kawasan pesisir, konservasi mangrove, dukungan Pokmaswas</td></tr>
+    <tr><td><strong>Bank Indonesia</strong></td><td>Lembaga Keuangan</td><td>Dukungan ekosistem pembayaran digital &amp; keuangan hijau</td></tr>
+    <tr><td><strong>Pegiat Konservasi Mangrove</strong></td><td>Komunitas &amp; NGO</td><td>Jaringan kelompok masyarakat aktif restorasi pesisir seluruh Indonesia</td></tr>
+    <tr><td><strong>Mayar.id</strong></td><td>Payment Gateway</td><td>QRIS &amp; transfer online, webhook konfirmasi pembayaran real-time</td></tr>
+  </table>
+
+  <h3>9.3 Dasar Regulasi</h3>
+  <div class="two">
+    <ul style="font-size:8.5pt">
+      <li><strong>PP No. 98/2021</strong> — Nilai Ekonomi Karbon &amp; SRN KLHK</li>
+      <li><strong>Permen LHK 21/2022</strong> — Tata laksana penerapan NEK</li>
+      <li><strong>Perpres 120/2022</strong> — Percepatan rehabilitasi hutan &amp; lahan (PMN)</li>
+    </ul>
+    <ul style="font-size:8.5pt">
+      <li><strong>UU No. 27/2022</strong> — Perlindungan Data Pribadi</li>
+      <li><strong>SE Menteri KKP 8/2023</strong> — Digitalisasi pemantauan ekosistem pesisir</li>
+      <li><strong>PMN 2025</strong> — Target 600.000 ha restorasi nasional</li>
+    </ul>
+  </div>
+
+  <hr>
+
+  <div style="text-align:center;padding:6mm 0 2mm">
+    <div style="font-size:26pt;font-weight:900;color:var(--g700);font-family:'Playfair Display',serif">ID-MAP</div>
+    <div style="font-size:9pt;color:var(--s500,#6b7280);margin-top:3px">Indonesia Mangrove Action Platform</div>
+    <div style="margin-top:5px;font-size:8.5pt">
+      <a href="https://id-map-national.vercel.app" style="color:var(--g600);text-decoration:none;font-weight:600">id-map-national.vercel.app</a>
+      &nbsp;·&nbsp; Booklet Platform Tahap 2 v1.0 &nbsp;·&nbsp; Mei 2026
+    </div>
+    <div style="margin-top:6px;font-size:7.5pt;color:var(--s400);max-width:130mm;margin-left:auto;margin-right:auto">
+      Platform digital untuk pemantauan, rehabilitasi, dan keberlanjutan ekosistem mangrove dan pesisir Indonesia — dengan komunitas pesisir sebagai ujung tombak pelaksanaan.
+    </div>
+  </div>
+
+  <div class="pf">
+    <span>ID-MAP · Indonesia Mangrove Action Platform</span>
+    <span><span class="dot"></span>Hal. 16</span>
+  </div>
+</div>
+</div>
+
+</body>
+</html>

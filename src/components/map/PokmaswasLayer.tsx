@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { DATA_POKMASWAS, KABKOTA_WARNA, type DataPokmaswas } from "@/lib/pokmaswasData";
-import { X, MapPin, Phone, Users } from "lucide-react";
+import { X, Users } from "lucide-react";
 
 const STORAGE_KEY = "idmap_pokmaswas_override";
 
@@ -135,47 +135,7 @@ export default function PokmaswasLayer({ onClose }: PokmaswasLayerProps) {
               key={item.no}
               position={[item.lat, item.lon]}
               icon={createPersonIcon(warna)}
-            >
-              <Popup maxWidth={260}>
-                <div className="p-1 space-y-2 text-xs">
-                  <div className="flex items-center gap-2 pb-1.5 border-b border-gray-100">
-                    <div
-                      className="w-8 h-8 rounded-full flex items-center justify-center text-white text-base flex-shrink-0"
-                      style={{ backgroundColor: warna }}
-                    >
-                      👤
-                    </div>
-                    <div>
-                      <p className="font-bold text-gray-900">{item.namaKelompok}</p>
-                      <p className="text-[10px] font-semibold" style={{ color: warna }}>
-                        #{item.no} · {item.kabKota}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-1.5">
-                    <MapPin className="w-3.5 h-3.5 text-gray-400 flex-shrink-0 mt-0.5" />
-                    <span className="text-gray-600">{item.alamat}</span>
-                  </div>
-
-                  <div className="flex items-start gap-1.5">
-                    <Users className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0 mt-0.5" />
-                    <span className="text-gray-700 font-medium">Ketua: {item.ketua}</span>
-                  </div>
-
-                  {item.noHp && (
-                    <div className="flex items-center gap-1.5">
-                      <Phone className="w-3.5 h-3.5 text-blue-400 flex-shrink-0" />
-                      <span className="text-gray-600">{item.noHp}</span>
-                    </div>
-                  )}
-
-                  <div className="pt-1 border-t border-gray-100 text-[10px] text-gray-400">
-                    {item.lat.toFixed(4)}, {item.lon.toFixed(4)}
-                  </div>
-                </div>
-              </Popup>
-            </Marker>
+            />
           );
         })}
       </MapContainer>

@@ -251,6 +251,7 @@ export default function KelolaAbrasiPage() {
               <th className="px-4 py-3 font-semibold">Prioritas</th>
               <th className="px-4 py-3 font-semibold hidden md:table-cell">Substrat</th>
               <th className="px-4 py-3 font-semibold hidden md:table-cell">Luasan</th>
+              <th className="px-4 py-3 font-semibold hidden lg:table-cell">Koordinat</th>
               <th className="px-4 py-3 font-semibold">Aksi</th>
             </tr>
           </thead>
@@ -277,6 +278,9 @@ export default function KelolaAbrasiPage() {
                     </td>
                     <td className="px-4 py-3 text-gray-500 hidden md:table-cell">{site.substrat}</td>
                     <td className="px-4 py-3 text-gray-500 hidden md:table-cell">{site.luasan}</td>
+                    <td className="px-4 py-3 hidden lg:table-cell">
+                      <span className="text-xs font-mono text-gray-400">{site.lat}, {site.lng}</span>
+                    </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-1">
                         <button onClick={() => handleEdit(site)}
@@ -294,7 +298,7 @@ export default function KelolaAbrasiPage() {
                   {/* Expanded row */}
                   {isExpanded && (
                     <tr key={`${site.no}-exp`} className="bg-gray-50/50">
-                      <td colSpan={7} className="px-4 pb-3 pt-0">
+                      <td colSpan={8} className="px-4 pb-3 pt-0">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-gray-600 pt-2">
                           <div>
                             <span className="font-semibold text-gray-500 block mb-0.5">Indikasi Abrasi</span>
@@ -326,7 +330,7 @@ export default function KelolaAbrasiPage() {
                   {/* Edit form inline */}
                   {editId === site.no && (
                     <tr key={`${site.no}-edit`}>
-                      <td colSpan={7} className="px-4 py-3">
+                      <td colSpan={8} className="px-4 py-3">
                         <EditForm onSave={handleSaveEdit} onCancel={() => setEditId(null)} />
                       </td>
                     </tr>

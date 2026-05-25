@@ -17,6 +17,7 @@ import type * as otpCodes from "../otpCodes.js";
 import type * as platformStats from "../platformStats.js";
 import type * as projects from "../projects.js";
 import type * as seed from "../seed.js";
+import type * as serviceContent from "../serviceContent.js";
 import type * as transactions from "../transactions.js";
 import type * as users from "../users.js";
 
@@ -36,6 +37,7 @@ declare const fullApi: ApiFromModules<{
   platformStats: typeof platformStats;
   projects: typeof projects;
   seed: typeof seed;
+  serviceContent: typeof serviceContent;
   transactions: typeof transactions;
   users: typeof users;
 }>;

@@ -143,13 +143,16 @@ export const getUserKycStatus = query({
     const pending = docs.filter((d) => d.status === "Menunggu").length;
     const rejected = docs.filter((d) => d.status === "Ditolak").length;
 
+    // sahabat: cukup 1 dokumen (KTP). mitra/lainnya: min 2 dokumen (KTP + NIB)
+    const user = await ctx.db.get(args.userId);
+    const minApproved = user?.role === "sahabat" ? 1 : 2;
+
     let status: "belum" | "menunggu" | "terverifikasi" | "ditolak";
     if (rejected > 0) {
       status = "ditolak";
     } else if (pending > 0) {
       status = "menunggu";
-    } else if (approved >= 2) {
-      // Minimum 2 documents approved (KTP + NIB)
+    } else if (approved >= minApproved) {
       status = "terverifikasi";
     } else {
       status = "menunggu";
@@ -198,16 +201,10 @@ export const submitDocument = mutation({
   },
   returns: v.id("kycDocuments"),
   handler: async (ctx, args) => {
-    // Verify user exists and is mitra or perusahaan
+    // Verify user exists — semua role diizinkan (sahabat, mitra, verifikator, dll)
     const user = await ctx.db.get(args.userId);
     if (!user) {
       throw new ConvexError({ code: "NOT_FOUND", message: "User tidak ditemukan" });
-    }
-    if (user.role !== "mitra" && user.role !== "verifikator") {
-      throw new ConvexError({
-        code: "INVALID_ROLE",
-        message: "Hanya mitra dan verifikator yang perlu KYC",
-      });
     }
 
     const docId = await ctx.db.insert("kycDocuments", {
@@ -269,12 +266,16 @@ export const reviewDocument = mutation({
     const pending = updatedDocs.filter((d) => d.status === "Menunggu").length;
     const rejected = updatedDocs.filter((d) => d.status === "Ditolak").length;
 
+    // sahabat cukup 1 dokumen; mitra/lainnya min 2
+    const owner = await ctx.db.get(doc.userId);
+    const minApproved = owner?.role === "sahabat" ? 1 : 2;
+
     let newKycStatus: "menunggu" | "terverifikasi" | "ditolak";
     if (rejected > 0) {
       newKycStatus = "ditolak";
     } else if (pending > 0) {
       newKycStatus = "menunggu";
-    } else if (approved >= 2) {
+    } else if (approved >= minApproved) {
       newKycStatus = "terverifikasi";
     } else {
       newKycStatus = "menunggu";

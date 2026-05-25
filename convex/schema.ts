@@ -62,6 +62,29 @@ export default defineSchema({
     .index("by_mitra", ["mitraId"])
     .index("by_status_and_created", ["status", "createdAt"]),
 
+  serviceContent: defineTable({
+    key: v.string(),
+    titleId: v.string(),
+    titleEn: v.string(),
+    descriptionId: v.string(),
+    descriptionEn: v.string(),
+    image: v.string(),
+    badgeText: v.string(),
+    badgeClass: v.string(),
+    iconBgClass: v.string(),
+    iconName: v.string(),
+    value1: v.string(),
+    label1: v.string(),
+    value2: v.string(),
+    label2: v.string(),
+    value3: v.string(),
+    label3: v.string(),
+    order: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_key", ["key"])
+    .index("by_order", ["order"]),
+
   // ─── Transactions (Carbon Credit Purchases) ──────────────────────
   transactions: defineTable({
     companyName: v.string(),

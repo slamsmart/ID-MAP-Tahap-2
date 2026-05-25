@@ -2,7 +2,6 @@
 
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
-import MangroveAIPanel from "@/components/dashboard/MangroveAIPanel";
 import EkosistemPanel from "@/components/dashboard/EkosistemPanel";
 import {
   FolderTree,
@@ -76,8 +75,6 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-6">
-      <MangroveAIPanel role="admin" defaultExpanded />
-
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {statsCards.map((card) => (

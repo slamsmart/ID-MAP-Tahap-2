@@ -1,8 +1,21 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Save, User, Bell, Shield } from "lucide-react";
+import { getSession } from "@/lib/auth";
 
 export default function PengaturanUserPage() {
+  const [userName, setUserName] = useState("—");
+  const [userEmail, setUserEmail] = useState("—");
+
+  useEffect(() => {
+    const s = getSession();
+    if (s) {
+      setUserName(s.name ?? "—");
+      setUserEmail(s.email ?? "—");
+    }
+  }, []);
+
   return (
     <div className="flex-1 p-6 bg-gray-50">
       <div className="mb-6">
@@ -11,9 +24,12 @@ export default function PengaturanUserPage() {
       </div>
 
       <div className="space-y-6">
+        {/* ── Profil ── */}
         <div className="bg-white rounded-xl border border-gray-100 p-6">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center"><User className="w-5 h-5 text-emerald-600" /></div>
+            <div className="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center">
+              <User className="w-5 h-5 text-emerald-600" />
+            </div>
             <div>
               <h3 className="font-display font-semibold text-gray-900">Profil</h3>
               <p className="text-xs text-gray-500">Informasi akun Anda</p>
@@ -22,26 +38,29 @@ export default function PengaturanUserPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
-              <input className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm" defaultValue="Ahmad Fauzi" />
+              <input className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm" defaultValue={userName} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-              <input className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm" defaultValue="ahmad.fauzi@gmail.com" />
+              <input className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm" defaultValue={userEmail} readOnly />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">No. Telepon</label>
-              <input className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm" defaultValue="+62 812-3456-7890" />
+              <input className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm" placeholder="+62 8xx-xxxx-xxxx" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Lokasi</label>
-              <input className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm" defaultValue="Surabaya, Jawa Timur" />
+              <input className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm" placeholder="Kota, Provinsi" />
             </div>
           </div>
         </div>
 
+        {/* ── Notifikasi ── */}
         <div className="bg-white rounded-xl border border-gray-100 p-6">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center"><Bell className="w-5 h-5 text-blue-600" /></div>
+            <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
+              <Bell className="w-5 h-5 text-blue-600" />
+            </div>
             <div>
               <h3 className="font-display font-semibold text-gray-900">Notifikasi</h3>
               <p className="text-xs text-gray-500">Kelola preferensi notifikasi</p>
@@ -67,9 +86,12 @@ export default function PengaturanUserPage() {
           </div>
         </div>
 
+        {/* ── Keamanan ── */}
         <div className="bg-white rounded-xl border border-gray-100 p-6">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center"><Shield className="w-5 h-5 text-purple-600" /></div>
+            <div className="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center">
+              <Shield className="w-5 h-5 text-purple-600" />
+            </div>
             <div>
               <h3 className="font-display font-semibold text-gray-900">Keamanan</h3>
               <p className="text-xs text-gray-500">Password dan keamanan akun</p>

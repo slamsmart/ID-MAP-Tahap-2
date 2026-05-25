@@ -2,7 +2,7 @@ export interface User {
   _id: string;
   email: string;
   name: string;
-  role: "sahabat" | "mitra" | "verifikator" | "admin";
+  role: "sahabat" | "mitra" | "verifikator" | "admin" | "corporate";
 }
 
 const SESSION_KEY = "idmap_session";

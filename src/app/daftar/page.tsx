@@ -24,6 +24,7 @@ function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [step, setStep] = useState<"form" | "otp">("form");
   const [otpValue, setOtpValue] = useState("");
+  const [resendCooldown, setResendCooldown] = useState(0);
 
   // Pre-select role from ?peran= URL param (e.g. /daftar?peran=mitra)
   const getInitialRole = (): Role => {
@@ -80,6 +81,14 @@ function RegisterForm() {
       }
       setStep("otp");
       setOtpValue("");
+      // Mulai cooldown 60 detik untuk tombol kirim ulang
+      setResendCooldown(60);
+      const timer = setInterval(() => {
+        setResendCooldown((prev) => {
+          if (prev <= 1) { clearInterval(timer); return 0; }
+          return prev - 1;
+        });
+      }, 1000);
     } catch {
       setError(t("Koneksi gagal. Pastikan internet Anda aktif.", "Connection failed."));
     } finally {
@@ -103,14 +112,48 @@ function RegisterForm() {
       setSession({ _id: userId, email, name, role });
       router.push(getDashboardPath(role));
     } catch (err: any) {
-      const msg = err?.data?.message ?? err?.message ?? "";
+      // ConvexError bisa berupa string (err.data) atau object (err.data.message)
+      const msg =
+        typeof err?.data === "string"
+          ? err.data
+          : (err?.data?.message ?? err?.message ?? "");
       if (msg.includes("DUPLICATE_EMAIL") || msg.includes("sudah terdaftar")) {
         setError(t("Email sudah terdaftar. Silakan masuk.", "Email already registered. Please log in."));
-      } else if (msg.includes("OTP")) {
+      } else if (msg.toLowerCase().includes("otp") || msg.includes("kode")) {
         setError(msg);
       } else {
         setError(t("Terjadi kesalahan. Silakan coba lagi.", "An error occurred. Please try again."));
       }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Kirim ulang OTP (reuse handleSubmit logic)
+  const handleResendOtp = async () => {
+    setError("");
+    try {
+      setIsLoading(true);
+      const res = await fetch("/api/auth/send-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, name }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error ?? t("Gagal mengirim ulang OTP.", "Failed to resend OTP."));
+        return;
+      }
+      setOtpValue("");
+      setResendCooldown(60);
+      const timer = setInterval(() => {
+        setResendCooldown((prev) => {
+          if (prev <= 1) { clearInterval(timer); return 0; }
+          return prev - 1;
+        });
+      }, 1000);
+    } catch {
+      setError(t("Koneksi gagal.", "Connection failed."));
     } finally {
       setIsLoading(false);
     }
@@ -138,6 +181,77 @@ function RegisterForm() {
         </div>
 
         <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/50 p-6 sm:p-8">
+
+          {/* ── Step OTP ── */}
+          {step === "otp" && (
+            <div>
+              <div className="text-center mb-6">
+                <div className="w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <span className="text-2xl">📧</span>
+                </div>
+                <h2 className="font-bold text-gray-900 text-lg">{t("Cek Email Anda", "Check Your Email")}</h2>
+                <p className="text-sm text-gray-500 mt-1">
+                  {t("Kode OTP 6 digit dikirim ke", "6-digit OTP sent to")}{" "}
+                  <span className="font-semibold text-emerald-700">{email}</span>
+                </p>
+              </div>
+
+              {error && (
+                <div role="alert" className="bg-red-50 text-red-600 text-sm px-4 py-2.5 rounded-lg mb-4 flex items-center gap-2">
+                  <span>⚠</span><span>{error}</span>
+                </div>
+              )}
+
+              <form onSubmit={handleVerifyOtp} className="space-y-4">
+                <div>
+                  <label htmlFor="otp-input" className="text-sm font-medium text-gray-700 block mb-1">
+                    {t("Kode OTP", "OTP Code")}
+                  </label>
+                  <input
+                    id="otp-input"
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={6}
+                    value={otpValue}
+                    onChange={(e) => { setOtpValue(e.target.value.replace(/\D/g, "")); setError(""); }}
+                    placeholder="000000"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg text-center text-2xl font-bold tracking-widest focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    autoFocus
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isLoading || otpValue.length < 6}
+                  className="block w-full py-2.5 bg-emerald-900 text-white font-semibold rounded-lg hover:bg-emerald-800 transition-colors text-sm disabled:opacity-70"
+                >
+                  {isLoading ? t("Memverifikasi...", "Verifying...") : t("Verifikasi & Daftar", "Verify & Register")}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleResendOtp}
+                  disabled={isLoading || resendCooldown > 0}
+                  className="block w-full text-sm text-emerald-600 hover:text-emerald-700 text-center disabled:text-gray-400 disabled:cursor-not-allowed"
+                >
+                  {resendCooldown > 0
+                    ? t(`Kirim ulang dalam ${resendCooldown}s`, `Resend in ${resendCooldown}s`)
+                    : t("Kirim ulang kode OTP", "Resend OTP code")}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => { setStep("form"); setError(""); setOtpValue(""); }}
+                  className="block w-full text-sm text-gray-500 hover:text-gray-700 text-center"
+                >
+                  ← {t("Ganti email", "Change email")}
+                </button>
+              </form>
+            </div>
+          )}
+
+          {/* ── Step Form ── */}
+          {step === "form" && <>
           {/* Role tabs */}
           <div className="flex rounded-lg bg-gray-100 p-1 mb-6">
             {roles.map((r) => (
@@ -285,6 +399,7 @@ function RegisterForm() {
               {t("Masuk", "Log In")}
             </Link>
           </p>
+          </>}
         </div>
       </div>
     </div>

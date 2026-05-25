@@ -2,7 +2,7 @@
 
 import {
   ChevronLeft, ChevronRight, Calculator, PenTool, Layers, Info,
-  Loader2, Leaf, Car, Plane, Home, Globe, Waves, Users,
+  Loader2, Leaf, Car, Plane, Home, Globe, Waves, ChevronDown,
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -35,15 +35,6 @@ const AbrasionMap = dynamic(() => import("@/components/map/AbrasionMap"), {
   ),
 });
 
-const PokmaswasLayer = dynamic(() => import("@/components/map/PokmaswasLayer"), {
-  ssr: false,
-  loading: () => (
-    <div className="absolute inset-0 flex items-center justify-center bg-[#0F2E2A] z-[400]">
-      <Loader2 className="h-8 w-8 text-emerald-400 animate-spin" />
-    </div>
-  ),
-});
-
 const EE_APP_URL =
   "https://ee-dimassyarifworkspace.projects.earthengine.app/view/mangrove-health-indeks-jatim";
 
@@ -63,7 +54,7 @@ export default function JelajahiPetaMangrovePage() {
   const [mhiCategory, setMhiCategory] = useState<"excellent" | "moderate" | "poor">("excellent");
   const [isAbrasionOpen, setIsAbrasionOpen] = useState(false);
   const [isTurtleLayerOpen, setIsTurtleLayerOpen] = useState(false);
-  const [isPokmaswasOpen, setIsPokmaswasOpen] = useState(false);
+  const [isLayerDropdownOpen, setIsLayerDropdownOpen] = useState(false);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -122,39 +113,66 @@ export default function JelajahiPetaMangrovePage() {
             <PenTool className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             {isDrawing ? "Sedang Menggambar..." : "Gambar Polygon"}
           </button>
-          <button
-            onClick={() => { setIsAbrasionOpen(!isAbrasionOpen); setIsTurtleLayerOpen(false); setIsPokmaswasOpen(false); }}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all duration-300 text-xs sm:text-sm font-bold border ${
-              isAbrasionOpen
-                ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20 border-orange-400"
-                : "bg-[#062d22] text-white hover:bg-orange-600 border-[#235850] hover:border-orange-400"
-            }`}
-          >
-            <Waves className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            <span className="hidden sm:inline">Abrasi Pantai</span>
-          </button>
-          <button
-            onClick={() => { setIsTurtleLayerOpen(!isTurtleLayerOpen); setIsAbrasionOpen(false); setIsPokmaswasOpen(false); }}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all duration-300 text-xs sm:text-sm font-bold border ${
-              isTurtleLayerOpen
-                ? "bg-teal-500 text-white shadow-lg shadow-teal-500/20 border-teal-400"
-                : "bg-[#062d22] text-white hover:bg-teal-600 border-[#235850] hover:border-teal-400"
-            }`}
-          >
-            <span className="text-base leading-none">🐢</span>
-            <span className="hidden sm:inline">Penyu</span>
-          </button>
-          <button
-            onClick={() => { setIsPokmaswasOpen(!isPokmaswasOpen); setIsAbrasionOpen(false); setIsTurtleLayerOpen(false); }}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all duration-300 text-xs sm:text-sm font-bold border ${
-              isPokmaswasOpen
-                ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/20 border-emerald-400"
-                : "bg-[#062d22] text-white hover:bg-emerald-600 border-[#235850] hover:border-emerald-400"
-            }`}
-          >
-            <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            <span className="hidden sm:inline">Pokmaswas</span>
-          </button>
+
+          {/* Layer dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => setIsLayerDropdownOpen((v) => !v)}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all duration-300 text-xs sm:text-sm font-bold border ${
+                isLayerDropdownOpen || isAbrasionOpen || isTurtleLayerOpen
+                  ? "bg-teal-500 text-white shadow-lg shadow-teal-500/20 border-teal-400"
+                  : "bg-[#062d22] text-white hover:bg-teal-600 border-[#235850] hover:border-teal-400"
+              }`}
+            >
+              <Layers className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">Layer</span>
+              <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isLayerDropdownOpen ? "rotate-180" : ""}`} />
+            </button>
+
+            {isLayerDropdownOpen && (
+              <>
+                {/* backdrop */}
+                <div className="fixed inset-0 z-[550]" onClick={() => setIsLayerDropdownOpen(false)} />
+                <div className="absolute top-full mt-2 left-0 z-[560] bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden min-w-[180px]">
+                  <p className="px-3 pt-2.5 pb-1 text-[10px] font-bold text-gray-400 uppercase tracking-wider">Pilih Layer</p>
+                  <button
+                    onClick={() => {
+                      setIsAbrasionOpen(true);
+                      setIsTurtleLayerOpen(false);
+                      setIsLayerDropdownOpen(false);
+                    }}
+                    className={`w-full flex items-center gap-2.5 px-3 py-2.5 text-sm font-semibold text-left transition-colors hover:bg-orange-50 ${
+                      isAbrasionOpen ? "bg-orange-50 text-orange-600" : "text-gray-700"
+                    }`}
+                  >
+                    <div className="w-7 h-7 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0">
+                      <Waves className="w-3.5 h-3.5 text-orange-600" />
+                    </div>
+                    Abrasi Pantai
+                  </button>
+                  <button
+                    onClick={() => {
+                      setIsTurtleLayerOpen(true);
+                      setIsAbrasionOpen(false);
+                      setIsLayerDropdownOpen(false);
+                    }}
+                    className={`w-full flex items-center gap-2.5 px-3 py-2.5 text-sm font-semibold text-left transition-colors hover:bg-teal-50 ${
+                      isTurtleLayerOpen ? "bg-teal-50 text-teal-600" : "text-gray-700"
+                    }`}
+                  >
+                    <div className="w-7 h-7 rounded-lg bg-teal-100 flex items-center justify-center flex-shrink-0 text-base">
+                      🐢
+                    </div>
+                    Penyu
+                  </button>
+                  <div className="h-px bg-gray-100 mx-3 my-1" />
+                  <p className="px-3 pb-2.5 text-[10px] text-gray-400">
+                    {isAbrasionOpen ? "Abrasi Pantai aktif" : isTurtleLayerOpen ? "Penyu aktif" : "Tidak ada layer aktif"}
+                  </p>
+                </div>
+              </>
+            )}
+          </div>
         </div>
 
         {/* Right: Actions */}
@@ -222,30 +240,6 @@ export default function JelajahiPetaMangrovePage() {
                   </div>
                 </div>
               ))}
-            </div>
-
-            {/* Info */}
-            <div className="bg-emerald-50/50 rounded-xl p-3 border border-emerald-100">
-              <div className="flex gap-2">
-                <Info className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0 mt-0.5" />
-                <p className="text-[10px] text-gray-600 leading-relaxed">
-                  Klik <strong className="text-emerald-600">Gambar Polygon</strong> lalu klik di area berwarna pada peta untuk menghitung potensi karbon.
-                </p>
-              </div>
-            </div>
-
-            {/* Mangrove Stats */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className="bg-white rounded-xl p-3 text-center border border-gray-100 shadow-sm">
-                <div className="flex justify-center mb-1"><Leaf className="w-4 h-4 text-emerald-500" /></div>
-                <div className="text-lg font-bold text-emerald-600">18.2K</div>
-                <div className="text-[9px] text-gray-500">Ha Mangrove Jatim</div>
-              </div>
-              <div className="bg-white rounded-xl p-3 text-center border border-gray-100 shadow-sm">
-                <div className="flex justify-center mb-1"><Loader2 className="w-4 h-4 text-amber-500" /></div>
-                <div className="text-lg font-bold text-amber-500">32%</div>
-                <div className="text-[9px] text-gray-500">Perlu Rehabilitasi</div>
-              </div>
             </div>
           </div>
 
@@ -424,11 +418,6 @@ export default function JelajahiPetaMangrovePage() {
           {/* Turtle Layer - full Leaflet map with satellite tiles */}
           {isTurtleLayerOpen && (
             <TurtleLayer onClose={() => setIsTurtleLayerOpen(false)} />
-          )}
-
-          {/* Pokmaswas Layer */}
-          {isPokmaswasOpen && (
-            <PokmaswasLayer onClose={() => setIsPokmaswasOpen(false)} />
           )}
         </div>
       </div>

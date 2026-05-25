@@ -1,10 +1,14 @@
 "use client";
 
 import { TreePine, Sprout, BarChart3, Fish, Shield, Users, CheckCircle2 } from "lucide-react";
+import { useQuery } from "convex/react";
+import { api } from "../../../convex/_generated/api";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const services = [
   {
+    key: "rehabilitasi-mangrove",
+    iconName: "TreePine",
     icon: TreePine,
     title: ["Rehabilitasi Mangrove", "Mangrove Rehabilitation"],
     desc: [
@@ -22,6 +26,8 @@ const services = [
     badgeText: "Ekosistem",
   },
   {
+    key: "penyulaman-mangrove",
+    iconName: "Sprout",
     icon: Sprout,
     title: ["Penyulaman Mangrove", "Mangrove Replanting"],
     desc: [
@@ -39,6 +45,8 @@ const services = [
     badgeText: "Revegetasi",
   },
   {
+    key: "monev-mangrove",
+    iconName: "BarChart3",
     icon: BarChart3,
     title: ["Jasa Pemantauan Monev Mangrove", "Mangrove Monitoring & Evaluation"],
     desc: [
@@ -56,6 +64,8 @@ const services = [
     badgeText: "Teknologi",
   },
   {
+    key: "decarbonisasi-aquaculture",
+    iconName: "Fish",
     icon: Fish,
     title: ["Decarbonisasi Aquaculture", "Aquaculture Decarbonization"],
     desc: [
@@ -73,6 +83,8 @@ const services = [
     badgeText: "Carbon Credit",
   },
   {
+    key: "habitat-penyu",
+    iconName: "Shield",
     icon: Shield,
     title: ["Perbaikan Habitat Penyu", "Sea Turtle Habitat Restoration"],
     desc: [
@@ -90,6 +102,8 @@ const services = [
     badgeText: "Konservasi",
   },
   {
+    key: "pemberdayaan-pesisir",
+    iconName: "Users",
     icon: Users,
     title: ["Pemberdayaan Masyarakat Pesisir", "Coastal Community Empowerment"],
     desc: [
@@ -108,8 +122,36 @@ const services = [
   },
 ];
 
+const iconMap = {
+  TreePine,
+  Sprout,
+  BarChart3,
+  Fish,
+  Shield,
+  Users,
+};
+
 export default function OurServicesSection() {
   const { t } = useLanguage();
+  const editableServices = useQuery(api.serviceContent.list);
+  const displayServices = editableServices && editableServices.length > 0
+    ? editableServices.map((svc) => ({
+        key: svc.key,
+        iconName: svc.iconName,
+        icon: iconMap[svc.iconName as keyof typeof iconMap] ?? TreePine,
+        title: [svc.titleId, svc.titleEn],
+        desc: [svc.descriptionId, svc.descriptionEn],
+        image: svc.image,
+        values: [
+          [svc.value1, svc.label1],
+          [svc.value2, svc.label2],
+          [svc.value3, svc.label3],
+        ],
+        iconBg: svc.iconBgClass,
+        badge: svc.badgeClass,
+        badgeText: svc.badgeText,
+      }))
+    : services;
 
   return (
     <section className="py-16 bg-gray-50">
@@ -132,11 +174,11 @@ export default function OurServicesSection() {
 
         {/* Cards */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {services.map((svc) => {
+          {displayServices.map((svc) => {
             const Icon = svc.icon;
             return (
               <div
-                key={svc.title[0]}
+                key={svc.key}
                 className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 flex flex-col"
               >
                 {/* Thumbnail */}
@@ -153,14 +195,14 @@ export default function OurServicesSection() {
                   <span className={`absolute top-3 right-3 text-[10px] font-bold text-white px-2.5 py-1 rounded-full ${svc.badge}`}>
                     {svc.badgeText}
                   </span>
-                  {/* Icon bottom-left overlapping */}
-                  <div className={`absolute bottom-0 left-5 translate-y-1/2 w-12 h-12 rounded-xl flex items-center justify-center ${svc.iconBg} shadow-lg border-2 border-white`}>
+                  {/* Icon bottom-left */}
+                  <div className={`absolute bottom-3 left-4 z-10 w-12 h-12 rounded-xl flex items-center justify-center ${svc.iconBg} shadow-lg border-2 border-white`}>
                     <Icon className="w-6 h-6 text-white" />
                   </div>
                 </div>
 
                 {/* Content */}
-                <div className="pt-8 px-5 pb-5 flex flex-col flex-1 gap-3">
+                <div className="p-5 flex flex-col flex-1 gap-3">
                   <h3 className="font-bold text-[#0f3d2e] text-base leading-snug">
                     {t(svc.title[0], svc.title[1])}
                   </h3>

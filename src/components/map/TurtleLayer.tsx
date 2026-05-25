@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { TITIK_PENDARATAN_PENYU, PENYU_WARNA, type TitikPenyu } from "@/lib/penyuData";
-import { X, Shell, AlertTriangle, Calendar, MapPin } from "lucide-react";
+import { X } from "lucide-react";
 
 const STORAGE_KEY = "idmap_penyu_override";
 
@@ -143,60 +143,7 @@ export default function TurtleLayer({ onClose }: TurtleLayerProps) {
               key={titik.id}
               position={[titik.lat, titik.lon]}
               icon={createTurtleIcon(warna)}
-            >
-              <Popup className="turtle-popup" maxWidth={260}>
-                <div className="p-1 space-y-2 text-xs">
-                  {/* Header popup */}
-                  <div className="flex items-center gap-2 pb-1.5 border-b border-gray-100">
-                    <span className="text-2xl">🐢</span>
-                    <div>
-                      <p className="font-bold text-gray-900">{titik.pantai}</p>
-                      <p className="text-[10px]" style={{ color: warna }}>
-                        Sarang #{titik.noSarang} · {titik.namaIkon}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Jenis */}
-                  <div className="flex items-start gap-1.5">
-                    <Shell className="w-3.5 h-3.5 text-gray-400 flex-shrink-0 mt-0.5" />
-                    <span className="text-gray-700 italic">{titik.jenisPenyu}</span>
-                  </div>
-
-                  {/* Catatan */}
-                  {titik.catatan && (
-                    <div className="flex items-start gap-1.5">
-                      <MapPin className="w-3.5 h-3.5 text-blue-400 flex-shrink-0 mt-0.5" />
-                      <span className="text-gray-600">{titik.catatan}</span>
-                    </div>
-                  )}
-
-                  {/* Ancaman */}
-                  <div className="flex items-start gap-1.5">
-                    <AlertTriangle className="w-3.5 h-3.5 text-orange-400 flex-shrink-0 mt-0.5" />
-                    <div className="flex flex-wrap gap-1">
-                      {titik.ancaman.map((a) => (
-                        <span
-                          key={a}
-                          className="px-1.5 py-0.5 bg-orange-50 text-orange-700 rounded text-[10px] font-medium"
-                        >
-                          {a}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Tanggal */}
-                  <div className="flex items-center gap-1.5 pt-1 border-t border-gray-100">
-                    <Calendar className="w-3.5 h-3.5 text-gray-400" />
-                    <span className="text-gray-500 text-[10px]">Survei: {titik.tanggalSurvei}</span>
-                    <span className="ml-auto px-1.5 py-0.5 bg-emerald-50 text-emerald-700 rounded text-[10px] font-bold">
-                      {titik.statusPerlindungan}
-                    </span>
-                  </div>
-                </div>
-              </Popup>
-            </Marker>
+            />
           );
         })}
       </MapContainer>

@@ -57,6 +57,26 @@ export default function HeroSection() {
               <ArrowRight className="h-4 w-4" />
             </a>
           </div>
+
+          {/* Stats */}
+          <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-0 sm:divide-x sm:divide-white/20">
+            <div className="sm:pr-8">
+              <p className="text-2xl sm:text-3xl font-extrabold text-white whitespace-nowrap">7</p>
+              <p className="text-sm text-white/70 mt-0.5">{t("Sahabat Terlibat", "Partners Involved")}</p>
+            </div>
+            <div className="sm:px-8">
+              <p className="text-2xl sm:text-3xl font-extrabold text-white whitespace-nowrap">1.285.760</p>
+              <p className="text-sm text-white/70 mt-0.5">{t("Bibit Mangrove Ditanam", "Mangrove Seedlings Planted")}</p>
+            </div>
+            <div className="sm:px-8">
+              <p className="text-2xl sm:text-3xl font-extrabold text-white whitespace-nowrap">850.000 <span className="text-lg font-semibold">Ton</span></p>
+              <p className="text-sm text-white/70 mt-0.5">{t("Serapan Karbon (CO₂e)", "Carbon Absorption (CO₂e)")}</p>
+            </div>
+            <div className="sm:pl-8">
+              <p className="text-2xl sm:text-3xl font-extrabold text-white whitespace-nowrap">55.250 <span className="text-lg font-semibold">Jt IDR</span></p>
+              <p className="text-sm text-white/70 mt-0.5">{t("Potensi Nilai Carbon", "Potential Carbon Value")}</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>

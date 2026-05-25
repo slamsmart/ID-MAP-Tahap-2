@@ -35,7 +35,7 @@ export default function InteractiveMapSection() {
               </span>
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-white leading-tight">
-              {t("Mangrove Health Index", "Mangrove Health Index")}
+              {t("MANGROVE HEALTH INDEX & COASTAL ECOSYSTEM", "MANGROVE HEALTH INDEX & COASTAL ECOSYSTEM")}
             </h2>
             <p className="text-emerald-200/80 text-base sm:text-lg mt-4 max-w-2xl mx-auto leading-relaxed">
               {t(

@@ -20,7 +20,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "ID-MAP | Pre-Market Carbon Infrastructure Platform",
+  title: "Satu Platform Mangrove Terintegrasi Menyeluruh",
   description:
     "Platform pre-market carbon terintegrasi MRV, SRN, dan pembelian carbon credit untuk kebutuhan ESG perusahaan.",
 };
