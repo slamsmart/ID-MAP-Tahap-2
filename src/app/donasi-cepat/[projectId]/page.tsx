@@ -18,12 +18,13 @@ import {
 import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
 
-const PRESETS = [10000, 25000, 50000, 100000];
+const PRESETS = [1000, 10000, 25000, 100000];
 
 type State =
   | "idle"
   | "generating"
   | "waiting"
+  | "simulating"
   | "paid"
   | "error";
 
@@ -46,7 +47,7 @@ export default function DonasiCepatPage() {
     projectId ? { projectId: projectId as Id<"projects"> } : "skip"
   );
 
-  const [amount, setAmount] = useState(25000);
+  const [amount, setAmount] = useState(1000);
   const [customAmount, setCustomAmount] = useState("");
   const [state, setState] = useState<State>("idle");
   const [qrisData, setQrisData] = useState<QrisData | null>(null);
@@ -83,8 +84,8 @@ export default function DonasiCepatPage() {
   }, [state, qrisData]);
 
   async function handleCreateQris() {
-    if (!finalAmount || finalAmount < 5000) {
-      setErrorMsg("Minimal donasi Rp 5.000");
+    if (!finalAmount || finalAmount < 1000) {
+      setErrorMsg("Minimal donasi Rp 1.000");
       return;
     }
     setErrorMsg("");
@@ -115,6 +116,25 @@ export default function DonasiCepatPage() {
     setQrisData(null);
     setState("idle");
     setErrorMsg("");
+  }
+
+  async function handleSimulatePayment() {
+    if (!qrisData) return;
+    setState("simulating");
+    try {
+      const res = await fetch("/api/payment/simulate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ contributionId: qrisData.contributionId }),
+      });
+      const data = (await res.json()) as { error?: string };
+      if (!res.ok) throw new Error(data.error ?? "Simulasi gagal");
+      setState("paid");
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Simulasi gagal";
+      setErrorMsg(msg);
+      setState("error");
+    }
   }
 
   if (project === undefined) {
@@ -268,7 +288,7 @@ export default function DonasiCepatPage() {
                 </div>
               </div>
 
-              {finalAmount >= 5000 && (
+              {finalAmount >= 1000 && (
                 <p className="text-xs text-emerald-700 bg-emerald-50 rounded-lg px-3 py-2">
                   {formatRp(finalAmount)} ≈{" "}
                   <strong>
@@ -287,7 +307,7 @@ export default function DonasiCepatPage() {
 
               <button
                 onClick={handleCreateQris}
-                disabled={!finalAmount || finalAmount < 5000}
+                disabled={!finalAmount || finalAmount < 1000}
                 className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-200 disabled:text-gray-400 text-white font-display font-semibold rounded-xl transition-colors"
               >
                 Buat QR Pembayaran
@@ -356,11 +376,25 @@ export default function DonasiCepatPage() {
               </div>
 
               <button
+                onClick={handleSimulatePayment}
+                className="w-full py-2.5 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg transition-colors"
+              >
+                Simulasi Bayar (Demo Juri)
+              </button>
+
+              <button
                 onClick={reset}
                 className="w-full py-2 text-xs text-gray-500 hover:text-gray-700"
               >
                 Batal &amp; ganti nominal
               </button>
+            </div>
+          )}
+
+          {state === "simulating" && (
+            <div className="py-10 flex flex-col items-center gap-3 text-gray-500">
+              <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
+              <p className="text-sm">Memproses simulasi pembayaran…</p>
             </div>
           )}
 

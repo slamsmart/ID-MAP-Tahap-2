@@ -11,7 +11,7 @@ import { api } from "../../../../convex/_generated/api";
 import { getSession, User } from "@/lib/auth";
 import { Id } from "../../../../convex/_generated/dataModel";
 
-const PRESET_AMOUNTS = [10000, 25000, 50000, 100000];
+const PRESET_AMOUNTS = [1000, 10000, 25000, 100000];
 
 type PaymentState = "idle" | "generating" | "waiting" | "simulating" | "paid" | "error";
 
@@ -69,7 +69,7 @@ function KycGate({ status }: { status?: string }) {
 
 export default function DonasiPage() {
   const [user, setUser] = useState<User | null>(null);
-  const [amount, setAmount] = useState(25000);
+  const [amount, setAmount] = useState(1000);
   const [customAmount, setCustomAmount] = useState("");
   const [selectedProjectId, setSelectedProjectId] = useState<string>("");
   const [state, setState] = useState<PaymentState>("idle");
@@ -107,8 +107,8 @@ export default function DonasiPage() {
     }).format(n);
 
   async function handleCreateQris() {
-    if (!finalAmount || finalAmount < 5000) {
-      setErrorMsg("Minimal donasi Rp 5.000");
+    if (!finalAmount || finalAmount < 1000) {
+      setErrorMsg("Minimal donasi Rp 1.000");
       return;
     }
     if (!selectedProjectId) {
@@ -328,7 +328,7 @@ export default function DonasiPage() {
                   </div>
                 </div>
 
-                {finalAmount >= 5000 && (
+                {finalAmount >= 1000 && (
                   <p className="text-xs text-emerald-600 bg-emerald-50 rounded-lg px-3 py-2">
                     {formatRp(finalAmount)} ≈ <strong>{(finalAmount / 5000).toFixed(4)} tCO₂e</strong> diserap mangrove
                   </p>
@@ -343,7 +343,7 @@ export default function DonasiPage() {
 
                 <button
                   onClick={handleCreateQris}
-                  disabled={!finalAmount || finalAmount < 5000 || !selectedProjectId}
+                  disabled={!finalAmount || finalAmount < 1000 || !selectedProjectId}
                   className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-lg transition-colors"
                 >
                   Buat QRIS Pembayaran
