@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "convex/react";
 import { QRCodeSVG } from "qrcode.react";
 import {
@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
+import { getSession, type User } from "@/lib/auth";
 
 const PRESETS = [1000, 10000, 25000, 100000];
 
@@ -41,10 +42,28 @@ interface QrisData {
 // Public donation page — accessible without login.
 // Reachable from QR code printed on the field at each verified project.
 export default function DonasiCepatPage() {
+  const router = useRouter();
   const { projectId } = useParams<{ projectId: string }>();
+
+  // Guard: scan QRIS wajib login dulu agar donasi tertaut ke akun.
+  // Non-login → /daftar dgn ?next=/donasi-cepat/<id> sehingga setelah daftar
+  // user balik ke halaman ini dan kontribusinya tercatat ke userId-nya.
+  const [authChecked, setAuthChecked] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  useEffect(() => {
+    const s = getSession();
+    if (!s) {
+      const next = encodeURIComponent(`/donasi-cepat/${projectId ?? ""}`);
+      router.replace(`/daftar?peran=sahabat&next=${next}`);
+      return;
+    }
+    setUser(s);
+    setAuthChecked(true);
+  }, [projectId, router]);
+
   const project = useQuery(
     api.projects.get,
-    projectId ? { projectId: projectId as Id<"projects"> } : "skip"
+    projectId && authChecked ? { projectId: projectId as Id<"projects"> } : "skip"
   );
 
   const [amount, setAmount] = useState(1000);
@@ -97,6 +116,7 @@ export default function DonasiCepatPage() {
         body: JSON.stringify({
           amount: finalAmount,
           projectId,
+          userId: user?._id,
         }),
       });
       const data = (await res.json()) as QrisData & { error?: string };
@@ -137,7 +157,7 @@ export default function DonasiCepatPage() {
     }
   }
 
-  if (project === undefined) {
+  if (!authChecked || project === undefined) {
     return (
       <main className="min-h-screen flex items-center justify-center bg-emerald-50">
         <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
@@ -462,10 +482,10 @@ export default function DonasiCepatPage() {
                 </p>
               </div>
               <Link
-                href="/daftar"
-                className="mt-2 w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-display font-semibold text-sm rounded-xl transition-colors"
+                href="/user/sertifikat"
+                className="mt-2 w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-display font-semibold text-sm rounded-xl transition-colors text-center"
               >
-                Daftar untuk klaim sertifikat
+                Lihat sertifikat saya
               </Link>
               <button
                 onClick={reset}

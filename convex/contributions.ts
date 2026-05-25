@@ -166,6 +166,18 @@ export const confirmPayment = mutation({
       const next = (project.fundingRaised ?? 0) + contrib.amount;
       await ctx.db.patch(contrib.projectId, { fundingRaised: next });
     }
+
+    // Auto-issue certificate (only if donor is a registered user)
+    if (contrib.userId) {
+      await ctx.db.insert("certificates", {
+        ownerId: contrib.userId,
+        projectId: contrib.projectId,
+        type: "contribution",
+        co2Amount: contrib.co2Equivalent,
+        issuedAt: Date.now(),
+        certificateNumber: `IDMAP-DON-${Date.now().toString(36).toUpperCase()}-${contrib._id.slice(-6).toUpperCase()}`,
+      });
+    }
     return null;
   },
 });
@@ -192,6 +204,18 @@ export const confirmByPaymentId = mutation({
     if (project) {
       const next = (project.fundingRaised ?? 0) + contrib.amount;
       await ctx.db.patch(contrib.projectId, { fundingRaised: next });
+    }
+
+    // Auto-issue certificate (only if donor is a registered user)
+    if (contrib.userId) {
+      await ctx.db.insert("certificates", {
+        ownerId: contrib.userId,
+        projectId: contrib.projectId,
+        type: "contribution",
+        co2Amount: contrib.co2Equivalent,
+        issuedAt: Date.now(),
+        certificateNumber: `IDMAP-DON-${Date.now().toString(36).toUpperCase()}-${contrib._id.slice(-6).toUpperCase()}`,
+      });
     }
     return null;
   },
