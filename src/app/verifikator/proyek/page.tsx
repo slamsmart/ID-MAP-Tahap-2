@@ -13,6 +13,8 @@ import {
   X,
   Search,
   ShieldCheck,
+  Upload,
+  ImageIcon,
 } from "lucide-react";
 import { getSession, User } from "@/lib/auth";
 
@@ -57,6 +59,8 @@ export default function VerifikatorProyekAuditPage() {
   const [editing, setEditing] = useState<Project | null>(null);
   const [confirmed, setConfirmed] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState("");
   const [form, setForm] = useState<Partial<Project>>({});
 
   const isVerifikator = session?.role === "verifikator";
@@ -80,15 +84,45 @@ export default function VerifikatorProyekAuditPage() {
       status: p.status,
       co2Absorption: p.co2Absorption,
       progress: p.progress ?? 0,
+      image: p.image,
     });
     setConfirmed(false);
+    setUploadError("");
   };
 
   const closeEdit = () => {
-    if (saving) return;
+    if (saving || uploading) return;
     setEditing(null);
     setForm({});
     setConfirmed(false);
+    setUploadError("");
+  };
+
+  const handleImageUpload = async (file: File) => {
+    if (file.size > 5 * 1024 * 1024) {
+      setUploadError("Ukuran maksimal 5 MB.");
+      return;
+    }
+    if (!file.type.startsWith("image/")) {
+      setUploadError("File harus berupa gambar.");
+      return;
+    }
+    setUploadError("");
+    setUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/cloudinary-upload", { method: "POST", body: fd });
+      const data = (await res.json()) as { url?: string; error?: string };
+      if (!res.ok || !data.url) {
+        throw new Error(data.error ?? "Upload gagal");
+      }
+      setForm((f) => ({ ...f, image: data.url }));
+    } catch (err) {
+      setUploadError(err instanceof Error ? err.message : "Upload gagal");
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleSave = async () => {
@@ -105,6 +139,7 @@ export default function VerifikatorProyekAuditPage() {
         status: form.status as ProjectStatus | undefined,
         co2Absorption: form.co2Absorption,
         progress: form.progress,
+        image: form.image,
       });
       closeEdit();
     } catch (err) {
@@ -267,7 +302,7 @@ export default function VerifikatorProyekAuditPage() {
               </div>
               <button
                 onClick={closeEdit}
-                disabled={saving}
+                disabled={saving || uploading}
                 className="p-1.5 hover:bg-gray-100 rounded-lg disabled:opacity-50"
                 aria-label="Tutup"
               >
@@ -282,6 +317,62 @@ export default function VerifikatorProyekAuditPage() {
                   Perubahan ini akan tersimpan permanen. Pastikan sudah dikonfirmasi
                   pemilik mitra proyek.
                 </p>
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-gray-700 block mb-1.5">
+                  Gambar Proyek
+                </label>
+                <div className="flex items-start gap-3">
+                  <div className="relative w-32 h-24 rounded-lg overflow-hidden bg-gray-100 border border-gray-200 flex-shrink-0">
+                    {form.image ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={form.image}
+                        alt="Preview"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-gray-400">
+                        <ImageIcon className="w-6 h-6" />
+                      </div>
+                    )}
+                    {uploading && (
+                      <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                        <Loader2 className="w-5 h-5 text-white animate-spin" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <label
+                      className={`inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg border cursor-pointer transition ${
+                        uploading
+                          ? "bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed"
+                          : "bg-white border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                      }`}
+                    >
+                      <Upload className="w-3.5 h-3.5" />
+                      {uploading ? "Mengunggah..." : "Ganti Gambar"}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        disabled={uploading}
+                        onChange={(e) => {
+                          const f = e.target.files?.[0];
+                          if (f) handleImageUpload(f);
+                          e.target.value = "";
+                        }}
+                      />
+                    </label>
+                    <p className="text-[11px] text-gray-400 mt-1.5 leading-snug">
+                      Format JPG/PNG/WebP, maks. 5 MB. Pilih foto landscape (rasio 3:2 / 16:9) agar tampil rapi pada kartu proyek.
+                    </p>
+                    {uploadError && (
+                      <p className="text-[11px] text-red-600 mt-1">{uploadError}</p>
+                    )}
+                  </div>
+                </div>
               </div>
 
               <div>
@@ -414,14 +505,14 @@ export default function VerifikatorProyekAuditPage() {
             <div className="flex items-center justify-end gap-2 p-4 border-t border-gray-100 bg-gray-50">
               <button
                 onClick={closeEdit}
-                disabled={saving}
+                disabled={saving || uploading}
                 className="px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 rounded-lg disabled:opacity-50"
               >
                 Batal
               </button>
               <button
                 onClick={handleSave}
-                disabled={!confirmed || saving || !isVerifikator}
+                disabled={!confirmed || saving || uploading || !isVerifikator}
                 className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-900 hover:bg-emerald-800 disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-lg transition"
               >
                 {saving && <Loader2 className="w-4 h-4 animate-spin" />}
