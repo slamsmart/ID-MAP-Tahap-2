@@ -584,7 +584,7 @@ export const seedPokmaswasProjects = mutation({
 
     const projects = [
       {
-        title: "GOAL CMC 3 Warna",
+        title: "Pokmaswas GOAL — Rehabilitasi Mangrove",
         location: "Pantai Clungup, Sumbermanjing Wetan, Malang Selatan",
         province: "Jawa Timur",
         image:
@@ -593,42 +593,53 @@ export const seedPokmaswasProjects = mutation({
         area: 30,
         seedsPlanted: 50000,
         description:
-          "Restorasi mangrove dan rehabilitasi pantai oleh Pokmaswas Gatra Olah Alam Lestari (GOAL) di Clungup Mangrove Conservation 3 Warna. Fokus pelestarian Pantai Clungup, Gatra dan Mini.",
-        serviceType: "Penanaman Mangrove",
-        fundingTarget: FUNDING_TARGET,
-        fundingRaised: 0,
-      },
-      {
-        title: "Pemulihan Mangrove Pantai Bama",
-        location: "Pantai Bama, Taman Nasional Baluran, Banyuwangi",
-        province: "Jawa Timur",
-        image:
-          "https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?w=800&q=80&auto=format&fit=crop",
-        co2Absorption: 60000,
-        area: 25,
-        seedsPlanted: 40000,
-        description:
-          "Rehabilitasi ekosistem mangrove sekitar Pantai Bama oleh Pokmaswas setempat untuk perlindungan habitat satwa pesisir dan pencegahan abrasi.",
+          "Rehabilitasi mangrove oleh Pokmaswas Gatra Olah Alam Lestari (GOAL) di Clungup Mangrove Conservation 3 Warna. Fokus pemulihan ekosistem pesisir Pantai Clungup, Gatra, dan Mini.",
         serviceType: "Rehabilitasi Mangrove",
         fundingTarget: FUNDING_TARGET,
         fundingRaised: 0,
       },
       {
-        title: "Konservasi Teluk Pangpang",
+        title: "Pokmaswas Pilar Harapan — Konservasi Habitat Penyu",
+        location: "Pantai Sukamade, Taman Nasional Meru Betiri, Banyuwangi",
+        province: "Jawa Timur",
+        image:
+          "https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=800&q=80&auto=format&fit=crop",
+        co2Absorption: 45000,
+        area: 20,
+        seedsPlanted: 25000,
+        description:
+          "Pokmaswas Pilar Harapan menjaga habitat peneluran penyu di pesisir Banyuwangi. Patroli sarang, relokasi telur, dan pelepasan tukik untuk pemulihan populasi penyu.",
+        serviceType: "Konservasi Habitat Penyu",
+        fundingTarget: FUNDING_TARGET,
+        fundingRaised: 0,
+      },
+      {
+        title: "Pokmaswas Mina Mulya — Pemberdayaan Nelayan Pesisir",
         location: "Teluk Pangpang, Muncar, Banyuwangi",
         province: "Jawa Timur",
         image:
           "https://images.unsplash.com/photo-1573655349936-de6bed86f839?w=800&q=80&auto=format&fit=crop",
-        co2Absorption: 90000,
+        co2Absorption: 60000,
         area: 35,
-        seedsPlanted: 60000,
+        seedsPlanted: 40000,
         description:
-          "Konservasi mangrove dan pemberdayaan Pokmaswas di kawasan Teluk Pangpang Muncar untuk mendukung perikanan berkelanjutan dan blue carbon.",
-        serviceType: "Konservasi Mangrove",
+          "Pokmaswas Mina Mulya memberdayakan nelayan dan masyarakat pesisir Muncar lewat pengawasan sumber daya laut, perikanan berkelanjutan, dan penguatan ekonomi komunitas pesisir.",
+        serviceType: "Pemberdayaan Masyarakat Pesisir",
         fundingTarget: FUNDING_TARGET,
         fundingRaised: 0,
       },
     ];
+
+    // Cleanup any legacy/non-Pokmaswas projects so only the 3 Pokmaswas remain
+    const newTitles = new Set(projects.map((p) => p.title));
+    const allExisting = await ctx.db.query("projects").collect();
+    let removed = 0;
+    for (const old of allExisting) {
+      if (!newTitles.has(old.title)) {
+        await ctx.db.delete(old._id);
+        removed++;
+      }
+    }
 
     let inserted = 0;
     let skipped = 0;
@@ -656,6 +667,6 @@ export const seedPokmaswasProjects = mutation({
       ids.push(id);
     }
 
-    return `Pokmaswas seed: ${inserted} inserted, ${skipped} skipped. IDs: ${ids.join(", ")}`;
+    return `Pokmaswas seed: ${inserted} inserted, ${skipped} skipped, ${removed} removed. IDs: ${ids.join(", ")}`;
   },
 });
