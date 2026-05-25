@@ -4,7 +4,8 @@ import { api } from "../../../../../convex/_generated/api";
 import { Id } from "../../../../../convex/_generated/dataModel";
 import { createQris, isMayarLive, MAYAR_BASE } from "../../../../lib/mayar";
 
-const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
+const CONVEX_URL = process.env.NEXT_PUBLIC_CONVEX_URL!;
+const convex = new ConvexHttpClient(CONVEX_URL);
 
 // Create a dynamic QRIS for community donation (B2C).
 //
@@ -88,6 +89,13 @@ export async function POST(request: NextRequest) {
     const msg = error instanceof Error ? error.message : "Gagal membuat QRIS";
     const stack = error instanceof Error ? error.stack : undefined;
     console.error("Create QRIS error:", msg, stack);
-    return NextResponse.json({ error: msg, stack, debug: true }, { status: 500 });
+    return NextResponse.json({
+      error: msg,
+      stack,
+      debug: true,
+      convexUrl: CONVEX_URL,
+      isMayarLive,
+      mayarBase: MAYAR_BASE,
+    }, { status: 500 });
   }
 }
