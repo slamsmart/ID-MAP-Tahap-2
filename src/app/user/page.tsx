@@ -48,6 +48,16 @@ export default function UserDashboard() {
     ? projects?.find(p => p._id === recentContribution.projectId) 
     : null;
 
+  // Pick the first verified project for the "scan-to-donate" QR.
+  // QR target = halaman publik /donasi-cepat/[projectId] yang QRIS-friendly.
+  const verifiedProjects = projects?.filter((p) => p.status === "Terverifikasi") ?? [];
+  const featuredProject = verifiedProjects[0];
+  const siteUrl =
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://idmap-pesisir.vercel.app";
+  const donationLink = featuredProject
+    ? `${siteUrl}/donasi-cepat/${featuredProject._id}`
+    : `${siteUrl}/proyek`;
+
   return (
     <div className="space-y-6">
       {/* Welcome */}
@@ -178,28 +188,39 @@ export default function UserDashboard() {
           {/* QR Scanner */}
           <div className="bg-emerald-50 rounded-xl border border-emerald-200 p-5">
             <h3 className="font-display font-semibold text-emerald-900 text-center mb-3">
-              Scan Proyek Mangrove
+              {featuredProject ? featuredProject.title : "Scan Proyek Mangrove"}
             </h3>
             <p className="text-xs text-center text-gray-500 mb-4">
-              Dukung Proyek Terverifikasi
+              {featuredProject
+                ? `${featuredProject.location}, ${featuredProject.province}`
+                : "Belum ada proyek terverifikasi"}
             </p>
             <div className="flex justify-center mb-4">
-              <div className="bg-white rounded-xl p-4">
+              <a
+                href={donationLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-white rounded-xl p-4 hover:shadow-md transition-shadow"
+                aria-label="Buka halaman donasi cepat"
+              >
                 <QRCodeSVG
-                  value="https://id-map.co.id/scan"
+                  value={donationLink}
                   size={180}
                   fgColor="#064E3B"
                   level="M"
                 />
-              </div>
+              </a>
             </div>
             <p className="text-xs text-center text-gray-500 mb-3">
-              Arahkan kamera ke kode QR pada lokasi proyek
+              Scan dari HP, atau klik tombol di bawah untuk donasi langsung
             </p>
-            <button onClick={() => alert("Kamera berhasil diakses. Silakan arahkan ke kode QR proyek.")} className="w-full py-2.5 bg-emerald-700 text-white font-display font-semibold rounded-lg hover:bg-emerald-600 transition-colors text-sm flex items-center justify-center gap-2">
+            <a
+              href="/user/donasi"
+              className="w-full py-2.5 bg-emerald-700 text-white font-display font-semibold rounded-lg hover:bg-emerald-600 transition-colors text-sm flex items-center justify-center gap-2"
+            >
               <Camera className="w-4 h-4" />
-              Scan Sekarang
-            </button>
+              Donasi via QRIS
+            </a>
           </div>
 
           {/* Impact Stats */}

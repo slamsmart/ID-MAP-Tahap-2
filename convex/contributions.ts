@@ -175,3 +175,21 @@ export const confirmByPaymentId = mutation({
     return null;
   },
 });
+
+// Lookup status singkat untuk polling dari halaman donasi
+export const getStatus = query({
+  args: { contributionId: v.id("contributions") },
+  returns: v.union(
+    v.object({
+      paymentStatus: v.optional(
+        v.union(v.literal("pending"), v.literal("paid"), v.literal("failed"))
+      ),
+    }),
+    v.null()
+  ),
+  handler: async (ctx, args) => {
+    const c = await ctx.db.get(args.contributionId);
+    if (!c) return null;
+    return { paymentStatus: c.paymentStatus };
+  },
+});
