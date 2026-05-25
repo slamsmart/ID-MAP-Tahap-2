@@ -13,6 +13,12 @@ const FUNDING_PROJECT_TITLES = [
   "Pokmaswas Mina Mulya — Pemberdayaan Nelayan Pesisir",
 ];
 
+// Some project titles may have been renamed by mitra/verifikator after seed
+// (e.g. "Rehabilitasi Mangrove (Pokmaswas X)"). Match by substring so the
+// filter stays robust across renames; cap the result to 3 cards.
+const isPokmaswasProject = (title: string) =>
+  /pokmaswas/i.test(title) || FUNDING_PROJECT_TITLES.includes(title.trim());
+
 const fmtRp = (n: number) =>
   new Intl.NumberFormat("id-ID", {
     style: "currency",
@@ -28,9 +34,9 @@ export default function PokmaswasCampaignSection() {
     setHasSession(!!getSession());
   }, []);
 
-  // Filter only the 3 Pokmaswas funding campaign projects
+  // Filter only Pokmaswas funding campaign projects (substring match on title)
   const campaigns = (allProjects ?? [])
-    .filter((p) => FUNDING_PROJECT_TITLES.includes(p.title))
+    .filter((p) => isPokmaswasProject(p.title))
     .slice(0, 3);
 
   // Build donate href: if not logged in, redirect to register first
@@ -49,11 +55,11 @@ export default function PokmaswasCampaignSection() {
             Dukung Proyek Aktif
           </span>
           <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#0f3d2e]">
-            Donasi QRIS untuk Pokmaswas
+            Dukung via QRIS untuk Pokmaswas / Mitra
           </h2>
           <p className="mt-3 text-slate-500 max-w-2xl mx-auto text-sm">
-            3 proyek mangrove terverifikasi siap menerima dukungan donasi.
-            Scan QRIS, dananya langsung tersalurkan ke kelompok masyarakat pesisir.
+            3 proyek mangrove terverifikasi siap menerima dukungan.
+            Scan QRIS, dananya langsung tersalurkan ke kelompok masyarakat pesisir & mitra pelaksana.
           </p>
         </div>
 
