@@ -31,7 +31,7 @@ export default function HeroSection() {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-white/90 backdrop-blur-md text-sm font-medium mb-6">
             <ShieldCheck className="h-4 w-4" />
-            {t("Platform Infrastruktur Ekosistem Karbon", "Carbon Ecosystem Infrastructure Platform")}
+            {t("Platform Integrasi Data Ekosistem Pesisir Berkelanjutan", "Integrated Coastal Ecosystem Data Platform for Sustainability")}
           </div>
 
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-[1.1] tracking-tight text-white drop-shadow-sm">
