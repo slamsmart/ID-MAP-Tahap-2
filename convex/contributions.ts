@@ -133,6 +133,19 @@ export const createPending = mutation({
   },
 });
 
+// Lampirkan paymentId setelah Mayar create invoice (dipanggil dari /api/payment/create-invoice)
+export const attachPaymentId = mutation({
+  args: {
+    contributionId: v.id("contributions"),
+    paymentId: v.string(),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.contributionId, { paymentId: args.paymentId });
+    return null;
+  },
+});
+
 // Konfirmasi pembayaran (dipanggil dari webhook mayar.id atau simulasi)
 export const confirmPayment = mutation({
   args: {

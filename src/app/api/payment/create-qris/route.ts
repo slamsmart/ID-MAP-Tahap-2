@@ -2,20 +2,23 @@ import { NextRequest, NextResponse } from "next/server";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../../../../convex/_generated/api";
 import { Id } from "../../../../../convex/_generated/dataModel";
-
-// Mayar.id Sandbox (test): https://api.mayar.club/hl/v1
-// Mayar.id Production:      https://api.mayar.id/hl/v1
-const MAYAR_BASE = process.env.MAYAR_SANDBOX === "false"
-  ? "https://api.mayar.id/hl/v1"
-  : "https://api.mayar.club/hl/v1";
-
-const MAYAR_API_KEY = process.env.MAYAR_API_KEY ?? "";
+import { createQris, isMayarLive, MAYAR_BASE } from "../../../../lib/mayar";
 
 const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
+// Create a dynamic QRIS for community donation (B2C).
+//
+// Flow:
+//   1. Client POSTs { amount, projectId, userId? }.
+//   2. We hit Mayar /qrcode/create to mint a QR image URL.
+//   3. We persist a "pending" contribution in Convex tagged with the QR id.
+//   4. When user pays, Mayar POSTs the webhook → we flip status to "paid".
+//
+// If MAYAR_API_KEY is unset, we return a dummy paymentId so the UI can
+// still render a fallback QR (qrcode.react). Useful for local dev.
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json() as {
+    const body = (await request.json()) as {
       amount: number;
       projectId: string;
       userId?: string;
@@ -29,53 +32,47 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+    if (!projectId) {
+      return NextResponse.json(
+        { error: "projectId diperlukan" },
+        { status: 400 }
+      );
+    }
 
-    // Rp 5.000 per tCO2e (perkiraan konversi donasi → karbon)
+    // Conversion: Rp 5.000 ≈ 1 tCO2e support (UI only, not regulatory).
     const co2Equivalent = +(amount / 5000).toFixed(4);
 
-    // 1. Buat dynamic QRIS via mayar.id
     let qrImageUrl: string | null = null;
     let mayarPaymentId: string | null = null;
 
-    if (MAYAR_API_KEY) {
-      const mayarRes = await fetch(`${MAYAR_BASE}/qrcode/create`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${MAYAR_API_KEY}`,
-        },
-        body: JSON.stringify({ amount }),
-      });
-
-      if (mayarRes.ok) {
-        const mayarData = await mayarRes.json() as {
-          statusCode: number;
-          messages: string;
-          data?: { url: string; amount: number; id?: string };
-        };
-
-        if (mayarData.statusCode === 200 && mayarData.data?.url) {
-          qrImageUrl = mayarData.data.url;
-          mayarPaymentId = mayarData.data?.id ?? `mayar_${Date.now()}`;
-        }
+    if (isMayarLive) {
+      try {
+        const res = await createQris(amount);
+        qrImageUrl = res.data?.url ?? null;
+        mayarPaymentId = res.data?.id ?? `mayar_${Date.now()}`;
+      } catch (err) {
+        // Don't fail the whole request — fall through to dummy mode so the
+        // donor can still see something. Surface the error to the client.
+        console.warn("[mayar] createQris failed, falling back to dummy:", err);
       }
     }
 
-    // Fallback dummy QR jika API key belum diset atau sandbox tidak merespons
-    if (!qrImageUrl) {
-      // Generate QRIS dummy menggunakan data statis (mode demo)
-      qrImageUrl = null; // akan di-handle di frontend dengan qrcode.react
-      mayarPaymentId = `dummy_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+    if (!mayarPaymentId) {
+      mayarPaymentId = `dummy_${Date.now()}_${Math.random()
+        .toString(36)
+        .slice(2, 8)}`;
     }
 
-    // 2. Simpan donasi pending ke Convex
-    const contributionId = await convex.mutation(api.contributions.createPending, {
-      projectId: projectId as Id<"projects">,
-      userId: userId as Id<"users"> | undefined,
-      amount,
-      co2Equivalent,
-      paymentId: mayarPaymentId ?? undefined,
-    });
+    const contributionId = await convex.mutation(
+      api.contributions.createPending,
+      {
+        projectId: projectId as Id<"projects">,
+        userId: userId as Id<"users"> | undefined,
+        amount,
+        co2Equivalent,
+        paymentId: mayarPaymentId,
+      }
+    );
 
     return NextResponse.json({
       success: true,
@@ -85,13 +82,11 @@ export async function POST(request: NextRequest) {
       amount,
       co2Equivalent,
       isSandbox: MAYAR_BASE.includes("mayar.club"),
-      isDummy: !MAYAR_API_KEY,
+      isDummy: !isMayarLive || !qrImageUrl,
     });
-  } catch (error: any) {
-    console.error("Create QRIS error:", error);
-    return NextResponse.json(
-      { error: error?.message ?? "Gagal membuat QRIS" },
-      { status: 500 }
-    );
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : "Gagal membuat QRIS";
+    console.error("Create QRIS error:", msg);
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }
