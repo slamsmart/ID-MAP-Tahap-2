@@ -670,3 +670,99 @@ export const seedPokmaswasProjects = mutation({
     return `Pokmaswas seed: ${inserted} inserted, ${skipped} skipped, ${removed} removed. IDs: ${ids.join(", ")}`;
   },
 });
+
+// ─── Seed dummy certificates for the demo sahabat account ─────────────
+// Idempotent: runs only when the sahabat account has no certificates yet.
+// Run: npx convex run seed:seedDummyCertificates
+export const seedDummyCertificates = mutation({
+  args: {},
+  returns: v.string(),
+  handler: async (ctx) => {
+    // Resolve the demo sahabat user (seeded by resetAndSeed → user@idmap.id).
+    // Fallback to the first sahabat user if the demo email is not present.
+    let sahabat = await ctx.db
+      .query("users")
+      .withIndex("by_email", (q) => q.eq("email", "user@idmap.id"))
+      .first();
+    if (!sahabat) {
+      sahabat = await ctx.db
+        .query("users")
+        .withIndex("by_role", (q) => q.eq("role", "sahabat"))
+        .first();
+    }
+    if (!sahabat) {
+      return "No sahabat user found — run seed:resetAndSeed first.";
+    }
+
+    // Skip if this user already has certificates (idempotent demo seed).
+    const existing = await ctx.db
+      .query("certificates")
+      .withIndex("by_owner", (q) => q.eq("ownerId", sahabat._id))
+      .first();
+    if (existing) {
+      return `Skipped: sahabat ${sahabat.email} already has certificates.`;
+    }
+
+    // Pull the 3 Pokmaswas projects to attach the dummy certificates to.
+    const pokmaswasTitles = [
+      "Pokmaswas GOAL — Rehabilitasi Mangrove",
+      "Pokmaswas Pilar Harapan — Konservasi Habitat Penyu",
+      "Pokmaswas Mina Mulya — Pemberdayaan Nelayan Pesisir",
+    ];
+    const projects = await ctx.db
+      .query("projects")
+      .withIndex("by_status", (q) => q.eq("status", "Terverifikasi"))
+      .collect();
+    const pokmaswasProjects = projects.filter((p) =>
+      pokmaswasTitles.includes(p.title)
+    );
+    if (pokmaswasProjects.length === 0) {
+      return "No Pokmaswas projects found — run seed:seedPokmaswasProjects first.";
+    }
+
+    // Generate 1 contribution + 1 certificate per Pokmaswas project so
+    // numbers look consistent on the user dashboard. Sertifikat di-tag
+    // sebagai "contribution" (donasi via QRIS).
+    const dummyAmounts = [50_000, 100_000, 25_000]; // IDR per project
+    let issued = 0;
+    const certNumbers: string[] = [];
+    const now = Date.now();
+
+    for (let i = 0; i < pokmaswasProjects.length; i++) {
+      const proj = pokmaswasProjects[i];
+      const amount = dummyAmounts[i] ?? 50_000;
+      const co2 = +(amount / 5000).toFixed(4); // mirror /api/payment/create-qris
+
+      // Insert a paid contribution so totals reconcile if anyone audits.
+      await ctx.db.insert("contributions", {
+        userId: sahabat._id,
+        projectId: proj._id,
+        amount,
+        co2Equivalent: co2,
+        method: "QRIS",
+        paymentId: `dummy_seed_${proj._id.slice(-6)}_${now}`,
+        paymentStatus: "paid",
+        createdAt: now - (i + 1) * 86400000, // staggered dates for variety
+      });
+
+      // Bump funding raised on the project.
+      await ctx.db.patch(proj._id, {
+        fundingRaised: (proj.fundingRaised ?? 0) + amount,
+      });
+
+      const certNumber = `IDMAP-DON-${(now - i).toString(36).toUpperCase()}-${proj._id.slice(-6).toUpperCase()}`;
+      await ctx.db.insert("certificates", {
+        ownerId: sahabat._id,
+        projectId: proj._id,
+        type: "contribution",
+        co2Amount: co2,
+        issuedAt: now - (i + 1) * 86400000,
+        certificateNumber: certNumber,
+      });
+      certNumbers.push(certNumber);
+      issued++;
+    }
+
+    return `Dummy certs seeded for ${sahabat.email}: ${issued} certificates. Numbers: ${certNumbers.join(", ")}`;
+  },
+});
