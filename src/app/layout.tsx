@@ -20,9 +20,17 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Satu Platform Mangrove Terintegrasi Menyeluruh",
+  title: "ID-MAP — Integrasi Data & Manajemen Pesisir",
   description:
-    "Platform pre-market carbon terintegrasi MRV, SRN, dan pembelian carbon credit untuk kebutuhan ESG perusahaan.",
+    "Platform integrasi data ekosistem pesisir Indonesia: mangrove, abrasi, habitat penyu, dan jaringan Pokmaswas/mitra dalam satu sistem MRV terverifikasi.",
+  icons: {
+    icon: [
+      { url: "/images/logo2.webp", type: "image/webp" },
+      { url: "/images/logo2.png", type: "image/png" },
+    ],
+    shortcut: "/images/logo2.png",
+    apple: "/images/logo2.png",
+  },
 };
 
 export default function RootLayout({

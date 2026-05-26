@@ -36,7 +36,7 @@ export default function HeroSection() {
 
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-[1.1] tracking-tight text-white drop-shadow-sm">
             {t("Satu Platform.", "One Platform.")}<br/>
-            {t("Seluruh Ekosistem Mangrove", "The Entire Mangrove Ecosystem")}<br/>
+            {t("Seluruh Ekosistem Mangrove & Pesisir", "The Entire Mangrove & Coastal Ecosystem")}<br/>
             <span className="text-[#6ee7b7]">{t("Indonesia.", "Indonesia.")}</span>
           </h1>
 
@@ -53,7 +53,7 @@ export default function HeroSection() {
               <ArrowRight className="h-4 w-4" />
             </a>
             <a href="/jelajahi-peta-mangrove" className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/40 px-6 py-3.5 text-sm font-bold text-white hover:bg-white/10 transition-colors backdrop-blur-sm">
-              {t("Jelajahi Peta Mangrove", "Explore Mangrove Map")}
+              {t("Peta Restorasi Lingkungan", "Environmental Restoration Map")}
               <ArrowRight className="h-4 w-4" />
             </a>
           </div>

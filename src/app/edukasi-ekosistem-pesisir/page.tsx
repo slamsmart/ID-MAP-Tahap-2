@@ -134,7 +134,7 @@ export default function EdukasiEkosistemPesisirPage() {
               </a>
               <Link href="/jelajahi-peta-mangrove" className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 border border-white/20 text-white font-semibold rounded-full hover:bg-white/20 transition-colors text-sm">
                 <Globe className="w-4 h-4" />
-                Jelajahi Peta Mangrove
+                Peta Restorasi Lingkungan
               </Link>
             </div>
           </div>
