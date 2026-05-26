@@ -89,6 +89,44 @@ export default function ThreeRolesSection() {
   const { language, t } = useLanguage();
   const data = useQuery(api.rolesSection.get);
 
+  // Loading state — render a skeleton while Convex hydrates so we don't
+  // flash the hard-coded Unsplash fallback before swapping to the
+  // verifikator-managed images. data === undefined means still loading;
+  // data === null means no record yet (use fallback).
+  if (data === undefined) {
+    return (
+      <section className="py-14 bg-white">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="text-center mb-10">
+            <div className="h-9 w-80 max-w-full mx-auto rounded-md bg-gray-100 animate-pulse" />
+            <div className="mt-3 h-4 w-96 max-w-full mx-auto rounded bg-gray-100 animate-pulse" />
+          </div>
+          <div className="grid lg:grid-cols-3 gap-6">
+            {[0, 1, 2].map((i) => (
+              <div
+                key={i}
+                className="flex flex-col rounded-2xl border border-gray-200 p-6 bg-white shadow-sm"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="h-6 w-32 rounded bg-gray-100 animate-pulse" />
+                  <div className="h-24 w-24 rounded-xl bg-gray-100 animate-pulse flex-shrink-0" />
+                </div>
+                <ul className="mt-5 space-y-3 flex-grow">
+                  {[0, 1, 2].map((b) => (
+                    <li key={b} className="h-4 w-3/4 rounded bg-gray-100 animate-pulse" />
+                  ))}
+                </ul>
+                <div className="mt-6 pt-4">
+                  <div className="h-10 w-40 rounded-full bg-gray-100 animate-pulse" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   const headline = data
     ? language === "en" ? data.headlineEn : data.headlineId
     : t(fallback.headlineId, fallback.headlineEn);
