@@ -41,8 +41,8 @@ interface Project {
 }
 
 const statusBadgeClass: Record<ProjectStatus, string> = {
-  "Terverifikasi": "bg-emerald-50 text-emerald-700 border-emerald-200",
-  "Dalam Proses": "bg-amber-50 text-amber-700 border-amber-200",
+  "Terverifikasi": "bg-emerald-50 text-emerald-700 border-emerald-100",
+  "Dalam Proses": "bg-amber-50 text-amber-700 border-amber-100",
   "Draft": "bg-gray-100 text-gray-600 border-gray-200",
 };
 
@@ -167,7 +167,7 @@ export default function VerifikatorProyekAuditPage() {
         </p>
       </div>
 
-      <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+      <div className="bg-amber-50 border border-amber-100 rounded-xl p-4 flex items-start gap-3">
         <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
         <div className="text-sm">
           <p className="font-semibold text-amber-900">
@@ -315,7 +315,7 @@ export default function VerifikatorProyekAuditPage() {
             </div>
 
             <div className="p-5 overflow-y-auto space-y-4">
-              <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-start gap-2">
+              <div className="bg-amber-50 border border-amber-100 rounded-lg p-3 flex items-start gap-2">
                 <ShieldCheck className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
                 <p className="text-xs text-amber-800">
                   Perubahan ini akan tersimpan permanen. Pastikan sudah dikonfirmasi
@@ -352,7 +352,7 @@ export default function VerifikatorProyekAuditPage() {
                       className={`inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg border cursor-pointer transition ${
                         uploading
                           ? "bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed"
-                          : "bg-white border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                          : "bg-white border-emerald-100 text-emerald-700 hover:bg-emerald-50"
                       }`}
                     >
                       <Upload className="w-3.5 h-3.5" />

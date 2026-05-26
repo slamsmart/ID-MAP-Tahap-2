@@ -7,7 +7,7 @@ const notifications = [
   { icon: Leaf, title: "Bibit Mangrove Ditanam", desc: "5 bibit mangrove dari donasi Anda telah ditanam di lokasi Banyuwangi.", time: "1 hari lalu", read: false, color: "bg-green-50 text-green-600" },
   { icon: Award, title: "Sertifikat Baru", desc: "Sertifikat Kontributor Mangrove Anda telah diterbitkan. Unduh sekarang.", time: "3 hari lalu", read: true, color: "bg-yellow-50 text-yellow-600" },
   { icon: QrCode, title: "Scan QRIS Berhasil", desc: "Pembayaran Rp 15.000 di Warung Sego Pecel berhasil dengan 0,25 tCO₂e offset.", time: "5 hari lalu", read: true, color: "bg-blue-50 text-blue-600" },
-  { icon: Leaf, title: "Update Proyek", desc: "Proyek Konservasi Mangrove Kalimantan telah mencapai progress 45%.", time: "1 minggu lalu", read: true, color: "bg-teal-50 text-teal-600" },
+  { icon: Leaf, title: "Update Proyek", desc: "Proyek Konservasi Mangrove Kalimantan telah mencapai progress 45%.", time: "1 minggu lalu", read: true, color: "bg-emerald-50 text-emerald-600" },
   { icon: Settings, title: "Update Sistem", desc: "Fitur baru: Lihat dampak ekuivalensi karbon Anda di halaman Dampak Saya.", time: "2 minggu lalu", read: true, color: "bg-gray-100 text-gray-500" },
 ];
 

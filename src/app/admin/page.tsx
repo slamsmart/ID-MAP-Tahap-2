@@ -276,9 +276,9 @@ export default function AdminDashboard() {
               onClick={() => setAbrasionFilter(f)}
               className={`px-3 py-1 rounded-full text-xs font-semibold border transition-all ${
                 abrasionFilter === f
-                  ? f === "Tinggi"         ? "bg-red-100 text-red-700 border-red-200"
-                  : f === "Sedang"         ? "bg-amber-100 text-amber-700 border-amber-200"
-                  : f === "Rendah–Sedang"  ? "bg-blue-100 text-blue-700 border-blue-200"
+                  ? f === "Tinggi"         ? "bg-red-100 text-red-700 border-red-100"
+                  : f === "Sedang"         ? "bg-amber-100 text-amber-700 border-amber-100"
+                  : f === "Rendah–Sedang"  ? "bg-blue-100 text-blue-700 border-blue-100"
                   : "bg-gray-900 text-white border-gray-900"
                   : "bg-white text-gray-500 border-gray-200 hover:border-gray-300"
               }`}

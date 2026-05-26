@@ -188,7 +188,7 @@ export default function VerifikatorLandingHeroPage() {
                   className={`inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg border cursor-pointer transition ${
                     uploading
                       ? "bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed"
-                      : "bg-white border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                      : "bg-white border-emerald-100 text-emerald-700 hover:bg-emerald-50"
                   }`}
                 >
                   <Upload className="w-3.5 h-3.5" />
@@ -283,14 +283,14 @@ export default function VerifikatorLandingHeroPage() {
                 value={form.headlineAccentId}
                 onChange={(e) => field("headlineAccentId", e.target.value)}
                 placeholder="Accent ID (warna emerald)"
-                className="px-3 py-2 text-sm border border-emerald-200 bg-emerald-50/40 rounded-lg focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                className="px-3 py-2 text-sm border border-emerald-100 bg-emerald-50/40 rounded-lg focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
               />
               <input
                 type="text"
                 value={form.headlineAccentEn}
                 onChange={(e) => field("headlineAccentEn", e.target.value)}
                 placeholder="Accent EN"
-                className="px-3 py-2 text-sm border border-emerald-200 bg-emerald-50/40 rounded-lg focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                className="px-3 py-2 text-sm border border-emerald-100 bg-emerald-50/40 rounded-lg focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
               />
             </div>
           </div>

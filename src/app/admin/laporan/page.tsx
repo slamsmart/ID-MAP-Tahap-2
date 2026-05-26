@@ -79,7 +79,7 @@ export default function LaporanPage() {
             { region: "Jawa & Lainnya", area: "350 Rb Ha", co2: "97.456 tCO₂e/tahun", pct: 11 },
           ].map((r) => (
             <div key={r.region} className="text-center">
-              <div className="w-20 h-20 mx-auto rounded-full border-4 border-emerald-200 flex items-center justify-center mb-2">
+              <div className="w-20 h-20 mx-auto rounded-full border-4 border-emerald-100 flex items-center justify-center mb-2">
                 <span className="text-lg font-bold text-emerald-700">{r.pct}%</span>
               </div>
               <p className="font-semibold text-gray-800 text-sm">{r.region}</p>

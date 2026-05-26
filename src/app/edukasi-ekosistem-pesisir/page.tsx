@@ -55,7 +55,7 @@ const pillars = [
     icon: Users,
     title: "Pemberdayaan Masyarakat Pesisir",
     desc: "Penguatan kapasitas kelompok Pokmaswas, nelayan, dan petambak melalui pelatihan teknis, akses pendanaan, dan integrasi kearifan lokal dalam tata kelola pesisir.",
-    color: "bg-teal-50 border-teal-100",
+    color: "bg-emerald-50 border-emerald-100",
     iconBg: "bg-teal-700",
   },
 ];

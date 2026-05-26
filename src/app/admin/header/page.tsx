@@ -203,7 +203,7 @@ export default function AdminHeaderPage() {
         {previewImage && (
           <div className="space-y-4">
             <h4 className="text-sm font-medium text-gray-700">Preview Gambar Baru</h4>
-            <div className="rounded-xl overflow-hidden border border-emerald-200 aspect-[21/9] relative bg-gray-100">
+            <div className="rounded-xl overflow-hidden border border-emerald-100 aspect-[21/9] relative bg-gray-100">
               <img
                 src={previewImage}
                 alt="Preview"
@@ -238,7 +238,7 @@ export default function AdminHeaderPage() {
         </p>
         <button
           onClick={handleReset}
-          className="inline-flex items-center gap-2 px-4 py-2.5 border border-red-200 text-red-600 text-sm font-medium rounded-lg hover:bg-red-50 transition"
+          className="inline-flex items-center gap-2 px-4 py-2.5 border border-red-100 text-red-600 text-sm font-medium rounded-lg hover:bg-red-50 transition"
         >
           <Trash2 className="w-4 h-4" />
           Reset ke Default
@@ -324,7 +324,7 @@ export default function AdminHeaderPage() {
         {authPreviewImage && (
           <div className="space-y-4">
             <h4 className="text-sm font-medium text-gray-700">Preview Gambar Baru</h4>
-            <div className="rounded-xl overflow-hidden border border-emerald-200 aspect-[21/9] relative bg-gray-100">
+            <div className="rounded-xl overflow-hidden border border-emerald-100 aspect-[21/9] relative bg-gray-100">
               <img
                 src={authPreviewImage}
                 alt="Auth BG Preview"
@@ -356,7 +356,7 @@ export default function AdminHeaderPage() {
         </p>
         <button
           onClick={handleAuthReset}
-          className="inline-flex items-center gap-2 px-4 py-2.5 border border-red-200 text-red-600 text-sm font-medium rounded-lg hover:bg-red-50 transition"
+          className="inline-flex items-center gap-2 px-4 py-2.5 border border-red-100 text-red-600 text-sm font-medium rounded-lg hover:bg-red-50 transition"
         >
           <Trash2 className="w-4 h-4" />
           Reset ke Default

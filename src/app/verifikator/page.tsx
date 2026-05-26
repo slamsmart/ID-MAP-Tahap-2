@@ -50,7 +50,7 @@ export default function VerifikatorDashboard() {
         </div>
         <div className="bg-white rounded-xl border border-gray-100 p-4">
           <p className="text-xs text-gray-500 mb-1">Sarang Penyu</p>
-          <p className="font-bold text-2xl text-teal-700">{totalPenyu}</p>
+          <p className="font-bold text-2xl text-emerald-700">{totalPenyu}</p>
           <p className="text-[10px] text-gray-400">{pantaiPenyu} pantai · {jenisPenyu} jenis</p>
         </div>
         <div className="bg-white rounded-xl border border-emerald-100 p-4">
@@ -98,7 +98,7 @@ export default function VerifikatorDashboard() {
         <div className="bg-white rounded-xl border border-gray-100 p-5 space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-teal-50 flex items-center justify-center text-xl">
+              <div className="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center text-xl">
                 🐢
               </div>
               <div>
@@ -106,7 +106,7 @@ export default function VerifikatorDashboard() {
                 <p className="text-[10px] text-gray-500">{totalPenyu} sarang · {pantaiPenyu} pantai</p>
               </div>
             </div>
-            <Link href="/verifikator/penyu" className="flex items-center gap-1 text-xs text-teal-600 font-semibold hover:text-teal-700">
+            <Link href="/verifikator/penyu" className="flex items-center gap-1 text-xs text-emerald-600 font-semibold hover:text-emerald-700">
               Kelola <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -116,7 +116,7 @@ export default function VerifikatorDashboard() {
               return (
                 <div key={pantai} className="flex items-center justify-between text-xs">
                   <span className="text-gray-700">{pantai}</span>
-                  <span className="font-bold text-teal-700">{count} sarang</span>
+                  <span className="font-bold text-emerald-700">{count} sarang</span>
                 </div>
               );
             })}
@@ -154,7 +154,7 @@ export default function VerifikatorDashboard() {
       </div>
 
       {/* Recent alert */}
-      <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+      <div className="bg-amber-50 border border-amber-100 rounded-xl p-4 flex items-start gap-3">
         <AlertTriangle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
         <div>
           <p className="text-sm font-semibold text-amber-800">Perhatian: {abrasiTinggi} lokasi prioritas tinggi</p>

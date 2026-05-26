@@ -239,7 +239,7 @@ export default function SertifikatPage() {
                   <button
                     onClick={() => handleShareWA(cert)}
                     aria-label={`Bagikan sertifikat ${cert.id} ke WhatsApp`}
-                    className="flex items-center gap-1 px-3 py-2 text-sm border border-emerald-200 bg-emerald-50 rounded-lg text-emerald-700 hover:bg-emerald-100 transition"
+                    className="flex items-center gap-1 px-3 py-2 text-sm border border-emerald-100 bg-emerald-50 rounded-lg text-emerald-700 hover:bg-emerald-100 transition"
                   >
                     <Share2 className="w-4 h-4" />
                     <span className="hidden sm:inline">Bagikan</span>
@@ -331,14 +331,14 @@ export default function SertifikatPage() {
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => handleShareWA(previewCert)}
-                  className="inline-flex items-center gap-1.5 px-3 py-2 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 text-xs font-semibold rounded-button transition-colors"
+                  className="inline-flex items-center gap-1.5 px-3 py-2 bg-emerald-50 hover:bg-emerald-100 border border-emerald-100 text-emerald-700 text-xs font-semibold rounded-button transition-colors"
                 >
                   <MessageCircle className="w-3.5 h-3.5" /> WhatsApp
                 </button>
                 <button
                   onClick={() => handleShareTwitter(previewCert)}
                   aria-label="Bagikan ke X / Twitter"
-                  className="inline-flex items-center gap-1.5 px-3 py-2 bg-sky-50 hover:bg-sky-100 border border-sky-200 text-sky-700 text-xs font-semibold rounded-button transition-colors"
+                  className="inline-flex items-center gap-1.5 px-3 py-2 bg-sky-50 hover:bg-sky-100 border border-sky-100 text-sky-700 text-xs font-semibold rounded-button transition-colors"
                 >
                   <span className="font-bold">𝕏</span> X / Twitter
                 </button>

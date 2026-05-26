@@ -18,7 +18,7 @@ export default function SRNRegistryPage() {
         <p className="text-sm text-gray-500 mt-1">Sistem Registri Nasional sesuai pedoman KLHK (PP No. 98/2021 & Permen LHK No. 21/2022)</p>
       </div>
 
-      <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 mb-6">
+      <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-4 mb-6">
         <div className="flex items-start gap-3">
           <Shield className="w-5 h-5 text-emerald-700 mt-0.5" />
           <div>

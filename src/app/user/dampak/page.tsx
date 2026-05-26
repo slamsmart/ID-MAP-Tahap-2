@@ -29,7 +29,7 @@ const statCards = [
     value: "8",
     desc: "Spesies biota pesisir",
     icon: Rabbit,
-    color: "text-teal-600 bg-teal-50",
+    color: "text-emerald-600 bg-emerald-50",
   },
 ];
 

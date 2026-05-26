@@ -41,21 +41,21 @@ const STATS = [
     value: `${(RINGKASAN_NASIONAL.totalLuasMangrove / 1_000_000).toFixed(2)} jt ha`,
     sub: `${RINGKASAN_NASIONAL.persentaseDunia}% mangrove dunia`,
     color: "bg-emerald-50 text-emerald-700",
-    border: "border-emerald-200",
+    border: "border-emerald-100",
   },
   {
     label: "Realisasi PMN",
     value: `${RINGKASAN_NASIONAL.persenRealisasi}%`,
     sub: `${(RINGKASAN_NASIONAL.realisasiRestorasi / 1000).toFixed(0)}k ha dari ${(RINGKASAN_NASIONAL.targetRestorasiTotal / 1000).toFixed(0)}k ha`,
     color: "bg-blue-50 text-blue-700",
-    border: "border-blue-200",
+    border: "border-blue-100",
   },
   {
     label: "Provinsi Kritis",
     value: String(DATA_PROVINSI.filter((p) => p.kondisi === "kritis").length),
     sub: `dari ${DATA_PROVINSI.length} provinsi`,
     color: "bg-red-50 text-red-700",
-    border: "border-red-200",
+    border: "border-red-100",
   },
 ];
 
@@ -196,7 +196,7 @@ export default function MangroveAIPanel({
         <div className="border-t border-gray-100">
           <div className="p-4 space-y-4">
             {/* AI Section — di atas stats */}
-            <div className="border border-dashed border-emerald-200 rounded-xl p-4 bg-emerald-50/30">
+            <div className="border border-dashed border-emerald-100 rounded-xl p-4 bg-emerald-50/30">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <Leaf className="w-4 h-4 text-emerald-600" />

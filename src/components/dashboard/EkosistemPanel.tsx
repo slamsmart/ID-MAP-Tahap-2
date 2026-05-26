@@ -11,9 +11,9 @@ import { AlertTriangle, Leaf, TrendingUp, Globe, Zap, ShieldAlert } from "lucide
 const fmt = (n: number) => n.toLocaleString("id-ID");
 
 const KONDISI_CFG = {
-  baik:    { label: "Baik",    bg: "bg-emerald-600", light: "bg-emerald-50",  text: "text-emerald-700",  border: "border-emerald-200" },
-  sedang:  { label: "Sedang",  bg: "bg-amber-500",   light: "bg-amber-50",    text: "text-amber-700",    border: "border-amber-200" },
-  kritis:  { label: "Kritis",  bg: "bg-red-600",     light: "bg-red-50",      text: "text-red-700",      border: "border-red-200" },
+  baik:    { label: "Baik",    bg: "bg-emerald-600", light: "bg-emerald-50",  text: "text-emerald-700",  border: "border-emerald-100" },
+  sedang:  { label: "Sedang",  bg: "bg-amber-500",   light: "bg-amber-50",    text: "text-amber-700",    border: "border-amber-100" },
+  kritis:  { label: "Kritis",  bg: "bg-red-600",     light: "bg-red-50",      text: "text-red-700",      border: "border-red-100" },
 };
 
 const ANCAMAN_CFG = {
@@ -57,7 +57,7 @@ export default function EkosistemPanel() {
               { label: "Total Mangrove", value: `${(RINGKASAN_NASIONAL.totalLuasMangrove / 1_000_000).toFixed(2)} jt ha`, sub: `${RINGKASAN_NASIONAL.persentaseDunia}% mangrove dunia`, icon: Leaf, color: "text-emerald-700", bg: "bg-emerald-50" },
               { label: "Area Terdegradasi", value: `${fmt(RINGKASAN_NASIONAL.luasDegradasi)} ha`, sub: `${((RINGKASAN_NASIONAL.luasDegradasi / RINGKASAN_NASIONAL.totalLuasMangrove) * 100).toFixed(1)}% dari total`, icon: AlertTriangle, color: "text-red-600", bg: "bg-red-50" },
               { label: "Realisasi Restorasi", value: `${fmt(RINGKASAN_NASIONAL.realisasiRestorasi)} ha`, sub: `${RINGKASAN_NASIONAL.persenRealisasi}% dari target PMN`, icon: TrendingUp, color: "text-blue-700", bg: "bg-blue-50" },
-              { label: "Karbon Tersimpan", value: `${fmt(RINGKASAN_NASIONAL.karbon_tersimpan_MtCO2)} Mt`, sub: `Nilai Rp ${RINGKASAN_NASIONAL.nilaiEkosistem_TrilyunRp} T/tahun`, icon: Zap, color: "text-teal-700", bg: "bg-teal-50" },
+              { label: "Karbon Tersimpan", value: `${fmt(RINGKASAN_NASIONAL.karbon_tersimpan_MtCO2)} Mt`, sub: `Nilai Rp ${RINGKASAN_NASIONAL.nilaiEkosistem_TrilyunRp} T/tahun`, icon: Zap, color: "text-emerald-700", bg: "bg-emerald-50" },
             ].map((s) => {
               const Icon = s.icon;
               return (
@@ -162,8 +162,8 @@ export default function EkosistemPanel() {
         </div>
 
         {/* ── Potensi Blue Carbon ── */}
-        <div className="bg-gradient-to-r from-teal-50 to-emerald-50 rounded-lg border border-teal-100 p-3">
-          <p className="text-[10px] font-semibold text-teal-700 uppercase tracking-widest mb-2">Potensi Blue Carbon</p>
+        <div className="bg-gradient-to-r from-teal-50 to-emerald-50 rounded-lg border border-emerald-100 p-3">
+          <p className="text-[10px] font-semibold text-emerald-700 uppercase tracking-widest mb-2">Potensi Blue Carbon</p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
             {[
               { label: "Stok Karbon", value: `${fmt(DATA_BLUE_CARBON.stokKarbon_tCO2_per_ha)} tCO₂`, sub: "per hektar" },
@@ -173,7 +173,7 @@ export default function EkosistemPanel() {
             ].map((bc) => (
               <div key={bc.label}>
                 <p className="text-base font-extrabold text-teal-800">{bc.value}</p>
-                <p className="text-[10px] text-teal-600 font-medium">{bc.label}</p>
+                <p className="text-[10px] text-emerald-600 font-medium">{bc.label}</p>
                 <p className="text-[10px] text-gray-400">{bc.sub}</p>
               </div>
             ))}

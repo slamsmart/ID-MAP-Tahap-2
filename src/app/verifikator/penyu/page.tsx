@@ -99,7 +99,7 @@ export default function KelolaPenyuPage() {
   }
 
   const EditForm = ({ onSave, onCancel }: { onSave: () => void; onCancel: () => void }) => (
-    <div className="bg-teal-50 border border-teal-200 rounded-xl p-4 space-y-3">
+    <div className="bg-emerald-50 border border-teal-200 rounded-xl p-4 space-y-3">
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="text-xs font-semibold text-gray-600 block mb-1">Nama Pantai</label>
@@ -185,15 +185,15 @@ export default function KelolaPenyuPage() {
         </div>
         <div className="flex items-center gap-2">
           {saved && (
-            <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-lg">
+            <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 border border-emerald-100 px-3 py-1.5 rounded-lg">
               ✓ Tersimpan
             </span>
           )}
-          <button onClick={handleReset} className="text-xs text-gray-500 hover:text-red-600 px-3 py-1.5 border border-gray-200 rounded-lg hover:border-red-200 transition-colors">
+          <button onClick={handleReset} className="text-xs text-gray-500 hover:text-red-600 px-3 py-1.5 border border-gray-200 rounded-lg hover:border-red-100 transition-colors">
             Reset Data
           </button>
           <button onClick={() => { setIsAdding(true); setEditId(null); setForm(emptyForm); }}
-            className="flex items-center gap-2 px-4 py-2 bg-teal-500 text-white text-sm font-semibold rounded-lg hover:bg-teal-600">
+            className="flex items-center gap-2 px-4 py-2 bg-emerald-500 text-white text-sm font-semibold rounded-lg hover:bg-teal-600">
             <Plus className="w-4 h-4" /> Tambah Sarang
           </button>
         </div>

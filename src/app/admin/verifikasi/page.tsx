@@ -413,7 +413,7 @@ export default function VerifikasiPage() {
                 <button
                   onClick={() => handleReview(item.doc._id as Id<"kycDocuments">, "Ditolak")}
                   disabled={isSubmitting}
-                  className="flex-1 px-4 py-2.5 rounded-lg border border-red-200 text-red-700 text-sm font-medium hover:bg-red-50 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="flex-1 px-4 py-2.5 rounded-lg border border-red-100 text-red-700 text-sm font-medium hover:bg-red-50 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   <XCircle className="w-4 h-4" />
                   Tolak

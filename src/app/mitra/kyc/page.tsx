@@ -40,14 +40,14 @@ const statusConfig = {
   Disetujui: {
     icon: CheckCircle,
     label: "Disetujui",
-    bg: "bg-emerald-50 border-emerald-200",
+    bg: "bg-emerald-50 border-emerald-100",
     text: "text-emerald-700",
     badge: "bg-emerald-100 text-emerald-700",
   },
   Ditolak: {
     icon: XCircle,
     label: "Ditolak",
-    bg: "bg-red-50 border-red-200",
+    bg: "bg-red-50 border-red-100",
     text: "text-red-700",
     badge: "bg-red-100 text-red-700",
   },
@@ -128,7 +128,7 @@ export default function MitraKYCPage() {
 
       {/* Success Message */}
       {successMsg && (
-        <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-xl text-sm font-medium flex items-center gap-2">
+        <div className="bg-emerald-50 border border-emerald-100 text-emerald-700 px-4 py-3 rounded-xl text-sm font-medium flex items-center gap-2">
           <CheckCircle className="w-4 h-4 flex-shrink-0" />
           {successMsg}
         </div>
@@ -138,11 +138,11 @@ export default function MitraKYCPage() {
       <div
         className={`rounded-xl border p-5 ${
           overallStatus === "terverifikasi"
-            ? "bg-emerald-50 border-emerald-200"
+            ? "bg-emerald-50 border-emerald-100"
             : overallStatus === "menunggu"
             ? "bg-yellow-50 border-yellow-200"
             : overallStatus === "ditolak"
-            ? "bg-red-50 border-red-200"
+            ? "bg-red-50 border-red-100"
             : "bg-gray-50 border-gray-200"
         }`}
       >
@@ -216,7 +216,7 @@ export default function MitraKYCPage() {
 
       {/* Required Documents Info */}
       {missingRequired.length > 0 && overallStatus !== "terverifikasi" && (
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
+        <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 flex items-start gap-3">
           <Info className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
           <div className="text-sm text-blue-800">
             <p className="font-medium">Dokumen wajib yang belum diupload:</p>

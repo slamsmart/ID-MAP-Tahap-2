@@ -89,7 +89,7 @@ export default function MitraMRVPage() {
                   </p>
                   <a
                     href="mailto:id.map.admin@gmail.com?subject=Permohonan%20Jadwal%20MRV"
-                    className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-semibold rounded-button border border-amber-200 transition-colors"
+                    className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-semibold rounded-button border border-amber-100 transition-colors"
                   >
                     Hubungi Verifikator
                   </a>

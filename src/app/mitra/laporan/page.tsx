@@ -49,7 +49,7 @@ export default function MitraLaporanPage() {
             <a 
               href="/docs/Template_Laporan_MRV_IDMAP.txt" 
               download
-              className="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-emerald-200 text-emerald-700 text-sm font-semibold rounded-lg hover:bg-emerald-50 transition"
+              className="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-emerald-100 text-emerald-700 text-sm font-semibold rounded-lg hover:bg-emerald-50 transition"
             >
               <Download className="w-4 h-4" /> Template MRV
             </a>

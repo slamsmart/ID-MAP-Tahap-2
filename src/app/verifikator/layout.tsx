@@ -11,7 +11,7 @@ export default function VerifikatorLayout({ children }: { children: React.ReactN
           <DashboardHeader
             title="Dashboard Verifikator"
             avatarInitials="VR"
-            avatarCls="bg-teal-500/20 text-teal-300"
+            avatarCls="bg-emerald-500/20 text-teal-300"
           />
           <main className="flex-1 p-4 sm:p-6 overflow-auto">{children}</main>
         </div>

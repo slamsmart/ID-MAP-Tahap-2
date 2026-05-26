@@ -186,7 +186,7 @@ export default function UserDashboard() {
         {/* Right Column */}
         <div className="space-y-6">
           {/* QR Scanner */}
-          <div className="bg-emerald-50 rounded-xl border border-emerald-200 p-5">
+          <div className="bg-emerald-50 rounded-xl border border-emerald-100 p-5">
             <h3 className="font-display font-semibold text-emerald-900 text-center mb-3">
               {featuredProject ? featuredProject.title : "Scan Proyek Mangrove"}
             </h3>

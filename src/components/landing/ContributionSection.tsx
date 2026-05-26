@@ -49,7 +49,7 @@ export default function ContributionSection() {
               {communitySteps.map((step, i) => (
                 <div key={step.num} className="flex items-center gap-2">
                   <div className="flex flex-col items-center text-center w-16">
-                    <div className="w-10 h-10 bg-emerald-50 border border-emerald-200 rounded-full flex items-center justify-center mb-1">
+                    <div className="w-10 h-10 bg-emerald-50 border border-emerald-100 rounded-full flex items-center justify-center mb-1">
                       <span className="font-display font-bold text-emerald-700 text-xs">
                         {step.num}
                       </span>
@@ -89,7 +89,7 @@ export default function ContributionSection() {
               {corporateSteps.map((step, i) => (
                 <div key={step.num} className="flex items-center gap-2">
                   <div className="flex flex-col items-center text-center w-16">
-                    <div className="w-10 h-10 bg-emerald-50 border border-emerald-200 rounded-full flex items-center justify-center mb-1">
+                    <div className="w-10 h-10 bg-emerald-50 border border-emerald-100 rounded-full flex items-center justify-center mb-1">
                       <span className="font-display font-bold text-emerald-700 text-xs">
                         {step.num}
                       </span>

@@ -29,7 +29,7 @@ export default function VerifikatorPengaturanPage() {
         </div>
         <div>
           <label className="text-xs font-semibold text-gray-500 block mb-1">Role</label>
-          <span className="text-xs font-bold px-2.5 py-1 bg-teal-100 text-teal-700 rounded-full">Verifikator</span>
+          <span className="text-xs font-bold px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full">Verifikator</span>
         </div>
       </div>
     </div>

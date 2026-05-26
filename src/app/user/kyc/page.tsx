@@ -12,7 +12,7 @@ const kycStatusConfig = {
     icon: ShieldCheck,
     title: "Identitas Terverifikasi ✓",
     desc: "KTP Anda telah diverifikasi oleh tim ID-MAP.",
-    card: "bg-emerald-50 border-emerald-200",
+    card: "bg-emerald-50 border-emerald-100",
     icon_bg: "bg-emerald-100",
     icon_color: "text-emerald-600",
     title_color: "text-emerald-800",
@@ -30,7 +30,7 @@ const kycStatusConfig = {
     icon: XCircle,
     title: "Verifikasi Ditolak",
     desc: "Dokumen ditolak. Silakan upload ulang KTP yang valid.",
-    card: "bg-red-50 border-red-200",
+    card: "bg-red-50 border-red-100",
     icon_bg: "bg-red-100",
     icon_color: "text-red-600",
     title_color: "text-red-800",
@@ -129,7 +129,7 @@ export default function LengkapiKycPage() {
 
           {/* Success toast */}
           {successMsg && (
-            <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-lg text-sm mb-4">
+            <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-100 text-emerald-700 px-4 py-3 rounded-lg text-sm mb-4">
               <CheckCircle className="w-4 h-4 flex-shrink-0" />
               {successMsg}
             </div>

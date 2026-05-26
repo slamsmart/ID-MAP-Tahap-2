@@ -107,7 +107,7 @@ export default function KelolaAbrasiPage() {
   }
 
   const EditForm = ({ onSave, onCancel }: { onSave: () => void; onCancel: () => void }) => (
-    <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 space-y-3">
+    <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 space-y-3">
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="text-xs font-semibold text-gray-600 block mb-1">Nama Pantai</label>
@@ -204,11 +204,11 @@ export default function KelolaAbrasiPage() {
         </div>
         <div className="flex items-center gap-2">
           {saved && (
-            <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-lg">
+            <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 border border-emerald-100 px-3 py-1.5 rounded-lg">
               ✓ Tersimpan
             </span>
           )}
-          <button onClick={handleReset} className="text-xs text-gray-500 hover:text-red-600 px-3 py-1.5 border border-gray-200 rounded-lg hover:border-red-200 transition-colors">
+          <button onClick={handleReset} className="text-xs text-gray-500 hover:text-red-600 px-3 py-1.5 border border-gray-200 rounded-lg hover:border-red-100 transition-colors">
             Reset Data
           </button>
           <button onClick={() => { setIsAdding(true); setEditId(null); setForm(emptyForm); }}
@@ -224,9 +224,9 @@ export default function KelolaAbrasiPage() {
           <button key={f} onClick={() => setFilterPrioritas(f)}
             className={`px-3 py-1.5 rounded-full text-xs font-bold border transition-all ${
               filterPrioritas === f
-                ? f === "Tinggi" ? "bg-red-100 text-red-700 border-red-200"
-                  : f === "Sedang" ? "bg-amber-100 text-amber-700 border-amber-200"
-                  : f === "Rendah–Sedang" ? "bg-blue-100 text-blue-700 border-blue-200"
+                ? f === "Tinggi" ? "bg-red-100 text-red-700 border-red-100"
+                  : f === "Sedang" ? "bg-amber-100 text-amber-700 border-amber-100"
+                  : f === "Rendah–Sedang" ? "bg-blue-100 text-blue-700 border-blue-100"
                   : "bg-gray-800 text-white border-gray-800"
                 : "bg-white text-gray-500 border-gray-200 hover:border-gray-300"
             }`}>

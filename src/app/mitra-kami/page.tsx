@@ -21,7 +21,7 @@ const partners = [
     category: "Pemerintah",
     desc: "Kementerian Kelautan, Perikanan, dan Desa mendukung pengelolaan kawasan pesisir dan konservasi mangrove sebagai bagian dari ekosistem laut Indonesia.",
     icon: Leaf,
-    color: "bg-teal-50 text-teal-700",
+    color: "bg-emerald-50 text-emerald-700",
   },
   {
     name: "Pegiat Konservasi Mangrove",

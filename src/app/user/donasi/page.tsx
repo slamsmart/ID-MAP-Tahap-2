@@ -309,7 +309,7 @@ export default function DonasiPage() {
                         className={`px-3 py-2 text-sm rounded-lg border font-medium transition-colors ${
                           finalAmount === a && !customAmount
                             ? "bg-emerald-600 text-white border-emerald-600"
-                            : "border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                            : "border-emerald-100 text-emerald-700 hover:bg-emerald-50"
                         }`}
                       >
                         {formatRp(a)}
@@ -363,7 +363,7 @@ export default function DonasiPage() {
             {state === "waiting" && qrisData && (
               <div className="space-y-4">
                 {(qrisData.isSandbox || qrisData.isDummy) && (
-                  <div className="flex items-start gap-2 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+                  <div className="flex items-start gap-2 text-xs text-amber-700 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">
                     <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
                     <span>
                       {qrisData.isDummy
@@ -451,7 +451,7 @@ export default function DonasiPage() {
                 </div>
                 <button
                   onClick={handleReset}
-                  className="w-full py-2.5 border border-emerald-200 text-emerald-700 hover:bg-emerald-50 text-sm font-semibold rounded-lg transition-colors"
+                  className="w-full py-2.5 border border-emerald-100 text-emerald-700 hover:bg-emerald-50 text-sm font-semibold rounded-lg transition-colors"
                 >
                   Donasi Lagi
                 </button>

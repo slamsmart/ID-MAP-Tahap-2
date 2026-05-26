@@ -130,7 +130,7 @@ export default function JelajahiPetaMangrovePage() {
               onClick={() => setIsLayerDropdownOpen((v) => !v)}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all duration-300 text-xs sm:text-sm font-bold border ${
                 isLayerDropdownOpen || isAbrasionOpen || isTurtleLayerOpen || isPokmaswasLayerOpen
-                  ? "bg-teal-500 text-white shadow-lg shadow-teal-500/20 border-teal-400"
+                  ? "bg-emerald-500 text-white shadow-lg shadow-teal-500/20 border-teal-400"
                   : "bg-[#062d22] text-white hover:bg-teal-600 border-[#235850] hover:border-teal-400"
               }`}
             >
@@ -168,11 +168,11 @@ export default function JelajahiPetaMangrovePage() {
                       setIsPokmaswasLayerOpen(false);
                       setIsLayerDropdownOpen(false);
                     }}
-                    className={`w-full flex items-center gap-2.5 px-3 py-2.5 text-sm font-semibold text-left transition-colors hover:bg-teal-50 ${
-                      isTurtleLayerOpen ? "bg-teal-50 text-teal-600" : "text-gray-700"
+                    className={`w-full flex items-center gap-2.5 px-3 py-2.5 text-sm font-semibold text-left transition-colors hover:bg-emerald-50 ${
+                      isTurtleLayerOpen ? "bg-emerald-50 text-emerald-600" : "text-gray-700"
                     }`}
                   >
-                    <div className="w-7 h-7 rounded-lg bg-teal-100 flex items-center justify-center flex-shrink-0 text-base">
+                    <div className="w-7 h-7 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0 text-base">
                       🐢
                     </div>
                     Penyu
@@ -334,7 +334,7 @@ export default function JelajahiPetaMangrovePage() {
                 {isDrawing ? "Luas Area Terukur" : "Luas Area (Hektar)"}
               </label>
               {isDrawing ? (
-                <div className={`w-full px-3 py-2.5 border rounded-xl text-xl font-bold transition-all duration-300 ${areaHa > 0 ? "bg-emerald-50 border-emerald-200 text-emerald-600" : "bg-gray-50 border-gray-200 text-gray-400"}`}>
+                <div className={`w-full px-3 py-2.5 border rounded-xl text-xl font-bold transition-all duration-300 ${areaHa > 0 ? "bg-emerald-50 border-emerald-100 text-emerald-600" : "bg-gray-50 border-gray-200 text-gray-400"}`}>
                   {areaHa > 0 ? areaHa.toLocaleString('id-ID', { maximumFractionDigits: 2 }) : "0.00"} <span className="text-sm font-medium">Ha</span>
                 </div>
               ) : (

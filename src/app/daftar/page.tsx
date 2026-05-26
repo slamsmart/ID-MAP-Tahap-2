@@ -213,7 +213,7 @@ function RegisterForm() {
                 </p>
               </div>
 
-              <div className="bg-amber-50 border border-amber-200 text-amber-800 text-xs px-3 py-2.5 rounded-lg mb-4 flex items-start gap-2">
+              <div className="bg-amber-50 border border-amber-100 text-amber-800 text-xs px-3 py-2.5 rounded-lg mb-4 flex items-start gap-2">
                 <span aria-hidden>📬</span>
                 <span>
                   {t(
@@ -477,7 +477,7 @@ export default function RegisterPage() {
     <Suspense
       fallback={
         <div className="min-h-screen bg-[#0f3d2e] flex items-center justify-center">
-          <div className="w-10 h-10 rounded-full border-4 border-emerald-200 border-t-emerald-600 animate-spin" />
+          <div className="w-10 h-10 rounded-full border-4 border-emerald-100 border-t-emerald-600 animate-spin" />
         </div>
       }
     >

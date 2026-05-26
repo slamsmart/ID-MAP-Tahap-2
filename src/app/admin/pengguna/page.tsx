@@ -39,7 +39,7 @@ const roleBadge = (role: string) => {
     case "mitra":
       return "bg-blue-100 text-blue-700";
     case "verifikator":
-      return "bg-teal-100 text-teal-700";
+      return "bg-emerald-100 text-emerald-700";
     default:
       return "bg-emerald-100 text-emerald-700";
   }
