@@ -36,6 +36,7 @@ const DEFAULTS = {
 
 export default function HeroSection() {
   const liveHero = useQuery(api.landingHero.get);
+  const stats = useQuery(api.platformStats.getAll);
   const [legacyHeroImage, setLegacyHeroImage] = useState<string | null>(null);
   const { language, t } = useLanguage();
 
@@ -44,6 +45,15 @@ export default function HeroSection() {
   useEffect(() => {
     getHeroImage().then((img) => setLegacyHeroImage(img || null));
   }, []);
+
+  // Resolve a stat by Convex key, falling back to a hard-coded display value
+  // so the hero never renders blank during the initial query hydrate. Once
+  // Convex resolves, the live numbers take over without flicker.
+  const statByKey = new Map((stats ?? []).map((s) => [s.key, s.value]));
+  const sahabatStat = statByKey.get("sahabat_terlibat") ?? "—";
+  const bibitStat = statByKey.get("bibit_ditanam") ?? "—";
+  const carbonStat = statByKey.get("serapan_karbon") ?? "—";
+  const valueStat = statByKey.get("potensi_nilai_carbon") ?? "—";
 
   const data = liveHero ?? DEFAULTS;
   const heroImage =
@@ -112,22 +122,23 @@ export default function HeroSection() {
             </a>
           </div>
 
-          {/* Stats */}
+          {/* Stats — sourced from Convex platformStats so verifikator dashboard
+              edits propagate live without redeploy. */}
           <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-0 sm:divide-x sm:divide-white/20">
             <div className="sm:pr-8">
-              <p className="text-2xl sm:text-3xl font-extrabold text-white whitespace-nowrap">7</p>
+              <p className="text-2xl sm:text-3xl font-extrabold text-white whitespace-nowrap">{sahabatStat}</p>
               <p className="text-sm text-white/70 mt-0.5">{t("Sahabat Terlibat", "Partners Involved")}</p>
             </div>
             <div className="sm:px-8">
-              <p className="text-2xl sm:text-3xl font-extrabold text-white whitespace-nowrap">1.285.760</p>
+              <p className="text-2xl sm:text-3xl font-extrabold text-white whitespace-nowrap">{bibitStat}</p>
               <p className="text-sm text-white/70 mt-0.5">{t("Bibit Mangrove Ditanam", "Mangrove Seedlings Planted")}</p>
             </div>
             <div className="sm:px-8">
-              <p className="text-2xl sm:text-3xl font-extrabold text-white whitespace-nowrap">850.000 <span className="text-lg font-semibold">Ton</span></p>
+              <p className="text-2xl sm:text-3xl font-extrabold text-white whitespace-nowrap">{carbonStat} <span className="text-lg font-semibold">Ton</span></p>
               <p className="text-sm text-white/70 mt-0.5">{t("Serapan Karbon (CO₂e)", "Carbon Absorption (CO₂e)")}</p>
             </div>
             <div className="sm:pl-8">
-              <p className="text-2xl sm:text-3xl font-extrabold text-white whitespace-nowrap">55.250 <span className="text-lg font-semibold">Jt IDR</span></p>
+              <p className="text-2xl sm:text-3xl font-extrabold text-white whitespace-nowrap">{valueStat}</p>
               <p className="text-sm text-white/70 mt-0.5">{t("Potensi Nilai Carbon", "Potential Carbon Value")}</p>
             </div>
           </div>
