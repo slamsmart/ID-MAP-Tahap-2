@@ -181,21 +181,20 @@ function LoginForm() {
             <div className="inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur-md px-4 py-2 border border-white/15">
               <ShieldCheck className="w-4 h-4 text-emerald-300" />
               <span className="text-sm font-medium text-white/90">
-                {t("Platform Terpercaya", "Trusted Platform")}
+                {t("Platform Integrasi Data Ekosistem Pesisir Berkelanjutan", "Integrated Coastal Ecosystem Data Platform for Sustainability")}
               </span>
             </div>
-            
+
             <h2 className="text-3xl xl:text-4xl font-extrabold text-white leading-tight tracking-tight">
-              {t("Kelola Ekosistem", "Manage Your Carbon")}<br />
-              <span className="text-emerald-300">{t("Karbon Anda", "Ecosystem")}</span>
-              <br />
-              {t("dengan Mudah", "with Ease")}
+              {t("Satu Platform.", "One Platform.")}<br />
+              {t("Seluruh Ekosistem Mangrove & Pesisir", "The Entire Mangrove & Coastal Ecosystem")}<br />
+              <span className="text-emerald-300">{t("Indonesia.", "Indonesia.")}</span>
             </h2>
-            
+
             <p className="text-base text-white/70 max-w-sm leading-relaxed">
               {t(
-                "Platform infrastruktur digital terintegrasi untuk mangrove, pesisir, dan kredit karbon Indonesia.",
-                "Integrated digital infrastructure platform for Indonesia's mangrove, coastal, and carbon credit ecosystem."
+                "Data terintegrasi untuk pemantauan restorasi lingkungan, rehabilitasi, dan keberlanjutan pesisir nusantara.",
+                "Integrated data for environmental restoration monitoring, rehabilitation, and coastal sustainability of the archipelago."
               )}
             </p>
             
