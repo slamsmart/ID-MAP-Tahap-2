@@ -231,6 +231,32 @@ export default defineSchema({
     updatedAt: v.number(),
   }).index("by_key", ["key"]),
 
+  // ─── Landing Hero (Editable Copy + Hero Image) ────────────────────
+  // Single editable record (key="default") used by HeroSection.tsx on
+  // the landing page. Verifikator dashboard updates here flow to the
+  // public homepage in real-time via Convex live queries.
+  landingHero: defineTable({
+    key: v.string(),
+    image: v.string(), // Cloudinary secure_url
+    badgeId: v.string(),
+    badgeEn: v.string(),
+    headlineLine1Id: v.string(),
+    headlineLine1En: v.string(),
+    headlineLine2Id: v.string(),
+    headlineLine2En: v.string(),
+    headlineAccentId: v.string(),
+    headlineAccentEn: v.string(),
+    subheadId: v.string(),
+    subheadEn: v.string(),
+    primaryCtaLabelId: v.string(),
+    primaryCtaLabelEn: v.string(),
+    primaryCtaHref: v.string(),
+    secondaryCtaLabelId: v.string(),
+    secondaryCtaLabelEn: v.string(),
+    secondaryCtaHref: v.string(),
+    updatedAt: v.number(),
+  }).index("by_key", ["key"]),
+
   // ─── KYC Documents (Verification Documents) ───────────────────────
   kycDocuments: defineTable({
     userId: v.id("users"),

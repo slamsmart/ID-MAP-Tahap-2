@@ -2,26 +2,75 @@
 
 import { useEffect, useState } from "react";
 import { ArrowRight, ShieldCheck } from "lucide-react";
+import { useQuery } from "convex/react";
+import { api } from "../../../convex/_generated/api";
 import { getHeroImage } from "@/lib/heroImageStore";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const DEFAULT_IMAGE = "/images/hero-mangrove.webp";
 
-export default function HeroSection() {
-  const [heroImage, setHeroImage] = useState<string | null>(null);
-  const { t } = useLanguage();
+// Default copy used when no Convex landingHero record exists yet.
+// Verifikator dashboard publishes a doc into convex; once present this
+// component switches to the live values automatically.
+const DEFAULTS = {
+  badgeId: "Platform Integrasi Data Ekosistem Pesisir Berkelanjutan",
+  badgeEn: "Integrated Coastal Ecosystem Data Platform for Sustainability",
+  headlineLine1Id: "Satu Platform.",
+  headlineLine1En: "One Platform.",
+  headlineLine2Id: "Seluruh Ekosistem Mangrove & Pesisir",
+  headlineLine2En: "The Entire Mangrove & Coastal Ecosystem",
+  headlineAccentId: "Indonesia.",
+  headlineAccentEn: "Indonesia.",
+  subheadId:
+    "Data terintegrasi untuk pemantauan restorasi lingkungan, rehabilitasi, dan keberlanjutan pesisir nusantara.",
+  subheadEn:
+    "Integrated data for environmental restoration monitoring, rehabilitation, and coastal sustainability of the archipelago.",
+  primaryCtaLabelId: "Mulai Berkontribusi",
+  primaryCtaLabelEn: "Start Contributing",
+  primaryCtaHref: "/daftar",
+  secondaryCtaLabelId: "Jelajahi Peta Restorasi Lingkungan",
+  secondaryCtaLabelEn: "Explore Environmental Restoration Map",
+  secondaryCtaHref: "/jelajahi-peta-mangrove",
+  image: "" as string,
+};
 
+export default function HeroSection() {
+  const liveHero = useQuery(api.landingHero.get);
+  const [legacyHeroImage, setLegacyHeroImage] = useState<string | null>(null);
+  const { language, t } = useLanguage();
+
+  // Legacy fallback: per-browser hero image saved in IndexedDB by the old
+  // hero-image setter. Only used when Convex has no live record yet.
   useEffect(() => {
-    getHeroImage().then((img) => {
-      setHeroImage(img || DEFAULT_IMAGE);
-    });
+    getHeroImage().then((img) => setLegacyHeroImage(img || null));
   }, []);
+
+  const data = liveHero ?? DEFAULTS;
+  const heroImage =
+    (liveHero?.image && liveHero.image.length > 0
+      ? liveHero.image
+      : legacyHeroImage) || DEFAULT_IMAGE;
+
+  const pick = (id: string, en: string) => (language === "en" ? en : id);
+
+  const badge = pick(data.badgeId, data.badgeEn);
+  const line1 = pick(data.headlineLine1Id, data.headlineLine1En);
+  const line2 = pick(data.headlineLine2Id, data.headlineLine2En);
+  const accent = pick(data.headlineAccentId, data.headlineAccentEn);
+  const subhead = pick(data.subheadId, data.subheadEn);
+  const primaryLabel = pick(data.primaryCtaLabelId, data.primaryCtaLabelEn);
+  const secondaryLabel = pick(
+    data.secondaryCtaLabelId,
+    data.secondaryCtaLabelEn
+  );
 
   return (
     <section
       className="relative overflow-hidden min-h-[580px] md:min-h-[680px] bg-cover bg-center transition-all duration-700"
       style={{
-        backgroundImage: heroImage ? `linear-gradient(90deg, rgba(16, 64, 48, 0.85) 0%, rgba(16, 64, 48, 0.65) 40%, rgba(16, 64, 48, 0.2) 70%, rgba(16, 64, 48, 0) 100%), url('${heroImage}')` : 'none',
+        backgroundImage: heroImage
+          ? `linear-gradient(90deg, rgba(16, 64, 48, 0.85) 0%, rgba(16, 64, 48, 0.65) 40%, rgba(16, 64, 48, 0.2) 70%, rgba(16, 64, 48, 0) 100%), url('${heroImage}')`
+          : "none",
         backgroundColor: "#0f3d2e",
       }}
     >
@@ -31,29 +80,34 @@ export default function HeroSection() {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-white/90 backdrop-blur-md text-sm font-medium mb-6">
             <ShieldCheck className="h-4 w-4" />
-            {t("Platform Integrasi Data Ekosistem Pesisir Berkelanjutan", "Integrated Coastal Ecosystem Data Platform for Sustainability")}
+            {badge}
           </div>
 
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-[1.1] tracking-tight text-white drop-shadow-sm">
-            {t("Satu Platform.", "One Platform.")}<br/>
-            {t("Seluruh Ekosistem Mangrove & Pesisir", "The Entire Mangrove & Coastal Ecosystem")}<br/>
-            <span className="text-[#6ee7b7]">{t("Indonesia.", "Indonesia.")}</span>
+            {line1}
+            <br />
+            {line2}
+            <br />
+            <span className="text-[#6ee7b7]">{accent}</span>
           </h1>
 
           <p className="mt-6 max-w-2xl text-lg md:text-xl leading-relaxed text-white drop-shadow-sm font-medium">
-            {t(
-              "Data terintegrasi untuk pemantauan restorasi lingkungan, rehabilitasi, dan keberlanjutan pesisir nusantara.",
-              "Integrated data for environmental restoration monitoring, rehabilitation, and coastal sustainability of the archipelago."
-            )}
+            {subhead}
           </p>
 
           <div className="mt-10 flex flex-col sm:flex-row flex-wrap gap-4">
-            <a href="/daftar" className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-6 py-3.5 text-sm font-bold text-[#0f3d2e] hover:bg-gray-50 transition-colors">
-              {t("Mulai Berkontribusi", "Start Contributing")}
+            <a
+              href={data.primaryCtaHref}
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-6 py-3.5 text-sm font-bold text-[#0f3d2e] hover:bg-gray-50 transition-colors"
+            >
+              {primaryLabel}
               <ArrowRight className="h-4 w-4" />
             </a>
-            <a href="/jelajahi-peta-mangrove" className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/40 px-6 py-3.5 text-sm font-bold text-white hover:bg-white/10 transition-colors backdrop-blur-sm">
-              {t("Jelajahi Peta Restorasi Lingkungan", "Explore Environmental Restoration Map")}
+            <a
+              href={data.secondaryCtaHref}
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/40 px-6 py-3.5 text-sm font-bold text-white hover:bg-white/10 transition-colors backdrop-blur-sm"
+            >
+              {secondaryLabel}
               <ArrowRight className="h-4 w-4" />
             </a>
           </div>
