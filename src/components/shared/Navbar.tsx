@@ -9,7 +9,7 @@ import { getSession, logout, getDashboardPath, User } from "@/lib/auth";
 
 const navLinks = [
   { href: "/", idLabel: "Beranda", enLabel: "Home", active: true },
-  { href: "/jelajahi-peta-mangrove", idLabel: "Peta Restorasi Lingkungan", enLabel: "Environmental Restoration Map" },
+  { href: "/jelajahi-peta-mangrove", idLabel: "Jelajahi Peta Restorasi Lingkungan", enLabel: "Explore Environmental Restoration Map" },
   { href: "/tentang", idLabel: "Tentang Kami", enLabel: "About Us" },
   { href: "/mitra-kami", idLabel: "Mitra", enLabel: "Partners" },
   { href: "/faq", idLabel: "FAQ", enLabel: "FAQ" },
