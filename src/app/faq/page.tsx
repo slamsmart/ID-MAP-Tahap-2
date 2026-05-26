@@ -3,47 +3,55 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import Navbar from "@/components/shared/Navbar";
+import Footer from "@/components/shared/Footer";
 
+// FAQ ID-MAP — fokus pada layanan integrasi data pesisir + Pokmaswas/Mitra.
+// Tidak membahas perdagangan carbon credit / blue carbon karena fokus jangka
+// pendek platform adalah penguatan komunitas pesisir, bukan registry karbon.
 const faqs = [
   {
     q: "Apa itu ID-MAP?",
-    a: "ID-MAP (Integrasi Data dan Manajemen Pesisir) adalah platform digital yang mengintegrasikan data ekosistem pesisir Indonesia — mangrove, abrasi, habitat penyu, dan jaringan Pokmaswas/mitra. Platform ini menghubungkan kontribusi masyarakat, pelaksana proyek lapangan, dan kebutuhan ESG/CSR perusahaan dalam satu sistem MRV terverifikasi.",
+    a: "ID-MAP (Integrasi Data dan Manajemen Pesisir) adalah platform digital yang mengintegrasikan data ekosistem pesisir Indonesia — mangrove, abrasi pantai, habitat penyu, dan jaringan Pokmaswas/Mitra. Platform menghubungkan Sahabat Pesisir (donatur publik), Mitra pelaksana proyek lapangan, Verifikator/DKP, dan komunitas pesisir dalam satu sistem yang transparan dan partisipatif.",
+  },
+  {
+    q: "Layanan apa saja yang ditawarkan ID-MAP?",
+    a: "ID-MAP menyediakan enam layanan inti solusi ekosistem pesisir: (1) Rehabilitasi Mangrove, (2) Penyulaman Mangrove, (3) Jasa Pemantauan Monev (MRV) Mangrove, (4) Decarbonisasi Aquaculture, (5) Perbaikan Habitat Penyu, dan (6) Pemberdayaan Masyarakat Pesisir. Setiap layanan dilaksanakan oleh kelompok Pokmaswas/mitra terverifikasi.",
   },
   {
     q: "Bagaimana cara mendaftar?",
-    a: "Klik tombol 'Daftar' di navbar, lalu pilih peran Anda: Komunitas (untuk individu/masyarakat), Mitra (untuk NGO, developer proyek, instansi), atau Perusahaan (untuk corporate yang ingin membeli carbon credit). Isi formulir pendaftaran dan Anda akan diarahkan ke dashboard sesuai peran.",
+    a: "Klik tombol 'Daftar' di navbar lalu pilih peran: Sahabat Pesisir (untuk individu yang ingin berdonasi dan ikut memantau dampak), atau Mitra (untuk Pokmaswas, NGO, instansi, akademisi yang menjalankan proyek lapangan). Untuk Sahabat cukup isi nama, email, no HP, dan alamat — tanpa upload KTP.",
   },
   {
-    q: "Apa perbedaan peran Komunitas, Mitra, dan Perusahaan?",
-    a: "Komunitas: individu yang ingin berkontribusi pada proyek mangrove. Mitra: organisasi yang mengembangkan proyek mangrove (NGO, project developer, instansi pemerintah, akademisi). Perusahaan: corporate yang ingin membeli carbon credit untuk offset emisi dan meningkatkan ESG score.",
+    q: "Apa perbedaan peran Sahabat, Mitra, Verifikator, dan Perusahaan?",
+    a: "Sahabat: individu yang mendonasi mikro via QRIS dan menerima sertifikat. Mitra: Pokmaswas/NGO/instansi yang mengelola proyek lapangan dan mengisi laporan MRV. Verifikator: tim DKP/auditor yang mengaudit data dan validasi proyek. Perusahaan: korporasi yang mendukung proyek pesisir untuk komitmen ESG/CSR.",
   },
   {
-    q: "Apa itu Carbon Credit?",
-    a: "Carbon credit adalah sertifikat yang mewakili pengurangan 1 ton CO₂ dari atmosfer. Proyek mangrove menghasilkan carbon credit karena mangrove menyerap dan menyimpan karbon (Blue Carbon). Perusahaan membeli carbon credit untuk mengoffset emisi mereka.",
+    q: "Apa itu Pokmaswas?",
+    a: "Pokmaswas (Kelompok Masyarakat Pengawas) adalah kelompok masyarakat pesisir resmi binaan Ditjen PSDKP — Kementerian Kelautan dan Perikanan. Mereka menjadi mitra utama ID-MAP karena memiliki SK pengukuhan, terlatih dalam pengawasan sumber daya laut, dan paling dekat dengan ekosistem yang dijaga.",
   },
   {
-    q: "Bagaimana sistem MRV bekerja?",
-    a: "MRV (Monitoring, Reporting, Verification) adalah sistem 3 tahap: Monitoring (pengumpulan data lapangan dan satelit), Reporting (pelaporan serapan karbon), dan Verification (verifikasi oleh pihak ketiga independen). Semua data terintegrasi dengan dashboard ID-MAP.",
+    q: "Bagaimana sistem MRV bekerja di ID-MAP?",
+    a: "MRV (Monitoring, Reporting, Verification) di ID-MAP berjalan dalam siklus per proyek: Mitra mengunggah bukti tanam dan pemantauan lapangan → Verifikator memvalidasi data dan dokumen pendukung → status proyek di-update menjadi Selesai dan dapat diaudit. Semua data dapat dipantau real-time di dashboard.",
   },
   {
-    q: "Apa itu SRN dan mengapa penting?",
-    a: "SRN (Sistem Registri Nasional) adalah sistem registrasi yang dikelola KLHK sesuai PP 98/2021 dan Permen LHK 21/2022. Registrasi SRN wajib untuk semua proyek karbon di Indonesia agar diakui secara legal dan bisa diperdagangkan.",
+    q: "Apakah proyek di ID-MAP terverifikasi?",
+    a: "Ya. Setiap proyek harus melalui review verifikator sebelum berstatus 'Terverifikasi' dan tampil di halaman publik. Proyek juga dapat diaudit bersama DKP daerah dan instansi terkait untuk memastikan keaslian lokasi, luasan, dan dampak ekosistem.",
   },
   {
-    q: "Bagaimana data serapan karbon dihitung?",
-    a: "Data serapan karbon dihitung menggunakan estimasi AI dan citra satelit (Copernicus/LAPAN), dikombinasikan dengan data pengukuran lapangan. Metodologi mengacu pada standar internasional (VCS, Gold Standard) dan pedoman KLHK.",
+    q: "Bagaimana cara berdonasi?",
+    a: "Pilih proyek Pokmaswas yang aktif di halaman beranda atau /proyek, klik 'Dukung Proyek (Scan QRIS)', login terlebih dahulu (cukup nama+email+HP+alamat), lalu pilih nominal donasi mulai Rp 10.000. Bayar via QRIS — bisa dari semua bank/e-wallet melalui Mayar.id. Sertifikat digital terbit otomatis setelah pembayaran berhasil.",
   },
   {
-    q: "Siapa mitra ID-MAP?",
-    a: "Mitra utama ID-MAP meliputi Bank Indonesia, Kementerian LHK (KLHK), KKPD, dan berbagai komunitas pegiat konservasi mangrove di seluruh Indonesia.",
+    q: "Apakah donasi saya tersalurkan langsung ke komunitas pelaksana?",
+    a: "Ya. Setiap donasi tercatat per proyek dan masuk ke fundingRaised proyek tersebut. Mitra pelaksana melihat dana masuk di dashboard /mitra/pendanaan, sementara Sahabat dapat memantau dampak (luasan, bibit, status MRV) dari /user.",
   },
   {
-    q: "Apakah proyek mangrove di ID-MAP terverifikasi?",
-    a: "Ya, setiap proyek melalui proses MRV (Monitoring, Reporting, Verification) dan diregistrasi di SRN KLHK. Proyek yang sudah terverifikasi ditandai dengan badge 'Terverifikasi' di dashboard.",
+    q: "Bagaimana sertifikat digital saya dapat diverifikasi?",
+    a: "Setiap sertifikat memiliki ID unik (mis. IDMAP-DON-XXXXXX), nama lengkap pemegang, dan dapat diunduh sebagai SVG. Sertifikat dapat dibagikan ke WhatsApp, X/Twitter, atau dikirim sebagai bukti partisipasi pemulihan ekosistem pesisir.",
   },
   {
     q: "Bagaimana cara menghubungi tim ID-MAP?",
-    a: "Anda dapat menghubungi kami melalui halaman Pengaturan di dashboard masing-masing peran, atau melalui email yang tercantum di footer website.",
+    a: "Anda dapat menghubungi kami melalui email yang tertera di halaman Tentang Kami atau di footer setiap halaman. Untuk pertanyaan teknis, gunakan menu Pengaturan pada dashboard masing-masing peran.",
   },
 ];
 
@@ -72,6 +80,7 @@ export default function FAQPage() {
                 <div key={i} className="border border-gray-200 rounded-xl overflow-hidden">
                   <button
                     onClick={() => setOpenIndex(openIndex === i ? null : i)}
+                    aria-expanded={openIndex === i}
                     className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-gray-50 transition"
                   >
                     <span className="font-semibold text-gray-900 text-sm sm:text-base pr-4">{faq.q}</span>
@@ -102,6 +111,7 @@ export default function FAQPage() {
           </div>
         </section>
       </main>
+      <Footer />
     </>
   );
 }

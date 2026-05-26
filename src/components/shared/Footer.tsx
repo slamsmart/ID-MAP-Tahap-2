@@ -24,8 +24,8 @@ export default function Footer() {
   const footerData = useQuery(api.footerContent.get);
 
   const brandName = footerData?.brandName ?? "ID-MAP";
-  const descId = footerData?.descriptionId ?? "Pre-Market Carbon Infrastructure Platform. Menghubungkan aksi iklim dengan teknologi dan transparansi.";
-  const descEn = footerData?.descriptionEn ?? "Pre-Market Carbon Infrastructure Platform. Connecting climate action with technology and transparency.";
+  const descId = footerData?.descriptionId ?? "Platform Integrasi Data dan Manajemen Pesisir. Menghubungkan komunitas, mitra pelaksana, dan donatur untuk pemantauan, rehabilitasi, dan keberlanjutan pesisir nusantara.";
+  const descEn = footerData?.descriptionEn ?? "Integrated Coastal Data & Management Platform. Connecting communities, project partners, and supporters for monitoring, rehabilitation, and sustainability of Indonesia's coast.";
   const email = footerData?.email ?? "info@id-map.co.id";
   const phone = footerData?.phone ?? "+62 21 1234 5678";
   const address = footerData?.address ?? "Jakarta, Indonesia";
