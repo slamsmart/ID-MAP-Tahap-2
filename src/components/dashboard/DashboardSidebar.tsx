@@ -25,6 +25,7 @@ import {
   Waves,
   Brain,
   PanelBottom,
+  LayoutGrid,
 } from "lucide-react";
 
 interface SidebarItem {
@@ -77,6 +78,7 @@ const verifikatorItems: SidebarItem[] = [
   { icon: Globe, label: "Titik Pendaratan Penyu", href: "/verifikator/penyu" },
   { icon: Users, label: "Data Pokmaswas", href: "/verifikator/pokmaswas" },
   { icon: ImageIcon, label: "Konten Layanan", href: "/verifikator/thumbnail-layanan" },
+  { icon: LayoutGrid, label: "Tiga Peran", href: "/verifikator/tiga-peran" },
   { icon: PanelBottom, label: "Footer Brand", href: "/verifikator/footer" },
   { icon: Settings, label: "Pengaturan", href: "/verifikator/pengaturan" },
 ];

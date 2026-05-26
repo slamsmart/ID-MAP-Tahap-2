@@ -22,6 +22,7 @@ const nextConfig = {
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "media.mayar.id" },
       { protocol: "https", hostname: "**.convex.cloud" },
+      { protocol: "https", hostname: "res.cloudinary.com" },
     ],
   },
 };

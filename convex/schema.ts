@@ -191,6 +191,46 @@ export default defineSchema({
   })
     .index("by_key", ["key"]),
 
+  // ─── Three Roles Section (Landing) ────────────────────────────────
+  rolesSection: defineTable({
+    key: v.string(), // singleton: "threeRoles"
+    headlineId: v.string(),
+    headlineEn: v.string(),
+    subtitleId: v.string(),
+    subtitleEn: v.string(),
+    cards: v.array(
+      v.object({
+        key: v.string(),
+        titleId: v.string(),
+        titleEn: v.string(),
+        bullet1Id: v.string(),
+        bullet1En: v.string(),
+        bullet2Id: v.string(),
+        bullet2En: v.string(),
+        bullet3Id: v.string(),
+        bullet3En: v.string(),
+        ctaId: v.string(),
+        ctaEn: v.string(),
+        href: v.string(),
+        image: v.string(),
+        order: v.number(),
+      })
+    ),
+    updatedAt: v.number(),
+  }).index("by_key", ["key"]),
+
+  // ─── Footer Content (Brand Section) ──────────────────────────────
+  footerContent: defineTable({
+    key: v.string(), // singleton: "brand"
+    brandName: v.string(),
+    descriptionId: v.string(),
+    descriptionEn: v.string(),
+    email: v.string(),
+    phone: v.string(),
+    address: v.string(),
+    updatedAt: v.number(),
+  }).index("by_key", ["key"]),
+
   // ─── KYC Documents (Verification Documents) ───────────────────────
   kycDocuments: defineTable({
     userId: v.id("users"),

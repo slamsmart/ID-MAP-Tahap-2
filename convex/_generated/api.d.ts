@@ -11,11 +11,13 @@
 import type * as activities from "../activities.js";
 import type * as certificates from "../certificates.js";
 import type * as contributions from "../contributions.js";
+import type * as footerContent from "../footerContent.js";
 import type * as kyc from "../kyc.js";
 import type * as mrvReports from "../mrvReports.js";
 import type * as otpCodes from "../otpCodes.js";
 import type * as platformStats from "../platformStats.js";
 import type * as projects from "../projects.js";
+import type * as rolesSection from "../rolesSection.js";
 import type * as seed from "../seed.js";
 import type * as serviceContent from "../serviceContent.js";
 import type * as transactions from "../transactions.js";
@@ -31,11 +33,13 @@ declare const fullApi: ApiFromModules<{
   activities: typeof activities;
   certificates: typeof certificates;
   contributions: typeof contributions;
+  footerContent: typeof footerContent;
   kyc: typeof kyc;
   mrvReports: typeof mrvReports;
   otpCodes: typeof otpCodes;
   platformStats: typeof platformStats;
   projects: typeof projects;
+  rolesSection: typeof rolesSection;
   seed: typeof seed;
   serviceContent: typeof serviceContent;
   transactions: typeof transactions;
