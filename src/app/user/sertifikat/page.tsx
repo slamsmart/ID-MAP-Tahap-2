@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Award, Download, Eye, X, Leaf } from "lucide-react";
+import Link from "next/link";
+import { Award, Download, Eye, X, Leaf, Heart } from "lucide-react";
 import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { getSession, User } from "@/lib/auth";
 import { Id } from "../../../../convex/_generated/dataModel";
+import { useEscapeKey } from "@/lib/useEscapeKey";
 
 // Konversi co2Amount → estimasi bibit (1 tCO₂e ≈ 10 bibit)
 const toBibit = (co2: number) => Math.round(co2 * 10);
@@ -32,6 +34,9 @@ const typeBadge: Record<CertDisplay["type"], string> = {
 export default function SertifikatPage() {
   const [session, setSession] = useState<User | null>(null);
   const [previewCert, setPreviewCert] = useState<CertDisplay | null>(null);
+
+  // Esc closes the certificate preview overlay.
+  useEscapeKey(!!previewCert, () => setPreviewCert(null));
 
   useEffect(() => {
     setSession(getSession());
@@ -128,12 +133,18 @@ export default function SertifikatPage() {
             </div>
           ))
         ) : certDisplayList.length === 0 ? (
-          <div className="bg-white rounded-xl border border-gray-100 p-8 text-center">
+          <div className="bg-white rounded-card border border-gray-100 p-8 text-center">
             <Award className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-            <p className="text-gray-500 font-medium">Belum ada sertifikat</p>
-            <p className="text-sm text-gray-400 mt-1">
-              Sertifikat akan terbit setelah Anda mendukung proyek pemulihan mangrove.
+            <p className="text-gray-700 font-semibold">Belum ada sertifikat</p>
+            <p className="text-sm text-gray-500 mt-1 max-w-sm mx-auto">
+              Sertifikat digital terbit otomatis setelah donasi Anda berhasil. Mulai dukung proyek mangrove untuk klaim sertifikat pertama.
             </p>
+            <Link
+              href="/proyek"
+              className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-button transition-colors"
+            >
+              <Heart className="w-4 h-4" /> Dukung Proyek Sekarang
+            </Link>
           </div>
         ) : (
           certDisplayList.map((cert) => (

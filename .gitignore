@@ -54,3 +54,6 @@ next-env.d.ts
 # AI agent local state
 /.agents/
 /.claude/
+
+# Editor / tool scratch files (e.g. lean-ctx ctx_edit safety copies)
+*.tmp.*

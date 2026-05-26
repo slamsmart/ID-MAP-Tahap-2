@@ -1,0 +1,1238 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<title>UX Design Case Study — ID-MAP v2.0</title>
+<style>
+  @page { size: A4 landscape; margin: 14mm; }
+  :root {
+    --green-900: #0f3d2e;
+    --green-700: #14523d;
+    --green-600: #1f6f54;
+    --green-500: #16a34a;
+    --green-50:  #ecfdf5;
+    --blue-600:  #0284c7;
+    --amber-600: #d97706;
+    --slate-900: #0f172a;
+    --slate-700: #334155;
+    --slate-500: #64748b;
+    --slate-300: #cbd5e1;
+    --slate-100: #f1f5f9;
+    --slate-50:  #f8fafc;
+  }
+  html, body { padding: 0; margin: 0; }
+  body {
+    font-family: "Plus Jakarta Sans", "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+    color: var(--slate-900);
+    font-size: 11pt;
+    line-height: 1.45;
+    background: #fff;
+  }
+  .page {
+    page-break-after: always;
+    min-height: calc(210mm - 28mm);
+    padding: 0;
+    position: relative;
+  }
+  .page:last-of-type { page-break-after: auto; }
+
+  /* ---------- Cover ---------- */
+  .cover {
+    background: linear-gradient(135deg, #0f3d2e 0%, #14523d 60%, #1f6f54 100%);
+    color: #fff;
+    border-radius: 14px;
+    padding: 22mm 18mm;
+    position: relative;
+    overflow: hidden;
+    min-height: calc(210mm - 32mm);
+  }
+  .cover::before {
+    content: "";
+    position: absolute;
+    inset: -60px -60px auto auto;
+    width: 320px; height: 320px;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(34,197,94,.45), transparent 70%);
+  }
+  .cover::after {
+    content: "";
+    position: absolute;
+    inset: auto auto -80px -80px;
+    width: 360px; height: 360px;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(2,132,199,.35), transparent 70%);
+  }
+  .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: .22em;
+    font-size: 9pt;
+    color: #a7f3d0;
+    font-weight: 700;
+  }
+  .cover h1 {
+    font-size: 36pt;
+    line-height: 1.05;
+    margin: 10pt 0 6pt;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .cover h2 {
+    font-size: 14pt;
+    font-weight: 500;
+    color: #d1fae5;
+    margin: 0 0 18pt;
+  }
+  .cover .meta {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12pt;
+    margin-top: 18pt;
+  }
+  .cover .meta div {
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.18);
+    border-radius: 10px;
+    padding: 10pt 12pt;
+  }
+  .cover .meta b {
+    display: block;
+    font-size: 8pt;
+    text-transform: uppercase;
+    letter-spacing: .15em;
+    color: #a7f3d0;
+    margin-bottom: 4pt;
+    font-weight: 700;
+  }
+  .cover .badges {
+    display: flex; gap: 8pt; flex-wrap: wrap;
+    margin-top: 16pt;
+  }
+  .cover .badges span {
+    background: rgba(255,255,255,.16);
+    border: 1px solid rgba(255,255,255,.25);
+    border-radius: 999px;
+    padding: 4pt 10pt;
+    font-size: 9pt;
+    font-weight: 600;
+  }
+  .cover .summary {
+    margin-top: 22pt;
+    background: rgba(255,255,255,.07);
+    border-left: 3px solid #a7f3d0;
+    padding: 14pt 16pt;
+    border-radius: 6px;
+    color: #ecfdf5;
+    font-size: 11pt;
+    line-height: 1.55;
+  }
+
+  /* ---------- Inner ---------- */
+  .section-title {
+    font-size: 22pt;
+    color: var(--green-900);
+    margin: 0 0 4pt;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+  .section-sub {
+    color: var(--slate-500);
+    font-size: 10pt;
+    margin: 0 0 14pt;
+  }
+  .divider {
+    height: 4px;
+    width: 64px;
+    background: var(--green-500);
+    border-radius: 999px;
+    margin-bottom: 12pt;
+  }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14pt; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12pt; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10pt; }
+  .grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8pt; }
+
+  .card {
+    background: #fff;
+    border: 1px solid var(--slate-300);
+    border-radius: 12px;
+    padding: 12pt 14pt;
+  }
+  .card.tinted {
+    background: var(--slate-50);
+    border-color: #e2e8f0;
+  }
+  .card.green {
+    background: var(--green-50);
+    border-color: #bbf7d0;
+  }
+  .card h3 {
+    margin: 0 0 6pt;
+    font-size: 11pt;
+    color: var(--green-900);
+    font-weight: 700;
+  }
+  .card .num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22pt; height: 22pt;
+    border-radius: 50%;
+    background: var(--green-900);
+    color: #fff;
+    font-weight: 800;
+    font-size: 10pt;
+    margin-right: 6pt;
+  }
+  .kbd {
+    background: var(--slate-100);
+    border: 1px solid var(--slate-300);
+    border-radius: 6px;
+    padding: 1px 6px;
+    font-family: "Geist Mono", ui-monospace, monospace;
+    font-size: 9pt;
+    color: var(--slate-700);
+  }
+  ul.tight { padding-left: 16pt; margin: 4pt 0; }
+  ul.tight li { margin-bottom: 3pt; }
+  .lead {
+    font-size: 12.5pt;
+    color: var(--slate-700);
+    line-height: 1.55;
+    border-left: 3px solid var(--green-500);
+    padding: 8pt 12pt;
+    background: #fafffb;
+    border-radius: 0 8px 8px 0;
+    margin: 8pt 0 16pt;
+  }
+  .quote {
+    font-style: italic;
+    color: var(--slate-700);
+    border-left: 3px solid var(--amber-600);
+    padding: 8pt 14pt;
+    background: #fffbeb;
+    border-radius: 0 8px 8px 0;
+  }
+  .pill {
+    display: inline-block;
+    border-radius: 999px;
+    padding: 2pt 8pt;
+    font-size: 8.5pt;
+    font-weight: 700;
+    background: var(--green-50);
+    color: var(--green-900);
+    border: 1px solid #bbf7d0;
+    margin-right: 4pt;
+  }
+  .pill.amber { background:#fffbeb; color: var(--amber-600); border-color:#fde68a; }
+  .pill.blue  { background:#eff6ff; color: var(--blue-600);  border-color:#bfdbfe; }
+  .pill.slate { background: var(--slate-100); color: var(--slate-700); border-color: var(--slate-300); }
+
+  table { border-collapse: collapse; width: 100%; font-size: 9.5pt; }
+  th, td {
+    border: 1px solid var(--slate-300);
+    padding: 6pt 8pt;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: var(--green-50);
+    color: var(--green-900);
+    font-weight: 700;
+    font-size: 9pt;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+  }
+  tr:nth-child(even) td { background: var(--slate-50); }
+
+  .stat {
+    background: var(--slate-50);
+    border: 1px solid var(--slate-300);
+    border-radius: 12px;
+    padding: 10pt 12pt;
+    text-align: center;
+  }
+  .stat .num-big {
+    font-size: 22pt;
+    font-weight: 800;
+    color: var(--green-900);
+    line-height: 1;
+  }
+  .stat .lbl {
+    font-size: 8.5pt;
+    color: var(--slate-500);
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    margin-top: 4pt;
+  }
+
+  .footer {
+    position: absolute;
+    bottom: 4mm; left: 0; right: 0;
+    display: flex; justify-content: space-between;
+    font-size: 8.5pt;
+    color: var(--slate-500);
+  }
+  .footer b { color: var(--green-900); }
+
+  .ascii {
+    font-family: "Geist Mono", ui-monospace, monospace;
+    font-size: 8.5pt;
+    background: var(--slate-50);
+    border: 1px solid var(--slate-300);
+    border-radius: 8px;
+    padding: 10pt 12pt;
+    white-space: pre;
+    line-height: 1.4;
+    overflow: hidden;
+  }
+  .role-card {
+    background: #fff;
+    border: 1px solid var(--slate-300);
+    border-radius: 12px;
+    padding: 10pt 12pt;
+  }
+  .role-card .role-name {
+    font-weight: 800;
+    color: var(--green-900);
+    font-size: 10.5pt;
+  }
+  .role-card .role-meta {
+    color: var(--slate-500);
+    font-size: 8.5pt;
+    margin: 2pt 0 6pt;
+  }
+  .col-flow {
+    display: grid;
+    grid-template-columns: 60pt 1fr;
+    gap: 6pt 10pt;
+    align-items: start;
+    font-size: 9.5pt;
+  }
+  .col-flow .step {
+    background: var(--green-900);
+    color: #fff;
+    border-radius: 6px;
+    padding: 4pt 6pt;
+    text-align: center;
+    font-weight: 700;
+    font-size: 8.5pt;
+  }
+  .col-flow .desc {
+    background: var(--slate-50);
+    border: 1px solid var(--slate-300);
+    border-radius: 6px;
+    padding: 5pt 8pt;
+  }
+  .legend {
+    display: flex; gap: 10pt; flex-wrap: wrap;
+    font-size: 9pt;
+    margin-top: 6pt;
+    color: var(--slate-700);
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 4pt; }
+  .legend i {
+    width: 10pt; height: 10pt; border-radius: 3px; display: inline-block;
+  }
+  .h-band {
+    background: var(--green-900);
+    color: #fff;
+    padding: 4pt 10pt;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 9.5pt;
+    display: inline-block;
+    margin-bottom: 6pt;
+    letter-spacing: .04em;
+  }
+
+  .takeaway {
+    background: linear-gradient(135deg, #14523d 0%, #1f6f54 100%);
+    color: #fff;
+    border-radius: 12px;
+    padding: 14pt 16pt;
+  }
+  .takeaway h3 { color: #a7f3d0; margin-top: 0; font-size: 10pt; letter-spacing: .15em; text-transform: uppercase; }
+</style>
+</head>
+<body>
+
+<!-- ============== COVER ============== -->
+<section class="page">
+  <div class="cover">
+    <div class="eyebrow">UX Design — Case Study</div>
+    <h1>ID-MAP v2.0</h1>
+    <h2>Indonesia Mangrove Action Platform — Infrastruktur Digital Karbon Pesisir</h2>
+
+    <div class="badges">
+      <span>Climate Tech</span>
+      <span>Carbon Marketplace</span>
+      <span>MRV Digital</span>
+      <span>5 Role Multi-tenant</span>
+      <span>Real-time (Convex)</span>
+    </div>
+
+    <div class="summary">
+      <b>Penjelasan Produk —</b> ID-MAP adalah platform digital multi-peran untuk
+      akselerasi restorasi mangrove dan perdagangan karbon biru Indonesia.
+      Menyatukan <b>Sahabat Pesisir</b> (donatur), <b>Mitra Proyek</b> (NGO/pengelola),
+      <b>Verifikator</b> (ilmuwan/DKP), <b>Perusahaan</b> (corporate buyer), dan <b>Admin</b>
+      dalam satu sistem terverifikasi yang selaras PMN 2025, KKMD, BRGMN, dan
+      Perpres 98/2021 tentang Nilai Ekonomi Karbon.
+    </div>
+
+    <div class="meta">
+      <div><b>Durasi Project</b>Jan 2026 — Q3 2026 (≈9 bulan, 4 sprint)</div>
+      <div><b>Posisi</b>Product Lead · UX Designer · Sustainability Advisor (DKP perspective)</div>
+      <div><b>Tanggung Jawab</b>User research, IA, wireframe, prototype, design system, validasi DKP/KKMD</div>
+    </div>
+
+    <div class="footer" style="color:#d1fae5">
+      <span>Case Study disusun dari sudut pandang <b style="color:#fff">ahli bisnis lingkungan, praktisi NGO, dan petugas DKP</b>.</span>
+      <span>Halaman 1 / 14</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============== 02 — RINGKASAN PROJECT ============== -->
+<section class="page">
+  <div class="h-band">RINGKASAN PROJECT</div>
+  <h2 class="section-title">Masalah, Tujuan, &amp; Konteks Sektor</h2>
+  <div class="divider"></div>
+
+  <div class="lead">
+    Indonesia kehilangan ±52% dari 3,36 juta ha mangrove akibat alih fungsi tambak,
+    abrasi, dan tata kelola yang fragmented. Pasar karbon sukarela tumbuh cepat
+    (USD 2 B → proyeksi USD 50 B di 2030) tetapi <b>Indonesia belum memiliki
+    infrastruktur digital terverifikasi</b> yang menghubungkan proyek lapangan,
+    verifikasi MRV, donasi komunitas, dan permintaan korporat dalam satu jalur audit.
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Masalah Sektor</h3>
+      <ul class="tight">
+        <li>Data mangrove tersebar — kebijakan lambat, proyek tumpang tindih.</li>
+        <li>Korporasi ESG kesulitan menemukan proyek terverifikasi &amp; SRN-ready.</li>
+        <li>NGO/mitra lapangan kekurangan tools manajemen &amp; akses pendanaan.</li>
+        <li>MRV manual via Excel: lambat, mahal, rentan fraud.</li>
+        <li>Masyarakat pesisir tidak punya kanal partisipasi digital yang transparan.</li>
+      </ul>
+    </div>
+    <div class="card green">
+      <h3>Tujuan ID-MAP v2.0</h3>
+      <ul class="tight">
+        <li>Membangun <b>satu sistem MRV digital</b> dengan audit trail immutable.</li>
+        <li>Marketplace karbon biru terverifikasi (proyek → tCO₂e → sertifikat).</li>
+        <li>Donasi komunitas QRIS dengan dampak terlihat (real-time).</li>
+        <li>Peta interaktif nasional: mangrove, abrasi, penyu, Pokmaswas.</li>
+        <li>Tools verifikator (DKP, peneliti, KKMD) untuk validasi lapangan.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="margin-top:14pt" class="grid-3">
+    <div class="card tinted">
+      <h3>Posisi pada Project</h3>
+      <p style="margin:0">Product Lead + UX Designer dengan dukungan
+      <span class="pill">Business Analyst</span>
+      <span class="pill blue">Architect</span>
+      <span class="pill amber">Field Validator (DKP)</span>
+      </p>
+    </div>
+    <div class="card tinted">
+      <h3>Tanggung Jawab UX</h3>
+      <ul class="tight" style="margin-top:0">
+        <li>User research multi-stakeholder (5 persona)</li>
+        <li>IA, user flow, wireframe (lo-fi → hi-fi)</li>
+        <li>Design system bilingual (ID/EN), aksesibilitas WCAG AA</li>
+        <li>Validasi field via DKP &amp; Pokmaswas</li>
+      </ul>
+    </div>
+    <div class="card tinted">
+      <h3>Kerangka Regulasi</h3>
+      <ul class="tight" style="margin-top:0">
+        <li>PMN 2025 (target restorasi 600.000 ha)</li>
+        <li>Perpres 98/2021 — Nilai Ekonomi Karbon</li>
+        <li>POJK 60/2023 — Perdagangan Karbon</li>
+        <li>KKMD &amp; BRGMN — Framework verifikasi</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="grid-4" style="margin-top:14pt">
+    <div class="stat"><div class="num-big">600 rb ha</div><div class="lbl">Target PMN Nasional</div></div>
+    <div class="stat"><div class="num-big">USD 180 M</div><div class="lbl">SAM Asia Tenggara (Mangrove)</div></div>
+    <div class="stat"><div class="num-big">IDR 5 B</div><div class="lbl">SOM Tahun 1–2 GMV</div></div>
+    <div class="stat"><div class="num-big">5 Peran</div><div class="lbl">sahabat · mitra · verifikator · corporate · admin</div></div>
+  </div>
+
+  <div class="footer">
+    <span><b>ID-MAP</b> · Case Study v1.0 — 2026</span>
+    <span>Halaman 2 / 14</span>
+  </div>
+</section>
+
+<!-- ============== 03 — EMPATHIZE / RESEARCH ============== -->
+<section class="page">
+  <div class="h-band">EMPATHIZE · DEFINE · IDEATE</div>
+  <h2 class="section-title">Ringkasan User Research</h2>
+  <div class="divider"></div>
+
+  <div class="quote">
+    "Kami sudah lakukan rehabilitasi 3 tahun, tapi laporan kuartalan ke DKP &amp; KKMD
+    masih manual: foto WhatsApp, Excel, lalu PDF. Setiap audit ulang seperti memulai dari nol."
+    <br/><span style="font-style: normal; font-weight:700; color:var(--green-900)">— Ibu Sari, Direktur NGO Pesisir Demak (Mitra)</span>
+  </div>
+
+  <p style="margin-top:10pt">
+    Riset dilakukan via wawancara mendalam (n=18), survei online (n=124),
+    observasi lapangan di Demak &amp; Sumba, serta diskusi terfokus dengan
+    <b>petugas Dinas Kelautan &amp; Perikanan (DKP) Jawa Timur</b> dan
+    <b>Pokmaswas</b> selaku pengawas independen. Insight dilipat ke
+    affinity map dan disederhanakan menjadi 4 pain point dominan.
+  </p>
+
+  <div class="grid-4" style="margin-top:8pt">
+    <div class="card">
+      <span class="num">1</span><b>Trust Gap</b>
+      <p style="margin:6pt 0 0">Donatur &amp; korporat tidak yakin dampak nyata. Bukti terbatas pada foto seremonial — tanpa data MRV terstruktur.</p>
+    </div>
+    <div class="card">
+      <span class="num">2</span><b>Workflow Manual</b>
+      <p style="margin:6pt 0 0">Mitra mengerjakan 3 spreadsheet paralel (proyek, MRV, keuangan). Verifikator menemukan inkonsistensi &gt;30% laporan.</p>
+    </div>
+    <div class="card">
+      <span class="num">3</span><b>Ekosistem Tidak Tersambung</b>
+      <p style="margin:6pt 0 0">Data DKP, KKMD, BRGMN, dan NGO tidak saling baca. Tidak ada single source of truth untuk peta abrasi/penyu.</p>
+    </div>
+    <div class="card">
+      <span class="num">4</span><b>Akses Pasar Karbon Sulit</b>
+      <p style="margin:6pt 0 0">Korporasi nasional kesulitan menemukan proyek SRN-ready &amp; ber-MRV. Onboarding ke pasar global &gt;6 bulan.</p>
+    </div>
+  </div>
+
+  <h3 style="margin-top:18pt;color:var(--green-900)">Cara Riset</h3>
+  <div class="grid-3">
+    <div class="card tinted">
+      <b>Sahabat Pesisir (n=124)</b>
+      <p style="margin:4pt 0 0">Survei online — motivasi donasi, channel pembayaran, ekspektasi transparansi.</p>
+    </div>
+    <div class="card tinted">
+      <b>Mitra &amp; NGO (n=8)</b>
+      <p style="margin:4pt 0 0">Wawancara &amp; observasi proses MRV di Demak, Sumba, Surabaya. Data-trail audit nyata.</p>
+    </div>
+    <div class="card tinted">
+      <b>DKP, KKMD &amp; Pokmaswas (n=6)</b>
+      <p style="margin:4pt 0 0">FGD dengan petugas DKP Jatim dan KKMD daerah — kebutuhan validasi spasial &amp; pelaporan.</p>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span><b>ID-MAP</b> · User Research</span>
+    <span>Halaman 3 / 14</span>
+  </div>
+</section>
+
+<!-- ============== 04 — PERSONAS ============== -->
+<section class="page">
+  <div class="h-band">PERSONAS</div>
+  <h2 class="section-title">Lima Stakeholder, Satu Ekosistem</h2>
+  <div class="divider"></div>
+
+  <div class="grid-3">
+    <div class="role-card">
+      <div class="role-name">Budi · Sahabat Pesisir</div>
+      <div class="role-meta">28 th · Mahasiswa · Surabaya</div>
+      <p><b>Goal —</b> Donasi kecil yang terasa nyata, lihat dampak via dashboard.</p>
+      <p><b>Pain —</b> Platform donasi tidak transparan, tanpa bukti dampak.</p>
+      <p><b>Channel —</b> Instagram → landing page → QRIS Mayar.id</p>
+      <span class="pill">P0: QRIS</span><span class="pill">Sertifikat</span>
+    </div>
+    <div class="role-card">
+      <div class="role-name">Ibu Sari · Mitra Proyek (NGO)</div>
+      <div class="role-meta">45 th · Direktur NGO Mangrove · Demak</div>
+      <p><b>Goal —</b> Multi-proyek, MRV otomatis, akses pasar karbon.</p>
+      <p><b>Pain —</b> Admin manual, Excel, dashboard tidak terpadu.</p>
+      <p><b>Channel —</b> Onboarding admin / referral korporat</p>
+      <span class="pill blue">P0: MRV</span><span class="pill blue">Pendanaan</span>
+    </div>
+    <div class="role-card">
+      <div class="role-name">Pak Hendra · Corporate Buyer</div>
+      <div class="role-meta">40 th · CSR Manager · Jakarta</div>
+      <p><b>Goal —</b> Beli kredit karbon Indonesia, laporan ESG audit-ready.</p>
+      <p><b>Pain —</b> Tidak ada marketplace kredibel &amp; SRN-ready.</p>
+      <p><b>Channel —</b> LinkedIn → mitra platform → corporate dashboard</p>
+      <span class="pill amber">P0: Marketplace</span><span class="pill amber">ESG Report</span>
+    </div>
+    <div class="role-card" style="border-color:#bfdbfe">
+      <div class="role-name">Dr. Rini · Verifikator (Peneliti)</div>
+      <div class="role-meta">35 th · Peneliti BRIN · Bogor</div>
+      <p><b>Goal —</b> Input verifikasi lapangan, kolaborasi tim.</p>
+      <p><b>Pain —</b> Tools tersebar (KoboToolbox, Excel, WhatsApp).</p>
+      <p><b>Channel —</b> Undangan admin platform</p>
+      <span class="pill blue">Audit Proyek</span><span class="pill blue">Peta Abrasi</span>
+    </div>
+    <div class="role-card" style="border-color:#bbf7d0">
+      <div class="role-name">Pak Joko · Petugas DKP</div>
+      <div class="role-meta">42 th · Bidang Konservasi DKP Jatim</div>
+      <p><b>Goal —</b> Memastikan validitas data lapangan untuk laporan ke pusat.</p>
+      <p><b>Pain —</b> Pokmaswas mengirim foto via WA, tanpa koordinat valid.</p>
+      <p><b>Channel —</b> Verifikator dashboard + sinkronisasi KKMD</p>
+      <span class="pill">DKP Coastal Layer</span><span class="pill">Pokmaswas</span>
+    </div>
+    <div class="role-card" style="border-color:#fde68a">
+      <div class="role-name">Admin Platform</div>
+      <div class="role-meta">Operator ID-MAP</div>
+      <p><b>Goal —</b> KYC pengguna, set harga karbon, monitor transaksi &amp; laporan.</p>
+      <p><b>Pain —</b> Risiko fraud, perlu audit trail lengkap.</p>
+      <p><b>Channel —</b> Internal tools (admin dashboard)</p>
+      <span class="pill amber">KYC Queue</span><span class="pill amber">Pricing &amp; Fee</span>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span><b>ID-MAP</b> · Personas</span>
+    <span>Halaman 4 / 14</span>
+  </div>
+</section>
+
+<!-- ============== 05 — JOURNEY MAP ============== -->
+<section class="page">
+  <div class="h-band">USER JOURNEY MAP</div>
+  <h2 class="section-title">Sahabat Pesisir → Donasi → Dampak</h2>
+  <div class="divider"></div>
+  <p class="section-sub">Goal: berdonasi via QRIS dan melihat dampak nyata kontribusi (tCO₂e &amp; pohon)</p>
+
+  <table>
+    <tr>
+      <th>Tahap</th><th>Aksi User</th><th>Touchpoint</th><th>Pikiran</th><th>Emosi</th><th>Peluang Desain</th>
+    </tr>
+    <tr>
+      <td><b>1. Sadar</b></td>
+      <td>Lihat post Instagram tentang abrasi pesisir Demak.</td>
+      <td>Instagram → landing page</td>
+      <td>"Apakah ini kredibel?"</td>
+      <td>🟡 Penasaran</td>
+      <td>Hero impact-counter live, sertifikasi mitra terlihat sejak fold pertama.</td>
+    </tr>
+    <tr>
+      <td><b>2. Eksplor</b></td>
+      <td>Buka peta jelajah, lihat proyek terdekat.</td>
+      <td>/jelajahi-peta-mangrove</td>
+      <td>"Proyek mana yang paling butuh?"</td>
+      <td>🟢 Antusias</td>
+      <td>Layer toggle (mangrove/abrasi/penyu/pokmaswas) dengan storyline.</td>
+    </tr>
+    <tr>
+      <td><b>3. Daftar</b></td>
+      <td>Buat akun via email + OTP.</td>
+      <td>/daftar — OTP email</td>
+      <td>"Cepat, jangan ribet."</td>
+      <td>🟡 Hati-hati</td>
+      <td>Form 2 step, OTP 60 dtk, indikator kekuatan password.</td>
+    </tr>
+    <tr>
+      <td><b>4. Donasi</b></td>
+      <td>Pilih proyek &amp; nominal, scan QRIS Mayar.id.</td>
+      <td>QRIS Mayar.id</td>
+      <td>"Aman gak ya?"</td>
+      <td>🟡 Cemas</td>
+      <td>Trust strip (logo Mayar, KYC mitra), konfirmasi real-time.</td>
+    </tr>
+    <tr>
+      <td><b>5. Verifikasi</b></td>
+      <td>Webhook konfirmasi → status "paid".</td>
+      <td>Backend Convex</td>
+      <td>"Berhasil tidak?"</td>
+      <td>🟢 Lega</td>
+      <td>Toast realtime + transition smooth ke halaman dampak.</td>
+    </tr>
+    <tr>
+      <td><b>6. Dampak</b></td>
+      <td>Lihat dashboard tCO₂e + pohon yang ditanam.</td>
+      <td>/user/dampak (live Convex)</td>
+      <td>"Saya bantu segini banyak!"</td>
+      <td>🟢🟢 Bangga</td>
+      <td>Sertifikat PDF/PNG share-able + share story Instagram.</td>
+    </tr>
+    <tr>
+      <td><b>7. Loyal</b></td>
+      <td>Update progress proyek &amp; ulang donasi.</td>
+      <td>Notifikasi email/in-app</td>
+      <td>"Saya mau dukung lagi."</td>
+      <td>🟢 Engaged</td>
+      <td>Notifikasi milestone proyek, badge "Sahabat Aktif".</td>
+    </tr>
+  </table>
+
+  <div class="footer">
+    <span><b>ID-MAP</b> · User Journey Map</span>
+    <span>Halaman 5 / 14</span>
+  </div>
+</section>
+
+<!-- ============== 06 — PROBLEM STATEMENT & HMW ============== -->
+<section class="page">
+  <div class="h-band">PROBLEM STATEMENT &amp; HMW</div>
+  <h2 class="section-title">Brainstorming Solusi</h2>
+  <div class="divider"></div>
+
+  <div class="grid-2">
+    <div class="card green">
+      <h3>Problem Statement — Sahabat</h3>
+      <p style="margin:0">
+        Budi, mahasiswa peduli iklim, butuh cara berkontribusi pada restorasi
+        mangrove yang <b>terverifikasi dan terlihat dampaknya</b>, agar uangnya tidak
+        hilang dalam birokrasi seremonial.
+      </p>
+    </div>
+    <div class="card green">
+      <h3>Problem Statement — Mitra &amp; DKP</h3>
+      <p style="margin:0">
+        Ibu Sari (NGO) dan Pak Joko (DKP) butuh <b>satu workflow MRV digital</b> yang
+        bisa diaudit Verifikator/KKMD &amp; dilaporkan ke pusat tanpa harus
+        mengulang Excel kuartalan.
+      </p>
+    </div>
+  </div>
+
+  <h3 style="margin-top:14pt;color:var(--green-900)">How Might We…</h3>
+  <div class="grid-3">
+    <div class="card tinted">
+      <span class="num">1</span><b>HMW menumbuhkan trust donatur</b>
+      <ul class="tight">
+        <li>Tampilkan KYC mitra + status SRN langsung di kartu proyek.</li>
+        <li>Sertifikat digital signed &amp; share-able.</li>
+        <li>Tracking realtime (Convex reactive query) tanpa polling.</li>
+      </ul>
+    </div>
+    <div class="card tinted">
+      <span class="num">2</span><b>HMW menghapus admin manual mitra</b>
+      <ul class="tight">
+        <li>Form MRV terstruktur (Monitoring/Reporting/Verification).</li>
+        <li>Upload Cloudinary signed, max 5 MB, MIME whitelist.</li>
+        <li>Audit log immutable di Convex (systemActivities).</li>
+      </ul>
+    </div>
+    <div class="card tinted">
+      <span class="num">3</span><b>HMW melibatkan DKP &amp; Pokmaswas</b>
+      <ul class="tight">
+        <li>Verifikator dashboard untuk input peta abrasi/penyu/pokmaswas.</li>
+        <li>Layer terpisah: data DKP vs data NGO vs Pokmaswas.</li>
+        <li>Field validation: koordinat WGS84 wajib, foto bergeotag.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 style="margin-top:14pt;color:var(--green-900)">Competitive Audit (Ringkas)</h3>
+  <table>
+    <tr>
+      <th>Pemain</th><th>Kekuatan</th><th>Celah / Peluang</th>
+    </tr>
+    <tr>
+      <td>Verra (global)</td>
+      <td>Standar global VCS, kredibilitas tinggi</td>
+      <td>Onboarding mahal &amp; lama untuk NGO Indonesia → ID-MAP fokus pre-market &amp; MRV-ready bridge.</td>
+    </tr>
+    <tr>
+      <td>Indonesia FOLU Net Sink (Pemerintah)</td>
+      <td>Otoritas regulasi PMN/SRN</td>
+      <td>Tidak ada UI marketplace untuk korporat &amp; donatur publik.</td>
+    </tr>
+    <tr>
+      <td>Platform donasi umum</td>
+      <td>UX donasi familiar</td>
+      <td>Tidak khusus karbon, tidak ada MRV/sertifikat tCO₂e, tidak verifikator independen.</td>
+    </tr>
+  </table>
+
+  <div class="footer">
+    <span><b>ID-MAP</b> · Problem Statement &amp; HMW</span>
+    <span>Halaman 6 / 14</span>
+  </div>
+</section>
+
+<!-- ============== 07 — STARTING THE DESIGN: GOAL & USER FLOW ============== -->
+<section class="page">
+  <div class="h-band">STARTING THE DESIGN</div>
+  <h2 class="section-title">Goal Statement &amp; User Flow</h2>
+  <div class="divider"></div>
+
+  <div class="lead">
+    <b>Goal Statement —</b> Mendesain platform multi-peran (5 role) yang
+    membuat <b>donasi terasa nyata</b>, <b>MRV menjadi otomatis</b>, dan
+    <b>verifikasi DKP/KKMD terstandar</b> — sehingga karbon biru Indonesia bisa
+    masuk ke pasar global dengan kepercayaan yang dapat diaudit.
+  </div>
+
+  <h3 style="color:var(--green-900);margin-top:0">User Flow Lintas Role</h3>
+  <div class="ascii">
+[Sahabat]                       [Mitra]                          [Verifikator / DKP]
+   |  Donasi QRIS                 |  Tambah Proyek                 |  Audit & verifikasi
+   v                              v                                v
++-------------+   webhook    +-------------+    submit MRV     +----------------+
+|  Mayar.id   |───────────►  |  Convex DB  |  ◄─────────────── |  MRV Reviewer  |
++-------------+              | (reactive)  |  approve/reject   +----------------+
+                              +-------------+                         |
+                                    |                                v
+                                    |                          [Peta Abrasi/Penyu/Pokmaswas]
+                                    |                          (verifikator dashboard)
+                                    |
+                                    v
+                              +-------------+    purchase tCO2e   +-------------+
+                              | Marketplace | ◄────────────────── |  Corporate  |
+                              +-------------+                     +-------------+
+                                    |                                  |
+                                    v                                  v
+                              [Sertifikat Karbon]               [Laporan ESG]
+                                    |                                  |
+                                    └──── Audit log immutable ─────────┘
+                                                  |
+                                                  v
+                                         [Admin & SRN Submission]
+  </div>
+
+  <h3 style="color:var(--green-900);margin-top:14pt">Information Architecture (3 level)</h3>
+  <div class="grid-3">
+    <div class="card tinted">
+      <b>Public (no auth)</b>
+      <ul class="tight">
+        <li>/ — Hero, Tiga Peran, Solusi Pesisir</li>
+        <li>/jelajahi-peta-mangrove</li>
+        <li>/proyek (read-only)</li>
+        <li>/edukasi-ekosistem-pesisir</li>
+        <li>/masuk · /daftar (OTP)</li>
+      </ul>
+    </div>
+    <div class="card tinted">
+      <b>Stakeholder Dashboards</b>
+      <ul class="tight">
+        <li>/user (sahabat) — donasi, dampak, sertifikat, KYC</li>
+        <li>/mitra — proyek, MRV, pendanaan, laporan</li>
+        <li>/verifikator — audit, abrasi, penyu, pokmaswas, konten layanan</li>
+        <li>/corporate — marketplace, ESG report</li>
+      </ul>
+    </div>
+    <div class="card tinted">
+      <b>Admin &amp; Compliance</b>
+      <ul class="tight">
+        <li>/admin — KYC queue, pengguna, transaksi</li>
+        <li>/admin/header &amp; /verifikator/footer — kelola konten publik</li>
+        <li>/verifikator/tiga-peran — kelola section landing</li>
+        <li>API: webhook Mayar.id, Cloudinary upload, OpenRouter AI</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span><b>ID-MAP</b> · Goal &amp; User Flow</span>
+    <span>Halaman 7 / 14</span>
+  </div>
+</section>
+
+<!-- ============== 08 — WIREFRAME ============== -->
+<section class="page">
+  <div class="h-band">WIREFRAME · LO-FI → HI-FI</div>
+  <h2 class="section-title">Sketsa Layar Inti</h2>
+  <div class="divider"></div>
+
+  <div class="grid-2">
+    <div class="card">
+      <b>Landing — "Tiga Peran, Satu Ekosistem"</b>
+      <div class="ascii" style="font-size:8pt">
+[Navbar: Logo · ID·EN · Masuk · Daftar]
+─────────────────────────────────────
+[Hero: Mangrove Demak + impact counter live]
+─────────────────────────────────────
+"Tiga Peran, Satu Ekosistem"
+[Sahabat]   [Mitra Proyek]   [Perusahaan]
+ ✓ QRIS      ✓ Pendanaan      ✓ ESG Report
+ ✓ Realtime  ✓ MRV Digital    ✓ SRN Ready
+ ✓ Trust     ✓ Pendampingan   ✓ Compliance
+[CTA Dukung] [CTA Daftar]    [CTA Hubungi]
+─────────────────────────────────────
+[Solusi Ekosistem Pesisir 6 layanan]
+[Statistik Nasional · Footer]
+      </div>
+    </div>
+
+    <div class="card">
+      <b>Verifikator Dashboard — DKP Coastal Layer</b>
+      <div class="ascii" style="font-size:8pt">
+[Sidebar verifikator]
+ · Dashboard
+ · Audit Proyek
+ · Data Abrasi Pantai (DKP)
+ · Titik Pendaratan Penyu
+ · Data Pokmaswas
+ · Hero Beranda  (CMS)
+ · Konten Layanan (CMS)
+ · Tiga Peran    (CMS)
+ · Footer Brand  (CMS)
+─────────────────────────────────────
+[Statistik: total, prioritas tinggi, sarang, pokmaswas]
+[Card Abrasi · Card Penyu · Card Pokmaswas]
+[Alert: prioritas tinggi]
+      </div>
+    </div>
+
+    <div class="card">
+      <b>Mitra — Proyek &amp; MRV</b>
+      <div class="ascii" style="font-size:8pt">
+[Header proyek: judul · status · SRN]
+[Tab: Detail · MRV · Pendanaan · Dokumen]
+[Form MRV: periode · tipe · upload · catatan]
+[Riwayat MRV terurut · status · reviewer]
+[Action: Submit ke Verifikator]
+      </div>
+    </div>
+
+    <div class="card">
+      <b>Corporate — Marketplace &amp; ESG</b>
+      <div class="ascii" style="font-size:8pt">
+[Filter: provinsi · serviceType · CO2e tersedia]
+[Grid Card Proyek terverifikasi + SRN-ready]
+[Detail proyek: foto · MRV · sertifikat mitra]
+[Checkout: tCO2e × harga IDR · invoice]
+[Dashboard ESG: total offset · proyek · export PDF]
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span><b>ID-MAP</b> · Wireframe</span>
+    <span>Halaman 8 / 14</span>
+  </div>
+</section>
+
+<!-- ============== 09 — DESIGN SYSTEM ============== -->
+<section class="page">
+  <div class="h-band">DESIGN SYSTEM</div>
+  <h2 class="section-title">Token, Komponen, Aksesibilitas</h2>
+  <div class="divider"></div>
+
+  <h3 style="color:var(--green-900);margin-top:0">Color Tokens — Mangrove + Ocean + Sunset</h3>
+  <div style="display:grid;grid-template-columns:repeat(8,1fr);gap:6pt;margin-bottom:8pt">
+    <div style="background:#0f3d2e;color:#fff;border-radius:8px;padding:8pt;text-align:center;font-size:8.5pt"><b>900</b><br>#0f3d2e</div>
+    <div style="background:#14523d;color:#fff;border-radius:8px;padding:8pt;text-align:center;font-size:8.5pt"><b>700</b><br>#14523d</div>
+    <div style="background:#1f6f54;color:#fff;border-radius:8px;padding:8pt;text-align:center;font-size:8.5pt"><b>600</b><br>#1f6f54</div>
+    <div style="background:#16a34a;color:#fff;border-radius:8px;padding:8pt;text-align:center;font-size:8.5pt"><b>500</b><br>#16a34a</div>
+    <div style="background:#0284c7;color:#fff;border-radius:8px;padding:8pt;text-align:center;font-size:8.5pt"><b>Ocean</b><br>#0284c7</div>
+    <div style="background:#d97706;color:#fff;border-radius:8px;padding:8pt;text-align:center;font-size:8.5pt"><b>Sunset</b><br>#d97706</div>
+    <div style="background:#0f172a;color:#fff;border-radius:8px;padding:8pt;text-align:center;font-size:8.5pt"><b>Slate</b><br>#0f172a</div>
+    <div style="background:#ecfdf5;color:#0f3d2e;border-radius:8px;padding:8pt;text-align:center;font-size:8.5pt;border:1px solid #bbf7d0"><b>Green/50</b><br>#ecfdf5</div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Typography</h3>
+      <ul class="tight">
+        <li><b>Display:</b> Plus Jakarta Sans (Google Fonts) — heading, brand.</li>
+        <li><b>Body:</b> Inter — paragraf, form, tabel.</li>
+        <li>Skala 4-pt grid: 12 → 14 → 16 → 18 → 20 → 24 → 30 → 36.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Spacing &amp; Grid</h3>
+      <ul class="tight">
+        <li>4 pt base grid · 12-col fluid container max 1280 px.</li>
+        <li>Card radius 12 px · Pill 999 px · Shadow lembut emerald-900/10.</li>
+        <li>Mobile-first breakpoints: 640 / 768 / 1024 / 1280.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="grid-3" style="margin-top:10pt">
+    <div class="card">
+      <h3>Komponen Inti</h3>
+      <ul class="tight">
+        <li>Navbar sticky + glass-blur</li>
+        <li>SidebarDashboard (4 role)</li>
+        <li>StatsCard, ProjectCard, MRVForm</li>
+        <li>LeafletMap + Layer Toggle</li>
+        <li>MangroveAIPanel (streaming)</li>
+        <li>LiveChat (sahabat support)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Pertimbangan Aksesibilitas</h3>
+      <ul class="tight">
+        <li>Kontras AA (≥4.5:1) untuk teks utama, ≥3:1 untuk teks besar.</li>
+        <li>Form bilingual ID/EN, label eksplisit, error in-line.</li>
+        <li>Focus ring emerald-500, target 44 px minimum.</li>
+        <li>Aria-label pada ikon-only button (Edit, Upload, Logout).</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Konten yang Dapat Diatur Verifikator</h3>
+      <ul class="tight">
+        <li>Hero Beranda (judul, sub-judul, gambar).</li>
+        <li>Konten Layanan (6 service card + thumbnail).</li>
+        <li>Tiga Peran (headline, subtitle, 3 kartu + thumbnail Cloudinary).</li>
+        <li>Footer Brand (deskripsi, kontak).</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span><b>ID-MAP</b> · Design System</span>
+    <span>Halaman 9 / 14</span>
+  </div>
+</section>
+
+<!-- ============== 10 — PROTOTYPE & ARCHITECTURE ============== -->
+<section class="page">
+  <div class="h-band">HIGH-FIDELITY · ARSITEKTUR</div>
+  <h2 class="section-title">Prototype &amp; Arsitektur Sistem</h2>
+  <div class="divider"></div>
+
+  <div class="ascii">
+┌──────────────────────────────── ID-MAP v2.0 ────────────────────────────────┐
+│                                                                            │
+│  ┌──────────────┐    ┌──────────────┐    ┌────────────────────────────┐    │
+│  │  Next.js 14  │    │    Convex    │    │  External Services         │    │
+│  │  App Router  │◄──►│  Serverless  │    │  · Mayar.id (QRIS)         │    │
+│  │  React 18    │    │  Reactive DB │    │  · Cloudinary (signed)     │    │
+│  │  Tailwind    │    │  TypeScript  │    │  · OpenRouter (DeepSeek/Gemini) │
+│  └──────────────┘    └──────────────┘    │  · Leaflet + OSM/Esri      │    │
+│         │                   │            └────────────────────────────┘    │
+│  Real-time queries · No polling · Audit-ready immutable activity log       │
+└────────────────────────────────────────────────────────────────────────────┘
+  </div>
+
+  <div class="grid-2" style="margin-top:8pt">
+    <div class="card">
+      <h3>Tech Stack Inti</h3>
+      <ul class="tight">
+        <li>Frontend: Next.js 14 (App Router), TypeScript, Tailwind.</li>
+        <li>Backend: Convex Cloud — query/mutation reaktif, file storage.</li>
+        <li>Pembayaran: Mayar.id (QRIS / Transfer / CSR webhook).</li>
+        <li>Aset gambar: Cloudinary signed upload, max 5 MB, MIME whitelist.</li>
+        <li>AI: OpenRouter — primary DeepSeek-v4-Flash, fallback Gemini 2 Flash.</li>
+        <li>Peta: Leaflet client-only (ssr:false), basemap OSM + Esri Satellite.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Skema Data (Convex)</h3>
+      <ul class="tight">
+        <li><span class="kbd">users</span> · <span class="kbd">projects</span> · <span class="kbd">contributions</span> · <span class="kbd">transactions</span></li>
+        <li><span class="kbd">certificates</span> · <span class="kbd">mrvReports</span> · <span class="kbd">kycDocuments</span></li>
+        <li><span class="kbd">systemActivities</span> (audit log) · <span class="kbd">otpCodes</span></li>
+        <li><span class="kbd">platformStats</span> · <span class="kbd">serviceContent</span></li>
+        <li><span class="kbd">rolesSection</span> (CMS Tiga Peran — bilingual)</li>
+        <li><span class="kbd">footerContent</span> (CMS brand &amp; kontak)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="grid-3" style="margin-top:10pt">
+    <div class="card tinted">
+      <b>Auth &amp; KYC</b>
+      <p style="margin:4pt 0 0">Email + OTP 6-digit (10 menit), session lokal, role-based routing dengan SessionGuard. KYC dokumen (KTP/NIB/NPWP/Akta) dengan reviewer trail.</p>
+    </div>
+    <div class="card tinted">
+      <b>Marketplace &amp; MRV</b>
+      <p style="margin:4pt 0 0">Kalkulasi tCO₂e × harga IDR, sertifikat <span class="kbd">IDM-YYYY-XXXXX</span>, MRV M/R/V, status SRN: Belum → Pending → Terdaftar.</p>
+    </div>
+    <div class="card tinted">
+      <b>Peta &amp; Lapangan</b>
+      <p style="margin:4pt 0 0">Layer toggle: mangrove nasional, abrasi pantai, sarang penyu, Pokmaswas. Verifikator/DKP input via dashboard, validasi koordinat WGS84.</p>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span><b>ID-MAP</b> · Architecture &amp; Prototype</span>
+    <span>Halaman 10 / 14</span>
+  </div>
+</section>
+
+<!-- ============== 11 — TESTING ============== -->
+<section class="page">
+  <div class="h-band">UX RESEARCH &amp; TESTING</div>
+  <h2 class="section-title">Usability Study Plan &amp; Insight</h2>
+  <div class="divider"></div>
+
+  <div class="grid-2">
+    <div class="card green">
+      <h3>Usability Study Plan</h3>
+      <ul class="tight">
+        <li><b>Metode:</b> moderated remote testing + field observation.</li>
+        <li><b>Partisipan:</b> 12 orang — 4 sahabat, 3 mitra, 2 corporate, 2 verifikator, 1 petugas DKP.</li>
+        <li><b>Skenario:</b> daftar OTP, donasi QRIS, submit MRV, beli karbon, verifikasi peta abrasi.</li>
+        <li><b>Metrik:</b> task success, time-on-task, SUS, error rate, kualitatif blocker.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Insight Utama</h3>
+      <ol style="margin:0;padding-left:18pt">
+        <li><b>Sahabat:</b> SUS 84/100. Blocker hanya pada saat pertama melihat layer peta — perlu legend lebih besar.</li>
+        <li><b>Mitra:</b> Form MRV awalnya 1 halaman panjang → dipecah jadi tab Detail/MRV/Pendanaan/Dokumen. Time-on-task turun dari 7 mnt → 3 mnt.</li>
+        <li><b>Verifikator/DKP:</b> Minta filter "prioritas tinggi" pada peta abrasi. Implementasi: card statistik tinggi/sedang/rendah dengan deeplink.</li>
+        <li><b>Corporate:</b> Butuh ringkasan ESG portofolio, bukan list transaksi. Implementasi: dashboard ESG di /corporate.</li>
+        <li><b>Konten:</b> Tim komunikasi NGO perlu mengubah headline/sub-judul tanpa rilis. Solusi: CMS Convex (rolesSection, footerContent, serviceContent).</li>
+      </ol>
+    </div>
+  </div>
+
+  <h3 style="color:var(--green-900);margin-top:14pt">Modifikasi Desain — Sebelum vs Sesudah</h3>
+  <table>
+    <tr><th>Area</th><th>Sebelum Usability Study</th><th>Sesudah Usability Study</th></tr>
+    <tr><td>Form MRV mitra</td><td>Single-page, 18 field, scroll panjang.</td><td>Tab 4 segmen (Detail/MRV/Pendanaan/Dokumen) + auto-save Convex.</td></tr>
+    <tr><td>Konten landing</td><td>Hardcoded di komponen, ubah = rilis baru.</td><td>CMS verifikator: Hero, Tiga Peran, Konten Layanan, Footer.</td></tr>
+    <tr><td>Peta abrasi</td><td>Marker tunggal tanpa filter prioritas.</td><td>Statistik prioritas tinggi/sedang/rendah + filter sidebar.</td></tr>
+    <tr><td>Onboarding bilingual</td><td>Toggle ID/EN tersebar.</td><td>LanguageContext global, semua copy via <span class="kbd">t(idText, enText)</span>.</td></tr>
+    <tr><td>Dashboard corporate</td><td>List transaksi.</td><td>Ringkasan ESG portofolio + export PDF.</td></tr>
+  </table>
+
+  <div class="footer">
+    <span><b>ID-MAP</b> · Usability Study</span>
+    <span>Halaman 11 / 14</span>
+  </div>
+</section>
+
+<!-- ============== 12 — PERSPEKTIF AHLI / DKP ============== -->
+<section class="page">
+  <div class="h-band">PERSPEKTIF DOMAIN — AHLI BISNIS LINGKUNGAN · PRAKTISI · DKP</div>
+  <h2 class="section-title">Mengapa Desain Ini Cocok untuk Sektor</h2>
+  <div class="divider"></div>
+
+  <div class="grid-3">
+    <div class="card">
+      <h3>📊 Ahli Bisnis Lingkungan</h3>
+      <ul class="tight">
+        <li>Mengisi <b>celah pre-market</b> antara NGO &amp; Verra/SRN — onboarding lebih cepat.</li>
+        <li>Setiap proyek menjadi unit <b>asset-class</b>: tCO₂e tersedia, harga, sertifikat unik.</li>
+        <li>Pricing fleksibel oleh Admin → bisa menyesuaikan koridor IDR/ton wilayah.</li>
+        <li>Audit log immutable mendukung <b>due diligence</b> oleh ESG fund &amp; auditor.</li>
+        <li>Modular regulasi — siap update saat POJK 60/2023 atau aturan turunannya berubah.</li>
+      </ul>
+    </div>
+
+    <div class="card" style="border-color:#bfdbfe">
+      <h3>🌱 Praktisi NGO &amp; Mitra Lapangan</h3>
+      <ul class="tight">
+        <li>MRV digital terstandar — <b>tidak perlu Excel kuartalan</b> lagi.</li>
+        <li>Pendanaan campuran: donasi QRIS + corporate offset + CSR.</li>
+        <li>Pendampingan teknis &amp; AI panel (kondisi mangrove via Sentinel/foto).</li>
+        <li>Monitoring kondisi proyek dari mana saja — dashboard reaktif.</li>
+        <li>Fokus tetap di lapangan, administrasi otomatis.</li>
+      </ul>
+    </div>
+
+    <div class="card" style="border-color:#bbf7d0">
+      <h3>🛟 Petugas DKP &amp; KKMD</h3>
+      <ul class="tight">
+        <li>Verifikator dashboard menyatukan data <b>abrasi · sarang penyu · Pokmaswas</b>.</li>
+        <li>Validasi koordinat WGS84 + foto bergeotag — selaras pelaporan KKMD daerah.</li>
+        <li>Mengurangi laporan terputus dari Pokmaswas (bukan lagi WhatsApp tanpa konteks).</li>
+        <li>Bisa kelola konten edukasi publik (CMS) untuk kampanye konservasi DKP.</li>
+        <li>Memberikan jejak audit yang dapat dipertanggungjawabkan ke pusat (BRGMN).</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 style="color:var(--green-900);margin-top:14pt">Selaras dengan Regulasi &amp; Program Nasional</h3>
+  <table>
+    <tr><th>Kerangka</th><th>Bagaimana ID-MAP Mendukung</th></tr>
+    <tr><td>PMN 2025 — target 600.000 ha</td><td>Registry proyek + progress tracker per provinsi (9 provinsi prioritas).</td></tr>
+    <tr><td>Perpres 98/2021 — Nilai Ekonomi Karbon</td><td>Mekanisme NEK: pricing tCO₂e, sertifikat unik, audit trail.</td></tr>
+    <tr><td>POJK 60/2023 — Perdagangan Karbon</td><td>Marketplace dengan KYC dan webhook signed dari payment gateway.</td></tr>
+    <tr><td>KKMD &amp; BRGMN</td><td>Verifikator dashboard + format pelaporan MRV M/R/V terstruktur.</td></tr>
+    <tr><td>SRN KLHK</td><td>Status proyek: Belum → Pending → Terdaftar; siap submission.</td></tr>
+  </table>
+
+  <div class="footer">
+    <span><b>ID-MAP</b> · Domain Lens (Ahli · Praktisi · DKP)</span>
+    <span>Halaman 12 / 14</span>
+  </div>
+</section>
+
+<!-- ============== 13 — TAKEAWAYS & NEXT ============== -->
+<section class="page">
+  <div class="h-band">GOING FORWARD</div>
+  <h2 class="section-title">Takeaways &amp; Next Steps</h2>
+  <div class="divider"></div>
+
+  <div class="grid-2">
+    <div class="takeaway">
+      <h3>Dampak</h3>
+      <ul class="tight">
+        <li>Mitra mengurangi waktu pelaporan MRV dari ±2 hari → ±2 jam.</li>
+        <li>Sahabat melihat dampak donasi (tCO₂e) <b>real-time</b> tanpa polling.</li>
+        <li>Petugas DKP &amp; KKMD memperoleh peta lapangan tervalidasi.</li>
+        <li>Korporasi mendapat akses proyek SRN-ready dengan due-diligence digital.</li>
+        <li>Konten landing dapat diubah verifikator tanpa rilis ulang aplikasi.</li>
+      </ul>
+    </div>
+    <div class="card green">
+      <h3>Pelajaran yang Didapat</h3>
+      <ul class="tight">
+        <li>Trust dibangun dari <b>angka yang bisa diaudit</b>, bukan estetika.</li>
+        <li>MRV "ringan" tetap valid jika terstandar dan immutable.</li>
+        <li>Stakeholder DKP perlu dilibatkan sejak fase research, bukan QA akhir.</li>
+        <li>Bilingual (ID/EN) wajib untuk corporate &amp; donor internasional.</li>
+        <li>Convex reactive query menghapus banyak loading state — UX terasa hidup.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 style="color:var(--green-900);margin-top:14pt">Langkah Selanjutnya</h3>
+  <div class="grid-3">
+    <div class="card">
+      <span class="num">1</span><b>Integrasi SRN KLHK</b>
+      <p style="margin:6pt 0 0">Hubungkan API submission SRN ke status proyek; toggle <span class="kbd">ENABLE_SRN_INTEGRATION</span>.</p>
+    </div>
+    <div class="card">
+      <span class="num">2</span><b>Mobile App + Field Survey</b>
+      <p style="margin:6pt 0 0">Native survey untuk Pokmaswas (offline-first), sinkron ke peta abrasi/penyu.</p>
+    </div>
+    <div class="card">
+      <span class="num">3</span><b>NFT-ready Sertifikat &amp; ESG Report Builder</b>
+      <p style="margin:6pt 0 0">Toggle <span class="kbd">ENABLE_NFT_CERT</span>, generator laporan ESG audit-ready.</p>
+    </div>
+  </div>
+
+  <div class="grid-4" style="margin-top:14pt">
+    <div class="stat"><div class="num-big">9 bln</div><div class="lbl">Durasi Project</div></div>
+    <div class="stat"><div class="num-big">5</div><div class="lbl">Role Multi-tenant</div></div>
+    <div class="stat"><div class="num-big">10</div><div class="lbl">Fitur Inti v2.0</div></div>
+    <div class="stat"><div class="num-big">9 epic</div><div class="lbl">Roadmap Sprint S1–S4</div></div>
+  </div>
+
+  <div class="footer">
+    <span><b>ID-MAP</b> · Going Forward</span>
+    <span>Halaman 13 / 14</span>
+  </div>
+</section>
+
+<!-- ============== 14 — CLOSING ============== -->
+<section class="page">
+  <div class="cover" style="min-height:auto;padding:18mm 16mm">
+    <div class="eyebrow">Let's Connect</div>
+    <h1 style="font-size:30pt;margin-top:8pt">Mari kolaborasi membangun infrastruktur karbon biru Indonesia.</h1>
+    <h2 style="margin-bottom:14pt">Dari pesisir Demak hingga Sumba — satu sistem, satu standar audit.</h2>
+
+    <div class="meta" style="grid-template-columns: 1fr 1fr">
+      <div><b>Repo</b>github.com/slamsmart/ID-MAP-Tahap-2</div>
+      <div><b>Web</b>idmap.id (preview Vercel)</div>
+      <div><b>Stakeholder Domain</b>DKP Jatim · KKMD Jateng · BRGMN · Mitra NGO Pesisir</div>
+      <div><b>Maintainer</b>Tim ID-MAP — slamsmart &amp; kontributor BMAD</div>
+    </div>
+
+    <div class="summary" style="margin-top:18pt">
+      <b>Catatan akhir —</b> Case study ini menuangkan seluruh konteks project ID-MAP
+      v2.0 ke dalam kerangka template UX Case Study, dengan lensa
+      <b>ahli bisnis lingkungan, praktisi NGO, dan petugas DKP</b>. Semua angka, role,
+      regulasi, dan keputusan desain berasal dari dokumen Project Brief, PRD,
+      Architecture, dan UX Spec yang berada di <span class="kbd">_bmad/docs/</span>.
+    </div>
+
+    <div class="footer" style="color:#d1fae5">
+      <span><b style="color:#fff">Terima kasih.</b> 🌿 — ID-MAP v2.0 Case Study</span>
+      <span>Halaman 14 / 14</span>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

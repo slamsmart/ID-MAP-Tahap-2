@@ -249,10 +249,12 @@ export default function KelolaPenyuPage() {
                       </div>
                       <div className="flex gap-1 flex-shrink-0">
                         <button onClick={() => handleEdit(titik)}
+                          aria-label={`Edit titik pendaratan penyu ${titik.pantai}`}
                           className="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg">
                           <Pencil className="w-3.5 h-3.5" />
                         </button>
                         <button onClick={() => handleDelete(titik.id)}
+                          aria-label={`Hapus titik pendaratan penyu ${titik.pantai}`}
                           className="p-1.5 text-red-400 hover:bg-red-50 rounded-lg">
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>

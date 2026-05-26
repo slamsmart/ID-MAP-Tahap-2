@@ -178,6 +178,7 @@ export default function LengkapiKycPage() {
                     {doc.status === "Menunggu" && (
                       <button
                         onClick={() => handleDelete(doc._id)}
+                        aria-label={`Hapus dokumen ${doc.documentName}`}
                         className="p-1.5 text-gray-300 hover:text-red-500 transition-colors flex-shrink-0"
                         title="Hapus"
                       >

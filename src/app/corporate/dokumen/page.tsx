@@ -68,8 +68,8 @@ export default function DokumenPage() {
                 </div>
               </div>
               <div className="flex gap-2">
-                <button className="flex items-center gap-1 px-3 py-2 text-sm border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50"><Eye className="w-4 h-4" /></button>
-                <button className="flex items-center gap-1 px-3 py-2 text-sm bg-emerald-900 text-white rounded-lg hover:bg-emerald-800"><Download className="w-4 h-4" /></button>
+                <button aria-label={`Lihat dokumen ${doc.title}`} className="flex items-center gap-1 px-3 py-2 text-sm border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50"><Eye className="w-4 h-4" /></button>
+                <button aria-label={`Unduh dokumen ${doc.title}`} className="flex items-center gap-1 px-3 py-2 text-sm bg-emerald-900 text-white rounded-lg hover:bg-emerald-800"><Download className="w-4 h-4" /></button>
               </div>
             </div>
           ))}

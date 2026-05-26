@@ -284,10 +284,12 @@ export default function KelolaAbrasiPage() {
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-1">
                         <button onClick={() => handleEdit(site)}
+                          aria-label={`Edit data abrasi ${site.namaPantai}`}
                           className="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors">
                           <Pencil className="w-3.5 h-3.5" />
                         </button>
                         <button onClick={() => handleDelete(site.no)}
+                          aria-label={`Hapus data abrasi ${site.namaPantai}`}
                           className="p-1.5 text-red-400 hover:bg-red-50 rounded-lg transition-colors">
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>

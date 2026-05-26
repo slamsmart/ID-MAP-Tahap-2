@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
-import { useMutation, useQuery } from "convex/react";
+import { useConvex, useMutation, useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import {
   AlertTriangle,
@@ -176,14 +176,39 @@ const colorOptions = [
 ];
 
 export default function ThumbnailLayananPage() {
+  const convex = useConvex();
   const savedServices = useQuery(api.serviceContent.list);
   const updateService = useMutation(api.serviceContent.update);
+  const generateUploadUrl = useMutation(api.serviceContent.generateUploadUrl);
   const fileRef = useRef<HTMLInputElement>(null);
+  const editorRef = useRef<HTMLDivElement>(null);
 
   const services = useMemo(() => {
     if (!savedServices || savedServices.length === 0) return defaultServices;
     const savedByKey = new Map(savedServices.map((svc) => [svc.key, svc]));
-    return defaultServices.map((svc) => ({ ...svc, ...savedByKey.get(svc.key) }));
+    return defaultServices.map((svc) => {
+      const saved = savedByKey.get(svc.key);
+      if (!saved) return svc;
+      return {
+        key: saved.key,
+        titleId: saved.titleId,
+        titleEn: saved.titleEn,
+        descriptionId: saved.descriptionId,
+        descriptionEn: saved.descriptionEn,
+        image: saved.image,
+        badgeText: saved.badgeText,
+        badgeClass: saved.badgeClass,
+        iconBgClass: saved.iconBgClass,
+        iconName: saved.iconName,
+        value1: saved.value1,
+        label1: saved.label1,
+        value2: saved.value2,
+        label2: saved.label2,
+        value3: saved.value3,
+        label3: saved.label3,
+        order: saved.order,
+      };
+    });
   }, [savedServices]);
 
   const [editKey, setEditKey] = useState<string | null>(null);
@@ -200,6 +225,9 @@ export default function ThumbnailLayananPage() {
     setEditKey(service.key);
     setForm(service);
     setError(null);
+    setTimeout(() => {
+      editorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 50);
   }
 
   async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
@@ -209,12 +237,22 @@ export default function ThumbnailLayananPage() {
     setError(null);
 
     try {
-      const fd = new FormData();
-      fd.append("file", file);
-      const res = await fetch("/api/cloudinary-upload", { method: "POST", body: fd });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "Upload gagal");
-      setForm((f) => ({ ...f, image: data.url }));
+      const uploadUrl = await generateUploadUrl();
+      const uploadRes = await fetch(uploadUrl, {
+        method: "POST",
+        headers: { "Content-Type": file.type },
+        body: file,
+      });
+      if (!uploadRes.ok) throw new Error("Upload ke Convex storage gagal");
+      const { storageId } = await uploadRes.json();
+      const signedUrl = await convex.query(api.serviceContent.getImageUrl, { storageId });
+      if (!signedUrl) throw new Error("Gagal mengambil URL gambar");
+
+      const nextForm = { ...form, image: signedUrl };
+      setForm(nextForm);
+      await updateService(nextForm);
+      setSavedKey(nextForm.key);
+      setTimeout(() => setSavedKey(null), 2500);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Upload gagal");
     } finally {
@@ -253,7 +291,7 @@ export default function ThumbnailLayananPage() {
       </div>
 
       {editKey && (
-        <div className="bg-white rounded-xl border border-emerald-100 p-4 shadow-sm">
+        <div ref={editorRef} className="bg-white rounded-xl border border-emerald-100 p-4 shadow-sm scroll-mt-4">
           <div className="grid grid-cols-1 xl:grid-cols-[320px_1fr] gap-5">
             <div>
               <div className="relative h-48 rounded-xl overflow-hidden bg-gray-100">

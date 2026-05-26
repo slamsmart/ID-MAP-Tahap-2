@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { formatRupiah, formatNumber } from "@/lib/utils";
 import { ArrowRight, Download, CheckCircle2 } from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
@@ -358,8 +359,17 @@ export default function CorporateDashboard() {
                 })
               ) : (
                 <tr>
-                  <td colSpan={4} className="py-4 text-center text-gray-500 text-sm border-b border-gray-50">
-                    Belum ada portofolio klaim karbon.
+                  <td colSpan={4} className="py-6 text-center text-sm border-b border-gray-50">
+                    <p className="text-gray-700 font-semibold">Belum ada portofolio klaim karbon</p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Mulai amankan posisi ESG Anda dengan membeli carbon credit dari proyek terverifikasi.
+                    </p>
+                    <Link
+                      href="/corporate/transaksi"
+                      className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-button transition-colors"
+                    >
+                      Beli Carbon Credit
+                    </Link>
                   </td>
                 </tr>
               )}

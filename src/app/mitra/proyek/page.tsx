@@ -7,6 +7,7 @@ import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { Sprout, MapPin, Calendar, ImageIcon, X, Check, Upload, Link as LinkIcon, Loader2 } from "lucide-react";
 import { getSession, User } from "@/lib/auth";
+import { useEscapeKey } from "@/lib/useEscapeKey";
 
 interface Project {
   _id: Id<"projects">;
@@ -60,6 +61,9 @@ export default function MitraProyekPage() {
   const [customUrl, setCustomUrl] = useState("");
   const [tab, setTab] = useState<"preset" | "url" | "upload">("preset");
   const [saving, setSaving] = useState(false);
+
+  // Esc closes the thumbnail-edit modal (matches outside-click + close button).
+  useEscapeKey(!!editingProject && !saving, () => setEditingProject(null));
 
   // Authorization check: only mitra role can access this page
   const isMitra = session?.role === "mitra";

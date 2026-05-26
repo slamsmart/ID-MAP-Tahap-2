@@ -13,6 +13,7 @@ import type * as certificates from "../certificates.js";
 import type * as contributions from "../contributions.js";
 import type * as footerContent from "../footerContent.js";
 import type * as kyc from "../kyc.js";
+import type * as landingHero from "../landingHero.js";
 import type * as mrvReports from "../mrvReports.js";
 import type * as otpCodes from "../otpCodes.js";
 import type * as platformStats from "../platformStats.js";
@@ -35,6 +36,7 @@ declare const fullApi: ApiFromModules<{
   contributions: typeof contributions;
   footerContent: typeof footerContent;
   kyc: typeof kyc;
+  landingHero: typeof landingHero;
   mrvReports: typeof mrvReports;
   otpCodes: typeof otpCodes;
   platformStats: typeof platformStats;

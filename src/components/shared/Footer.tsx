@@ -1,24 +1,34 @@
 "use client";
 
-import { 
-  Leaf, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  ArrowRight, 
-  ShieldCheck, 
-  Cloud, 
-  Users, 
-  BookOpen, 
+import {
+  Leaf,
+  Mail,
+  Phone,
+  MapPin,
+  ArrowRight,
+  ShieldCheck,
+  Cloud,
+  Users,
+  BookOpen,
   ChevronRight,
   Lock,
   CheckCircle2
 } from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useQuery } from "convex/react";
+import { api } from "../../../convex/_generated/api";
 
 export default function Footer() {
   const { t } = useLanguage();
+  const footerData = useQuery(api.footerContent.get);
+
+  const brandName = footerData?.brandName ?? "ID-MAP";
+  const descId = footerData?.descriptionId ?? "Pre-Market Carbon Infrastructure Platform. Menghubungkan aksi iklim dengan teknologi dan transparansi.";
+  const descEn = footerData?.descriptionEn ?? "Pre-Market Carbon Infrastructure Platform. Connecting climate action with technology and transparency.";
+  const email = footerData?.email ?? "info@id-map.co.id";
+  const phone = footerData?.phone ?? "+62 21 1234 5678";
+  const address = footerData?.address ?? "Jakarta, Indonesia";
 
   return (
     <footer className="bg-[#0a1c15] text-white">
@@ -99,26 +109,23 @@ export default function Footer() {
                 <div className="w-10 h-10 bg-emerald-800 rounded-full flex items-center justify-center">
                   <Leaf className="w-5 h-5 text-emerald-300" />
                 </div>
-                <span className="font-display font-bold text-2xl tracking-tight">ID-MAP</span>
+                <span className="font-display font-bold text-2xl tracking-tight">{brandName}</span>
               </div>
               <p className="text-sm text-gray-400 mb-6 leading-relaxed">
-                {t(
-                  "Pre-Market Carbon Infrastructure Platform. Menghubungkan aksi iklim dengan teknologi dan transparansi.",
-                  "Pre-Market Carbon Infrastructure Platform. Connecting climate action with technology and transparency."
-                )}
+                {t(descId, descEn)}
               </p>
               <div className="space-y-3 text-sm text-emerald-100 mb-8 font-medium">
                 <div className="flex items-center gap-3">
                   <Mail className="w-4 h-4 text-emerald-500" />
-                  info@id-map.co.id
+                  {email}
                 </div>
                 <div className="flex items-center gap-3">
                   <Phone className="w-4 h-4 text-emerald-500" />
-                  +62 21 1234 5678
+                  {phone}
                 </div>
                 <div className="flex items-center gap-3">
                   <MapPin className="w-4 h-4 text-emerald-500" />
-                  Jakarta, Indonesia
+                  {address}
                 </div>
               </div>
               

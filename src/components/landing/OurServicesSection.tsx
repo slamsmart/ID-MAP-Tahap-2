@@ -134,24 +134,27 @@ const iconMap = {
 export default function OurServicesSection() {
   const { t } = useLanguage();
   const editableServices = useQuery(api.serviceContent.list);
-  const displayServices = editableServices && editableServices.length > 0
-    ? editableServices.map((svc) => ({
-        key: svc.key,
-        iconName: svc.iconName,
-        icon: iconMap[svc.iconName as keyof typeof iconMap] ?? TreePine,
-        title: [svc.titleId, svc.titleEn],
-        desc: [svc.descriptionId, svc.descriptionEn],
-        image: svc.image,
-        values: [
-          [svc.value1, svc.label1],
-          [svc.value2, svc.label2],
-          [svc.value3, svc.label3],
-        ],
-        iconBg: svc.iconBgClass,
-        badge: svc.badgeClass,
-        badgeText: svc.badgeText,
-      }))
-    : services;
+  const savedByKey = new Map((editableServices ?? []).map((svc) => [svc.key, svc]));
+  const displayServices = services.map((svc) => {
+    const saved = savedByKey.get(svc.key);
+    if (!saved) return svc;
+    return {
+      key: saved.key,
+      iconName: saved.iconName,
+      icon: iconMap[saved.iconName as keyof typeof iconMap] ?? svc.icon,
+      title: [saved.titleId, saved.titleEn],
+      desc: [saved.descriptionId, saved.descriptionEn],
+      image: saved.image,
+      values: [
+        [saved.value1, saved.label1],
+        [saved.value2, saved.label2],
+        [saved.value3, saved.label3],
+      ],
+      iconBg: saved.iconBgClass,
+      badge: saved.badgeClass,
+      badgeText: saved.badgeText,
+    };
+  });
 
   return (
     <section className="py-16 bg-gray-50">

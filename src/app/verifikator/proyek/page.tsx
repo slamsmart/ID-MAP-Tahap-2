@@ -17,6 +17,7 @@ import {
   ImageIcon,
 } from "lucide-react";
 import { getSession, User } from "@/lib/auth";
+import { useEscapeKey } from "@/lib/useEscapeKey";
 
 type ProjectStatus = "Draft" | "Dalam Proses" | "Terverifikasi";
 
@@ -97,6 +98,9 @@ export default function VerifikatorProyekAuditPage() {
     setConfirmed(false);
     setUploadError("");
   };
+
+  // Esc closes the edit modal (matches mouse outside-click + X button paths).
+  useEscapeKey(!!editing, closeEdit);
 
   const handleImageUpload = async (file: File) => {
     if (file.size > 5 * 1024 * 1024) {
