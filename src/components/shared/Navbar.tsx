@@ -34,14 +34,16 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-emerald-900/10">
       <div className="mx-auto max-w-7xl px-6 py-4 flex items-center justify-between">
         <Link href="/" className="flex items-center" aria-label="ID-MAP - Mangrove & Pesisir untuk Ekosistem Karbon Indonesia">
-          <Image
-            src="/images/logo2.webp"
-            alt="ID-MAP"
-            width={112}
-            height={112}
-            className="h-14 md:h-16 w-auto object-contain"
-            priority
-          />
+          <span className="inline-flex items-center justify-center h-14 w-14 md:h-16 md:w-16 rounded-full bg-white ring-1 ring-emerald-900/10 shadow-sm shadow-emerald-900/10 p-1.5">
+            <Image
+              src="/images/logo2.webp"
+              alt="ID-MAP"
+              width={112}
+              height={112}
+              className="h-full w-full object-contain"
+              priority
+            />
+          </span>
         </Link>
 
         <nav className="hidden lg:flex items-center gap-9 text-sm font-semibold text-slate-600">
