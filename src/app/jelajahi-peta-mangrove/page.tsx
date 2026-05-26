@@ -97,8 +97,8 @@ export default function JelajahiPetaMangrovePage() {
           </div>
           <div>
             <h1 className="font-display font-bold text-white text-base sm:text-lg tracking-wide flex flex-wrap items-center gap-1 sm:gap-2">
-              MANGROVE
-              <span className="font-light text-emerald-400">HEALTH INDEX & COASTAL ECOSYSTEM</span>
+              PETA
+              <span className="font-light text-emerald-400">RESTORASI LINGKUNGAN</span>
             </h1>
             <div className="flex items-center gap-1.5 text-[9px] sm:text-[10px] text-emerald-100/50 uppercase tracking-wider font-medium mt-0.5">
               <span>Powered by</span>
@@ -191,7 +191,7 @@ export default function JelajahiPetaMangrovePage() {
                     <div className="w-7 h-7 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0 text-base">
                       🛡️
                     </div>
-                    Pokmaswas
+                    Mitra
                   </button>
                   <div className="h-px bg-gray-100 mx-3 my-1" />
                   <p className="px-3 pb-2.5 text-[10px] text-gray-400">
@@ -200,7 +200,7 @@ export default function JelajahiPetaMangrovePage() {
                       : isTurtleLayerOpen
                       ? "Penyu aktif"
                       : isPokmaswasLayerOpen
-                      ? "Pokmaswas aktif"
+                      ? "Mitra aktif"
                       : "Tidak ada layer aktif"}
                   </p>
                 </div>

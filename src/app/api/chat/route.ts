@@ -8,7 +8,7 @@ const NVIDIA_MODELS = [
   "deepseek-ai/deepseek-v4-flash",       // ~2349ms — fallback 2
 ];
 
-const SYSTEM_PROMPT = `Kamu adalah ID-MAP Assistant, Customer Service resmi platform ID-MAP (Indonesian Mangrove Action Platform).
+const SYSTEM_PROMPT = `Kamu adalah ID-MAP Assistant, Customer Service resmi platform ID-MAP (Integrasi Data dan Manajemen Pesisir).
 
 Fokus utama yang harus kamu kuasai dan jelaskan:
 - Integrasi data mangrove dan ekosistem pesisir pada platform ID-MAP

@@ -23,8 +23,9 @@ export default function TentangPage() {
               <div>
                 <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Apa itu ID-MAP?</h2>
                 <p className="text-gray-600 leading-relaxed mb-4">
-                  ID-MAP (Indonesia Mangrove Action Platform) adalah platform infrastruktur digital yang menghubungkan
-                  kontribusi masyarakat, pengembangan proyek mangrove, dan kebutuhan carbon credit perusahaan.
+                  ID-MAP (Integrasi Data dan Manajemen Pesisir) adalah platform digital yang mengintegrasikan data
+                  ekosistem pesisir Indonesia — mangrove, abrasi, habitat penyu, dan jaringan Pokmaswas/mitra —
+                  serta menghubungkan kontribusi masyarakat, pelaksana proyek lapangan, dan kebutuhan ESG/CSR perusahaan.
                 </p>
                 <p className="text-gray-600 leading-relaxed">
                   Platform ini dirancang untuk mendukung perdagangan karbon mangrove di Indonesia melalui

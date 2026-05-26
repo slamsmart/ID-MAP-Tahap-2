@@ -7,7 +7,7 @@ import Navbar from "@/components/shared/Navbar";
 const faqs = [
   {
     q: "Apa itu ID-MAP?",
-    a: "ID-MAP (Indonesia Mangrove Action Platform) adalah platform infrastruktur digital untuk ekosistem karbon mangrove Indonesia. Platform ini menghubungkan kontribusi masyarakat, pengembangan proyek mangrove, dan kebutuhan carbon credit perusahaan.",
+    a: "ID-MAP (Integrasi Data dan Manajemen Pesisir) adalah platform digital yang mengintegrasikan data ekosistem pesisir Indonesia — mangrove, abrasi, habitat penyu, dan jaringan Pokmaswas/mitra. Platform ini menghubungkan kontribusi masyarakat, pelaksana proyek lapangan, dan kebutuhan ESG/CSR perusahaan dalam satu sistem MRV terverifikasi.",
   },
   {
     q: "Bagaimana cara mendaftar?",
