@@ -44,8 +44,7 @@ const fallback = {
       ctaId: "Dukung Sekarang",
       ctaEn: "Support Now",
       href: "/daftar?peran=sahabat",
-      image:
-        "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&w=700&q=80",
+      image: "/images/roles/sahabat.webp",
       order: 1,
     },
     {
@@ -61,8 +60,7 @@ const fallback = {
       ctaId: "Daftar sebagai Mitra",
       ctaEn: "Register as Partner",
       href: "/daftar?peran=mitra",
-      image:
-        "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?auto=format&fit=crop&w=700&q=80",
+      image: "/images/roles/mitra.webp",
       order: 2,
     },
     {
@@ -78,8 +76,7 @@ const fallback = {
       ctaId: "Hubungi Kami",
       ctaEn: "Contact Us",
       href: "https://wa.me/6281234561017",
-      image:
-        "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=700&q=80",
+      image: "/images/roles/perusahaan.webp",
       order: 3,
     },
   ] as CardData[],
@@ -162,18 +159,25 @@ export default function ThreeRolesSection() {
             return (
               <article
                 key={card.key}
-                className="flex flex-col rounded-2xl border border-gray-200 p-6 bg-white shadow-sm hover:shadow-md transition-shadow duration-300"
+                className="group flex flex-col rounded-2xl border border-gray-200 p-6 bg-white shadow-sm hover:shadow-md transition-shadow duration-300"
               >
                 <div className="flex items-start justify-between gap-4">
                   <h3 className="text-xl font-bold text-[#0f3d2e]">{title}</h3>
-                  <Image
-                    src={card.image}
-                    alt={title}
-                    width={96}
-                    height={96}
-                    className="h-24 w-24 rounded-xl object-cover flex-shrink-0"
-                    loading="lazy"
-                  />
+                  <div
+                    className="relative h-24 w-24 flex-shrink-0 rounded-2xl bg-gradient-to-br from-emerald-50 via-white to-emerald-100/60 ring-1 ring-emerald-100 shadow-sm grid place-items-center overflow-hidden transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:scale-[1.04]"
+                    aria-hidden="true"
+                  >
+                    {/* Soft halo behind the 3D emoji for depth */}
+                    <span className="absolute inset-2 rounded-full bg-emerald-200/40 blur-xl" />
+                    <Image
+                      src={card.image}
+                      alt={title}
+                      width={144}
+                      height={144}
+                      className="relative h-20 w-20 object-contain drop-shadow-[0_6px_8px_rgba(6,78,59,0.25)]"
+                      loading="lazy"
+                    />
+                  </div>
                 </div>
 
                 <ul className="mt-5 space-y-3 flex-grow">
