@@ -231,6 +231,49 @@ export default defineSchema({
     updatedAt: v.number(),
   }).index("by_key", ["key"]),
 
+  // ─── About Page Content (Editable /tentang) ───────────────────────
+  // Verifikator dashboard publishes copy + 6 services + 6 why-cards
+  // for the public /tentang page. Hero image and per-card images use
+  // Cloudinary URLs uploaded via /api/cloudinary-upload.
+  aboutContent: defineTable({
+    key: v.string(), // singleton: "default"
+    heroImage: v.optional(v.string()),
+    heroTitleId: v.string(),
+    heroTitleEn: v.string(),
+    heroSubtitleId: v.string(),
+    heroSubtitleEn: v.string(),
+    apaItuTitleId: v.string(),
+    apaItuTitleEn: v.string(),
+    apaItuParagraph1Id: v.string(),
+    apaItuParagraph1En: v.string(),
+    apaItuParagraph2Id: v.string(),
+    apaItuParagraph2En: v.string(),
+    missionId: v.string(),
+    missionEn: v.string(),
+    visionId: v.string(),
+    visionEn: v.string(),
+    services: v.array(
+      v.object({
+        iconKey: v.string(), // e.g. "Sprout", "Leaf" — maps to lucide name
+        titleId: v.string(),
+        titleEn: v.string(),
+        descId: v.string(),
+        descEn: v.string(),
+        image: v.optional(v.string()), // optional Cloudinary URL
+      })
+    ),
+    whyCards: v.array(
+      v.object({
+        iconKey: v.string(),
+        titleId: v.string(),
+        titleEn: v.string(),
+        descId: v.string(),
+        descEn: v.string(),
+      })
+    ),
+    updatedAt: v.number(),
+  }).index("by_key", ["key"]),
+
   // ─── Landing Hero (Editable Copy + Hero Image) ────────────────────
   // Single editable record (key="default") used by HeroSection.tsx on
   // the landing page. Verifikator dashboard updates here flow to the

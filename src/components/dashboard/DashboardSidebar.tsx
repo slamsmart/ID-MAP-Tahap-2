@@ -79,6 +79,7 @@ const verifikatorItems: SidebarItem[] = [
   { icon: Globe, label: "Titik Pendaratan Penyu", href: "/verifikator/penyu" },
   { icon: Users, label: "Data Pokmaswas", href: "/verifikator/pokmaswas" },
   { icon: PanelTop, label: "Hero Beranda", href: "/verifikator/landing-hero" },
+  { icon: FileText, label: "Halaman Tentang", href: "/verifikator/tentang" },
   { icon: ImageIcon, label: "Konten Layanan", href: "/verifikator/thumbnail-layanan" },
   { icon: LayoutGrid, label: "Tiga Peran", href: "/verifikator/tiga-peran" },
   { icon: PanelBottom, label: "Footer Brand", href: "/verifikator/footer" },
