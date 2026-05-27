@@ -164,17 +164,17 @@ export default function ThreeRolesSection() {
                 <div className="flex items-start justify-between gap-4">
                   <h3 className="text-xl font-bold text-[#0f3d2e]">{title}</h3>
                   <div
-                    className="relative h-24 w-24 flex-shrink-0 rounded-2xl bg-gradient-to-br from-emerald-50 via-white to-emerald-100/60 ring-1 ring-emerald-100 shadow-sm grid place-items-center overflow-hidden transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:scale-[1.04]"
+                    className="relative h-24 w-24 flex-shrink-0 grid place-items-center transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:scale-[1.06]"
                     aria-hidden="true"
                   >
-                    {/* Soft halo behind the 3D emoji for depth */}
-                    <span className="absolute inset-2 rounded-full bg-emerald-200/40 blur-xl" />
+                    {/* Soft circular halo behind the 3D emoji for depth */}
+                    <span className="absolute inset-1 rounded-full bg-emerald-200/40 blur-xl" />
                     <Image
                       src={card.image}
                       alt={title}
                       width={144}
                       height={144}
-                      className="relative h-20 w-20 object-contain drop-shadow-[0_6px_8px_rgba(6,78,59,0.25)]"
+                      className="relative h-20 w-20 object-contain drop-shadow-[0_6px_10px_rgba(6,78,59,0.28)]"
                       loading="lazy"
                     />
                   </div>
