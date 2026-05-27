@@ -27,6 +27,7 @@ import {
   PanelBottom,
   PanelTop,
   LayoutGrid,
+  HelpCircle,
 } from "lucide-react";
 
 interface SidebarItem {
@@ -80,6 +81,7 @@ const verifikatorItems: SidebarItem[] = [
   { icon: Users, label: "Data Pokmaswas", href: "/verifikator/pokmaswas" },
   { icon: PanelTop, label: "Hero Beranda", href: "/verifikator/landing-hero" },
   { icon: FileText, label: "Halaman Tentang", href: "/verifikator/tentang" },
+  { icon: HelpCircle, label: "Halaman FAQ", href: "/verifikator/faq" },
   { icon: ImageIcon, label: "Konten Layanan", href: "/verifikator/thumbnail-layanan" },
   { icon: LayoutGrid, label: "Tiga Peran", href: "/verifikator/tiga-peran" },
   { icon: PanelBottom, label: "Footer Brand", href: "/verifikator/footer" },

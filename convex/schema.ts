@@ -300,6 +300,26 @@ export default defineSchema({
     updatedAt: v.number(),
   }).index("by_key", ["key"]),
 
+  // ─── FAQ Content (Editable /faq) ──────────────────────────────────
+  // Verifikator dapat edit daftar tanya-jawab tanpa redeploy. Items
+  // adalah array (urutan tampil = urutan array). Bahasa ID & EN.
+  faqContent: defineTable({
+    key: v.string(), // singleton: "default"
+    heroTitleId: v.string(),
+    heroTitleEn: v.string(),
+    heroSubtitleId: v.string(),
+    heroSubtitleEn: v.string(),
+    items: v.array(
+      v.object({
+        questionId: v.string(),
+        questionEn: v.string(),
+        answerId: v.string(),
+        answerEn: v.string(),
+      })
+    ),
+    updatedAt: v.number(),
+  }).index("by_key", ["key"]),
+
   // ─── KYC Documents (Verification Documents) ───────────────────────
   kycDocuments: defineTable({
     userId: v.id("users"),
