@@ -167,14 +167,14 @@ export default function ThreeRolesSection() {
                     className="relative h-24 w-24 flex-shrink-0 grid place-items-center transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:scale-[1.06]"
                     aria-hidden="true"
                   >
-                    {/* Soft circular halo behind the 3D emoji for depth */}
-                    <span className="absolute inset-1 rounded-full bg-emerald-200/40 blur-xl" />
+                    {/* Soft circular green glow that bleeds outside the disc */}
+                    <span className="absolute inset-0 rounded-full bg-emerald-400/35 blur-2xl scale-110" />
                     <Image
                       src={card.image}
                       alt={title}
                       width={144}
                       height={144}
-                      className="relative h-20 w-20 object-contain drop-shadow-[0_6px_10px_rgba(6,78,59,0.28)]"
+                      className="relative h-24 w-24 rounded-full object-cover ring-1 ring-emerald-100/50 shadow-[0_10px_28px_-6px_rgba(16,185,129,0.55)]"
                       loading="lazy"
                     />
                   </div>
