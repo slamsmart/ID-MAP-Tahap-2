@@ -7,7 +7,7 @@
 
 | Field | Value |
 |-------|-------|
-| Product | ID-MAP (Indonesia Mangrove Action Platform) |
+| Product | ID-MAP (Integrasi Data dan Manajemen Pesisir) |
 | Version | 2.0 |
 | Status | In Development |
 | Tech Stack | Next.js 14 + Convex + TypeScript + Tailwind CSS |

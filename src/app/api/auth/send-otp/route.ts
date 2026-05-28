@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../../../../convex/_generated/api";
+import { rateLimit } from "@/lib/rateLimit";
 
 const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
@@ -11,6 +12,24 @@ export async function POST(req: NextRequest) {
 
     if (!email) {
       return NextResponse.json({ error: "Email diperlukan." }, { status: 400 });
+    }
+
+    // Rate limit: max 5 OTP per email per jam.
+    // Mencegah spam OTP, abuse Resend/Gmail quota, dan harassment victim.
+    const rl = rateLimit({
+      bucket: "otp",
+      key: email.toLowerCase(),
+      limit: 5,
+      windowMs: 60 * 60 * 1000, // 1 jam
+    });
+    if (!rl.ok) {
+      const minutes = Math.ceil(rl.retryAfterMs / 60_000);
+      return NextResponse.json(
+        {
+          error: `Terlalu banyak permintaan OTP. Coba lagi dalam ${minutes} menit.`,
+        },
+        { status: 429, headers: { "Retry-After": String(Math.ceil(rl.retryAfterMs / 1000)) } }
+      );
     }
 
     const gmailUser = process.env.GMAIL_USER;

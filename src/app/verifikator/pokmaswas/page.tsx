@@ -279,14 +279,14 @@ export default function KelolaPokmaswasPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50/50">
-                <th className="text-left text-xs text-gray-400 font-semibold px-4 py-3 w-8">#</th>
-                <th className="text-left text-xs text-gray-400 font-semibold px-3 py-3 hidden sm:table-cell">Kab/Kota</th>
-                <th className="text-left text-xs text-gray-400 font-semibold px-3 py-3">Nama Kelompok</th>
-                <th className="text-left text-xs text-gray-400 font-semibold px-3 py-3 hidden md:table-cell">Alamat</th>
-                <th className="text-left text-xs text-gray-400 font-semibold px-3 py-3">Ketua</th>
-                <th className="text-left text-xs text-gray-400 font-semibold px-3 py-3 hidden lg:table-cell">No. HP</th>
-                <th className="text-left text-xs text-gray-400 font-semibold px-3 py-3 hidden md:table-cell">Koordinat</th>
-                <th className="text-left text-xs text-gray-400 font-semibold px-3 py-3 w-16">Aksi</th>
+                <th className="text-left text-xs text-gray-500 font-semibold px-4 py-3 w-8">#</th>
+                <th className="text-left text-xs text-gray-500 font-semibold px-3 py-3 hidden sm:table-cell">Kab/Kota</th>
+                <th className="text-left text-xs text-gray-500 font-semibold px-3 py-3">Nama Kelompok</th>
+                <th className="text-left text-xs text-gray-500 font-semibold px-3 py-3 hidden md:table-cell">Alamat</th>
+                <th className="text-left text-xs text-gray-500 font-semibold px-3 py-3">Ketua</th>
+                <th className="text-left text-xs text-gray-500 font-semibold px-3 py-3 hidden lg:table-cell">No. HP</th>
+                <th className="text-left text-xs text-gray-500 font-semibold px-3 py-3 hidden md:table-cell">Koordinat</th>
+                <th className="text-left text-xs text-gray-500 font-semibold px-3 py-3 w-16">Aksi</th>
               </tr>
             </thead>
             <tbody>

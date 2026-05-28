@@ -20,9 +20,64 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "ID-MAP — Integrasi Data & Manajemen Pesisir",
+  title: {
+    default: "ID-MAP — Integrasi Data & Manajemen Pesisir",
+    template: "%s · ID-MAP",
+  },
   description:
     "Platform integrasi data ekosistem pesisir Indonesia: mangrove, abrasi, habitat penyu, dan jaringan Pokmaswas/mitra dalam satu sistem MRV terverifikasi.",
+  keywords: [
+    "ID-MAP",
+    "Integrasi Data Pesisir",
+    "Pokmaswas",
+    "mangrove Indonesia",
+    "DKP",
+    "KKP",
+    "donasi mangrove",
+    "QRIS pesisir",
+    "konservasi penyu",
+    "abrasi pantai",
+    "MRV",
+    "blue carbon",
+  ],
+  metadataBase: new URL("https://idmap-pesisir.vercel.app"),
+  openGraph: {
+    type: "website",
+    locale: "id_ID",
+    siteName: "ID-MAP",
+    title: "ID-MAP — Integrasi Data & Manajemen Pesisir",
+    description:
+      "Satu platform untuk seluruh ekosistem mangrove & pesisir Indonesia. Donasi QRIS langsung tersalurkan ke Pokmaswas pelaksana, dengan sertifikat digital yang dapat dibagikan.",
+    url: "https://idmap-pesisir.vercel.app",
+    images: [
+      {
+        url: "/images/hero-mangrove.webp",
+        width: 1920,
+        height: 1080,
+        alt: "Hutan mangrove pesisir Indonesia — ID-MAP",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ID-MAP — Integrasi Data & Manajemen Pesisir",
+    description:
+      "Donasi QRIS langsung tersalurkan ke Pokmaswas pelaksana. Sertifikat digital otomatis. Data pesisir Indonesia dalam satu platform.",
+    images: ["/images/hero-mangrove.webp"],
+  },
+  alternates: {
+    canonical: "/",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   icons: {
     icon: [
       { url: "/images/logo2.webp", type: "image/webp" },

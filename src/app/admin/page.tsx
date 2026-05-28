@@ -293,14 +293,14 @@ export default function AdminDashboard() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50/50">
-                <th className="text-left text-xs text-gray-400 font-semibold px-5 py-3 w-8">#</th>
-                <th className="text-left text-xs text-gray-400 font-semibold px-3 py-3">Nama Pantai</th>
-                <th className="text-left text-xs text-gray-400 font-semibold px-3 py-3 hidden md:table-cell">Kecamatan / Kab</th>
-                <th className="text-left text-xs text-gray-400 font-semibold px-3 py-3 hidden lg:table-cell">Indikasi Abrasi</th>
-                <th className="text-left text-xs text-gray-400 font-semibold px-3 py-3 hidden sm:table-cell">Substrat</th>
-                <th className="text-left text-xs text-gray-400 font-semibold px-3 py-3 hidden sm:table-cell">Luasan</th>
-                <th className="text-left text-xs text-gray-400 font-semibold px-3 py-3">Prioritas</th>
-                <th className="text-left text-xs text-gray-400 font-semibold px-3 py-3 w-8" />
+                <th className="text-left text-xs text-gray-500 font-semibold px-5 py-3 w-8">#</th>
+                <th className="text-left text-xs text-gray-500 font-semibold px-3 py-3">Nama Pantai</th>
+                <th className="text-left text-xs text-gray-500 font-semibold px-3 py-3 hidden md:table-cell">Kecamatan / Kab</th>
+                <th className="text-left text-xs text-gray-500 font-semibold px-3 py-3 hidden lg:table-cell">Indikasi Abrasi</th>
+                <th className="text-left text-xs text-gray-500 font-semibold px-3 py-3 hidden sm:table-cell">Substrat</th>
+                <th className="text-left text-xs text-gray-500 font-semibold px-3 py-3 hidden sm:table-cell">Luasan</th>
+                <th className="text-left text-xs text-gray-500 font-semibold px-3 py-3">Prioritas</th>
+                <th className="text-left text-xs text-gray-500 font-semibold px-3 py-3 w-8" />
               </tr>
             </thead>
             <tbody>
@@ -443,13 +443,13 @@ export default function AdminDashboard() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-gray-100 bg-gray-50/50">
-                    <th className="text-left text-xs text-gray-400 font-semibold px-5 py-3 w-8">#</th>
-                    <th className="text-left text-xs text-gray-400 font-semibold px-3 py-3 hidden sm:table-cell">Kab/Kota</th>
-                    <th className="text-left text-xs text-gray-400 font-semibold px-3 py-3">Nama Kelompok</th>
-                    <th className="text-left text-xs text-gray-400 font-semibold px-3 py-3 hidden md:table-cell">Alamat</th>
-                    <th className="text-left text-xs text-gray-400 font-semibold px-3 py-3">Ketua</th>
-                    <th className="text-left text-xs text-gray-400 font-semibold px-3 py-3 hidden lg:table-cell">No. HP</th>
-                    <th className="text-left text-xs text-gray-400 font-semibold px-3 py-3 hidden lg:table-cell">Koordinat</th>
+                    <th className="text-left text-xs text-gray-500 font-semibold px-5 py-3 w-8">#</th>
+                    <th className="text-left text-xs text-gray-500 font-semibold px-3 py-3 hidden sm:table-cell">Kab/Kota</th>
+                    <th className="text-left text-xs text-gray-500 font-semibold px-3 py-3">Nama Kelompok</th>
+                    <th className="text-left text-xs text-gray-500 font-semibold px-3 py-3 hidden md:table-cell">Alamat</th>
+                    <th className="text-left text-xs text-gray-500 font-semibold px-3 py-3">Ketua</th>
+                    <th className="text-left text-xs text-gray-500 font-semibold px-3 py-3 hidden lg:table-cell">No. HP</th>
+                    <th className="text-left text-xs text-gray-500 font-semibold px-3 py-3 hidden lg:table-cell">Koordinat</th>
                   </tr>
                 </thead>
                 <tbody>

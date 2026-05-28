@@ -71,6 +71,16 @@ export default function DonasiCepatPage() {
   const [state, setState] = useState<State>("idle");
   const [qrisData, setQrisData] = useState<QrisData | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
+  const [isSandbox, setIsSandbox] = useState(false);
+
+  // Fetch sandbox flag once so banner persists sebelum user klik "Buat QR"
+  // (qrisData.isSandbox baru tersedia setelah panggil /create-qris).
+  useEffect(() => {
+    fetch("/api/payment/config", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((c: { sandbox?: boolean }) => setIsSandbox(!!c.sandbox))
+      .catch(() => {});
+  }, []);
 
   const finalAmount = customAmount
     ? parseInt(customAmount.replace(/\D/g, "")) || 0
@@ -205,6 +215,21 @@ export default function DonasiCepatPage() {
             Pembayaran aman via Mayar.id
           </div>
         </div>
+
+        {/* Mode Demo banner — persistent sepanjang halaman saat sandbox aktif.
+            Memberi tahu juri/tester bahwa pembayaran tidak menggunakan uang
+            sungguhan. Hilang otomatis di production (MAYAR_SANDBOX=false). */}
+        {isSandbox && (
+          <div className="mb-5 lg:mb-8 flex items-start gap-2.5 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-800">
+            <Sparkles className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="font-semibold">Mode Demo / Sandbox aktif</p>
+              <p className="text-xs text-amber-700 mt-0.5">
+                Halaman ini menggunakan Mayar.id sandbox. Tidak ada dana real yang ditransaksikan. Tombol &quot;Simulasi Bayar&quot; tersedia untuk testing alur tanpa scan QR.
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Two-column layout */}
         <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-6 lg:gap-10 items-start">

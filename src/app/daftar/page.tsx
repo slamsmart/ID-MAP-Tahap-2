@@ -199,6 +199,35 @@ function RegisterForm() {
 
         <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/50 p-6 sm:p-8">
 
+          {/* ── Stepper 2-step (Form → OTP) ── */}
+          <div className="flex items-center justify-center gap-2 mb-6">
+            <div className="flex items-center gap-2">
+              <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
+                step === "form" || step === "otp"
+                  ? "bg-emerald-600 text-white"
+                  : "bg-gray-200 text-gray-500"
+              }`}>
+                1
+              </div>
+              <span className={`text-xs font-semibold ${step === "form" ? "text-emerald-700" : "text-gray-400"}`}>
+                {t("Isi Data", "Fill Data")}
+              </span>
+            </div>
+            <div className={`flex-1 h-0.5 max-w-12 ${step === "otp" ? "bg-emerald-600" : "bg-gray-200"}`} />
+            <div className="flex items-center gap-2">
+              <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
+                step === "otp"
+                  ? "bg-emerald-600 text-white"
+                  : "bg-gray-200 text-gray-500"
+              }`}>
+                2
+              </div>
+              <span className={`text-xs font-semibold ${step === "otp" ? "text-emerald-700" : "text-gray-400"}`}>
+                {t("Verifikasi OTP", "Verify OTP")}
+              </span>
+            </div>
+          </div>
+
           {/* ── Step OTP ── */}
           {step === "otp" && (
             <div>

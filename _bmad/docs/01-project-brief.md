@@ -5,7 +5,7 @@
 
 ## 1. Executive Summary
 
-**ID-MAP** (Indonesia Mangrove Action Platform) adalah platform digital multi-peran untuk akselerasi restorasi dan perlindungan ekosistem mangrove Indonesia melalui perdagangan karbon transparan, pengelolaan proyek berbasis sains, donasi komunitas, dan verifikasi lapangan terstandar.
+**ID-MAP** (Integrasi Data dan Manajemen Pesisir) adalah platform digital multi-peran untuk akselerasi restorasi dan perlindungan ekosistem mangrove Indonesia melalui perdagangan karbon transparan, pengelolaan proyek berbasis sains, donasi komunitas, dan verifikasi lapangan terstandar.
 
 Platform ini menjawab dua krisis sekaligus:
 1. Indonesia kehilangan ±52% dari 3,36 juta hektar mangrove akibat alih fungsi lahan dan abrasi
@@ -44,14 +44,13 @@ Platform selaras dengan:
 
 ## 3. Proposed Solution
 
-ID-MAP v2.0 adalah platform SaaS multi-tenant dengan lima role utama:
+ID-MAP v2.0 adalah platform SaaS multi-tenant dengan empat role utama:
 
 | Role | Bahasa Umum | Fungsi Utama |
 |------|-------------|--------------|
 | `sahabat` | Relawan/Donatur | Donasi, tracking dampak, sertifikat |
 | `mitra` | NGO/Pengelola Proyek | Manajemen proyek, upload MRV, pendanaan |
 | `verifikator` | Ilmuwan Lapangan | Verifikasi data, peta abrasi, fauna |
-| `corporate` | Perusahaan | Beli karbon kredit, ESG reporting |
 | `admin` | Operator Platform | KYC, pengaturan sistem, laporan |
 
 ### 3.1 Core Features v2.0
