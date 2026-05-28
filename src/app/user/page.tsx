@@ -9,6 +9,7 @@ import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import { formatNumber, formatRupiah } from "@/lib/utils";
 import EkosistemPanel from "@/components/dashboard/EkosistemPanel";
+import OnboardingTour from "@/components/dashboard/OnboardingTour";
 
 const articles = [
   {
@@ -60,6 +61,9 @@ export default function UserDashboard() {
 
   return (
     <div className="space-y-6">
+      {/* First-time onboarding tour — auto-hide setelah dismiss */}
+      <OnboardingTour name={session?.name} />
+
       {/* Welcome */}
       <div>
         <h1 className="font-display font-bold text-2xl text-gray-900">

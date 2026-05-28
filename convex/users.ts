@@ -28,6 +28,7 @@ async function verifyPassword(plain: string, stored: string): Promise<boolean> {
 const roleValidator = v.union(
   v.literal("sahabat"),
   v.literal("mitra"),
+  v.literal("mitra_facilitator"),
   v.literal("verifikator"),
   v.literal("admin"),
   v.literal("corporate")

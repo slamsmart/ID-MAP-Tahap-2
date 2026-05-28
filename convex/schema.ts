@@ -10,6 +10,7 @@ export default defineSchema({
     role: v.union(
       v.literal("sahabat"),
       v.literal("mitra"),
+      v.literal("mitra_facilitator"),
       v.literal("verifikator"),
       v.literal("admin"),
       v.literal("corporate")
@@ -58,10 +59,15 @@ export default defineSchema({
     serviceType: v.optional(v.string()),
     fundingTarget: v.optional(v.number()),  // IDR
     fundingRaised: v.optional(v.number()),  // IDR (default 0)
+    // Stage 11 NGO Layer — facilitator (NGO/akademisi/dll) sebagai
+    // co-operator. Pokmaswas tetap "owner" via mitraId.
+    facilitatorId: v.optional(v.id("users")),
+    facilitatorOrgId: v.optional(v.id("partnerOrganizations")),
     createdAt: v.number(),
   })
     .index("by_status", ["status"])
     .index("by_mitra", ["mitraId"])
+    .index("by_facilitator", ["facilitatorId"])
     .index("by_status_and_created", ["status", "createdAt"]),
 
   serviceContent: defineTable({
@@ -319,6 +325,35 @@ export default defineSchema({
     ),
     updatedAt: v.number(),
   }).index("by_key", ["key"]),
+
+  // ─── Partner Organizations (NGO Whitelist) ────────────────────────
+  // NGO/akademisi/koperasi yang di-whitelist sebagai facilitator untuk
+  // proyek Pokmaswas. Stage 11 strategic decision: 3-tier partnership
+  // model (Direct, NGO-Mediated, Corporate-Sponsored).
+  partnerOrganizations: defineTable({
+    name: v.string(),
+    legalName: v.string(),
+    type: v.union(
+      v.literal("ngo"),
+      v.literal("akademisi"),
+      v.literal("pemerintah_daerah"),
+      v.literal("koperasi")
+    ),
+    capabilities: v.array(v.string()),
+    contactEmail: v.string(),
+    website: v.optional(v.string()),
+    logo: v.optional(v.string()),
+    description: v.optional(v.string()),
+    status: v.union(
+      v.literal("aktif"),
+      v.literal("review"),
+      v.literal("nonaktif")
+    ),
+    whitelistedAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_status", ["status"])
+    .index("by_type", ["type"]),
 
   // ─── KYC Documents (Verification Documents) ───────────────────────
   kycDocuments: defineTable({

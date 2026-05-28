@@ -18,6 +18,7 @@ import type * as kyc from "../kyc.js";
 import type * as landingHero from "../landingHero.js";
 import type * as mrvReports from "../mrvReports.js";
 import type * as otpCodes from "../otpCodes.js";
+import type * as partnerOrganizations from "../partnerOrganizations.js";
 import type * as platformStats from "../platformStats.js";
 import type * as projects from "../projects.js";
 import type * as rolesSection from "../rolesSection.js";
@@ -43,6 +44,7 @@ declare const fullApi: ApiFromModules<{
   landingHero: typeof landingHero;
   mrvReports: typeof mrvReports;
   otpCodes: typeof otpCodes;
+  partnerOrganizations: typeof partnerOrganizations;
   platformStats: typeof platformStats;
   projects: typeof projects;
   rolesSection: typeof rolesSection;

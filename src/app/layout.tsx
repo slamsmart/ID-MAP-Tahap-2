@@ -68,6 +68,8 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/",
   },
+  manifest: "/manifest.webmanifest",
+  themeColor: "#0f3d2e",
   robots: {
     index: true,
     follow: true,
