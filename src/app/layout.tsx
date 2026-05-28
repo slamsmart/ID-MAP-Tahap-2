@@ -80,14 +80,8 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  icons: {
-    icon: [
-      { url: "/images/logo2.webp", type: "image/webp" },
-      { url: "/images/logo2.png", type: "image/png" },
-    ],
-    shortcut: "/images/logo2.png",
-    apple: "/images/logo2.png",
-  },
+  // Icons resolved via Next.js convention: src/app/icon.png +
+  // src/app/apple-icon.png. No manual metadata.icons needed.
 };
 
 export default function RootLayout({
