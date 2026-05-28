@@ -1,0 +1,612 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<title>ID-MAP Blueprint v2.0 — Repositioned</title>
+<style>
+  @page { size: A4; margin: 16mm 14mm; }
+  * { box-sizing: border-box; }
+  html, body {
+    font-family: "Inter", "Segoe UI", -apple-system, sans-serif;
+    color: #111827;
+    background: #ffffff;
+    line-height: 1.55;
+    font-size: 10.5pt;
+    margin: 0;
+    padding: 0;
+  }
+  .cover {
+    page-break-after: always;
+    min-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 40px;
+    background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+    border-radius: 20px;
+  }
+  .cover h1 { font-size: 32pt; color: #0f3d2e; margin: 0 0 14px; line-height: 1.05; }
+  .cover .sub { color: #065f46; font-size: 13pt; max-width: 540px; margin: 0 auto 28px; }
+  .cover .badge {
+    display: inline-block;
+    background: #064E3B;
+    color: white;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 9pt;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 24px;
+  }
+  .cover .repositioned {
+    display: inline-block;
+    background: white;
+    color: #0f3d2e;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 9pt;
+    font-weight: 700;
+    border: 1px solid #A7F3D0;
+    margin-bottom: 18px;
+  }
+  .cover .meta { color: #4b5563; font-size: 10pt; margin-top: 30px; }
+  .cover .meta strong { color: #0f3d2e; }
+  h1 { color: #0f3d2e; font-size: 18pt; margin: 28px 0 6px; padding-bottom: 6px; border-bottom: 2px solid #059669; }
+  h2 { color: #0f3d2e; font-size: 13pt; margin: 20px 0 8px; }
+  h3 { color: #064E3B; font-size: 11.5pt; margin: 14px 0 6px; }
+  p { margin: 6px 0 10px; }
+  ul, ol { margin: 6px 0 10px; padding-left: 20px; }
+  li { margin: 3px 0; }
+  blockquote {
+    border-left: 4px solid #059669;
+    padding: 8px 14px;
+    margin: 10px 0;
+    background: #ECFDF5;
+    color: #064E3B;
+    font-style: italic;
+    border-radius: 4px;
+  }
+  table { width: 100%; border-collapse: collapse; margin: 10px 0 16px; font-size: 9.5pt; }
+  th { background: #ECFDF5; color: #064E3B; text-align: left; padding: 8px 10px; border-bottom: 2px solid #059669; font-weight: 700; }
+  td { padding: 7px 10px; border-bottom: 1px solid #E5E7EB; vertical-align: top; }
+  tr:last-child td { border-bottom: 0; }
+  pre, code {
+    background: #0f3d2e;
+    color: #6EE7B7;
+    border-radius: 6px;
+    padding: 1px 5px;
+    font-family: "Consolas", "Monaco", monospace;
+    font-size: 9pt;
+  }
+  pre {
+    padding: 12px 14px;
+    overflow-x: auto;
+    line-height: 1.45;
+    page-break-inside: avoid;
+  }
+  pre code { background: transparent; color: inherit; padding: 0; }
+  .ascii {
+    background: #0a1c15;
+    color: #6EE7B7;
+    padding: 18px;
+    border-radius: 8px;
+    font-family: "Consolas", monospace;
+    font-size: 8.5pt;
+    line-height: 1.35;
+    white-space: pre;
+    overflow: hidden;
+    page-break-inside: avoid;
+  }
+  .callout {
+    background: #FEF3C7;
+    border-left: 4px solid #F59E0B;
+    padding: 10px 14px;
+    border-radius: 4px;
+    margin: 12px 0;
+    font-size: 10pt;
+  }
+  .callout-info { background: #DBEAFE; border-left-color: #3B82F6; }
+  .callout-success { background: #D1FAE5; border-left-color: #10B981; }
+  .callout-danger { background: #FEE2E2; border-left-color: #EF4444; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .card { background: #F9FAFB; border-radius: 10px; padding: 12px 14px; border: 1px solid #E5E7EB; }
+  .card h3 { margin-top: 0; }
+  section { page-break-inside: avoid; }
+  .role-tag { font-weight: 700; color: #059669; }
+  footer {
+    margin-top: 30px;
+    padding-top: 14px;
+    border-top: 1px solid #E5E7EB;
+    color: #6B7280;
+    font-size: 9pt;
+    text-align: center;
+  }
+  .page-break { page-break-before: always; }
+  .pill {
+    display: inline-block;
+    background: #ECFDF5;
+    color: #064E3B;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 9pt;
+    font-weight: 600;
+    border: 1px solid #A7F3D0;
+  }
+  .pill-warn {
+    background: #FEF3C7;
+    color: #92400E;
+    border-color: #FDE68A;
+  }
+  .pill-danger {
+    background: #FEE2E2;
+    color: #991B1B;
+    border-color: #FECACA;
+  }
+  strong { color: #0f3d2e; }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<section class="cover">
+  <div class="badge">Blueprint Submission — Tahap 2</div>
+  <h1>ID-MAP<br/>Blueprint v2.0</h1>
+  <div class="sub">Integrasi Data dan Manajemen Pesisir — Platform Integrasi Data Ekosistem Pesisir Berkelanjutan</div>
+  <div class="repositioned">⚙ Repositioned dari "Indonesia Mangrove Action Platform"</div>
+  <div class="meta">
+    <strong>Versi:</strong> 2.0 · <strong>Tanggal:</strong> 28 Mei 2026<br/>
+    <strong>Stack:</strong> Next.js 14 · Convex · Mayar.id · Cloudinary<br/>
+    <strong>Live:</strong> idmap-pesisir.vercel.app
+  </div>
+</section>
+
+<!-- STAGE 1 -->
+<section>
+  <h1>Stage 1 · Domain Research</h1>
+
+  <h2>Pivot user persona: Pokmaswas</h2>
+  <p>Pokmaswas (Kelompok Masyarakat Pengawas) adalah kelompok masyarakat pesisir resmi binaan <strong>Ditjen PSDKP — Kementerian Kelautan dan Perikanan</strong>.</p>
+  <ul>
+    <li>Sudah punya <strong>SK pengukuhan formal</strong> — identitas legal sudah ada, tidak perlu KYC ulang</li>
+    <li>Terlatih dalam pengawasan sumber daya laut</li>
+    <li>Tersebar <strong>±2.000 kelompok aktif</strong> di seluruh Indonesia</li>
+    <li>Saat ini lapor manual via WhatsApp/kertas — pain point digitalisasi nyata</li>
+  </ul>
+
+  <h2>Regulasi yang relevan</h2>
+  <ul>
+    <li><strong>PP 27/2021</strong> — Penyelenggaraan Bidang Kelautan dan Perikanan</li>
+    <li><strong>PP 5/2021</strong> — Pelaksanaan Perizinan Berbasis Risiko (RZWP3K)</li>
+    <li><strong>Permen KP 36/2023</strong> — Pemberdayaan Pokmaswas</li>
+    <li><strong>POJK 51/2017</strong> — Penerapan Keuangan Berkelanjutan</li>
+    <li><strong>UU PDP No. 27/2022</strong> — Perlindungan Data Pribadi</li>
+    <li><strong>SRN-PPI</strong> — registry karbon nasional (relevan tapi bukan primary value prop)</li>
+  </ul>
+
+  <h2>Apa yang berubah dari positioning lama</h2>
+  <table>
+    <thead><tr><th>Sebelum</th><th>Sesudah</th></tr></thead>
+    <tbody>
+      <tr><td>Carbon credit infrastructure</td><td>Coastal data integration platform</td></tr>
+      <tr><td>KLHK (PP 98/2021) sebagai regulator</td><td>KKP/PSDKP sebagai pembina utama</td></tr>
+      <tr><td>Mangrove only</td><td>Mangrove + abrasi + penyu + ekosistem pesisir</td></tr>
+      <tr><td>B2B focus (perusahaan beli kredit)</td><td>Multi-actor (Sahabat + Mitra + DKP + Corporate)</td></tr>
+      <tr><td>Pre-market carbon = niche</td><td>Public good integration = wider reach</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Kompetitor &amp; lansekap</h2>
+  <ul>
+    <li><strong>Indikator (BRGM)</strong> — pemerintah, top-down monitoring mangrove</li>
+    <li><strong>Tracart, Fairatmos</strong> — private carbon registry, B2B-only</li>
+    <li><strong>Asuh Pesisir, KKP One Data</strong> — internal pemerintah</li>
+    <li><strong>Gap yang ID-MAP isi:</strong> bottom-up Pokmaswas + transparent donor + multi-stakeholder marketplace</li>
+  </ul>
+</section>
+
+<!-- STAGE 2 -->
+<section class="page-break">
+  <h1>Stage 2 · Product Brief</h1>
+
+  <blockquote><strong>Vision.</strong> Menjadi platform terpercaya yang mempercepat pemulihan dan keberlanjutan ekosistem pesisir nusantara melalui kolaborasi data, komunitas, dan teknologi.</blockquote>
+  <blockquote><strong>Mission.</strong> Mengintegrasikan data dan tata kelola pesisir Indonesia melalui enam layanan inti — rehabilitasi mangrove, penyulaman, MRV digital, decarbonisasi aquaculture, perbaikan habitat penyu, dan pemberdayaan masyarakat pesisir — secara transparan, partisipatif, dan berkelanjutan.</blockquote>
+
+  <h2>Target Users (Primary)</h2>
+  <ol>
+    <li><span class="role-tag">Pokmaswas / Mitra</span> — ±2.000 kelompok ber-SK PSDKP, fokus Jatim → Jateng → Sulsel → NTT</li>
+    <li><span class="role-tag">Sahabat Pesisir</span> — GenZ-Millennial 22-40 tahun, donasi Rp 10rb-500rb</li>
+    <li><span class="role-tag">DKP Provinsi/Kabupaten</span> — perpanjangan tangan KKP di lapangan</li>
+    <li><span class="role-tag">Korporasi ESG</span> — emiten BEI wajib lapor POJK 51/2017</li>
+    <li><span class="role-tag">NGO Konservasi</span> — YKAN, WWF, KEHATI sebagai mitra strategis</li>
+  </ol>
+
+  <h2>Value Proposition Triangle</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h3>Pokmaswas</h3>
+      <p>Alat kerja digital → laporan cepat → honor lebih cepat → pengakuan</p>
+    </div>
+    <div class="card">
+      <h3>Sahabat Pesisir</h3>
+      <p>Bukti realisasi donasi → sertifikat shareable → impact nyata</p>
+    </div>
+    <div class="card">
+      <h3>DKP Daerah</h3>
+      <p>Dashboard agregat lintas kecamatan → laporan ke pusat lebih mudah</p>
+    </div>
+    <div class="card">
+      <h3>Korporasi ESG</h3>
+      <p>Akses proyek terverifikasi → laporan POJK 51/2017 cepat dan auditable</p>
+    </div>
+  </div>
+
+  <h2>6 Layanan Inti</h2>
+  <ol>
+    <li>Rehabilitasi Mangrove</li>
+    <li>Penyulaman Mangrove</li>
+    <li>Jasa Pemantauan Monev (MRV) Mangrove</li>
+    <li>Decarbonisasi Aquaculture</li>
+    <li>Perbaikan Habitat Penyu</li>
+    <li>Pemberdayaan Masyarakat Pesisir</li>
+  </ol>
+
+  <h2>Differentiator</h2>
+  <ul>
+    <li>Bottom-up dari Pokmaswas, bukan top-down dari KLHK/BRGM</li>
+    <li>Multi-actor marketplace, bukan registry tertutup</li>
+    <li>Live MRV dengan QRIS donation loop yang langsung tersalurkan</li>
+    <li>Future-ready: data MRV kompatibel dengan SRN-PPI saat blue carbon matang</li>
+  </ul>
+</section>
+
+<!-- STAGE 3 -->
+<section class="page-break">
+  <h1>Stage 3 · PRFAQ (Working Backwards)</h1>
+
+  <h2>Press Release — Imaginary Launch (Q4 2026)</h2>
+  <blockquote>
+    <strong>JAKARTA, 15 Oktober 2026</strong> — Hari ini ID-MAP, Platform Integrasi Data dan Manajemen Pesisir Indonesia, resmi membuka adopsi nasional setelah pilot 6 bulan di Banyuwangi-Malang-Sidoarjo. Platform ini menjadi jembatan digital pertama yang menghubungkan <strong>2.000 Kelompok Masyarakat Pengawas (Pokmaswas)</strong> dengan donatur publik, regulator, dan korporasi pendukung lingkungan.
+    <br/><br/>
+    "Selama ini Pokmaswas binaan kami melapor manual lewat WhatsApp dan kertas, butuh 3-6 minggu sampai laporan diterima Dinas. Dengan ID-MAP, lapor selesai dalam 30 menit dan langsung tervalidasi DKP," ujar Direktur Pengawasan Sumber Daya Kelautan dan Perikanan, KKP.
+    <br/><br/>
+    Dalam 6 bulan pilot, ID-MAP menyalurkan <strong>Rp 2,4 miliar</strong> ke 47 proyek aktif Pokmaswas, dengan <strong>rata-rata realisasi &lt;72 jam</strong> dari donasi masuk.
+  </blockquote>
+
+  <h2>FAQ Internal (Tim) — Risiko Terbesar</h2>
+  <div class="callout callout-danger">
+    <strong>1. Adopsi Pokmaswas senior literasi digital rendah</strong><br/>
+    Mitigasi: form simpel + onboarding via DKP <strong>+ NGO partnership tier (lihat Stage 11 — strategic decision)</strong>
+  </div>
+  <div class="callout callout-danger">
+    <strong>2. Webhook payment gagal</strong><br/>
+    Mitigasi: signature verify + idempotent + polling fallback 3 detik
+  </div>
+  <div class="callout callout-danger">
+    <strong>3. Skeptis korporasi tentang verifikasi</strong><br/>
+    Mitigasi: dashboard publik + audit trail blockchain-ready
+  </div>
+</section>
+
+<!-- STAGE 4 -->
+<section class="page-break">
+  <h1>Stage 4 · PRD Highlights</h1>
+
+  <h2>Epic Map (8 Epics)</h2>
+  <table>
+    <thead><tr><th>Epic</th><th>Cakupan</th></tr></thead>
+    <tbody>
+      <tr><td>E1</td><td>Public Identity &amp; Discovery (landing, peta, tentang, FAQ, footer)</td></tr>
+      <tr><td>E2</td><td>Sahabat Pesisir Onboarding (form, OTP, profile)</td></tr>
+      <tr><td>E3</td><td>Donasi QRIS Flow (Mayar, webhook, banner sandbox)</td></tr>
+      <tr><td>E4</td><td>Sertifikat Digital (auto-issue, preview, share WA/X)</td></tr>
+      <tr><td>E5</td><td>Mitra (Pokmaswas) Operations (project, MRV, pendanaan)</td></tr>
+      <tr><td>E6</td><td>Verifikator (DKP) Tools (audit, CRUD, CMS editor)</td></tr>
+      <tr><td>E7</td><td>Admin &amp; Governance (user, KYC, transaction)</td></tr>
+      <tr><td>E8</td><td>Corporate Carbon Credit (browse, buy, ESG report)</td></tr>
+    </tbody>
+  </table>
+
+  <h2>User Stories Selected (P0)</h2>
+  <ul>
+    <li><strong>US-S01</strong> — Sahabat baru daftar dengan minimal data</li>
+    <li><strong>US-S02</strong> — Sahabat scan QRIS dan dapat sertifikat otomatis</li>
+    <li><strong>US-M01</strong> — Mitra upload bukti tanam &amp; progres MRV</li>
+    <li><strong>US-V01</strong> — Verifikator edit konten landing tanpa redeploy</li>
+    <li><strong>US-C01</strong> — Corporate browse proyek terverifikasi &amp; beli carbon credit</li>
+  </ul>
+</section>
+
+<!-- STAGE 5 -->
+<section class="page-break">
+  <h1>Stage 5 · Architecture</h1>
+
+  <h2>Architecture Decision Records (ADR)</h2>
+  <table>
+    <thead><tr><th>ADR</th><th>Pilihan</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>ADR-001</td><td>Frontend: Next.js 14 App Router</td><td><span class="pill">Active</span></td></tr>
+      <tr><td>ADR-002</td><td>Backend: Convex (Reactive DB)</td><td><span class="pill">Active</span></td></tr>
+      <tr><td>ADR-003</td><td>Auth: Custom session + bcrypt</td><td><span class="pill pill-danger">Pending</span></td></tr>
+      <tr><td>ADR-004</td><td>Payment: Mayar.id</td><td><span class="pill">Active</span></td></tr>
+      <tr><td>ADR-005</td><td>Hosting: Vercel + Cloudflare</td><td><span class="pill">Active</span></td></tr>
+      <tr><td>ADR-006</td><td>Image: Cloudinary (free tier)</td><td><span class="pill">Active</span></td></tr>
+      <tr><td>ADR-007</td><td>Map: Leaflet + Earth Engine</td><td><span class="pill">Active</span></td></tr>
+    </tbody>
+  </table>
+
+  <h2>High-Level Architecture</h2>
+<pre class="ascii">
+        USER (5 roles)
+              │
+              ▼
+   ┌──────────────────────────┐
+   │  Vercel Edge (Next 14)   │
+   │  ┌────────────────────┐  │
+   │  │ Public pages (RSC) │  │
+   │  │ Dashboard (use cl) │  │
+   │  │ API /api/payment/* │  │
+   │  └─────────┬──────────┘  │
+   └────────────┼─────────────┘
+                │
+   ┌────────────┼────────────┐
+   ▼            ▼            ▼
+ ┌─────┐   ┌────────┐   ┌──────────┐
+ │Convex│  │Mayar.id│  │Cloudinary│
+ │ DB   │  │  QRIS  │  │  images  │
+ └─────┘   └────────┘   └──────────┘
+
+ + Earth Engine (peta)
+ + Resend (OTP email)
+ + Anthropic / OpenRouter / NVIDIA NIM (AI chat)
+</pre>
+
+  <h2>Data Model — Convex Tables</h2>
+  <ul>
+    <li><strong>Identity:</strong> users, otpCodes, kycDocuments</li>
+    <li><strong>Catalog:</strong> projects, serviceContent</li>
+    <li><strong>Transaction:</strong> contributions, transactions, certificates</li>
+    <li><strong>Field Ops:</strong> mrvReports, systemActivities</li>
+    <li><strong>CMS (Verifikator-editable):</strong> landingHero, aboutContent, faqContent, footerContent, rolesSection, platformStats</li>
+  </ul>
+</section>
+
+<!-- STAGE 6 -->
+<section class="page-break">
+  <h1>Stage 6 · UX &amp; IA</h1>
+
+  <h2>Information Architecture</h2>
+<pre class="ascii">Public
+├── /                          Landing
+├── /tentang                   About (live editable)
+├── /faq                       FAQ (live editable)
+├── /mitra-kami                Partners showcase
+├── /proyek                    All verified projects
+├── /jelajahi-peta-mangrove    Map (Mangrove + Abrasi + Penyu + Mitra)
+└── /donasi-cepat/[id]         Donation flow (login required)
+
+Auth
+├── /daftar                    Register
+└── /masuk                     Login
+
+Sahabat ──── /user, /user/donasi, /user/sertifikat,
+             /user/proyek, /user/dampak, /user/notifikasi,
+             /user/pengaturan
+
+Mitra ────── /mitra, /mitra/proyek, /mitra/proyek-baru,
+             /mitra/mrv, /mitra/laporan, /mitra/pendanaan,
+             /mitra/kyc, /mitra/pengaturan
+
+Verifikator ─ /verifikator + 9 sub-pages (CMS editor):
+             analisis-ai, proyek, abrasi, penyu, pokmaswas,
+             landing-hero, tentang, faq, footer, tiga-peran,
+             thumbnail-layanan
+
+Admin ────── /admin, /admin/users, /admin/proyek,
+             /admin/transaksi, /admin/kyc
+
+Corporate ── /corporate, /corporate/transaksi,
+             /corporate/dokumen</pre>
+</section>
+
+<!-- STAGE 7 -->
+<section class="page-break">
+  <h1>Stage 7 · Sprint Plan (12 minggu pilot)</h1>
+  <table>
+    <thead><tr><th>Sprint</th><th>Fokus</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>S0</td><td>Foundation (Next + Convex + tokens)</td><td><span class="pill">Done</span></td></tr>
+      <tr><td>S1</td><td>Auth + 5 Roles</td><td><span class="pill">Done</span></td></tr>
+      <tr><td>S2</td><td>Landing + Map</td><td><span class="pill">Done</span></td></tr>
+      <tr><td>S3</td><td>Project CRUD</td><td><span class="pill">Done</span></td></tr>
+      <tr><td>S4</td><td>Donasi QRIS + Mayar</td><td><span class="pill">Done</span></td></tr>
+      <tr><td>S5</td><td>Certificate Auto-issue</td><td><span class="pill">Done</span></td></tr>
+      <tr><td>S6</td><td>MRV Cycle</td><td><span class="pill">Done</span></td></tr>
+      <tr><td>S7</td><td>CMS Layer (Verifikator editor)</td><td><span class="pill">Done</span></td></tr>
+      <tr><td>S8</td><td>Corporate Flow</td><td><span class="pill">Done</span></td></tr>
+      <tr><td>S9</td><td>Admin Tools</td><td><span class="pill">Done</span></td></tr>
+      <tr><td>S10</td><td>Polish + a11y</td><td><span class="pill">Done</span></td></tr>
+      <tr><td>S11</td><td>Pre-launch Security</td><td><span class="pill pill-warn">Pending</span></td></tr>
+      <tr><td>S12</td><td>Submission Docs</td><td><span class="pill pill-warn">In progress</span></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- STAGE 10 -->
+<section class="page-break">
+  <h1>Stage 10 · Audit Gates (Release Candidate)</h1>
+  <table>
+    <thead><tr><th>Gate</th><th>Cakupan</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>Foundation</td><td>Layouting tokens (border, fill, shadow, radius)</td><td><span class="pill">Pass</span></td></tr>
+      <tr><td>System Coherence</td><td>7-Lens audit fixes (skeleton, esc, aria-label, empty CTA)</td><td><span class="pill">Pass</span></td></tr>
+      <tr><td>WCAG 2.2 AA</td><td>Color contrast, keyboard nav, screen reader</td><td><span class="pill pill-warn">Pending</span></td></tr>
+      <tr><td>Motion Performance</td><td>Frame budget, reduce-motion respect</td><td><span class="pill pill-warn">Pending</span></td></tr>
+      <tr><td>Security</td><td>Bcrypt, webhook verify, rate limit, simulate gate</td><td><span class="pill pill-danger">Critical pending</span></td></tr>
+      <tr><td>Polish</td><td>2-column donasi, sertifikat share, 3D icon</td><td><span class="pill">Pass</span></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- STAGE 11 — NGO LAYER -->
+<section class="page-break">
+  <h1>Stage 11 · NGO Layer for Pokmaswas</h1>
+  <p><strong>Strategic decision — 28 Mei 2026.</strong> Berasal dari diskusi ahli untuk memitigasi risiko #1 PRFAQ (adopsi Pokmaswas senior literasi digital rendah).</p>
+
+  <blockquote>
+    "Projek Pokmaswas di-pihak-ke-3-kan dengan NGO terpercaya yang menguasai lapangan dan core layanannya. Pelaporan jadi lebih akurat dan cepat, program tersalurkan ke Pokmas tepat sasaran."
+  </blockquote>
+
+  <h2>Analisis: Bisa, dan justru memperkuat positioning</h2>
+
+  <div class="callout callout-success">
+    <strong>✓ 6 alasan kenapa ini ide bagus</strong>
+    <ol style="margin: 8px 0 0 0;">
+      <li><strong>Infrastruktur lapangan NGO sudah ada.</strong> YKAN, KEHATI, WWF, WCS punya tim teknis aktif</li>
+      <li><strong>Kapasitas pelatihan &amp; pendampingan.</strong> Beban literasi digital pindah ke field officer NGO</li>
+      <li><strong>MRV jadi audit-grade.</strong> NGO punya methodology Verra/Plan Vivo/Gold Standard</li>
+      <li><strong>Solves chicken-and-egg di rural area.</strong> Scale ke daerah remote tanpa fisik on-the-ground</li>
+      <li><strong>Cocok dengan POJK 51 + ESG corporate.</strong> Korporasi nyaman lihat NGO partner di rantai validasi</li>
+      <li><strong>Precedent sudah jalan.</strong> YKAN-Pertamina, KEHATI-Mandiri, WWF-Astra</li>
+    </ol>
+  </div>
+
+  <div class="callout">
+    <strong>⚠ 5 risk yang harus di-mitigate</strong>
+    <ol style="margin: 8px 0 0 0;">
+      <li><strong>Intermediary fee membengkak.</strong> Solusi: NGO fee dari corporate sponsor, bukan donasi Sahabat</li>
+      <li><strong>NGO kapasitas tidak merata.</strong> Solusi: NGO whitelist + audit periodik</li>
+      <li><strong>Politik &amp; relasi NGO-Pokmaswas.</strong> Solusi: opt-in per proyek, bukan mandatory</li>
+      <li><strong>Risiko gatekeeping.</strong> Solusi: tetap buka jalur direct Pokmaswas → ID-MAP</li>
+      <li><strong>Liability data.</strong> Solusi: MoU jelas di onboarding NGO</li>
+    </ol>
+  </div>
+
+  <h2>Usulan Model: 3-Tier Partnership</h2>
+  <table>
+    <thead><tr><th>Tier</th><th>Aktor</th><th>Use Case</th></tr></thead>
+    <tbody>
+      <tr><td><strong>A — Direct</strong></td><td>Pokmaswas literate digital input langsung</td><td>Pokmaswas urban/semi-urban di Jawa</td></tr>
+      <tr><td><strong>B — NGO-Mediated</strong> <span class="pill">NEW</span></td><td>NGO whitelisted (YKAN/KEHATI/WWF) sebagai facilitator</td><td>Pokmaswas remote / senior, role: <code>mitra_facilitator</code></td></tr>
+      <tr><td><strong>C — Corporate-Sponsored</strong></td><td>Korporasi beli paket NGO + Pokmaswas + ID-MAP</td><td>ESG dashboard agregat + audit trail</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Implementasi Convex (perubahan minimal)</h2>
+  <p><strong>Tabel <code>users</code> — tambah role baru:</strong></p>
+<pre>role: v.union(
+  v.literal("sahabat"),
+  v.literal("mitra"),               // pokmaswas direct
+  v.literal("mitra_facilitator"),   // NGO yang co-operate
+  v.literal("verifikator"),
+  v.literal("admin"),
+  v.literal("corporate")
+)</pre>
+
+  <p><strong>Tabel <code>projects</code> — tambah field:</strong></p>
+<pre>facilitatorId: v.optional(v.id("users")),
+facilitatorOrg: v.optional(v.string()),  // "YKAN" / "KEHATI"</pre>
+
+  <p><strong>Tabel baru: <code>partnerOrganizations</code></strong></p>
+<pre>partnerOrganizations: defineTable({
+  name: v.string(),
+  legalName: v.string(),
+  type: v.union(
+    v.literal("ngo"),
+    v.literal("akademisi"),
+    v.literal("pemerintah_daerah"),
+    v.literal("koperasi")
+  ),
+  whitelistedAt: v.number(),
+  capabilities: v.array(v.string()),  // ["mangrove", "penyu", "mrv"]
+  contactEmail: v.string(),
+  status: v.union(
+    v.literal("aktif"),
+    v.literal("review"),
+    v.literal("nonaktif")
+  ),
+  updatedAt: v.number(),
+})</pre>
+
+  <h2>Roadmap NGO Layer (3-6 bulan)</h2>
+  <table>
+    <thead><tr><th>Phase</th><th>Aktivitas</th><th>Deliverable</th></tr></thead>
+    <tbody>
+      <tr><td>Phase 1 (bulan 1-2)</td><td>MoU 3 NGO pilot (YKAN, KEHATI, WCS)</td><td>MoU signed, NGO whitelist v1</td></tr>
+      <tr><td>Phase 2 (bulan 3)</td><td>Build <code>mitra_facilitator</code> role + <code>partnerOrganizations</code> table</td><td>Role + dashboard NGO</td></tr>
+      <tr><td>Phase 3 (bulan 4)</td><td>Pilot 5 proyek di Jatim dengan NGO mediation</td><td>Laporan komparasi (direct vs facilitated)</td></tr>
+      <tr><td>Phase 4 (bulan 5-6)</td><td>Scale ke 20 proyek, NGO whitelist diperluas</td><td>NGO marketplace di /mitra-kami</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- STAGE 12 -->
+<section class="page-break">
+  <h1>Stage 12 · Retrospective</h1>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>✓ What Worked</h3>
+      <ul>
+        <li>Convex live queries = killer feature</li>
+        <li>3D icon Microsoft Fluent (~80KB total) looks premium</li>
+        <li>Schema consolidation di akhir lebih cepat dari design upfront</li>
+        <li>Repositioning early sebelum submission</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>✗ What Didn't</h3>
+      <ul>
+        <li>Plaintext password sampai akhir (debt)</li>
+        <li>Token color drift sampai 12 fill colors</li>
+        <li>heroImageStore IndexedDB legacy gak dibersihkan</li>
+        <li>Carbon credit framing awal di-bake ke /tentang dan /faq</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>What We'd Change Next Time</h2>
+  <ol>
+    <li><strong>Design tokens before code</strong> — lock di tailwind.config.ts dari Sprint 0</li>
+    <li><strong>Auth + security at S1</strong> — bukan di S11</li>
+    <li><strong>CMS layer earlier</strong> — verifikator-editable content harus ada dari S2</li>
+    <li><strong>Pitch validation early</strong> — PRFAQ direview stakeholder DKP sebelum dev mulai</li>
+    <li><strong>NGO partnership di PRFAQ awal</strong> — bukan afterthought, jadi pillar strategy</li>
+  </ol>
+
+  <h2>Open Questions for Tahap 2 Reviewers</h2>
+  <ol>
+    <li>Apakah skema ini cukup compliant dengan Permen KP 36/2023?</li>
+    <li>Apakah donasi mikro public di-regulate OJK (kalau dianggap crowdfunding)?</li>
+    <li>Apakah strategi tanpa carbon credit primary realistic untuk monetisasi long-term?</li>
+    <li><strong>Apakah model NGO-mediated (Tier B) bisa di-scale tanpa ID-MAP jadi gatekeeper?</strong></li>
+  </ol>
+</section>
+
+<!-- TL;DR -->
+<section>
+  <h1>TL;DR Repositioning Summary</h1>
+  <table>
+    <thead><tr><th>Aspek</th><th>Old</th><th>New</th></tr></thead>
+    <tbody>
+      <tr><td>Nama</td><td>Indonesia Mangrove Action Platform</td><td>Integrasi Data dan Manajemen Pesisir</td></tr>
+      <tr><td>Tagline</td><td>Pre-Market Carbon Infrastructure</td><td>Platform Integrasi Data Ekosistem Pesisir Berkelanjutan</td></tr>
+      <tr><td>Primary regulator</td><td>KLHK (Ditjen PPI/SRN)</td><td>KKP (Ditjen PSDKP)</td></tr>
+      <tr><td>Primary actor</td><td>Corporate carbon buyer</td><td>Sahabat + Pokmaswas</td></tr>
+      <tr><td>Primary value</td><td>Carbon credit infrastructure</td><td>Coastal data integration</td></tr>
+      <tr><td>Service scope</td><td>Mangrove only</td><td>6 layanan inti</td></tr>
+      <tr><td>Field operation</td><td>Direct Pokmaswas only</td><td><strong>Direct + NGO-mediated + Corporate-sponsored (3-tier)</strong></td></tr>
+      <tr><td>Future option</td><td>Core monetization</td><td>Optional upside saat regulasi blue carbon matang</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<footer>
+  ID-MAP — Integrasi Data dan Manajemen Pesisir · Blueprint v2.0 · 28 Mei 2026<br/>
+  Disusun untuk submission Tahap 2 — kompetisi pengembangan platform pesisir berkelanjutan<br/>
+  Live: idmap-pesisir.vercel.app
+</footer>
+
+</body>
+</html>
