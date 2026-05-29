@@ -624,6 +624,56 @@ Adopsi Pokmaswas senior yang literasi digital rendah → mitigasi:
 
 ---
 
+## Stage 13 · Dampak Keberlanjutan (SDGs) & Visi Global
+
+### Penyelarasan dengan Sustainable Development Goals (SDGs)
+
+ID-MAP bukan sekadar platform donasi — sebagai platform **keberlanjutan ekosistem pesisir**, keenam layanan inti dirancang selaras dengan agenda **Sustainable Development Goals (SDGs)** PBB, terutama pilar lingkungan, iklim, dan kesejahteraan masyarakat pesisir.
+
+**Pemetaan 6 Layanan Inti → SDGs:**
+
+| Layanan Inti | SDGs Terkait |
+|---|---|
+| 1. Rehabilitasi Mangrove | SDG 13 (Iklim) · SDG 14 (Ekosistem Laut) · SDG 15 (Ekosistem Darat) |
+| 2. Penyulaman Mangrove | SDG 13 · SDG 14 · SDG 15 |
+| 3. Jasa Pemantauan Monev (MRV) | SDG 13 · SDG 14 · SDG 17 (Kemitraan & transparansi data) |
+| 4. Decarbonisasi Aquaculture | SDG 12 (Produksi Bertanggung Jawab) · SDG 13 · SDG 14 |
+| 5. Perbaikan Habitat Penyu | SDG 14 · SDG 15 |
+| 6. Pemberdayaan Masyarakat Pesisir | SDG 1 (Tanpa Kemiskinan) · SDG 8 (Pekerjaan Layak) · SDG 10 (Mengurangi Ketimpangan) · SDG 11 (Komunitas Berkelanjutan) |
+
+**SDGs inti yang diusung ID-MAP:**
+
+- **SDG 14 — Ekosistem Lautan (Life Below Water):** poros utama. Mangrove, penyu, dan rehabilitasi pesisir adalah inti misi platform.
+- **SDG 13 — Penanganan Perubahan Iklim:** mangrove sebagai *blue carbon sink*, decarbonisasi aquaculture menurunkan emisi.
+- **SDG 15 — Ekosistem Daratan:** vegetasi pesisir dan habitat sebagai zona transisi darat-laut.
+- **SDG 1 & 8 — Tanpa Kemiskinan & Pekerjaan Layak:** honor Pokmaswas tersalurkan cepat, pesisir jadi sumber penghidupan berkelanjutan.
+- **SDG 12 — Konsumsi & Produksi Bertanggung Jawab:** aquaculture rendah karbon.
+- **SDG 17 — Kemitraan untuk Tujuan:** model multi-aktor (Sahabat + Pokmaswas + DKP + NGO + Korporasi) adalah perwujudan langsung dari kemitraan lintas sektor.
+
+> Penyelarasan SDGs ini memperkuat narasi ke juri Tahap 2, donor publik, dan korporasi ESG (POJK 51/2017) yang laporan keberlanjutannya wajib memetakan kontribusi terhadap SDGs.
+
+### Menunjang Ekosistem QRIS Bank Indonesia hingga ke Pesisir
+
+Donasi mikro ID-MAP berjalan di atas **QRIS** — standar pembayaran nasional Bank Indonesia. Dengan menyalurkan donasi Sahabat Pesisir ke proyek Pokmaswas di daerah pesisir dan remote, ID-MAP turut **memperluas penetrasi ekosistem QRIS BI hingga menyentuh komunitas pesisir** yang selama ini berada di luar jangkauan layanan keuangan digital.
+
+- **Inklusi keuangan pesisir:** transaksi digital masuk ke kelompok masyarakat yang sebelumnya cash-based / unbanked.
+- **Sejalan dengan misi BI** untuk perluasan akseptasi QRIS ke seluruh lapisan masyarakat dan wilayah 3T.
+- **Setiap donasi = jejak transaksi QRIS baru** di wilayah pesisir, memperkaya ekosistem pembayaran nasional.
+
+### Visi Global: QRIS Cross-Border ASEAN + Mode Bahasa Inggris
+
+Bank Indonesia telah meluncurkan **QRIS Cross-Border** dengan negara-negara ASEAN (Thailand, Malaysia, Singapura) sebagai bagian dari **Regional Payment Connectivity (RPC)**, dan terus diperluas. Ini membuka jalan agar donasi lintas negara dapat masuk ke proyek pesisir Indonesia tanpa friksi konversi.
+
+ID-MAP **future-ready** untuk peluang ini:
+
+- **Mode Bahasa Inggris sudah tersedia** di web app (toggle ID ↔ EN via `LanguageContext`), sehingga donatur internasional, diaspora Indonesia, dan mitra global dapat menggunakan platform secara penuh.
+- **QRIS cross-border** memungkinkan Sahabat Pesisir dari negara ASEAN berdonasi langsung memakai aplikasi pembayaran negaranya — menjangkau pasar donor regional.
+- **Kombinasi mode EN + QRIS cross-border** memposisikan ID-MAP sebagai jembatan donasi konservasi pesisir Indonesia ke skala Asia, bukan hanya domestik.
+
+> Jangka panjang: ID-MAP dapat menjadi etalase konservasi pesisir Indonesia bagi donor & korporasi ASEAN, menumpang infrastruktur QRIS cross-border BI dan didukung antarmuka multibahasa.
+
+---
+
 ## TL;DR Repositioning Summary
 
 | Aspek | Old | New |
