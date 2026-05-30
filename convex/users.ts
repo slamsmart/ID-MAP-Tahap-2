@@ -9,18 +9,18 @@ import bcrypt from "bcryptjs";
 // ini untuk auto-detect legacy plaintext (untuk migrasi smooth).
 const BCRYPT_COST = 10;
 const isHashed = (s: string) => s.startsWith("$2a$") || s.startsWith("$2b$") || s.startsWith("$2y$");
-async function hashPassword(plain: string): Promise<string> {
+function hashPassword(plain: string): string {
   if (isHashed(plain)) return plain; // already hashed (idempotent)
-  return await bcrypt.hash(plain, BCRYPT_COST);
+  return bcrypt.hashSync(plain, BCRYPT_COST);
 }
-async function verifyPassword(plain: string, stored: string): Promise<boolean> {
+function verifyPassword(plain: string, stored: string): boolean {
   if (!isHashed(stored)) {
     // Legacy plaintext fallback — direct compare, tapi LOG sebagai debt
     // marker. Setelah login berhasil, mutation login akan otomatis
     // re-hash password ke bcrypt untuk migrasi gradual.
     return plain === stored;
   }
-  return await bcrypt.compare(plain, stored);
+  return bcrypt.compareSync(plain, stored);
 }
 
 // ─── Shared Validator ──────────────────────────────────────────────
@@ -153,7 +153,7 @@ export const create = mutation({
 
     const needsKyc = args.role === "sahabat" || args.role === "mitra" || args.role === "verifikator" || args.role === "corporate";
 
-    const hashedPassword = await hashPassword(args.password);
+    const hashedPassword = hashPassword(args.password);
 
     return await ctx.db.insert("users", {
       ...args,
@@ -179,14 +179,14 @@ export const login = mutation({
 
     if (!user) return null;
 
-    const ok = await verifyPassword(args.password, user.password);
+    const ok = verifyPassword(args.password, user.password);
     if (!ok) return null;
 
     // Lazy migration: kalau password masih plaintext (legacy seed),
     // re-hash ke bcrypt setelah login berhasil sehingga next login
     // sudah pakai compare yang aman.
     if (!isHashed(user.password)) {
-      const newHash = await hashPassword(args.password);
+      const newHash = hashPassword(args.password);
       await ctx.db.patch(user._id, { password: newHash });
       return { ...user, password: newHash };
     }
