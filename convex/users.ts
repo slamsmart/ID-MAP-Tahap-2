@@ -171,9 +171,10 @@ export const login = mutation({
   },
   returns: v.union(userValidator, v.null()),
   handler: async (ctx, args) => {
+    const email = args.email.trim().toLowerCase();
     const user = await ctx.db
       .query("users")
-      .withIndex("by_email", (q) => q.eq("email", args.email))
+      .withIndex("by_email", (q) => q.eq("email", email))
       .first();
 
     if (!user) return null;

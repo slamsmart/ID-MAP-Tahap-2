@@ -92,7 +92,8 @@ function LoginForm() {
 
     try {
       setIsLoading(true);
-      const user = await loginMutation({ email, password });
+      const normalizedEmail = email.trim().toLowerCase();
+      const user = await loginMutation({ email: normalizedEmail, password });
       
       if (!user) {
         const demoRole = roles.find((r) => {
@@ -105,12 +106,26 @@ function LoginForm() {
           return;
         }
 
-        const userId = await createUserMutation({
-          email: roleHints[demoRole].email,
-          password: roleHints[demoRole].password,
-          name: demoNames[demoRole],
-          role: demoRole,
-        });
+        let userId: string;
+        try {
+          userId = await createUserMutation({
+            email: roleHints[demoRole].email,
+            password: roleHints[demoRole].password,
+            name: demoNames[demoRole],
+            role: demoRole,
+          });
+        } catch {
+          // Akun demo sudah ada (DUPLICATE_EMAIL) — login ulang.
+          const existing = await loginMutation({
+            email: roleHints[demoRole].email,
+            password: roleHints[demoRole].password,
+          });
+          if (!existing) {
+            setError(t("Email atau password salah.", "Invalid email or password."));
+            return;
+          }
+          userId = existing._id;
+        }
 
         setSession({
           _id: userId,
