@@ -28,6 +28,9 @@ import {
   PanelTop,
   LayoutGrid,
   HelpCircle,
+  Building2,
+  FileBadge,
+  Calculator,
 } from "lucide-react";
 
 interface SidebarItem {
@@ -72,6 +75,16 @@ const mitraItems: SidebarItem[] = [
   { icon: Settings, label: "Pengaturan", href: "/mitra/pengaturan" },
 ];
 
+const corporateItems: SidebarItem[] = [
+  { icon: LayoutDashboard, label: "Dashboard", href: "/corporate" },
+  { icon: Building2, label: "Portofolio ESG", href: "/corporate/portofolio" },
+  { icon: Calculator, label: "Estimasi", href: "/corporate/estimasi" },
+  { icon: Wallet, label: "Beli Kontribusi", href: "/corporate/beli" },
+  { icon: FileBadge, label: "Dokumen", href: "/corporate/dokumen" },
+  { icon: ArrowRightLeft, label: "Transaksi", href: "/corporate/transaksi" },
+  { icon: Settings, label: "Pengaturan", href: "/corporate/pengaturan" },
+];
+
 const verifikatorItems: SidebarItem[] = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/verifikator" },
   { icon: Brain, label: "Analisis AI", href: "/verifikator/analisis-ai" },
@@ -89,7 +102,7 @@ const verifikatorItems: SidebarItem[] = [
 ];
 
 interface DashboardSidebarProps {
-  type: "admin" | "user" | "verifikator" | "mitra";
+  type: "admin" | "user" | "verifikator" | "mitra" | "corporate";
 }
 
 export default function DashboardSidebar({ type }: DashboardSidebarProps) {
@@ -102,6 +115,8 @@ export default function DashboardSidebar({ type }: DashboardSidebarProps) {
       ? userItems
       : type === "mitra"
       ? mitraItems
+      : type === "corporate"
+      ? corporateItems
       : verifikatorItems;
 
   const sidebarContent = (

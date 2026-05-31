@@ -1,0 +1,13 @@
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - -t
+      - asia-southeast2-docker.pkg.dev/$PROJECT_ID/id-map/id-map:$COMMIT_SHA
+      - -t
+      - asia-southeast2-docker.pkg.dev/$PROJECT_ID/id-map/id-map:latest
+      - .
+
+images:
+  - asia-southeast2-docker.pkg.dev/$PROJECT_ID/id-map/id-map:$COMMIT_SHA
+  - asia-southeast2-docker.pkg.dev/$PROJECT_ID/id-map/id-map:latest

@@ -60,19 +60,31 @@ function rateLimitInMemory(opts: RateLimitOpts): RateLimitResult {
 
 let redis: Redis | null = null;
 let redisChecked = false;
+let redisInitError: string | null = null;
 
 function getRedis(): Redis | null {
   if (redisChecked) return redis;
   redisChecked = true;
   const url = process.env.UPSTASH_REDIS_REST_URL;
   const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!url || !token) return null;
+  if (!url || !token) {
+    redisInitError = `missing-env url=${Boolean(url)} token=${Boolean(token)}`;
+    return null;
+  }
   try {
     redis = new Redis({ url, token });
     return redis;
-  } catch {
+  } catch (err) {
+    redisInitError = err instanceof Error ? err.message : String(err);
     return null;
   }
+}
+
+// Untuk debug only — return alasan kenapa Redis tidak aktif.
+export function rateLimitInitError(): string | null {
+  // Make sure getRedis() di-call dulu supaya redisInitError ter-set.
+  getRedis();
+  return redisInitError;
 }
 
 // ─── Public API ───────────────────────────────────────────────────────

@@ -8,9 +8,9 @@ export default function CorporateLayout({
   children: React.ReactNode;
 }) {
   return (
-    <SessionGuard allowedRoles={["verifikator"]}>
+    <SessionGuard allowedRoles={["corporate"]}>
       <div className="flex min-h-screen bg-gray-50">
-        <DashboardSidebar type="verifikator" />
+        <DashboardSidebar type="corporate" />
         <div className="flex-1 flex flex-col min-w-0">
           <DashboardHeader
             title="Dashboard Corporate"
