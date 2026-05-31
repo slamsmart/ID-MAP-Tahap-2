@@ -142,15 +142,21 @@ ID-MAP-Final/
 |------|---------|
 | `convex/schema.ts` | Database schema — source of truth for all tables |
 | `convex/seed.ts` | Dev seed data — `npx convex run seed:resetAndSeed` |
-| `convex/users.ts` | User CRUD, auth helpers |
+| `convex/users.ts` | User CRUD, bcrypt hashing, lazy migration |
 | `convex/projects.ts` | Project CRUD, status transitions |
 | `convex/contributions.ts` | Donation records, payment status |
-| `src/lib/auth.ts` | Session get/set/clear, role types, dashboard routing |
-| `src/components/shared/SessionGuard.tsx` | Route protection, role-based redirect |
+| `src/lib/auth.ts` | Client session cache + `/api/auth/me` bridge |
+| `src/lib/sessionToken.ts` | HMAC-signed session token (server-only) |
+| `src/lib/serverSession.ts` | `cookies()` helpers for route handlers |
+| `src/lib/logger.ts` | Structured JSON logger w/ field redaction |
+| `src/middleware.ts` | Edge middleware — verifies session cookie for protected routes |
+| `src/components/shared/SessionGuard.tsx` | Client-side guard, listens to `session:change` event |
 | `src/components/shared/Navbar.tsx` | Top navigation, auth state |
-| `src/app/api/auth/` | OTP, login, register API routes |
+| `src/app/api/auth/` | login, register, logout, me, send-otp |
 | `src/app/api/payment/` | Mayar.id payment initiation + webhook |
 | `src/app/api/mangrove-analysis/route.ts` | OpenRouter AI proxy |
+| `tests/e2e/` | Playwright smoke tests (4 critical journeys) |
+| `playwright.config.ts` | E2E runner config |
 | `next.config.mjs` | Next.js config (image domains, etc.) |
 
 ---
@@ -179,16 +185,18 @@ ID-MAP-Final/
 
 | ID | Issue | Severity | Status | Epic |
 |----|-------|----------|--------|------|
-| TD-01 | Password plaintext di DB | CRITICAL | Open | E0/S004 |
-| TD-02 | `"komunitas"` role in auth.ts | HIGH | Open | E0/S001 |
+| TD-01 | Password plaintext di DB | CRITICAL | Resolved (bcrypt + lazy migrate) | E0/S004 |
+| TD-02 | `"komunitas"` role in auth.ts | HIGH | Resolved | E0/S001 |
 | TD-03 | `.tmp` files in repo | HIGH | Open | E0/S002 |
 | TD-04 | No migrations system | HIGH | Open | E0/S005 |
-| TD-05 | No test coverage | HIGH | Open | E1+ |
+| TD-05 | No test coverage | HIGH | In Progress (Playwright smoke) | E1+ |
 | TD-06 | Static GIS data (not DB) | MEDIUM | Open | E7 |
-| TD-07 | No rate limiting on auth | HIGH | Open | E1/S009 |
+| TD-07 | No rate limiting on auth | HIGH | Resolved | E1/S009 |
 | TD-08 | No input sanitization | HIGH | Open | E1/S010 |
-| TD-09 | `corporate` not in schema | MEDIUM | Open | E0/S003 |
-| TD-10 | Webhook signature not verified | HIGH | Open | E4 |
+| TD-09 | `corporate` not in schema | MEDIUM | Resolved | E0/S003 |
+| TD-10 | Webhook signature not verified | HIGH | Resolved | E4 |
+| TD-11 | Session in localStorage (XSS risk) | HIGH | Resolved (HttpOnly cookie + middleware) | E1 |
+| TD-12 | No structured logging | MEDIUM | Resolved (lib/logger.ts) | E1 |
 
 ---
 

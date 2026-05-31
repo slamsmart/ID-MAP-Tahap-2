@@ -3,7 +3,9 @@ import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../../../../convex/_generated/api";
 import { Id } from "../../../../../convex/_generated/dataModel";
 import { createQris, isMayarLive, MAYAR_BASE } from "../../../../lib/mayar";
+import { createLogger } from "@/lib/logger";
 
+const log = createLogger("api.payment.create-qris");
 const CONVEX_URL = process.env.NEXT_PUBLIC_CONVEX_URL!;
 const convex = new ConvexHttpClient(CONVEX_URL);
 
@@ -52,9 +54,7 @@ export async function POST(request: NextRequest) {
         qrImageUrl = res.data?.url ?? null;
         mayarPaymentId = res.data?.id ?? `mayar_${Date.now()}`;
       } catch (err) {
-        // Don't fail the whole request — fall through to dummy mode so the
-        // donor can still see something. Surface the error to the client.
-        console.warn("[mayar] createQris failed, falling back to dummy:", err);
+        log.warn("createQris_failed_fallback", { err: err as Error, amount });
       }
     }
 
@@ -75,6 +75,12 @@ export async function POST(request: NextRequest) {
       }
     );
 
+    log.info("qris_created", {
+      paymentId: mayarPaymentId,
+      contributionId,
+      amount,
+      isDummy: !isMayarLive || !qrImageUrl,
+    });
     return NextResponse.json({
       success: true,
       contributionId,
@@ -87,11 +93,9 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : "Gagal membuat QRIS";
-    const stack = error instanceof Error ? error.stack : undefined;
-    console.error("Create QRIS error:", msg, stack);
+    log.error("create_qris_exception", { err: error as Error });
     return NextResponse.json({
       error: msg,
-      stack,
       debug: true,
       convexUrl: CONVEX_URL,
       isMayarLive,

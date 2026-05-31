@@ -22,10 +22,13 @@ export default function Navbar() {
 
   useEffect(() => {
     setSession(getSession());
+    const onChange = () => setSession(getSession());
+    window.addEventListener("session:change", onChange);
+    return () => window.removeEventListener("session:change", onChange);
   }, []);
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     setSession(null);
     window.location.href = "/";
   };

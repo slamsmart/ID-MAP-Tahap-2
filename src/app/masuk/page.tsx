@@ -5,8 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Leaf, Eye, EyeOff, Globe, ArrowRight, ShieldCheck, Lock, Mail } from "lucide-react";
 import { setSession, getDashboardPath, User } from "@/lib/auth";
-import { useMutation } from "convex/react";
-import { api } from "../../../convex/_generated/api";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getAuthBgImage } from "@/lib/heroImageStore";
 
@@ -50,8 +48,6 @@ function LoginForm() {
       ? nextPath
       : null;
   const { language, setLanguage, t } = useLanguage();
-  const loginMutation = useMutation(api.users.login);
-  const createUserMutation = useMutation(api.users.create);
   const [showPassword, setShowPassword] = useState(false);
   const [role, setRole] = useState<Role>("sahabat");
   const [email, setEmail] = useState("");
@@ -93,12 +89,41 @@ function LoginForm() {
     try {
       setIsLoading(true);
       const normalizedEmail = email.trim().toLowerCase();
-      const user = await loginMutation({ email: normalizedEmail, password });
-      
+
+      const tryLogin = async (e: string, p: string) => {
+        const r = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "same-origin",
+          body: JSON.stringify({ email: e, password: p }),
+        });
+        if (!r.ok) return null;
+        const data = await r.json().catch(() => null);
+        return (data?.user as User | null) ?? null;
+      };
+      const tryRegister = async (input: {
+        email: string;
+        password: string;
+        name: string;
+        role: Role;
+      }) => {
+        const r = await fetch("/api/auth/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "same-origin",
+          body: JSON.stringify(input),
+        });
+        if (!r.ok) return null;
+        const data = await r.json().catch(() => null);
+        return (data?.user as User | null) ?? null;
+      };
+
+      const user = await tryLogin(normalizedEmail, password);
+
       if (!user) {
         const demoRole = roles.find((r) => {
           const hint = roleHints[r];
-          return hint.email === email.trim().toLowerCase() && hint.password === password;
+          return hint.email === normalizedEmail && hint.password === password;
         });
 
         if (!demoRole) {
@@ -106,45 +131,28 @@ function LoginForm() {
           return;
         }
 
-        let userId: string;
-        try {
-          userId = await createUserMutation({
-            email: roleHints[demoRole].email,
-            password: roleHints[demoRole].password,
-            name: demoNames[demoRole],
-            role: demoRole,
-          });
-        } catch {
-          // Akun demo sudah ada (DUPLICATE_EMAIL) — login ulang.
-          const existing = await loginMutation({
-            email: roleHints[demoRole].email,
-            password: roleHints[demoRole].password,
-          });
-          if (!existing) {
-            setError(t("Email atau password salah.", "Invalid email or password."));
-            return;
-          }
-          userId = existing._id;
-        }
-
-        setSession({
-          _id: userId,
+        let demoUser = await tryRegister({
           email: roleHints[demoRole].email,
+          password: roleHints[demoRole].password,
           name: demoNames[demoRole],
           role: demoRole,
         });
-        router.push(safeNext ?? getDashboardPath(demoRole));
+        if (!demoUser) {
+          demoUser = await tryLogin(roleHints[demoRole].email, roleHints[demoRole].password);
+        }
+        if (!demoUser) {
+          setError(t("Email atau password salah.", "Invalid email or password."));
+          return;
+        }
+
+        setSession(demoUser);
+        router.push(safeNext ?? getDashboardPath(demoUser.role));
         return;
       }
 
-      setSession({
-        _id: user._id,
-        email: user.email,
-        name: user.name,
-        role: user.role
-      });
+      setSession(user);
       router.push(safeNext ?? getDashboardPath(user.role));
-    } catch (err) {
+    } catch {
       setError(t("Terjadi kesalahan. Silakan coba lagi.", "An error occurred. Please try again."));
     } finally {
       setIsLoading(false);

@@ -5,7 +5,9 @@ import {
   verifyWebhook,
   type MayarWebhookPayload,
 } from "../../../../lib/mayar";
+import { createLogger } from "@/lib/logger";
 
+const log = createLogger("api.payment.webhook");
 const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
 // Mayar.id POSTs here when payment events occur.
@@ -19,11 +21,12 @@ const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 //
 // Mayar expects a 2xx within ~5s; otherwise it retries. Keep work minimal.
 export async function POST(request: NextRequest) {
+  const startedAt = Date.now();
   const rawBody = await request.text();
 
   const verdict = verifyWebhook(rawBody, request.headers);
   if (!verdict.ok) {
-    console.warn("Mayar webhook rejected:", verdict.reason);
+    log.warn("webhook_rejected", { reason: verdict.reason, bodyLen: rawBody.length });
     return NextResponse.json(
       { received: false, error: verdict.reason },
       { status: 401 }
@@ -34,16 +37,17 @@ export async function POST(request: NextRequest) {
   try {
     payload = JSON.parse(rawBody) as MayarWebhookPayload;
   } catch {
+    log.warn("webhook_invalid_json", { bodyLen: rawBody.length });
     return NextResponse.json({ error: "invalid json" }, { status: 400 });
   }
 
   const event = payload.event;
   const data = payload.data;
-  // Mayar's transactionId is the canonical reference; fall back to data.id.
   const paymentId =
     data?.transactionId ?? data?.extraData?.transactionId ?? data?.id ?? "";
 
   if (!paymentId) {
+    log.warn("webhook_missing_payment_id", { event });
     return NextResponse.json({ error: "paymentId missing" }, { status: 400 });
   }
 
@@ -52,12 +56,23 @@ export async function POST(request: NextRequest) {
       await convex.mutation(api.contributions.confirmByPaymentId, {
         paymentId,
       });
+      log.info("payment_confirmed", {
+        event,
+        paymentId,
+        status: data?.status,
+        durationMs: Date.now() - startedAt,
+      });
+    } else {
+      log.info("webhook_ack", { event, paymentId, status: data?.status });
     }
-    // Other events (reminder, membership) — log only for now.
     return NextResponse.json({ received: true, event });
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : "webhook failed";
-    console.error("Webhook handler error:", msg);
+    log.error("webhook_handler_exception", {
+      event,
+      paymentId,
+      err: error as Error,
+    });
     // 5xx so Mayar retries.
     return NextResponse.json({ error: msg }, { status: 500 });
   }

@@ -3,10 +3,13 @@ import nodemailer from "nodemailer";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../../../../convex/_generated/api";
 import { rateLimit } from "@/lib/rateLimit";
+import { createLogger } from "@/lib/logger";
 
+const log = createLogger("api.auth.send-otp");
 const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
 export async function POST(req: NextRequest) {
+  const startedAt = Date.now();
   try {
     const { email, name } = await req.json();
 
@@ -14,20 +17,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Email diperlukan." }, { status: 400 });
     }
 
-    // Rate limit: max 5 OTP per email per jam.
-    // Mencegah spam OTP, abuse Resend/Gmail quota, dan harassment victim.
     const rl = rateLimit({
       bucket: "otp",
       key: email.toLowerCase(),
       limit: 5,
-      windowMs: 60 * 60 * 1000, // 1 jam
+      windowMs: 60 * 60 * 1000,
     });
     if (!rl.ok) {
       const minutes = Math.ceil(rl.retryAfterMs / 60_000);
+      log.warn("otp_rate_limited", { email, retryAfterMs: rl.retryAfterMs });
       return NextResponse.json(
-        {
-          error: `Terlalu banyak permintaan OTP. Coba lagi dalam ${minutes} menit.`,
-        },
+        { error: `Terlalu banyak permintaan OTP. Coba lagi dalam ${minutes} menit.` },
         { status: 429, headers: { "Retry-After": String(Math.ceil(rl.retryAfterMs / 1000)) } }
       );
     }
@@ -36,22 +36,18 @@ export async function POST(req: NextRequest) {
     const gmailPass = process.env.GMAIL_APP_PASSWORD;
 
     if (!gmailUser || !gmailPass) {
-      console.error("GMAIL_USER atau GMAIL_APP_PASSWORD belum di-set di .env.local");
+      log.error("smtp_not_configured");
       return NextResponse.json(
         { error: "Konfigurasi email server belum siap." },
         { status: 500 }
       );
     }
 
-    // Generate OTP via Convex
     const code = await convex.mutation(api.otpCodes.createOtp, { email });
 
     const transporter = nodemailer.createTransport({
       service: "gmail",
-      auth: {
-        user: gmailUser,
-        pass: gmailPass,
-      },
+      auth: { user: gmailUser, pass: gmailPass },
     });
 
     await transporter.sendMail({
@@ -77,9 +73,10 @@ export async function POST(req: NextRequest) {
       `,
     });
 
+    log.info("otp_sent", { email, durationMs: Date.now() - startedAt });
     return NextResponse.json({ success: true });
   } catch (err: any) {
-    console.error("send-otp error:", err);
+    log.error("send_otp_exception", { err: err as Error });
     return NextResponse.json({ error: err.message ?? "Terjadi kesalahan." }, { status: 500 });
   }
 }

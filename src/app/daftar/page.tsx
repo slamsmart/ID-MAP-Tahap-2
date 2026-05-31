@@ -17,7 +17,6 @@ type Role = (typeof roles)[number];
 function RegisterForm() {
   const router = useRouter();
   const { t } = useLanguage();
-  const createMutation = useMutation(api.users.create);
   const verifyOtpMutation = useMutation(api.otpCodes.verifyOtp);
   const searchParams = useSearchParams();
 
@@ -114,30 +113,46 @@ function RegisterForm() {
       setIsLoading(true);
       await verifyOtpMutation({ email, code: otpValue.trim() });
 
-      const userId = await createMutation({
-        email,
-        password,
-        name,
-        role,
-        ...(phone ? { phone } : {}),
-        ...(address ? { address } : {}),
+      const r = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify({
+          email,
+          password,
+          name,
+          role,
+          ...(phone ? { phone } : {}),
+          ...(address ? { address } : {}),
+        }),
       });
-      setSession({ _id: userId, email, name, role });
-      // Honor ?next= redirect param (e.g. when user clicked "Donate" from landing)
+      if (!r.ok) {
+        const errData = await r.json().catch(() => null);
+        if (r.status === 409) {
+          setError(t("Email sudah terdaftar. Silakan masuk.", "Email already registered. Please log in."));
+        } else {
+          setError(errData?.error ?? t("Gagal mendaftar.", "Failed to register."));
+        }
+        return;
+      }
+      const data = await r.json().catch(() => null);
+      const newUser = (data?.user as User | null) ?? null;
+      if (!newUser) {
+        setError(t("Gagal mendaftar.", "Failed to register."));
+        return;
+      }
+      setSession(newUser);
       const nextPath = searchParams.get("next");
       const safeNext = nextPath && nextPath.startsWith("/") && !nextPath.startsWith("//")
         ? nextPath
         : null;
       router.push(safeNext ?? getDashboardPath(role));
     } catch (err: any) {
-      // ConvexError bisa berupa string (err.data) atau object (err.data.message)
       const msg =
         typeof err?.data === "string"
           ? err.data
           : (err?.data?.message ?? err?.message ?? "");
-      if (msg.includes("DUPLICATE_EMAIL") || msg.includes("sudah terdaftar")) {
-        setError(t("Email sudah terdaftar. Silakan masuk.", "Email already registered. Please log in."));
-      } else if (msg.toLowerCase().includes("otp") || msg.includes("kode")) {
+      if (msg.toLowerCase().includes("otp") || msg.includes("kode")) {
         setError(msg);
       } else {
         setError(t("Terjadi kesalahan. Silakan coba lagi.", "An error occurred. Please try again."));
