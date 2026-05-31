@@ -4,6 +4,13 @@ import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { getSession, refreshSession } from "@/lib/auth";
 
+function loginPathFor(allowedRoles?: string[]): string {
+  if (!allowedRoles || allowedRoles.length === 0) return "/masuk";
+  if (allowedRoles.length === 1 && allowedRoles[0] === "admin") return "/masuk-admin";
+  if (allowedRoles.includes("verifikator")) return "/masuk-verifikator";
+  return "/masuk";
+}
+
 export default function SessionGuard({ children, allowedRoles }: { children: React.ReactNode, allowedRoles?: string[] }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -11,11 +18,12 @@ export default function SessionGuard({ children, allowedRoles }: { children: Rea
 
   useEffect(() => {
     let cancelled = false;
+    const loginPath = loginPathFor(allowedRoles);
 
     const evaluate = (sessionRole: string | undefined) => {
       if (cancelled) return;
       if (!sessionRole) {
-        router.push("/masuk");
+        router.push(loginPath);
         return;
       }
       if (allowedRoles && !allowedRoles.includes(sessionRole)) {

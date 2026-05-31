@@ -9,13 +9,15 @@ import { NextRequest, NextResponse } from "next/server";
 
 const SESSION_COOKIE = "idmap_sess";
 
-// Map prefix path → role yang diizinkan
-const ROUTE_GUARDS: Array<{ prefix: string; roles: string[] }> = [
-  { prefix: "/admin", roles: ["admin"] },
-  { prefix: "/verifikator", roles: ["verifikator", "admin"] },
-  { prefix: "/mitra", roles: ["mitra", "mitra_facilitator", "admin"] },
-  { prefix: "/corporate", roles: ["corporate", "admin"] },
-  { prefix: "/user", roles: ["sahabat", "admin"] },
+// Map prefix path → role yang diizinkan + halaman login khusus.
+// /admin & /verifikator pakai portal login terpisah supaya entry-pointnya
+// tidak terekspos di halaman /masuk publik.
+const ROUTE_GUARDS: Array<{ prefix: string; roles: string[]; loginPath: string }> = [
+  { prefix: "/admin", roles: ["admin"], loginPath: "/masuk-admin" },
+  { prefix: "/verifikator", roles: ["verifikator", "admin"], loginPath: "/masuk-verifikator" },
+  { prefix: "/mitra", roles: ["mitra", "mitra_facilitator", "admin"], loginPath: "/masuk" },
+  { prefix: "/corporate", roles: ["corporate", "admin"], loginPath: "/masuk" },
+  { prefix: "/user", roles: ["sahabat", "admin"], loginPath: "/masuk" },
 ];
 
 function b64urlDecode(s: string): Uint8Array {
@@ -88,7 +90,7 @@ export async function middleware(req: NextRequest) {
 
   if (!session) {
     const url = req.nextUrl.clone();
-    url.pathname = "/masuk";
+    url.pathname = guard.loginPath;
     url.searchParams.set("next", pathname);
     return NextResponse.redirect(url);
   }

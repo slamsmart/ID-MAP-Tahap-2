@@ -8,21 +8,17 @@ import { setSession, getDashboardPath, User } from "@/lib/auth";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getAuthBgImage } from "@/lib/heroImageStore";
 
-const roles = ["sahabat", "mitra", "verifikator", "admin"] as const;
+const roles = ["sahabat", "mitra"] as const;
 type Role = (typeof roles)[number];
 
 const roleHints: Record<Role, { email: string; password: string }> = {
   sahabat: { email: "user@idmap.id", password: "user123" },
   mitra: { email: "mitra@idmap.id", password: "mitra123" },
-  verifikator: { email: "verifikator@idmap.id", password: "verif123" },
-  admin: { email: "admin@idmap.id", password: "admin123" },
 };
 
 const demoNames: Record<Role, string> = {
   sahabat: "Andi Pratama",
   mitra: "Mitra Proyek Mangrove",
-  verifikator: "Tim Verifikator Pesisir",
-  admin: "Admin ID-MAP",
 };
 
 export default function LoginPage() {
@@ -66,15 +62,11 @@ function LoginForm() {
   const roleLabels: Record<Role, string> = {
     sahabat: t("Sahabat", "Sahabat"),
     mitra: t("Mitra", "Partner"),
-    verifikator: t("Verifikator", "Verifier"),
-    admin: "Admin",
   };
 
   const roleDescriptions: Record<Role, string> = {
     sahabat: t("Donasi QRIS, pantau dampak, & sertifikat", "QRIS donation, impact tracking & certificates"),
     mitra: t("Kelola proyek mitra & laporan MRV", "Manage partner projects & MRV reports"),
-    verifikator: t("Kelola & verifikasi data abrasi pantai dan penyu", "Manage & verify coastal abrasion and turtle data"),
-    admin: t("Panel administrasi penuh", "Full administration panel"),
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -311,7 +303,7 @@ function LoginForm() {
             </div>
 
             {/* Role Selector */}
-            <div className="grid grid-cols-4 gap-1.5 p-1.5 bg-white rounded-xl border border-gray-200 shadow-sm mb-6">
+            <div className="grid grid-cols-2 gap-1.5 p-1.5 bg-white rounded-xl border border-gray-200 shadow-sm mb-6">
               {roles.map((r) => (
                 <button
                   key={r}
