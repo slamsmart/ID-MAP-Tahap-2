@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../../../../convex/_generated/api";
 import { Id } from "../../../../../convex/_generated/dataModel";
-import { rateLimit } from "@/lib/rateLimit";
+import { rateLimitAsync } from "@/lib/rateLimit";
 
 const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
@@ -14,7 +14,7 @@ const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 // normal hanya butuh ~1/3 detik selama 1-2 menit (~120 req max per donasi).
 export async function GET(request: NextRequest) {
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
-  const rl = rateLimit({
+  const rl = await rateLimitAsync({
     bucket: "payment-status:ip",
     key: ip,
     limit: 240,

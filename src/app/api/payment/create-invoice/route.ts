@@ -3,7 +3,7 @@ import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../../../../convex/_generated/api";
 import { Id } from "../../../../../convex/_generated/dataModel";
 import { createInvoice, isMayarLive, MAYAR_BASE } from "../../../../lib/mayar";
-import { rateLimit } from "@/lib/rateLimit";
+import { rateLimitAsync } from "@/lib/rateLimit";
 import { createLogger } from "@/lib/logger";
 
 const log = createLogger("api.payment.create-invoice");
@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
   // Rate limit per IP: 5 invoice / jam. Lebih ketat dari QRIS karena
   // invoice membutuhkan personal data donor.
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
-  const rl = rateLimit({
+  const rl = await rateLimitAsync({
     bucket: "invoice:ip",
     key: ip,
     limit: 5,

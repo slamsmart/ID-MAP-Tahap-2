@@ -6,7 +6,7 @@ import {
   isMayarLive,
   MAYAR_BASE,
 } from "../../../../lib/mayar";
-import { rateLimit } from "@/lib/rateLimit";
+import { rateLimitAsync } from "@/lib/rateLimit";
 import { createLogger } from "@/lib/logger";
 
 const log = createLogger("api.payment.register-webhook");
@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
 
   // Brute-force guard: 10 attempt per jam per IP. Token statik tanpa
   // throttle = ranselt brute-forceable.
-  const rl = rateLimit({
+  const rl = await rateLimitAsync({
     bucket: "register-webhook:ip",
     key: ip,
     limit: 10,

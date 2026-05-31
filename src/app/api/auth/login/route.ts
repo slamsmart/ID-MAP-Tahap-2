@@ -6,7 +6,7 @@ import {
   SESSION_TTL_SECONDS,
   createSessionToken,
 } from "@/lib/sessionToken";
-import { rateLimit } from "@/lib/rateLimit";
+import { rateLimitAsync } from "@/lib/rateLimit";
 import { createLogger } from "@/lib/logger";
 
 const log = createLogger("api.auth.login");
@@ -27,8 +27,10 @@ export async function POST(req: NextRequest) {
     // dari banyak IP ke 1 akun ditolak, dan brute-force dari 1 IP ke
     // banyak akun juga ditolak.
     const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
-    const emailLimit = rateLimit({ bucket: "login:email", key: email, limit: 10, windowMs: 15 * 60 * 1000 });
-    const ipLimit = rateLimit({ bucket: "login:ip", key: ip, limit: 30, windowMs: 15 * 60 * 1000 });
+    const [emailLimit, ipLimit] = await Promise.all([
+      rateLimitAsync({ bucket: "login:email", key: email, limit: 10, windowMs: 15 * 60 * 1000 }),
+      rateLimitAsync({ bucket: "login:ip", key: ip, limit: 30, windowMs: 15 * 60 * 1000 }),
+    ]);
     if (!emailLimit.ok || !ipLimit.ok) {
       const retryAfterMs = Math.max(emailLimit.retryAfterMs, ipLimit.retryAfterMs);
       log.warn("rate_limited", { email, ip, retryAfterMs });

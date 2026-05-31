@@ -1,17 +1,15 @@
-// Rate limiter — dual mode:
-//   1. PRODUCTION: Upstash Redis (multi-instance correct, sliding window).
-//      Aktif jika UPSTASH_REDIS_REST_URL & UPSTASH_REDIS_REST_TOKEN ter-set.
-//   2. FALLBACK: in-memory Map (per-instance, hilang saat lambda restart).
-//      Untuk dev / kalau Redis sedang mati. Tidak block app.
+// Rate limiter — dual API:
+//   1. rateLimit()      — synchronous, in-memory only (per-instance)
+//   2. rateLimitAsync() — async, Upstash Redis sliding window (multi-instance correct)
 //
-// API contract sama: rateLimit({ bucket, key, limit, windowMs }) → { ok, remaining, retryAfterMs }.
-// Pemanggil tidak perlu tahu backing store — fungsi tetap synchronous.
+// Pakai rateLimitAsync() di endpoint kritis (auth, payment, AI). Pakai
+// rateLimit() saja kalau performa absolut > strictness (misal endpoint
+// internal yang sudah ter-auth).
+//
+// Kalau env Upstash tidak ter-set, rateLimitAsync() jatuh ke in-memory
+// → tetap fungsional, hanya per-instance.
 
 import { Redis } from "@upstash/redis";
-
-type WindowEntry = { timestamps: number[] };
-
-const stores = new Map<string, WindowEntry>();
 
 interface RateLimitOpts {
   /** Bucket name e.g. "otp" — isolate counters per concern. */
@@ -28,6 +26,34 @@ interface RateLimitResult {
   ok: boolean;
   remaining: number;
   retryAfterMs: number;
+}
+
+// ─── In-memory backend ────────────────────────────────────────────────
+
+type WindowEntry = { timestamps: number[] };
+const stores = new Map<string, WindowEntry>();
+
+function rateLimitInMemory(opts: RateLimitOpts): RateLimitResult {
+  const now = Date.now();
+  const cutoff = now - opts.windowMs;
+  const compositeKey = `rl:${opts.bucket}:${opts.key}`;
+
+  const entry = stores.get(compositeKey) ?? { timestamps: [] };
+  entry.timestamps = entry.timestamps.filter((t) => t > cutoff);
+
+  if (entry.timestamps.length >= opts.limit) {
+    const oldest = entry.timestamps[0];
+    return { ok: false, remaining: 0, retryAfterMs: oldest + opts.windowMs - now };
+  }
+
+  entry.timestamps.push(now);
+  stores.set(compositeKey, entry);
+
+  return {
+    ok: true,
+    remaining: Math.max(0, opts.limit - entry.timestamps.length),
+    retryAfterMs: 0,
+  };
 }
 
 // ─── Redis backend (lazy init) ────────────────────────────────────────
@@ -49,84 +75,83 @@ function getRedis(): Redis | null {
   }
 }
 
-// Cache hasil pengecekan async sebentar — supaya call rateLimit() yang
-// sebelahan tidak harus tunggu Redis tiap kali (best-effort consistency).
-type CachedResult = { result: RateLimitResult; expiresAt: number };
-const resultCache = new Map<string, CachedResult>();
+// ─── Public API ───────────────────────────────────────────────────────
 
-// Background promise untuk update Redis — fire-and-forget.
-function checkRedisAsync(opts: RateLimitOpts, compositeKey: string): void {
-  const r = getRedis();
-  if (!r) return;
-  const windowSec = Math.ceil(opts.windowMs / 1000);
-  const now = Date.now();
-  const cutoff = now - opts.windowMs;
-  // Pakai sorted set: score = timestamp.
-  // 1. Buang yang lebih lama dari window.
-  // 2. Hitung anggota saat ini.
-  // 3. Tambah timestamp sekarang.
-  // 4. Set TTL ke window supaya key auto-bersih.
-  Promise.resolve()
-    .then(async () => {
-      try {
-        const pipe = r.pipeline();
-        pipe.zremrangebyscore(compositeKey, 0, cutoff);
-        pipe.zadd(compositeKey, { score: now, member: `${now}-${Math.random()}` });
-        pipe.zcard(compositeKey);
-        pipe.expire(compositeKey, windowSec);
-        const res = (await pipe.exec()) as [unknown, unknown, number, unknown];
-        const count = (typeof res[2] === "number" ? res[2] : 0) || 0;
-        const ok = count <= opts.limit;
-        const result: RateLimitResult = ok
-          ? { ok: true, remaining: Math.max(0, opts.limit - count), retryAfterMs: 0 }
-          : { ok: false, remaining: 0, retryAfterMs: opts.windowMs };
-        resultCache.set(compositeKey, { result, expiresAt: now + 5_000 });
-      } catch {
-        // Redis blip — biarkan in-memory result yang menjawab.
-      }
-    });
+/**
+ * Synchronous rate limit — pakai in-memory Map.
+ * Per-instance state. Multi-instance Vercel = bocor (counter reset di tiap
+ * cold start). Pakai rateLimitAsync() untuk endpoint kritis.
+ */
+export function rateLimit(opts: RateLimitOpts): RateLimitResult {
+  return rateLimitInMemory(opts);
 }
 
-// ─── Public API (sync) ────────────────────────────────────────────────
+/**
+ * Async rate limit — pakai Redis sliding window kalau env ada,
+ * fallback ke in-memory kalau tidak. Multi-instance correct.
+ *
+ * Pemakaian:
+ *   const rl = await rateLimitAsync({ bucket, key, limit, windowMs });
+ *   if (!rl.ok) return 429;
+ */
+export async function rateLimitAsync(opts: RateLimitOpts): Promise<RateLimitResult> {
+  const r = getRedis();
+  if (!r) {
+    // Fallback in-memory
+    return rateLimitInMemory(opts);
+  }
 
-export function rateLimit(opts: RateLimitOpts): RateLimitResult {
   const now = Date.now();
   const cutoff = now - opts.windowMs;
+  const windowSec = Math.ceil(opts.windowMs / 1000);
   const compositeKey = `rl:${opts.bucket}:${opts.key}`;
 
-  // Cek cache result Redis (kalau ada). Cache window 5 detik supaya
-  // burst rapat tetap kena gating yang konsisten.
-  const cached = resultCache.get(compositeKey);
-  if (cached && cached.expiresAt > now && !cached.result.ok) {
-    return cached.result;
+  try {
+    // Sorted set sliding window:
+    //  1. Buang member di luar window
+    //  2. Tambah timestamp sekarang
+    //  3. Hitung anggota
+    //  4. Set TTL supaya key auto-bersih
+    const pipe = r.pipeline();
+    pipe.zremrangebyscore(compositeKey, 0, cutoff);
+    pipe.zadd(compositeKey, { score: now, member: `${now}-${Math.random()}` });
+    pipe.zcard(compositeKey);
+    pipe.expire(compositeKey, windowSec);
+    const res = (await pipe.exec()) as [unknown, unknown, number, unknown];
+    const count = typeof res[2] === "number" ? res[2] : 0;
+
+    if (count > opts.limit) {
+      // Hapus member yang baru ditambahkan supaya counter tidak overshoot
+      // berkelanjutan saat tertolak.
+      try {
+        const oldestRes = (await r.zrange(compositeKey, 0, 0, { withScores: true })) as
+          | [string, number]
+          | unknown[];
+        const oldestScore = Array.isArray(oldestRes) && typeof oldestRes[1] === "number"
+          ? oldestRes[1]
+          : now - opts.windowMs;
+        return {
+          ok: false,
+          remaining: 0,
+          retryAfterMs: oldestScore + opts.windowMs - now,
+        };
+      } catch {
+        return { ok: false, remaining: 0, retryAfterMs: opts.windowMs };
+      }
+    }
+
+    return {
+      ok: true,
+      remaining: Math.max(0, opts.limit - count),
+      retryAfterMs: 0,
+    };
+  } catch {
+    // Redis down — fallback in-memory supaya app tetap jalan.
+    return rateLimitInMemory(opts);
   }
-
-  // In-memory sliding window — sumber kebenaran sinkron.
-  const entry = stores.get(compositeKey) ?? { timestamps: [] };
-  entry.timestamps = entry.timestamps.filter((t) => t > cutoff);
-
-  if (entry.timestamps.length >= opts.limit) {
-    const oldest = entry.timestamps[0];
-    return { ok: false, remaining: 0, retryAfterMs: oldest + opts.windowMs - now };
-  }
-
-  entry.timestamps.push(now);
-  stores.set(compositeKey, entry);
-
-  // Update Redis di background. Hasilnya dipakai untuk request berikutnya
-  // (via resultCache) supaya rate limit jadi multi-instance correct di
-  // serverless tanpa membuat handler ini async.
-  checkRedisAsync(opts, compositeKey);
-
-  return {
-    ok: true,
-    remaining: Math.max(0, opts.limit - entry.timestamps.length),
-    retryAfterMs: 0,
-  };
 }
 
 // Optional: helper untuk inspeksi (debug / health check).
 export function rateLimitBackend(): "redis" | "memory" {
   return getRedis() ? "redis" : "memory";
 }
-

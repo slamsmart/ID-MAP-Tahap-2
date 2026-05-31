@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ID-MAP
 
-## Getting Started
+Platform integrasi data dan manajemen pesisir Indonesia berbasis Next.js 14 + Convex. Project ini mencakup landing page publik, dashboard multi-role, analisis AI, donasi QRIS, serta peta interaktif untuk use case mangrove dan ekosistem pesisir.
 
-First, run the development server:
+## Menjalankan lokal
+
+1. Salin `.env.example` sesuai kebutuhan menjadi file env lokal.
+2. Install dependency:
+
+```bash
+npm install
+```
+
+3. Jalankan development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Buka `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts utama
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run dev
+npm run build
+npm run start
+npm run test:e2e
+```
 
-## Learn More
+## Deployment
 
-To learn more about Next.js, take a look at the following resources:
+- Production aktif sebelumnya berjalan di Vercel.
+- Repo ini sekarang juga sudah disiapkan untuk container deployment ke Google Cloud Run.
+- Panduan deploy ada di `CLOUD_RUN_DEPLOY.md`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Catatan env penting
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `NEXT_PUBLIC_CONVEX_URL` wajib karena frontend dan API route berkomunikasi ke Convex.
+- `SESSION_SECRET` wajib di production dan minimal 32 karakter.
+- Payment, email, AI, CAPTCHA, dan upload media akan aktif sesuai env provider masing-masing.
 
-## Deploy on Vercel
+## Submission readiness
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Status fitur, akun demo, dan known debt terdokumentasi di `SUBMISSION_STATUS.md`.

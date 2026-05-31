@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { rateLimit } from "@/lib/rateLimit";
+import { rateLimitAsync } from "@/lib/rateLimit";
 import { createLogger } from "@/lib/logger";
 
 const log = createLogger("api.chat");
@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
   // Rate limit per-IP — 20 chat/menit. Mencegah bot abuse + habisin
   // kuota NVIDIA. User normal jarang chat lebih dari sekali per detik.
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
-  const rl = rateLimit({ bucket: "chat:ip", key: ip, limit: 20, windowMs: 60_000 });
+  const rl = await rateLimitAsync({ bucket: "chat:ip", key: ip, limit: 20, windowMs: 60_000 });
   if (!rl.ok) {
     log.warn("chat_rate_limited", { ip, retryAfterMs: rl.retryAfterMs });
     return NextResponse.json(

@@ -4,7 +4,7 @@ import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../../../../convex/_generated/api";
 import { Id } from "../../../../../convex/_generated/dataModel";
 import { getServerSession } from "@/lib/serverSession";
-import { rateLimit } from "@/lib/rateLimit";
+import { rateLimitAsync } from "@/lib/rateLimit";
 import { createLogger } from "@/lib/logger";
 
 const log = createLogger("api.payment.simulate");
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
 
   // Rate limit per-IP supaya satu sesi tidak bisa increment tanpa batas.
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
-  const rl = rateLimit({ bucket: "simulate:ip", key: ip, limit: 20, windowMs: 60 * 60 * 1000 });
+  const rl = await rateLimitAsync({ bucket: "simulate:ip", key: ip, limit: 20, windowMs: 60 * 60 * 1000 });
   if (!rl.ok) {
     return NextResponse.json(
       { error: "Terlalu banyak simulasi. Coba lagi nanti." },

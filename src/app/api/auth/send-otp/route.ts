@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../../../../convex/_generated/api";
-import { rateLimit } from "@/lib/rateLimit";
+import { rateLimitAsync } from "@/lib/rateLimit";
 import { createLogger } from "@/lib/logger";
 
 const log = createLogger("api.auth.send-otp");
@@ -22,18 +22,20 @@ export async function POST(req: NextRequest) {
     // Dual rate limit: email-bound (5/jam) + IP-bound (15/jam) untuk
     // mencegah penyerang putar email berbeda dari satu IP/botnet kecil
     // → habiskan kuota Gmail/Resend.
-    const emailRl = rateLimit({
-      bucket: "otp:email",
-      key: email.toLowerCase(),
-      limit: 5,
-      windowMs: 60 * 60 * 1000,
-    });
-    const ipRl = rateLimit({
-      bucket: "otp:ip",
-      key: ip,
-      limit: 15,
-      windowMs: 60 * 60 * 1000,
-    });
+    const [emailRl, ipRl] = await Promise.all([
+      rateLimitAsync({
+        bucket: "otp:email",
+        key: email.toLowerCase(),
+        limit: 5,
+        windowMs: 60 * 60 * 1000,
+      }),
+      rateLimitAsync({
+        bucket: "otp:ip",
+        key: ip,
+        limit: 15,
+        windowMs: 60 * 60 * 1000,
+      }),
+    ]);
     if (!emailRl.ok || !ipRl.ok) {
       const retryAfterMs = Math.max(emailRl.retryAfterMs, ipRl.retryAfterMs);
       const minutes = Math.ceil(retryAfterMs / 60_000);

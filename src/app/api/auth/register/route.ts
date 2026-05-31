@@ -6,7 +6,7 @@ import {
   SESSION_TTL_SECONDS,
   createSessionToken,
 } from "@/lib/sessionToken";
-import { rateLimit } from "@/lib/rateLimit";
+import { rateLimitAsync } from "@/lib/rateLimit";
 import { verifyTurnstile, isTurnstileEnabled } from "@/lib/turnstile";
 import { createLogger } from "@/lib/logger";
 
@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
   const startedAt = Date.now();
   try {
     const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
-    const ipRl = rateLimit({
+    const ipRl = await rateLimitAsync({
       bucket: "register:ip",
       key: ip,
       limit: 10,
@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
 
     // Rate limit per email — proteksi terhadap loop dengan 1 IP berputar
     // banyak email random.
-    const emailRl = rateLimit({
+    const emailRl = await rateLimitAsync({
       bucket: "register:email",
       key: email,
       limit: 3,

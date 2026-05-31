@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "@/lib/serverSession";
-import { rateLimit } from "@/lib/rateLimit";
+import { rateLimitAsync } from "@/lib/rateLimit";
 import { createLogger } from "@/lib/logger";
 
 const log = createLogger("api.cloudinary-upload");
@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
   }
 
   // Rate limit per-user — 30 upload / jam.
-  const rl = rateLimit({
+  const rl = await rateLimitAsync({
     bucket: "upload:user",
     key: session.uid,
     limit: 30,

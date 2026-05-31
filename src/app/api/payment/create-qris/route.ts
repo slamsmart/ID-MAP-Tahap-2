@@ -3,7 +3,7 @@ import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../../../../convex/_generated/api";
 import { Id } from "../../../../../convex/_generated/dataModel";
 import { createQris, isMayarLive, MAYAR_BASE } from "../../../../lib/mayar";
-import { rateLimit } from "@/lib/rateLimit";
+import { rateLimitAsync } from "@/lib/rateLimit";
 import { createLogger } from "@/lib/logger";
 
 const log = createLogger("api.payment.create-qris");
@@ -25,9 +25,9 @@ const convex = new ConvexHttpClient(CONVEX_URL);
 // login). Rate limit per-IP melindungi Mayar quota & Convex insert spam.
 export async function POST(request: NextRequest) {
   // Rate limit per IP: 10 QRIS / jam. Cukup untuk user normal,
-  // memblokir bot/looper.
+  // memblokir bot/looper. Pakai Redis kalau env ada → multi-instance correct.
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
-  const rl = rateLimit({
+  const rl = await rateLimitAsync({
     bucket: "qris:ip",
     key: ip,
     limit: 10,
