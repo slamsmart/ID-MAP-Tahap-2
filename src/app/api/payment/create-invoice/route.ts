@@ -3,14 +3,37 @@ import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../../../../convex/_generated/api";
 import { Id } from "../../../../../convex/_generated/dataModel";
 import { createInvoice, isMayarLive, MAYAR_BASE } from "../../../../lib/mayar";
+import { rateLimit } from "@/lib/rateLimit";
+import { createLogger } from "@/lib/logger";
 
+const log = createLogger("api.payment.create-invoice");
 const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
 // Invoice-based checkout (richer UX than dynamic QRIS).
 // Customer is redirected to a Mayar-hosted checkout page that supports QRIS,
 // VA, e-wallet, and credit card. Use this for higher-value donations or
 // corporate (B2B) payments where you want an invoice document attached.
+//
+// SECURITY: public endpoint (B2B donor input email/mobile). Rate limit
+// per-IP melindungi Mayar quota & Convex insert spam.
 export async function POST(request: NextRequest) {
+  // Rate limit per IP: 5 invoice / jam. Lebih ketat dari QRIS karena
+  // invoice membutuhkan personal data donor.
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
+  const rl = rateLimit({
+    bucket: "invoice:ip",
+    key: ip,
+    limit: 5,
+    windowMs: 60 * 60 * 1000,
+  });
+  if (!rl.ok) {
+    log.warn("invoice_rate_limited", { ip, retryAfterMs: rl.retryAfterMs });
+    return NextResponse.json(
+      { error: "Terlalu banyak permintaan invoice. Coba lagi nanti." },
+      { status: 429, headers: { "Retry-After": String(Math.ceil(rl.retryAfterMs / 1000)) } }
+    );
+  }
+
   try {
     const body = (await request.json()) as {
       amount: number;

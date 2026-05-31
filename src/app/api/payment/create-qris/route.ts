@@ -3,6 +3,7 @@ import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../../../../convex/_generated/api";
 import { Id } from "../../../../../convex/_generated/dataModel";
 import { createQris, isMayarLive, MAYAR_BASE } from "../../../../lib/mayar";
+import { rateLimit } from "@/lib/rateLimit";
 import { createLogger } from "@/lib/logger";
 
 const log = createLogger("api.payment.create-qris");
@@ -19,7 +20,27 @@ const convex = new ConvexHttpClient(CONVEX_URL);
 //
 // If MAYAR_API_KEY is unset, we return a dummy paymentId so the UI can
 // still render a fallback QR (qrcode.react). Useful for local dev.
+//
+// SECURITY: endpoint sengaja public (juri/visitor bisa coba donasi tanpa
+// login). Rate limit per-IP melindungi Mayar quota & Convex insert spam.
 export async function POST(request: NextRequest) {
+  // Rate limit per IP: 10 QRIS / jam. Cukup untuk user normal,
+  // memblokir bot/looper.
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
+  const rl = rateLimit({
+    bucket: "qris:ip",
+    key: ip,
+    limit: 10,
+    windowMs: 60 * 60 * 1000,
+  });
+  if (!rl.ok) {
+    log.warn("qris_rate_limited", { ip, retryAfterMs: rl.retryAfterMs });
+    return NextResponse.json(
+      { error: "Terlalu banyak permintaan QRIS. Coba lagi nanti." },
+      { status: 429, headers: { "Retry-After": String(Math.ceil(rl.retryAfterMs / 1000)) } }
+    );
+  }
+
   try {
     const body = (await request.json()) as {
       amount: number;

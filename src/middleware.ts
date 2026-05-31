@@ -82,11 +82,22 @@ export async function middleware(req: NextRequest) {
   const guard = ROUTE_GUARDS.find((g) => pathname === g.prefix || pathname.startsWith(g.prefix + "/"));
   if (!guard) return NextResponse.next();
 
-  const secret =
-    process.env.SESSION_SECRET ??
-    "dev-only-insecure-secret-please-set-SESSION_SECRET-in-prod";
+  const secret = process.env.SESSION_SECRET;
+  if (!secret || secret.length < 32) {
+    if (process.env.NODE_ENV === "production") {
+      // Fail-closed: tidak boleh fall back ke secret default di prod.
+      // sessionToken.ts juga throw di prod jika SECRET kosong.
+      const url = req.nextUrl.clone();
+      url.pathname = guard.loginPath;
+      url.searchParams.set("next", pathname);
+      return NextResponse.redirect(url);
+    }
+  }
+  const effectiveSecret = secret && secret.length >= 32
+    ? secret
+    : "dev-only-insecure-secret-please-set-SESSION_SECRET-in-prod";
   const token = req.cookies.get(SESSION_COOKIE)?.value;
-  const session = await verifyToken(token, secret);
+  const session = await verifyToken(token, effectiveSecret);
 
   if (!session) {
     const url = req.nextUrl.clone();

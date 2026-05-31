@@ -25,6 +25,33 @@ const nextConfig = {
       { protocol: "https", hostname: "res.cloudinary.com" },
     ],
   },
+  async headers() {
+    // Security headers — defense in depth.
+    // CSP sengaja tidak di-set strict di sini supaya tidak block live-edit
+    // dashboard yang inject lib eksternal (NVIDIA chat stream, Mayar JS).
+    // Untuk tahap pilot/produksi: tambahkan Content-Security-Policy yang
+    // diinventarisasi dari domain yang benar-benar dipakai.
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=63072000; includeSubDomains; preload",
+          },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          {
+            key: "Permissions-Policy",
+            value: "camera=(), microphone=(), geolocation=(self), payment=()",
+          },
+          { key: "X-DNS-Prefetch-Control", value: "on" },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;
+
