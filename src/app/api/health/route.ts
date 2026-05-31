@@ -1,14 +1,36 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import crypto from "crypto";
 import { rateLimitBackend, rateLimitAsync, rateLimitInitError } from "@/lib/rateLimit";
 
-// Debug endpoint untuk verify rate limit setup di production.
-// PUBLIC by design — no PII, no sensitive info.
-export async function GET() {
+// Health/debug endpoint — gate via ADMIN_API_TOKEN supaya internals
+// (Redis url prefix, token length, env flags) tidak public.
+//
+// Pakai:
+//   curl -H "x-admin-token: <ADMIN_API_TOKEN>" https://www.id-map.app/api/health
+//
+// Tanpa token: respon 200 dengan minimal info (uptime check saja).
+
+function timingSafeCompare(a: string, b: string): boolean {
+  const ab = Buffer.from(a);
+  const bb = Buffer.from(b);
+  if (ab.length !== bb.length) return false;
+  return crypto.timingSafeEqual(ab, bb);
+}
+
+export async function GET(request: NextRequest) {
+  const adminToken = process.env.ADMIN_API_TOKEN ?? "";
+  const provided = request.headers.get("x-admin-token") ?? "";
+  const isAdmin = adminToken.length >= 16 && timingSafeCompare(provided, adminToken);
+
+  if (!isAdmin) {
+    // Public minimal response — uptime check.
+    return NextResponse.json({ ok: true, service: "id-map" });
+  }
+
+  // Admin: return full diagnostic.
   const backend = rateLimitBackend();
   const initError = rateLimitInitError();
 
-  // Test live ke Redis dengan limit ketat 5/30sec — kalau Redis sungguh
-  // jalan, panggilan ke-6 dalam 30 detik harus return ok=false.
   let testResult = null;
   let redisError: string | null = null;
   try {
@@ -33,8 +55,11 @@ export async function GET() {
       hasUpstashToken: Boolean(process.env.UPSTASH_REDIS_REST_TOKEN),
       upstashUrlPrefix: process.env.UPSTASH_REDIS_REST_URL?.slice(0, 30),
       upstashTokenLen: process.env.UPSTASH_REDIS_REST_TOKEN?.length,
+      hasTurnstileSecret: Boolean(process.env.TURNSTILE_SECRET_KEY),
+      hasTurnstileSiteKey: Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY),
     },
   });
 }
+
 
 
