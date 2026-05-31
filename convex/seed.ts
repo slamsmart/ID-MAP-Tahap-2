@@ -1,5 +1,21 @@
 import { mutation } from "./_generated/server";
 import { v } from "convex/values";
+import bcrypt from "bcryptjs";
+
+// Hash plaintext password sekali, di-cache per-process. Cost 10 sama
+// dengan users.ts:hashPassword supaya seed account perilakunya identik
+// dengan user yang register normal. Idempoten: kalau dipanggil dua kali
+// tidak akan re-hash bcrypt yang sudah ter-hash.
+const BCRYPT_COST = 10;
+const _hashCache = new Map<string, string>();
+function hp(plain: string): string {
+  if (plain.startsWith("$2")) return plain;
+  const cached = _hashCache.get(plain);
+  if (cached) return cached;
+  const out = bcrypt.hashSync(plain, BCRYPT_COST);
+  _hashCache.set(plain, out);
+  return out;
+}
 
 export const seedAll = mutation({
   args: {},
@@ -14,7 +30,7 @@ export const seedAll = mutation({
     // ─── Seed Users ──────────────────────────────────────────────
     const adminId = await ctx.db.insert("users", {
       email: "admin@idmap.id",
-      password: "admin123",
+      password: hp("admin123"),
       name: "Admin ID-MAP",
       role: "admin",
       createdAt: Date.now(),
@@ -22,7 +38,7 @@ export const seedAll = mutation({
 
     const userId = await ctx.db.insert("users", {
       email: "user@idmap.id",
-      password: "user123",
+      password: hp("user123"),
       name: "Andi Pratama",
       role: "sahabat",
       kycStatus: "terverifikasi",
@@ -33,7 +49,7 @@ export const seedAll = mutation({
 
     const corpId = await ctx.db.insert("users", {
       email: "verifikator@idmap.id",
-      password: "verif123",
+      password: hp("verif123"),
       name: "Tim Verifikator Pesisir",
       role: "verifikator",
       kycStatus: "terverifikasi",
@@ -45,7 +61,7 @@ export const seedAll = mutation({
 
     const mitraId = await ctx.db.insert("users", {
       email: "mitra@idmap.id",
-      password: "mitra123",
+      password: hp("mitra123"),
       name: "Mitra Proyek Mangrove",
       role: "mitra",
       kycStatus: "terverifikasi",
@@ -58,7 +74,7 @@ export const seedAll = mutation({
     // Extra mitra with pending KYC for demo
     const mitraPendingId = await ctx.db.insert("users", {
       email: "baru@idmap.id",
-      password: "baru123",
+      password: hp("baru123"),
       name: "Ahmad Fauzi",
       role: "mitra",
       kycStatus: "menunggu",
@@ -71,7 +87,7 @@ export const seedAll = mutation({
     // Extra verifikator with rejected KYC for demo
     const corpRejectedId = await ctx.db.insert("users", {
       email: "verif2@idmap.id",
-      password: "verif456",
+      password: hp("verif456"),
       name: "Verifikator Lapangan",
       role: "verifikator",
       kycStatus: "ditolak",
@@ -428,11 +444,11 @@ export const resetAndSeed = mutation({
 
     // Re-use seedAll handler logic inline
     const adminId = await ctx.db.insert("users", {
-      email: "admin@idmap.id", password: "admin123",
+      email: "admin@idmap.id", password: hp("admin123"),
       name: "Admin ID-MAP", role: "admin", createdAt: Date.now(),
     });
     const userId = await ctx.db.insert("users", {
-      email: "user@idmap.id", password: "user123",
+      email: "user@idmap.id", password: hp("user123"),
       name: "Andi Pratama", role: "sahabat",
       kycStatus: "terverifikasi",
       organization: "Komunitas Peduli Mangrove",
@@ -440,27 +456,27 @@ export const resetAndSeed = mutation({
       createdAt: Date.now(),
     });
     const verifikatorId = await ctx.db.insert("users", {
-      email: "verifikator@idmap.id", password: "verif123",
+      email: "verifikator@idmap.id", password: hp("verif123"),
       name: "Tim Verifikator Pesisir", role: "verifikator",
       kycStatus: "terverifikasi", organization: "BPSPL Denpasar",
       phone: "031-5550001", address: "Jl. Ikan Dorang No. 1, Surabaya",
       createdAt: Date.now(),
     });
     const mitraId = await ctx.db.insert("users", {
-      email: "mitra@idmap.id", password: "mitra123",
+      email: "mitra@idmap.id", password: hp("mitra123"),
       name: "Mitra Proyek Mangrove", role: "mitra",
       kycStatus: "terverifikasi", organization: "Yayasan Mangrove Nusantara",
       phone: "0812-3456-7890", address: "Jl. Pantai Indah No. 5, Banyuwangi",
       createdAt: Date.now(),
     });
     const mitraPendingId = await ctx.db.insert("users", {
-      email: "baru@idmap.id", password: "baru123",
+      email: "baru@idmap.id", password: hp("baru123"),
       name: "Ahmad Fauzi", role: "mitra", kycStatus: "menunggu",
       organization: "Kelompok Tani Pesisir", phone: "0813-9876-5432",
       address: "Jl. Nelayan No. 12, Demak", createdAt: Date.now(),
     });
     const mitraRejectedId = await ctx.db.insert("users", {
-      email: "ditolak@idmap.id", password: "ditolak123",
+      email: "ditolak@idmap.id", password: hp("ditolak123"),
       name: "Verifikator Lapangan", role: "verifikator",
       kycStatus: "ditolak", organization: "Dinas Kelautan Jatim",
       phone: "031-5550099", address: "Jl. Ahmad Yani No. 88, Surabaya",
