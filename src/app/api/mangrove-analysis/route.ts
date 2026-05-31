@@ -7,6 +7,10 @@ import {
   PROGRAM_RESTORASI,
   ANCAMAN_MANGROVE,
 } from "@/lib/mangroveNasionalData";
+import { rateLimit } from "@/lib/rateLimit";
+import { createLogger } from "@/lib/logger";
+
+const log = createLogger("api.mangrove-analysis");
 
 /** Context ringkas (~40% lebih sedikit token dari buildMangroveContext() */
 function buildShortContext(): string {
@@ -69,6 +73,18 @@ const OPENROUTER_MODELS = [
 ];
 
 export async function POST(request: NextRequest) {
+  // Rate limit per-IP — endpoint ini lebih mahal (analisis panjang),
+  // jadi lebih ketat: 10/menit. Mencegah bot drain kuota OpenRouter.
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
+  const rl = rateLimit({ bucket: "mangrove-analysis:ip", key: ip, limit: 10, windowMs: 60_000 });
+  if (!rl.ok) {
+    log.warn("analysis_rate_limited", { ip, retryAfterMs: rl.retryAfterMs });
+    return NextResponse.json(
+      { error: "Terlalu banyak permintaan. Coba lagi sebentar." },
+      { status: 429, headers: { "Retry-After": String(Math.ceil(rl.retryAfterMs / 1000)) } }
+    );
+  }
+
   try {
     const body = await request.json();
     const { fokus = "umum", role = "admin" } = body as {

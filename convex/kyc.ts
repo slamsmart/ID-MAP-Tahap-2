@@ -2,6 +2,7 @@ import { query, mutation } from "./_generated/server";
 import { internal } from "./_generated/api";
 import { v } from "convex/values";
 import { ConvexError } from "convex/values";
+import { requireRole, requireOwnerOrAdmin } from "./authz";
 
 // ─── Shared Validator ──────────────────────────────────────────────
 
@@ -187,6 +188,7 @@ export const getStats = query({
 /** Submit a new KYC document */
 export const submitDocument = mutation({
   args: {
+    actorId: v.id("users"),
     userId: v.id("users"),
     type: v.union(
       v.literal("KTP"),
@@ -201,7 +203,8 @@ export const submitDocument = mutation({
   },
   returns: v.id("kycDocuments"),
   handler: async (ctx, args) => {
-    // Verify user exists — semua role diizinkan (sahabat, mitra, verifikator, dll)
+    await requireOwnerOrAdmin(ctx, args.actorId, args.userId);
+
     const user = await ctx.db.get(args.userId);
     if (!user) {
       throw new ConvexError({ code: "NOT_FOUND", message: "User tidak ditemukan" });
@@ -216,7 +219,6 @@ export const submitDocument = mutation({
       submittedAt: Date.now(),
     });
 
-    // Update user kycStatus to "menunggu"
     if (user.kycStatus !== "menunggu" && user.kycStatus !== "terverifikasi") {
       await ctx.runMutation(internal.users.updateKycStatus, {
         userId: args.userId,
@@ -228,36 +230,36 @@ export const submitDocument = mutation({
   },
 });
 
-/** Admin reviews (approve/reject) a KYC document */
+/** Verifikator/admin reviews (approve/reject) a KYC document */
 export const reviewDocument = mutation({
   args: {
+    actorId: v.id("users"),
     documentId: v.id("kycDocuments"),
     status: v.union(v.literal("Disetujui"), v.literal("Ditolak")),
     reviewNote: v.optional(v.string()),
-    reviewedBy: v.id("users"),
   },
   returns: v.null(),
   handler: async (ctx, args) => {
+    // `reviewedBy` di-set dari actor server-side, BUKAN dari client.
+    await requireRole(ctx, args.actorId, ["verifikator", "admin"]);
+
     const doc = await ctx.db.get(args.documentId);
     if (!doc) {
       throw new ConvexError({ code: "NOT_FOUND", message: "Dokumen tidak ditemukan" });
     }
 
-    // Update document status
     await ctx.db.patch(args.documentId, {
       status: args.status,
       reviewNote: args.reviewNote,
-      reviewedBy: args.reviewedBy,
+      reviewedBy: args.actorId,
       reviewedAt: Date.now(),
     });
 
-    // Recalculate user KYC status
     const allDocs = await ctx.db
       .query("kycDocuments")
       .withIndex("by_user", (q) => q.eq("userId", doc.userId))
       .collect();
 
-    // Apply the current review to the in-memory list
     const updatedDocs = allDocs.map((d) =>
       d._id === args.documentId ? { ...d, status: args.status } : d
     );
@@ -266,7 +268,6 @@ export const reviewDocument = mutation({
     const pending = updatedDocs.filter((d) => d.status === "Menunggu").length;
     const rejected = updatedDocs.filter((d) => d.status === "Ditolak").length;
 
-    // sahabat cukup 1 dokumen; mitra/lainnya min 2
     const owner = await ctx.db.get(doc.userId);
     const minApproved = owner?.role === "sahabat" ? 1 : 2;
 
@@ -290,15 +291,20 @@ export const reviewDocument = mutation({
   },
 });
 
-/** Delete a KYC document (by user, only if still pending) */
+/** Delete a KYC document (owner or admin only, only if still pending) */
 export const deleteDocument = mutation({
-  args: { documentId: v.id("kycDocuments") },
+  args: {
+    actorId: v.id("users"),
+    documentId: v.id("kycDocuments"),
+  },
   returns: v.null(),
   handler: async (ctx, args) => {
     const doc = await ctx.db.get(args.documentId);
     if (!doc) {
       throw new ConvexError({ code: "NOT_FOUND", message: "Dokumen tidak ditemukan" });
     }
+    await requireOwnerOrAdmin(ctx, args.actorId, doc.userId);
+
     if (doc.status !== "Menunggu") {
       throw new ConvexError({
         code: "ALREADY_REVIEWED",

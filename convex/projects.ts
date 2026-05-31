@@ -1,6 +1,7 @@
-import { query, mutation } from "./_generated/server";
+import { query, mutation, internalMutation } from "./_generated/server";
 import { v } from "convex/values";
 import { ConvexError } from "convex/values";
+import { requireRole } from "./authz";
 
 const projectValidator = v.object({
   _id: v.id("projects"),
@@ -97,6 +98,7 @@ export const getStats = query({
 
 export const create = mutation({
   args: {
+    actorId: v.id("users"),
     title: v.string(),
     location: v.string(),
     province: v.string(),
@@ -110,8 +112,11 @@ export const create = mutation({
   },
   returns: v.id("projects"),
   handler: async (ctx, args) => {
+    // Hanya mitra/facilitator/admin yang boleh create project.
+    await requireRole(ctx, args.actorId, ["mitra", "mitra_facilitator", "admin"]);
+    const { actorId: _a, ...rest } = args;
     return await ctx.db.insert("projects", {
-      ...args,
+      ...rest,
       status: "Draft",
       progress: 0,
       srnStatus: "Belum",
@@ -123,6 +128,7 @@ export const create = mutation({
 
 export const update = mutation({
   args: {
+    actorId: v.id("users"),
     projectId: v.id("projects"),
     title: v.optional(v.string()),
     location: v.optional(v.string()),
@@ -146,7 +152,31 @@ export const update = mutation({
   },
   returns: v.null(),
   handler: async (ctx, args) => {
-    const { projectId, ...updates } = args;
+    const project = await ctx.db.get(args.projectId);
+    if (!project) {
+      throw new ConvexError({ code: "NOT_FOUND", message: "Proyek tidak ditemukan" });
+    }
+    const actor = await ctx.db.get(args.actorId);
+    if (!actor) {
+      throw new ConvexError({ code: "UNAUTHORIZED", message: "Sesi tidak valid." });
+    }
+    // Mitra hanya boleh edit proyeknya sendiri. Verifikator/admin boleh
+    // semua. Status "Terverifikasi" hanya boleh di-set oleh verifikator/admin.
+    const isPrivileged = actor.role === "verifikator" || actor.role === "admin";
+    const isOwnerMitra =
+      (actor.role === "mitra" || actor.role === "mitra_facilitator") &&
+      project.mitraId === args.actorId;
+    if (!isPrivileged && !isOwnerMitra) {
+      throw new ConvexError({ code: "FORBIDDEN", message: "Tidak berhak ubah proyek ini." });
+    }
+    if (args.status === "Terverifikasi" && !isPrivileged) {
+      throw new ConvexError({
+        code: "FORBIDDEN",
+        message: "Status Terverifikasi hanya boleh di-set verifikator/admin.",
+      });
+    }
+
+    const { actorId: _a, projectId, ...updates } = args;
     const cleanUpdates = Object.fromEntries(
       Object.entries(updates).filter(([, val]) => val !== undefined)
     );
@@ -157,7 +187,9 @@ export const update = mutation({
   },
 });
 
-export const incrementFunding = mutation({
+// Internal-only — dipanggil dari contributions.confirmPayment* setelah
+// webhook Mayar verify signature. JANGAN expose sebagai public mutation.
+export const incrementFundingInternal = internalMutation({
   args: {
     projectId: v.id("projects"),
     amount: v.number(),
@@ -166,10 +198,7 @@ export const incrementFunding = mutation({
   handler: async (ctx, args) => {
     const project = await ctx.db.get(args.projectId);
     if (!project) {
-      throw new ConvexError({
-        code: "NOT_FOUND",
-        message: "Proyek tidak ditemukan",
-      });
+      throw new ConvexError({ code: "NOT_FOUND", message: "Proyek tidak ditemukan" });
     }
     const next = (project.fundingRaised ?? 0) + args.amount;
     await ctx.db.patch(args.projectId, { fundingRaised: next });
@@ -178,15 +207,16 @@ export const incrementFunding = mutation({
 });
 
 export const remove = mutation({
-  args: { projectId: v.id("projects") },
+  args: {
+    actorId: v.id("users"),
+    projectId: v.id("projects"),
+  },
   returns: v.null(),
   handler: async (ctx, args) => {
+    await requireRole(ctx, args.actorId, ["admin"]);
     const project = await ctx.db.get(args.projectId);
     if (!project) {
-      throw new ConvexError({
-        code: "NOT_FOUND",
-        message: "Proyek tidak ditemukan",
-      });
+      throw new ConvexError({ code: "NOT_FOUND", message: "Proyek tidak ditemukan" });
     }
     await ctx.db.delete(args.projectId);
     return null;

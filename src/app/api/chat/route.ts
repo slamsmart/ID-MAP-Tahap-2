@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
+import { rateLimit } from "@/lib/rateLimit";
+import { createLogger } from "@/lib/logger";
 
+const log = createLogger("api.chat");
 const NVIDIA_API_URL = "https://integrate.api.nvidia.com/v1/chat/completions";
 // Fallback chain — diurutkan berdasarkan kecepatan TTFT
 const NVIDIA_MODELS = [
@@ -44,6 +47,18 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "NVIDIA API key tidak dikonfigurasi" }, { status: 500 });
   }
 
+  // Rate limit per-IP — 20 chat/menit. Mencegah bot abuse + habisin
+  // kuota NVIDIA. User normal jarang chat lebih dari sekali per detik.
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
+  const rl = rateLimit({ bucket: "chat:ip", key: ip, limit: 20, windowMs: 60_000 });
+  if (!rl.ok) {
+    log.warn("chat_rate_limited", { ip, retryAfterMs: rl.retryAfterMs });
+    return NextResponse.json(
+      { error: "Terlalu banyak permintaan. Coba lagi sebentar." },
+      { status: 429, headers: { "Retry-After": String(Math.ceil(rl.retryAfterMs / 1000)) } }
+    );
+  }
+
   let body: { messages?: { role: string; content: string }[] };
   try {
     body = await req.json();
@@ -51,7 +66,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Request tidak valid" }, { status: 400 });
   }
 
-  const userMessages = (body.messages ?? []).slice(-6); // max 6 pesan terakhir
+  // Buang system messages yang dikirim user — hanya server yang boleh
+  // set system prompt. Ini mitigasi prompt injection ringan; user masih
+  // bisa coba inject via content message biasa, tapi system prompt tidak
+  // bisa di-override.
+  const userMessages = (body.messages ?? [])
+    .filter((m) => m.role === "user" || m.role === "assistant")
+    .slice(-6);
 
   // Coba model satu per satu — berhenti saat berhasil
   let nvidiaRes: Response | null = null;

@@ -82,6 +82,7 @@ export default function MitraProyekPage() {
     setSaving(true);
     try {
       await updateProject({
+        actorId: mitraId!,
         projectId: editingProject._id,
         image: newThumbnail,
       });

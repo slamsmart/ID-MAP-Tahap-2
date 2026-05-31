@@ -3,6 +3,7 @@
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
+import { getSession } from "@/lib/auth";
 import {
   CheckCircle,
   Clock,
@@ -28,17 +29,6 @@ export default function VerifikasiPage() {
   const [reviewNote, setReviewNote] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Get admin ID from session
-  const getAdminId = (): Id<"users"> | null => {
-    if (typeof window === "undefined") return null;
-    try {
-      const session = JSON.parse(localStorage.getItem("idmap_session") ?? "{}");
-      return session.userId ?? null;
-    } catch {
-      return null;
-    }
-  };
-
   const isLoading = kycStats === undefined || allDocs === undefined;
 
   const filteredDocs = (allDocs ?? []).filter(
@@ -49,8 +39,8 @@ export default function VerifikasiPage() {
     docId: Id<"kycDocuments">,
     status: "Disetujui" | "Ditolak"
   ) => {
-    const adminId = getAdminId();
-    if (!adminId) {
+    const session = getSession();
+    if (!session?._id) {
       alert("Sesi admin tidak ditemukan. Silakan login ulang.");
       return;
     }
@@ -58,10 +48,10 @@ export default function VerifikasiPage() {
     setIsSubmitting(true);
     try {
       await reviewDocument({
+        actorId: session._id as Id<"users">,
         documentId: docId,
         status,
         reviewNote: reviewNote || undefined,
-        reviewedBy: adminId,
       });
       setSelectedDoc(null);
       setReviewNote("");

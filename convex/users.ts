@@ -2,6 +2,7 @@ import { query, mutation, internalMutation } from "./_generated/server";
 import { v } from "convex/values";
 import { ConvexError } from "convex/values";
 import bcrypt from "bcryptjs";
+import { requireAdmin, requireOwnerOrAdmin } from "./authz";
 
 // Password hashing — Convex V8 isolate jalankan bcryptjs (pure JS).
 // Cost factor 10 = ~10ms hash di server, balance keamanan vs latency.
@@ -34,12 +35,14 @@ const roleValidator = v.union(
   v.literal("corporate")
 );
 
-const userValidator = v.object({
+// Public-safe user shape — JANGAN ekspor field `password` ke client.
+// Validator ini dipakai untuk SEMUA query/mutation public yang return
+// user. Strip terjadi di handler via `toPublicUser()`.
+const publicUserValidator = v.object({
   _id: v.id("users"),
   _creationTime: v.number(),
   email: v.string(),
   name: v.string(),
-  password: v.string(),
   role: roleValidator,
   kycStatus: v.optional(
     v.union(
@@ -55,43 +58,67 @@ const userValidator = v.object({
   createdAt: v.number(),
 });
 
+type RawUser = {
+  _id: any;
+  _creationTime: number;
+  email: string;
+  name: string;
+  password: string;
+  role: any;
+  kycStatus?: any;
+  phone?: string;
+  organization?: string;
+  address?: string;
+  createdAt: number;
+};
+
+function toPublicUser(u: RawUser) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { password, ...rest } = u;
+  return rest;
+}
+
 // ─── Queries ───────────────────────────────────────────────────────
 
 export const list = query({
   args: {},
-  returns: v.array(userValidator),
+  returns: v.array(publicUserValidator),
   handler: async (ctx) => {
-    return await ctx.db.query("users").collect();
+    const rows = await ctx.db.query("users").collect();
+    return rows.map(toPublicUser);
   },
 });
 
 export const get = query({
   args: { userId: v.id("users") },
-  returns: v.union(userValidator, v.null()),
+  returns: v.union(publicUserValidator, v.null()),
   handler: async (ctx, args) => {
-    return await ctx.db.get(args.userId);
+    const u = await ctx.db.get(args.userId);
+    return u ? toPublicUser(u) : null;
   },
 });
 
 export const getByEmail = query({
   args: { email: v.string() },
-  returns: v.union(userValidator, v.null()),
+  returns: v.union(publicUserValidator, v.null()),
   handler: async (ctx, args) => {
-    return await ctx.db
+    const u = await ctx.db
       .query("users")
       .withIndex("by_email", (q) => q.eq("email", args.email))
       .first();
+    return u ? toPublicUser(u) : null;
   },
 });
 
 export const listByRole = query({
   args: { role: roleValidator },
-  returns: v.array(userValidator),
+  returns: v.array(publicUserValidator),
   handler: async (ctx, args) => {
-    return await ctx.db
+    const rows = await ctx.db
       .query("users")
       .withIndex("by_role", (q) => q.eq("role", args.role))
       .collect();
+    return rows.map(toPublicUser);
   },
 });
 
@@ -169,7 +196,7 @@ export const login = mutation({
     email: v.string(),
     password: v.string(),
   },
-  returns: v.union(userValidator, v.null()),
+  returns: v.union(publicUserValidator, v.null()),
   handler: async (ctx, args) => {
     const email = args.email.trim().toLowerCase();
     const user = await ctx.db
@@ -188,15 +215,16 @@ export const login = mutation({
     if (!isHashed(user.password)) {
       const newHash = hashPassword(args.password);
       await ctx.db.patch(user._id, { password: newHash });
-      return { ...user, password: newHash };
+      return toPublicUser({ ...user, password: newHash });
     }
 
-    return user;
+    return toPublicUser(user);
   },
 });
 
 export const update = mutation({
   args: {
+    actorId: v.id("users"),
     userId: v.id("users"),
     name: v.optional(v.string()),
     email: v.optional(v.string()),
@@ -206,7 +234,10 @@ export const update = mutation({
   },
   returns: v.null(),
   handler: async (ctx, args) => {
-    const { userId, ...updates } = args;
+    // Hanya pemilik atau admin yang boleh update profile.
+    await requireOwnerOrAdmin(ctx, args.actorId, args.userId);
+
+    const { actorId: _a, userId, ...updates } = args;
     const cleanUpdates = Object.fromEntries(
       Object.entries(updates).filter(([, val]) => val !== undefined)
     );
@@ -236,9 +267,13 @@ export const updateKycStatus = internalMutation({
 });
 
 export const remove = mutation({
-  args: { userId: v.id("users") },
+  args: {
+    actorId: v.id("users"),
+    userId: v.id("users"),
+  },
   returns: v.null(),
   handler: async (ctx, args) => {
+    await requireAdmin(ctx, args.actorId);
     await ctx.db.delete(args.userId);
     return null;
   },

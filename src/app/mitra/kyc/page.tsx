@@ -82,6 +82,7 @@ export default function MitraKYCPage() {
     setIsSubmitting(true);
     try {
       await submitDocument({
+        actorId: userId,
         userId,
         type: selectedType,
         documentName: documentName.trim(),
@@ -100,8 +101,9 @@ export default function MitraKYCPage() {
 
   const handleDelete = async (docId: Id<"kycDocuments">) => {
     if (!confirm("Yakin ingin menghapus dokumen ini?")) return;
+    if (!userId) return;
     try {
-      await deleteDocument({ documentId: docId });
+      await deleteDocument({ actorId: userId, documentId: docId });
     } catch (err) {
       console.error("Delete error:", err);
       alert("Gagal menghapus dokumen.");

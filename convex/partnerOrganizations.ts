@@ -1,5 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { requireAdmin } from "./authz";
 
 const orgValidator = v.object({
   _id: v.id("partnerOrganizations"),
@@ -55,6 +56,7 @@ export const get = query({
 
 export const create = mutation({
   args: {
+    actorId: v.id("users"),
     name: v.string(),
     legalName: v.string(),
     type: v.union(
@@ -71,8 +73,10 @@ export const create = mutation({
   },
   returns: v.id("partnerOrganizations"),
   handler: async (ctx, args) => {
+    await requireAdmin(ctx, args.actorId);
+    const { actorId: _a, ...rest } = args;
     return await ctx.db.insert("partnerOrganizations", {
-      ...args,
+      ...rest,
       status: "aktif",
       whitelistedAt: Date.now(),
       updatedAt: Date.now(),
@@ -82,6 +86,7 @@ export const create = mutation({
 
 export const updateStatus = mutation({
   args: {
+    actorId: v.id("users"),
     orgId: v.id("partnerOrganizations"),
     status: v.union(
       v.literal("aktif"),
@@ -91,6 +96,7 @@ export const updateStatus = mutation({
   },
   returns: v.null(),
   handler: async (ctx, args) => {
+    await requireAdmin(ctx, args.actorId);
     await ctx.db.patch(args.orgId, {
       status: args.status,
       updatedAt: Date.now(),

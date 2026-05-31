@@ -17,18 +17,30 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Email diperlukan." }, { status: 400 });
     }
 
-    const rl = rateLimit({
-      bucket: "otp",
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
+
+    // Dual rate limit: email-bound (5/jam) + IP-bound (15/jam) untuk
+    // mencegah penyerang putar email berbeda dari satu IP/botnet kecil
+    // → habiskan kuota Gmail/Resend.
+    const emailRl = rateLimit({
+      bucket: "otp:email",
       key: email.toLowerCase(),
       limit: 5,
       windowMs: 60 * 60 * 1000,
     });
-    if (!rl.ok) {
-      const minutes = Math.ceil(rl.retryAfterMs / 60_000);
-      log.warn("otp_rate_limited", { email, retryAfterMs: rl.retryAfterMs });
+    const ipRl = rateLimit({
+      bucket: "otp:ip",
+      key: ip,
+      limit: 15,
+      windowMs: 60 * 60 * 1000,
+    });
+    if (!emailRl.ok || !ipRl.ok) {
+      const retryAfterMs = Math.max(emailRl.retryAfterMs, ipRl.retryAfterMs);
+      const minutes = Math.ceil(retryAfterMs / 60_000);
+      log.warn("otp_rate_limited", { email, ip, retryAfterMs });
       return NextResponse.json(
         { error: `Terlalu banyak permintaan OTP. Coba lagi dalam ${minutes} menit.` },
-        { status: 429, headers: { "Retry-After": String(Math.ceil(rl.retryAfterMs / 1000)) } }
+        { status: 429, headers: { "Retry-After": String(Math.ceil(retryAfterMs / 1000)) } }
       );
     }
 

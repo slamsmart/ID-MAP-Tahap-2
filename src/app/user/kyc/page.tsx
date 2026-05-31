@@ -80,7 +80,7 @@ export default function LengkapiKycPage() {
     if (!userId || !docName.trim()) return;
     setIsSubmitting(true);
     try {
-      await submitDocument({ userId, type: "KTP", documentName: docName.trim() });
+      await submitDocument({ actorId: userId, userId, type: "KTP", documentName: docName.trim() });
       setDocName("");
       setShowKtpForm(false);
       setSuccessMsg("KTP berhasil dikirim! Admin akan mereview dalam 1–2 hari kerja.");
@@ -95,8 +95,9 @@ export default function LengkapiKycPage() {
 
   const handleDelete = async (docId: Id<"kycDocuments">) => {
     if (!confirm("Hapus dokumen ini?")) return;
+    if (!userId) return;
     try {
-      await deleteDocument({ documentId: docId });
+      await deleteDocument({ actorId: userId, documentId: docId });
     } catch {
       alert("Gagal menghapus dokumen.");
     }

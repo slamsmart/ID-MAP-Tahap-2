@@ -130,10 +130,11 @@ export default function VerifikatorProyekAuditPage() {
   };
 
   const handleSave = async () => {
-    if (!editing || !isVerifikator || !confirmed) return;
+    if (!editing || !isVerifikator || !confirmed || !session?._id) return;
     setSaving(true);
     try {
       await updateProject({
+        actorId: session._id as Id<"users">,
         projectId: editing._id,
         title: form.title,
         location: form.location,
