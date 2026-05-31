@@ -11,7 +11,7 @@ import { createLogger } from "@/lib/logger";
 
 const log = createLogger("api.auth.login");
 const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
-
+export const dynamic = 'force-dynamic';
 export async function POST(req: NextRequest) {
   const startedAt = Date.now();
   try {
