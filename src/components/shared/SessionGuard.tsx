@@ -6,8 +6,8 @@ import { getSession, refreshSession } from "@/lib/auth";
 
 function loginPathFor(allowedRoles?: string[]): string {
   if (!allowedRoles || allowedRoles.length === 0) return "/masuk";
-  if (allowedRoles.length === 1 && allowedRoles[0] === "admin") return "/masuk-admin";
-  if (allowedRoles.includes("verifikator")) return "/masuk-verifikator";
+  if (allowedRoles.length === 1 && allowedRoles[0] === "admin") return "/masuk/admin";
+  if (allowedRoles.includes("verifikator")) return "/masuk/verifikator";
   return "/masuk";
 }
 

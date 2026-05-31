@@ -13,8 +13,8 @@ const SESSION_COOKIE = "idmap_sess";
 // /admin & /verifikator pakai portal login terpisah supaya entry-pointnya
 // tidak terekspos di halaman /masuk publik.
 const ROUTE_GUARDS: Array<{ prefix: string; roles: string[]; loginPath: string }> = [
-  { prefix: "/admin", roles: ["admin"], loginPath: "/masuk-admin" },
-  { prefix: "/verifikator", roles: ["verifikator", "admin"], loginPath: "/masuk-verifikator" },
+  { prefix: "/admin", roles: ["admin"], loginPath: "/masuk/admin" },
+  { prefix: "/verifikator", roles: ["verifikator", "admin"], loginPath: "/masuk/verifikator" },
   { prefix: "/mitra", roles: ["mitra", "mitra_facilitator", "admin"], loginPath: "/masuk" },
   { prefix: "/corporate", roles: ["corporate", "admin"], loginPath: "/masuk" },
   { prefix: "/user", roles: ["sahabat", "admin"], loginPath: "/masuk" },
