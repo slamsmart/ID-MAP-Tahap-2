@@ -9,6 +9,7 @@ import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getAuthBgImage } from "@/lib/heroImageStore";
+import Turnstile from "@/components/shared/Turnstile";
 
 const roles = ["sahabat", "mitra"] as const;
 type Role = (typeof roles)[number];
@@ -40,6 +41,8 @@ function RegisterForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const turnstileEnabled = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY);
   const DEFAULT_BG = "/images/hero-mangrove.webp";
   const [bgImage, setBgImage] = useState(DEFAULT_BG);
 
@@ -124,6 +127,7 @@ function RegisterForm() {
           role,
           ...(phone ? { phone } : {}),
           ...(address ? { address } : {}),
+          ...(turnstileToken ? { turnstileToken } : {}),
         }),
       });
       if (!r.ok) {
@@ -493,9 +497,15 @@ function RegisterForm() {
               </label>
             </div>
 
+            {turnstileEnabled && (
+              <div className="flex justify-center">
+                <Turnstile onVerify={setTurnstileToken} />
+              </div>
+            )}
+
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || (turnstileEnabled && !turnstileToken)}
               className="block w-full py-2.5 bg-emerald-900 text-white font-display font-semibold rounded-lg hover:bg-emerald-800 transition-colors text-sm text-center disabled:opacity-70"
             >
               {isLoading ? t("Mendaftar...", "Registering...") : t("Daftar", "Register")}

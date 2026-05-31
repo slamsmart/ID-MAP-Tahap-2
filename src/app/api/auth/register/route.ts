@@ -7,6 +7,7 @@ import {
   createSessionToken,
 } from "@/lib/sessionToken";
 import { rateLimit } from "@/lib/rateLimit";
+import { verifyTurnstile, isTurnstileEnabled } from "@/lib/turnstile";
 import { createLogger } from "@/lib/logger";
 
 const log = createLogger("api.auth.register");
@@ -50,12 +51,26 @@ export async function POST(req: NextRequest) {
     const password = typeof body.password === "string" ? body.password : "";
     const name = typeof body.name === "string" ? body.name.trim() : "";
     const role = typeof body.role === "string" ? body.role : "";
+    const turnstileToken = typeof body.turnstileToken === "string" ? body.turnstileToken : "";
 
     if (!email || !password || !name || !ALLOWED_ROLES.has(role)) {
       return NextResponse.json({ error: "Field tidak lengkap." }, { status: 400 });
     }
     if (password.length < 6) {
       return NextResponse.json({ error: "Password minimal 6 karakter." }, { status: 400 });
+    }
+
+    // Turnstile CAPTCHA — auto-skip di dev (TURNSTILE_SECRET_KEY belum
+    // di-set). Block di prod kalau token salah/expired/spoofed.
+    if (isTurnstileEnabled()) {
+      const verdict = await verifyTurnstile(turnstileToken, ip);
+      if (!verdict.ok) {
+        log.warn("register_captcha_failed", { ip, reason: verdict.reason });
+        return NextResponse.json(
+          { error: "Verifikasi CAPTCHA gagal. Coba lagi." },
+          { status: 400 }
+        );
+      }
     }
 
     // Rate limit per email — proteksi terhadap loop dengan 1 IP berputar
