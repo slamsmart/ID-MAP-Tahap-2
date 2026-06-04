@@ -1,6 +1,6 @@
-"use client";
+﻿"use client";
 
-import { Suspense, useState, useEffect } from "react";
+import { Suspense, useState, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
@@ -14,7 +14,7 @@ import Turnstile from "@/components/shared/Turnstile";
 const roles = ["sahabat", "mitra"] as const;
 type Role = (typeof roles)[number];
 
-// ─── Inner form — uses useSearchParams, must be inside <Suspense> ────────────
+// â”€â”€â”€ Inner form â€” uses useSearchParams, must be inside <Suspense> â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function RegisterForm() {
   const router = useRouter();
   const { t } = useLanguage();
@@ -38,6 +38,8 @@ function RegisterForm() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
+  const [partnerType, setPartnerType] = useState("");
+  const [projectLocation, setProjectLocation] = useState("");
   const [password, setPassword] = useState("");
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [error, setError] = useState("");
@@ -46,6 +48,28 @@ function RegisterForm() {
   const turnstileEnabled = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY);
   const DEFAULT_BG = "/images/hero-mangrove.webp";
   const [bgImage, setBgImage] = useState(DEFAULT_BG);
+  const resendTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const clearResendTimer = () => {
+    if (resendTimerRef.current) {
+      clearInterval(resendTimerRef.current);
+      resendTimerRef.current = null;
+    }
+  };
+
+  const startResendCooldown = () => {
+    clearResendTimer();
+    setResendCooldown(60);
+    resendTimerRef.current = setInterval(() => {
+      setResendCooldown((prev) => {
+        if (prev <= 1) {
+          clearResendTimer();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
 
   useEffect(() => {
     getAuthBgImage()
@@ -53,12 +77,18 @@ function RegisterForm() {
       .catch(() => {}); // fallback ke default sudah di-set di useState
   }, []);
 
+  useEffect(() => {
+    setRole(getInitialRole());
+  }, [searchParams]);
+
+  useEffect(() => clearResendTimer, []);
+
   const roleLabels: Record<Role, string> = {
     sahabat: t("Sahabat", "Sahabat"),
     mitra: t("Mitra", "Partner"),
   };
 
-  // Step 1: validasi form → kirim OTP ke email
+  // Step 1: validasi form â†’ kirim OTP ke email
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -69,6 +99,10 @@ function RegisterForm() {
     }
     if (role === "sahabat" && (!phone || !address)) {
       setError(t("No HP dan alamat KTP wajib diisi untuk Sahabat Mangrove.", "Phone and KTP address are required for Sahabat Mangrove."));
+      return;
+    }
+    if (role === "mitra" && (!partnerType || !projectLocation.trim())) {
+      setError(t("Jenis mitra dan lokasi proyek wajib diisi untuk Mitra.", "Partner type and project location are required for partners."));
       return;
     }
     if (password.length < 6) {
@@ -96,14 +130,7 @@ function RegisterForm() {
       }
       setStep("otp");
       setOtpValue("");
-      // Mulai cooldown 60 detik untuk tombol kirim ulang
-      setResendCooldown(60);
-      const timer = setInterval(() => {
-        setResendCooldown((prev) => {
-          if (prev <= 1) { clearInterval(timer); return 0; }
-          return prev - 1;
-        });
-      }, 1000);
+      startResendCooldown();
     } catch {
       setError(t("Koneksi gagal. Pastikan internet Anda aktif.", "Connection failed."));
     } finally {
@@ -111,7 +138,7 @@ function RegisterForm() {
     }
   };
 
-  // Step 2: verifikasi OTP → buat akun → redirect
+  // Step 2: verifikasi OTP â†’ buat akun â†’ redirect
   const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -135,6 +162,11 @@ function RegisterForm() {
           role,
           ...(phone ? { phone } : {}),
           ...(address ? { address } : {}),
+          ...(role === "mitra" ? {
+            organization: name,
+            partnerType,
+            projectLocation: projectLocation.trim(),
+          } : {}),
           ...(turnstileToken ? { turnstileToken } : {}),
         }),
       });
@@ -191,13 +223,7 @@ function RegisterForm() {
         return;
       }
       setOtpValue("");
-      setResendCooldown(60);
-      const timer = setInterval(() => {
-        setResendCooldown((prev) => {
-          if (prev <= 1) { clearInterval(timer); return 0; }
-          return prev - 1;
-        });
-      }, 1000);
+      startResendCooldown();
     } catch {
       setError(t("Koneksi gagal.", "Connection failed."));
     } finally {
@@ -227,7 +253,7 @@ function RegisterForm() {
 
         <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/50 p-6 sm:p-8">
 
-          {/* ── Stepper 2-step (Form → OTP) ── */}
+          {/* â”€â”€ Stepper 2-step (Form â†’ OTP) â”€â”€ */}
           <div className="flex items-center justify-center gap-2 mb-6">
             <div className="flex items-center gap-2">
               <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
@@ -256,12 +282,12 @@ function RegisterForm() {
             </div>
           </div>
 
-          {/* ── Step OTP ── */}
+          {/* â”€â”€ Step OTP â”€â”€ */}
           {step === "otp" && (
             <div>
               <div className="text-center mb-6">
                 <div className="w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <span className="text-2xl">📧</span>
+                  <span className="text-2xl">ðŸ“§</span>
                 </div>
                 <h2 className="font-bold text-gray-900 text-lg">{t("Cek Email Anda", "Check Your Email")}</h2>
                 <p className="text-sm text-gray-500 mt-1">
@@ -271,7 +297,7 @@ function RegisterForm() {
               </div>
 
               <div className="bg-amber-50 border border-amber-100 text-amber-800 text-xs px-3 py-2.5 rounded-lg mb-4 flex items-start gap-2">
-                <span aria-hidden>📬</span>
+                <span aria-hidden>ðŸ“¬</span>
                 <span>
                   {t(
                     "Email tidak masuk? Mohon cek folder Spam / Promosi pada Gmail Anda.",
@@ -282,7 +308,7 @@ function RegisterForm() {
 
               {error && (
                 <div role="alert" className="bg-red-50 text-red-600 text-sm px-4 py-2.5 rounded-lg mb-4 flex items-center gap-2">
-                  <span>⚠</span><span>{error}</span>
+                  <span>âš </span><span>{error}</span>
                 </div>
               )}
 
@@ -328,13 +354,13 @@ function RegisterForm() {
                   onClick={() => { setStep("form"); setError(""); setOtpValue(""); }}
                   className="block w-full text-sm text-gray-500 hover:text-gray-700 text-center"
                 >
-                  ← {t("Ganti email", "Change email")}
+                  â† {t("Ganti email", "Change email")}
                 </button>
               </form>
             </div>
           )}
 
-          {/* ── Step Form ── */}
+          {/* â”€â”€ Step Form â”€â”€ */}
           {step === "form" && <>
           {/* Role tabs */}
           <div className="flex rounded-lg bg-gray-100 p-1 mb-6">
@@ -356,7 +382,7 @@ function RegisterForm() {
 
           {error && (
             <div id="register-error" role="alert" aria-live="assertive" className="bg-red-50 text-red-600 text-sm px-4 py-2.5 rounded-lg mb-4 flex items-center gap-2">
-              <span aria-hidden="true">⚠</span>
+              <span aria-hidden="true">âš </span>
               <span>{error}</span>
             </div>
           )}
@@ -443,7 +469,12 @@ function RegisterForm() {
                   <label htmlFor="register-partner-type" className="text-sm font-medium text-gray-700 block mb-1">
                     {t("Jenis Mitra", "Partner Type")}
                   </label>
-                  <select id="register-partner-type" className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white">
+                  <select
+                    id="register-partner-type"
+                    value={partnerType}
+                    onChange={(e) => setPartnerType(e.target.value)}
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white"
+                  >
                     <option value="">{t("Pilih jenis mitra", "Select partner type")}</option>
                     <option value="ngo">{t("NGO / Lembaga Nirlaba", "NGO / Non-profit")}</option>
                     <option value="developer">{t("Project Developer", "Project Developer")}</option>
@@ -459,6 +490,8 @@ function RegisterForm() {
                   <input
                     id="register-location"
                     type="text"
+                    value={projectLocation}
+                    onChange={(e) => setProjectLocation(e.target.value)}
                     placeholder={t("Kabupaten / Kota, Provinsi", "Regency / City, Province")}
                     className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                   />
@@ -536,7 +569,7 @@ function RegisterForm() {
   );
 }
 
-// ─── Page export — wraps form in Suspense for useSearchParams ────────────────
+// â”€â”€â”€ Page export â€” wraps form in Suspense for useSearchParams â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export default function RegisterPage() {
   return (
     <Suspense
@@ -550,3 +583,4 @@ export default function RegisterPage() {
     </Suspense>
   );
 }
+

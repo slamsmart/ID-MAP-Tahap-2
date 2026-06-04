@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../../../../convex/_generated/api";
 import {
@@ -16,7 +16,7 @@ const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 const ALLOWED_ROLES = new Set(["sahabat", "mitra", "verifikator", "admin", "corporate"]);
 
 // CATATAN SUBMISSION TAHAP 2:
-// Endpoint sengaja menerima role apapun untuk kebutuhan demo juri —
+// Endpoint sengaja menerima role apapun untuk kebutuhan demo juri â€”
 // agar penilai bisa membuat akun di setiap role tanpa setup manual.
 // Untuk tahap pilot/produksi, restrict ALLOWED_ROLES = ["sahabat"] dan
 // pindahkan provisioning admin/verifikator ke /api/admin/users/create
@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Password minimal 6 karakter." }, { status: 400 });
     }
 
-    // Turnstile CAPTCHA — auto-skip di dev (TURNSTILE_SECRET_KEY belum
+    // Turnstile CAPTCHA â€” auto-skip di dev (TURNSTILE_SECRET_KEY belum
     // di-set). Block di prod kalau token salah/expired/spoofed.
     if (isTurnstileEnabled()) {
       const verdict = await verifyTurnstile(turnstileToken, ip);
@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Rate limit per email — proteksi terhadap loop dengan 1 IP berputar
+    // Rate limit per email â€” proteksi terhadap loop dengan 1 IP berputar
     // banyak email random.
     const emailRl = await rateLimitAsync({
       bucket: "register:email",
@@ -92,6 +92,15 @@ export async function POST(req: NextRequest) {
     const phone = typeof body.phone === "string" ? body.phone : undefined;
     const organization = typeof body.organization === "string" ? body.organization : undefined;
     const address = typeof body.address === "string" ? body.address : undefined;
+    const partnerType = typeof body.partnerType === "string" ? body.partnerType : undefined;
+    const projectLocation = typeof body.projectLocation === "string" ? body.projectLocation.trim() : undefined;
+
+    if (role === "mitra" && (!partnerType || !projectLocation)) {
+      return NextResponse.json(
+        { error: "Jenis mitra dan lokasi proyek wajib diisi." },
+        { status: 400 }
+      );
+    }
 
     let userId: string;
     try {
@@ -138,3 +147,4 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Terjadi kesalahan server." }, { status: 500 });
   }
 }
+
