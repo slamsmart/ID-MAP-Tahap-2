@@ -39,6 +39,7 @@ function RegisterForm() {
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [password, setPassword] = useState("");
+  const [agreeTerms, setAgreeTerms] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState("");
@@ -74,13 +75,19 @@ function RegisterForm() {
       setError(t("Password minimal 6 karakter.", "Password must be at least 6 characters."));
       return;
     }
+    if (!agreeTerms) {
+      setError(t("Anda harus menyetujui Syarat & Ketentuan.", "You must agree to the Terms & Conditions."));
+      return;
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
 
     try {
       setIsLoading(true);
       const res = await fetch("/api/auth/send-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, name }),
+        body: JSON.stringify({ email: normalizedEmail, name }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -114,14 +121,15 @@ function RegisterForm() {
     }
     try {
       setIsLoading(true);
-      await verifyOtpMutation({ email, code: otpValue.trim() });
+      const normalizedEmail = email.trim().toLowerCase();
+      await verifyOtpMutation({ email: normalizedEmail, code: otpValue.trim() });
 
       const r = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "same-origin",
         body: JSON.stringify({
-          email,
+          email: normalizedEmail,
           password,
           name,
           role,
@@ -171,10 +179,11 @@ function RegisterForm() {
     setError("");
     try {
       setIsLoading(true);
+      const normalizedEmail = email.trim().toLowerCase();
       const res = await fetch("/api/auth/send-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, name }),
+        body: JSON.stringify({ email: normalizedEmail, name }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -482,17 +491,19 @@ function RegisterForm() {
             </div>
 
             <div>
-              <label htmlFor="register-terms" className="flex items-start gap-2 text-sm text-gray-600">
+              <label htmlFor="register-terms" className="flex items-start gap-2 text-sm text-gray-600 cursor-pointer">
                 <input
                   id="register-terms"
                   type="checkbox"
+                  checked={agreeTerms}
+                  onChange={(e) => { setAgreeTerms(e.target.checked); if (error) setError(""); }}
                   className="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500 mt-0.5"
                 />
                 <span>
                   {t("Saya menyetujui", "I agree to the")}{" "}
-                  <a href="#" className="text-emerald-600">{t("Syarat & Ketentuan", "Terms & Conditions")}</a>{" "}
+                  <a href="#" className="text-emerald-600 underline">{t("Syarat & Ketentuan", "Terms & Conditions")}</a>{" "}
                   {t("dan", "and")}{" "}
-                  <a href="#" className="text-emerald-600">{t("Kebijakan Privasi", "Privacy Policy")}</a>
+                  <a href="#" className="text-emerald-600 underline">{t("Kebijakan Privasi", "Privacy Policy")}</a>
                 </span>
               </label>
             </div>

@@ -11,11 +11,14 @@ const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 export async function POST(req: NextRequest) {
   const startedAt = Date.now();
   try {
-    const { email, name } = await req.json();
+    const { email: rawEmail, name } = await req.json();
 
-    if (!email) {
+    if (!rawEmail || typeof rawEmail !== "string") {
       return NextResponse.json({ error: "Email diperlukan." }, { status: 400 });
     }
+
+    // Normalize agar key OTP konsisten dengan record user (yang juga lowercase di /api/auth/register)
+    const email = rawEmail.trim().toLowerCase();
 
     const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
 
@@ -25,7 +28,7 @@ export async function POST(req: NextRequest) {
     const [emailRl, ipRl] = await Promise.all([
       rateLimitAsync({
         bucket: "otp:email",
-        key: email.toLowerCase(),
+        key: email,
         limit: 5,
         windowMs: 60 * 60 * 1000,
       }),
