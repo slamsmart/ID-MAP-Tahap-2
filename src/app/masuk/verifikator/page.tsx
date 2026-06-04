@@ -339,9 +339,9 @@ function VerifikatorLoginForm() {
                   <label htmlFor="login-password" className="text-sm font-semibold text-gray-700">
                     {t("Kata Sandi", "Password")}
                   </label>
-                  <a href="#" className="text-xs font-semibold text-emerald-600 hover:text-emerald-700 transition-colors">
+                  <Link href="/lupa-password" className="text-xs font-semibold text-emerald-600 hover:text-emerald-700 transition-colors">
                     {t("Lupa password?", "Forgot password?")}
-                  </a>
+                  </Link>
                 </div>
                 <div className="relative">
                   <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" aria-hidden="true" />

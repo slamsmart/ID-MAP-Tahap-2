@@ -266,6 +266,28 @@ export const updateKycStatus = internalMutation({
   },
 });
 
+// Reset password via OTP — dipanggil HANYA dari /api/auth/reset-password
+// (server route Next.js) setelah verify OTP. Mutation ini tidak verify
+// OTP sendiri; server route harus call api.otpCodes.verifyOtp dulu.
+export const resetPasswordByEmail = mutation({
+  args: { email: v.string(), newPassword: v.string() },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    if (args.newPassword.length < 6) {
+      throw new ConvexError("Password minimal 6 karakter.");
+    }
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_email", (q) => q.eq("email", args.email))
+      .unique();
+    if (!user) {
+      throw new ConvexError("Email tidak terdaftar.");
+    }
+    await ctx.db.patch(user._id, { password: hashPassword(args.newPassword) });
+    return null;
+  },
+});
+
 export const remove = mutation({
   args: {
     actorId: v.id("users"),
