@@ -45,9 +45,10 @@ export default function AllProjectsPage() {
                   </div>
                 ))
               : projects.map((project) => (
-                  <div
+                  <Link
                     key={project._id}
-                    className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+                    href={`/donasi-cepat/${project._id}`}
+                    className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-shadow cursor-pointer block focus:outline-none focus:ring-2 focus:ring-emerald-500"
                   >
                     <div className="relative h-48 overflow-hidden">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -75,11 +76,14 @@ export default function AllProjectsPage() {
                         <MapPin className="w-3.5 h-3.5" />
                         {project.location}
                       </div>
-                      <p className="text-xs text-emerald-600 font-medium">
+                      <p className="text-xs text-emerald-600 font-medium mb-3">
                         {new Intl.NumberFormat("id-ID").format(project.co2Absorption)} tCO₂e
                       </p>
+                      <span className="inline-flex items-center justify-center w-full px-3 py-2 rounded-lg bg-emerald-600 text-white text-sm font-semibold group-hover:bg-emerald-700 transition-colors">
+                        {t("Dukung Proyek Ini", "Support This Project")}
+                      </span>
                     </div>
-                  </div>
+                  </Link>
                 ))}
           </div>
           
