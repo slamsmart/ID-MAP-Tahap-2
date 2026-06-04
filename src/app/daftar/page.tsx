@@ -3,7 +3,7 @@
 import { Suspense, useState, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Mail, Inbox, ArrowLeft, AlertTriangle } from "lucide-react";
 import { setSession, getDashboardPath, User } from "@/lib/auth";
 import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
@@ -125,7 +125,11 @@ function RegisterForm() {
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error ?? t("Gagal mengirim OTP.", "Failed to send OTP."));
+        if (res.status === 409) {
+          setError(t("Email sudah terdaftar. Silakan masuk.", "Email already registered. Please log in."));
+        } else {
+          setError(data.error ?? t("Gagal mengirim OTP.", "Failed to send OTP."));
+        }
         return;
       }
       setStep("otp");
@@ -287,7 +291,7 @@ function RegisterForm() {
             <div>
               <div className="text-center mb-6">
                 <div className="w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <span className="text-2xl">ðŸ“§</span>
+                  <Mail className="w-7 h-7 text-emerald-700" aria-hidden="true" />
                 </div>
                 <h2 className="font-bold text-gray-900 text-lg">{t("Cek Email Anda", "Check Your Email")}</h2>
                 <p className="text-sm text-gray-500 mt-1">
@@ -297,7 +301,7 @@ function RegisterForm() {
               </div>
 
               <div className="bg-amber-50 border border-amber-100 text-amber-800 text-xs px-3 py-2.5 rounded-lg mb-4 flex items-start gap-2">
-                <span aria-hidden>ðŸ“¬</span>
+                <Inbox className="w-4 h-4 shrink-0 mt-0.5" aria-hidden="true" />
                 <span>
                   {t(
                     "Email tidak masuk? Mohon cek folder Spam / Promosi pada Gmail Anda.",
@@ -308,7 +312,7 @@ function RegisterForm() {
 
               {error && (
                 <div role="alert" className="bg-red-50 text-red-600 text-sm px-4 py-2.5 rounded-lg mb-4 flex items-center gap-2">
-                  <span>âš </span><span>{error}</span>
+                  <AlertTriangle className="w-4 h-4 shrink-0" aria-hidden="true" /><span>{error}</span>
                 </div>
               )}
 
@@ -354,7 +358,7 @@ function RegisterForm() {
                   onClick={() => { setStep("form"); setError(""); setOtpValue(""); }}
                   className="block w-full text-sm text-gray-500 hover:text-gray-700 text-center"
                 >
-                  â† {t("Ganti email", "Change email")}
+                  <ArrowLeft className="w-3.5 h-3.5 inline" aria-hidden="true" /> {t("Ganti email", "Change email")}
                 </button>
               </form>
             </div>
@@ -382,7 +386,7 @@ function RegisterForm() {
 
           {error && (
             <div id="register-error" role="alert" aria-live="assertive" className="bg-red-50 text-red-600 text-sm px-4 py-2.5 rounded-lg mb-4 flex items-center gap-2">
-              <span aria-hidden="true">âš </span>
+              <AlertTriangle className="w-4 h-4 shrink-0" aria-hidden="true" />
               <span>{error}</span>
             </div>
           )}

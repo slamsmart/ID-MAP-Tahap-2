@@ -49,6 +49,19 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Cegah pendaftaran ganda + spam OTP ke email user yang sudah punya akun.
+    // Sebelumnya endpoint ini meneruskan ke registrasi; baru ditolak di
+    // /api/auth/register. Akibatnya attacker bisa drain kuota SMTP dengan
+    // memutar OTP ke email orang lain yang sudah terdaftar.
+    const existing = await convex.query(api.users.getByEmail, { email });
+    if (existing) {
+      log.warn("otp_duplicate_email", { email });
+      return NextResponse.json(
+        { error: "Email sudah terdaftar. Silakan masuk." },
+        { status: 409 }
+      );
+    }
+
     const gmailUser = process.env.GMAIL_USER;
     const gmailPass = process.env.GMAIL_APP_PASSWORD;
 
