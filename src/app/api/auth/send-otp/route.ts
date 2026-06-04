@@ -20,6 +20,13 @@ export async function POST(req: NextRequest) {
     // Normalize agar key OTP konsisten dengan record user (yang juga lowercase di /api/auth/register)
     const email = rawEmail.trim().toLowerCase();
 
+    // Validate email format sebelum hand-off ke nodemailer (yang akan
+    // throw "No recipients defined" → 500). Regex sederhana cukup karena
+    // nodemailer juga validate sendiri saat kirim.
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return NextResponse.json({ error: "Format email tidak valid." }, { status: 400 });
+    }
+
     const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
 
     // Dual rate limit: email-bound (5/jam) + IP-bound (15/jam) untuk
@@ -80,6 +87,13 @@ export async function POST(req: NextRequest) {
       auth: { user: gmailUser, pass: gmailPass },
     });
 
+    // Escape HTML chars di name supaya tidak ada injection ke body email.
+    const safeName = typeof name === "string"
+      ? name.slice(0, 80).replace(/[&<>"']/g, (c) => ({
+          "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+        }[c] ?? c))
+      : "";
+
     await transporter.sendMail({
       from: `"ID-MAP" <${gmailUser}>`,
       to: email,
@@ -91,7 +105,7 @@ export async function POST(req: NextRequest) {
           </div>
           <h2 style="font-size:18px;font-weight:700;color:#111827;margin:0 0 8px">Verifikasi Email Anda</h2>
           <p style="color:#6b7280;font-size:14px;margin:0 0 24px">
-            Halo ${name ?? ""}! Gunakan kode berikut untuk menyelesaikan pendaftaran:
+            Halo ${safeName}! Gunakan kode berikut untuk menyelesaikan pendaftaran:
           </p>
           <div style="background:#fff;border:2px solid #d1fae5;border-radius:12px;padding:24px;text-align:center;margin-bottom:24px">
             <span style="font-size:40px;font-weight:900;letter-spacing:12px;color:#065f46">${code}</span>
