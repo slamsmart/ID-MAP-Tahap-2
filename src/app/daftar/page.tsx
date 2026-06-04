@@ -42,7 +42,8 @@ function RegisterForm() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState("");
-  const [turnstileFailed, setTurnstileFailed] = useState(false);
+  const [turnstileError, setTurnstileError] = useState(false);
+  const [turnstileAttempt, setTurnstileAttempt] = useState(0);
   const turnstileEnabled = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY);
   const DEFAULT_BG = "/images/hero-mangrove.webp";
   const [bgImage, setBgImage] = useState(DEFAULT_BG);
@@ -543,32 +544,63 @@ function RegisterForm() {
               </label>
             </div>
 
-            {turnstileEnabled && !turnstileFailed && (
+            {turnstileEnabled && (
               <div className="flex flex-col items-center gap-2">
-                <Turnstile
-                  onVerify={setTurnstileToken}
-                  onError={() => {
-                    console.warn("[Daftar] Turnstile failed — allowing registration without it");
-                    setTurnstileFailed(true);
-                  }}
-                />
-                {!turnstileToken && (
-                  <p className="text-xs text-gray-500 flex items-center gap-1.5">
-                    <Loader2 className="w-3 h-3 animate-spin" aria-hidden="true" />
-                    {t("Memverifikasi browser…", "Verifying browser…")}
-                  </p>
+                {!turnstileError ? (
+                  <>
+                    <Turnstile
+                      key={turnstileAttempt}
+                      onVerify={(token) => {
+                        setTurnstileToken(token);
+                        setTurnstileError(false);
+                      }}
+                      onError={() => {
+                        console.warn("[Daftar] Turnstile failed — show retry button");
+                        setTurnstileError(true);
+                        setTurnstileToken("");
+                      }}
+                    />
+                    {!turnstileToken && (
+                      <p className="text-xs text-gray-500 flex items-center gap-1.5">
+                        <Loader2 className="w-3 h-3 animate-spin" aria-hidden="true" />
+                        {t("Memverifikasi browser…", "Verifying browser…")}
+                      </p>
+                    )}
+                  </>
+                ) : (
+                  <div className="w-full bg-amber-50 border border-amber-200 rounded-lg px-3 py-2.5 text-xs text-amber-800 flex items-start gap-2">
+                    <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" aria-hidden="true" />
+                    <div className="flex-1">
+                      <p>
+                        {t(
+                          "Verifikasi browser gagal. Pastikan koneksi stabil & ekstensi pemblokir tidak aktif.",
+                          "Browser verification failed. Make sure connection is stable & no blocker extension is active."
+                        )}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setTurnstileError(false);
+                          setTurnstileAttempt((n) => n + 1);
+                        }}
+                        className="mt-1.5 text-emerald-700 font-semibold hover:text-emerald-800 underline"
+                      >
+                        {t("Coba lagi", "Try again")}
+                      </button>
+                    </div>
+                  </div>
                 )}
               </div>
             )}
 
             <button
               type="submit"
-              disabled={isLoading || (turnstileEnabled && !turnstileFailed && !turnstileToken)}
+              disabled={isLoading || (turnstileEnabled && !turnstileToken)}
               className="block w-full py-2.5 bg-emerald-900 text-white font-display font-semibold rounded-lg hover:bg-emerald-800 transition-colors text-sm text-center disabled:opacity-70"
             >
               {isLoading
                 ? t("Mendaftar...", "Registering...")
-                : turnstileEnabled && !turnstileFailed && !turnstileToken
+                : turnstileEnabled && !turnstileToken
                   ? t("Menunggu verifikasi browser…", "Waiting for browser verification…")
                   : t("Daftar", "Register")}
             </button>
