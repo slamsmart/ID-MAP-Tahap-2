@@ -186,6 +186,7 @@ export default defineSchema({
     code: v.string(),
     expiresAt: v.number(),
     used: v.boolean(),
+    attempts: v.optional(v.number()),
   }).index("by_email", ["email"]),
 
   // ─── Platform Stats (Aggregated) ─────────────────────────────────

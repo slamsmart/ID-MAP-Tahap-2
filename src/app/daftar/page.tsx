@@ -3,10 +3,8 @@
 import { Suspense, useState, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Eye, EyeOff, Mail, Inbox, ArrowLeft, AlertTriangle } from "lucide-react";
+import { Eye, EyeOff, Mail, Inbox, ArrowLeft, AlertTriangle, Loader2 } from "lucide-react";
 import { setSession, getDashboardPath, User } from "@/lib/auth";
-import { useMutation } from "convex/react";
-import { api } from "../../../convex/_generated/api";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getAuthBgImage } from "@/lib/heroImageStore";
 import Turnstile from "@/components/shared/Turnstile";
@@ -18,7 +16,6 @@ type Role = (typeof roles)[number];
 function RegisterForm() {
   const router = useRouter();
   const { t } = useLanguage();
-  const verifyOtpMutation = useMutation(api.otpCodes.verifyOtp);
   const searchParams = useSearchParams();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -45,6 +42,7 @@ function RegisterForm() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState("");
+  const [turnstileFailed, setTurnstileFailed] = useState(false);
   const turnstileEnabled = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY);
   const DEFAULT_BG = "/images/hero-mangrove.webp";
   const [bgImage, setBgImage] = useState(DEFAULT_BG);
@@ -153,7 +151,6 @@ function RegisterForm() {
     try {
       setIsLoading(true);
       const normalizedEmail = email.trim().toLowerCase();
-      await verifyOtpMutation({ email: normalizedEmail, code: otpValue.trim() });
 
       const r = await fetch("/api/auth/register", {
         method: "POST",
@@ -164,6 +161,7 @@ function RegisterForm() {
           password,
           name,
           role,
+          otpCode: otpValue.trim(),
           ...(phone ? { phone } : {}),
           ...(address ? { address } : {}),
           ...(role === "mitra" ? {
@@ -545,18 +543,34 @@ function RegisterForm() {
               </label>
             </div>
 
-            {turnstileEnabled && (
-              <div className="flex justify-center">
-                <Turnstile onVerify={setTurnstileToken} />
+            {turnstileEnabled && !turnstileFailed && (
+              <div className="flex flex-col items-center gap-2">
+                <Turnstile
+                  onVerify={setTurnstileToken}
+                  onError={() => {
+                    console.warn("[Daftar] Turnstile failed — allowing registration without it");
+                    setTurnstileFailed(true);
+                  }}
+                />
+                {!turnstileToken && (
+                  <p className="text-xs text-gray-500 flex items-center gap-1.5">
+                    <Loader2 className="w-3 h-3 animate-spin" aria-hidden="true" />
+                    {t("Memverifikasi browser…", "Verifying browser…")}
+                  </p>
+                )}
               </div>
             )}
 
             <button
               type="submit"
-              disabled={isLoading || (turnstileEnabled && !turnstileToken)}
+              disabled={isLoading || (turnstileEnabled && !turnstileFailed && !turnstileToken)}
               className="block w-full py-2.5 bg-emerald-900 text-white font-display font-semibold rounded-lg hover:bg-emerald-800 transition-colors text-sm text-center disabled:opacity-70"
             >
-              {isLoading ? t("Mendaftar...", "Registering...") : t("Daftar", "Register")}
+              {isLoading
+                ? t("Mendaftar...", "Registering...")
+                : turnstileEnabled && !turnstileFailed && !turnstileToken
+                  ? t("Menunggu verifikasi browser…", "Waiting for browser verification…")
+                  : t("Daftar", "Register")}
             </button>
           </form>
 

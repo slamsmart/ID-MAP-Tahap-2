@@ -10,6 +10,7 @@
 
 import type * as aboutContent from "../aboutContent.js";
 import type * as activities from "../activities.js";
+import type * as authz from "../authz.js";
 import type * as certificates from "../certificates.js";
 import type * as contributions from "../contributions.js";
 import type * as faqContent from "../faqContent.js";
@@ -36,6 +37,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   aboutContent: typeof aboutContent;
   activities: typeof activities;
+  authz: typeof authz;
   certificates: typeof certificates;
   contributions: typeof contributions;
   faqContent: typeof faqContent;

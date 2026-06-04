@@ -52,12 +52,19 @@ export async function POST(req: NextRequest) {
     const name = typeof body.name === "string" ? body.name.trim() : "";
     const role = typeof body.role === "string" ? body.role : "";
     const turnstileToken = typeof body.turnstileToken === "string" ? body.turnstileToken : "";
+    const otpCode = typeof body.otpCode === "string" ? body.otpCode.trim() : "";
 
     if (!email || !password || !name || !ALLOWED_ROLES.has(role)) {
       return NextResponse.json({ error: "Field tidak lengkap." }, { status: 400 });
     }
     if (password.length < 6) {
       return NextResponse.json({ error: "Password minimal 6 karakter." }, { status: 400 });
+    }
+    if (!/^\d{6}$/.test(otpCode)) {
+      return NextResponse.json(
+        { error: "Kode OTP tidak valid. Silakan masukkan 6 digit kode." },
+        { status: 400 }
+      );
     }
 
     // Turnstile CAPTCHA â€” auto-skip di dev (TURNSTILE_SECRET_KEY belum
@@ -100,6 +107,20 @@ export async function POST(req: NextRequest) {
         { error: "Jenis mitra dan lokasi proyek wajib diisi." },
         { status: 400 }
       );
+    }
+
+    // Server-side OTP verify (single source of truth). Mutation ini juga
+    // mark `used:true` + bump attempt counter, jadi attacker tidak bisa
+    // skip endpoint OTP atau replay kode lama.
+    try {
+      await convex.mutation(api.otpCodes.verifyOtp, { email, code: otpCode });
+    } catch (err: any) {
+      const msg =
+        typeof err?.data === "string"
+          ? err.data
+          : err?.data?.message ?? err?.message ?? "Kode OTP tidak valid.";
+      log.warn("register_otp_invalid", { email, msg });
+      return NextResponse.json({ error: msg }, { status: 400 });
     }
 
     let userId: string;

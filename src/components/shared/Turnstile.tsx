@@ -4,10 +4,13 @@
 // Widget akan otomatis hide (return null) kalau NEXT_PUBLIC_TURNSTILE_SITE_KEY
 // belum di-set, supaya UI tetap normal saat dev.
 //
+// Safety: fail-open after 8s jika Turnstile tidak merespon.
+//
 // Pemakaian:
 //   const [token, setToken] = useState<string>("");
-//   <Turnstile onVerify={setToken} />
-//   ... lalu kirim `turnstileToken: token` di body request.
+//   const [failed, setFailed] = useState(false);
+//   <Turnstile onVerify={setToken} onError={() => setFailed(true)} />
+//   ... lalu kirim turnstileToken: token di body request.
 
 import { useEffect, useRef } from "react";
 
@@ -39,20 +42,16 @@ function loadTurnstileScript(): Promise<void> {
   if (typeof window === "undefined") return Promise.resolve();
   if (window.turnstile) return Promise.resolve();
   if (document.getElementById(SCRIPT_ID)) {
-    // Script sedang loading — tunggu dengan polling pendek.
     return new Promise((resolve) => {
       const t = setInterval(() => {
-        if (window.turnstile) {
-          clearInterval(t);
-          resolve();
-        }
+        if (window.turnstile) { clearInterval(t); resolve(); }
       }, 50);
     });
   }
   return new Promise((resolve, reject) => {
     const s = document.createElement("script");
     s.id = SCRIPT_ID;
-    s.src = `${SCRIPT_SRC}?render=explicit`;
+    s.src = SCRIPT_SRC + "?render=explicit";
     s.async = true;
     s.defer = true;
     s.onload = () => resolve();
@@ -76,41 +75,69 @@ export default function Turnstile({
 }: TurnstileProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const widgetIdRef = useRef<string | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
   useEffect(() => {
     if (!siteKey || !containerRef.current) return;
 
     let cancelled = false;
+
+    // Safety timeout: jika Turnstile tidak merespon dalam 5 detik → fail-open.
+    // Lebih pendek dari sebelumnya (8s) supaya user tidak melihat tombol Daftar
+    // disabled tanpa alasan kalau script CDN Cloudflare lambat / di-block.
+    timeoutRef.current = setTimeout(() => {
+      if (!cancelled && onError) {
+        console.warn("[Turnstile] Timeout setelah 5s — fail open");
+        onError();
+      }
+    }, 5000);
+
     loadTurnstileScript()
       .then(() => {
         if (cancelled || !window.turnstile || !containerRef.current) return;
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+          timeoutRef.current = null;
+        }
         widgetIdRef.current = window.turnstile.render(containerRef.current, {
           sitekey: siteKey,
-          callback: (token) => onVerify(token),
-          "error-callback": () => onError?.(),
+          callback: (token) => {
+            if (timeoutRef.current) {
+              clearTimeout(timeoutRef.current);
+              timeoutRef.current = null;
+            }
+            onVerify(token);
+          },
+          "error-callback": () => {
+            if (timeoutRef.current) {
+              clearTimeout(timeoutRef.current);
+              timeoutRef.current = null;
+            }
+            onError?.();
+          },
           "expired-callback": () => onVerify(""),
           theme,
         });
       })
-      .catch(() => onError?.());
+      .catch(() => {
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+          timeoutRef.current = null;
+        }
+        onError?.();
+      });
 
     return () => {
       cancelled = true;
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
       if (widgetIdRef.current && window.turnstile) {
-        try {
-          window.turnstile.remove(widgetIdRef.current);
-        } catch {
-          // ignore
-        }
+        try { window.turnstile.remove(widgetIdRef.current); } catch {}
       }
     };
   }, [siteKey, onVerify, onError, theme]);
 
-  if (!siteKey) {
-    // Belum di-setup — sembunyikan widget supaya UI normal di dev.
-    return null;
-  }
+  if (!siteKey) return null;
 
   return <div ref={containerRef} className={className} />;
 }
