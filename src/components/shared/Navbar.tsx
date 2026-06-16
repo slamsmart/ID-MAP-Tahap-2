@@ -3,22 +3,29 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { Menu, X, UserCircle, LogOut } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getSession, logout, getDashboardPath, User } from "@/lib/auth";
 
 const navLinks = [
-  { href: "/", idLabel: "Beranda", enLabel: "Home", active: true },
+  { href: "/", idLabel: "Beranda", enLabel: "Home" },
   { href: "/jelajahi-peta-mangrove", idLabel: "Jelajahi Peta Restorasi Lingkungan", enLabel: "Explore Environmental Restoration Map" },
   { href: "/tentang", idLabel: "Tentang Kami", enLabel: "About Us" },
   { href: "/mitra-kami", idLabel: "Mitra", enLabel: "Partners" },
   { href: "/faq", idLabel: "FAQ", enLabel: "FAQ" },
 ];
 
+function isLinkActive(pathname: string, href: string) {
+  if (href === "/") return pathname === "/";
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { language, setLanguage, t } = useLanguage();
   const [session, setSession] = useState<User | null>(null);
+  const pathname = usePathname() ?? "/";
 
   useEffect(() => {
     setSession(getSession());
@@ -49,21 +56,25 @@ export default function Navbar() {
           </span>
         </Link>
 
-        <nav className="hidden lg:flex items-center gap-9 text-sm font-semibold text-slate-600">
-          {navLinks.map((link, index) => (
-            <Link
-              key={link.idLabel}
-              href={link.href}
-              className={`relative transition-colors hover:text-[#0f3d2e] ${
-                index === 0 ? "text-[#0f3d2e]" : ""
-              }`}
-            >
-              {t(link.idLabel, link.enLabel)}
-              {index === 0 && (
-                <span className="absolute -bottom-3 left-0 right-0 h-0.5 rounded-full bg-emerald-500" />
-              )}
-            </Link>
-          ))}
+        <nav className="hidden lg:flex items-center gap-9 text-sm font-semibold text-black">
+          {navLinks.map((link) => {
+            const active = isLinkActive(pathname, link.href);
+            return (
+              <Link
+                key={link.idLabel}
+                href={link.href}
+                aria-current={active ? "page" : undefined}
+                className={`relative transition-colors hover:text-[#0f3d2e] ${
+                  active ? "text-[#0f3d2e]" : ""
+                }`}
+              >
+                {t(link.idLabel, link.enLabel)}
+                {active && (
+                  <span className="absolute -bottom-3 left-0 right-0 h-0.5 rounded-full bg-emerald-500" />
+                )}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="hidden lg:flex items-center gap-3">
@@ -106,13 +117,13 @@ export default function Navbar() {
             <>
               <Link
                 href="/masuk"
-                className="rounded-full border-2 border-[#0f3d2e] px-7 py-3 text-sm font-bold text-[#0f3d2e] hover:bg-emerald-50 transition"
+                className="rounded-full border-2 border-[#0f3d2e] px-7 py-3 text-sm font-bold text-[#0f3d2e] hover:bg-emerald-50 transition focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
               >
                 {t("Masuk", "Log In")}
               </Link>
               <Link
                 href="/daftar"
-                className="rounded-full bg-[#0f3d2e] px-7 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-900/20 hover:bg-[#14523d] transition"
+                className="rounded-full bg-[#0f3d2e] px-7 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-900/20 hover:bg-[#14523d] transition focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
               >
                 {t("Daftar", "Sign Up")}
               </Link>
@@ -148,16 +159,24 @@ export default function Navbar() {
               EN
             </button>
           </div>
-          {navLinks.map((link) => (
-            <Link
-              key={link.idLabel}
-              href={link.href}
-              onClick={() => setMobileOpen(false)}
-              className="block px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-emerald-50 hover:text-[#0f3d2e] rounded-lg"
-            >
-              {t(link.idLabel, link.enLabel)}
-            </Link>
-          ))}
+          {navLinks.map((link) => {
+            const active = isLinkActive(pathname, link.href);
+            return (
+              <Link
+                key={link.idLabel}
+                href={link.href}
+                onClick={() => setMobileOpen(false)}
+                aria-current={active ? "page" : undefined}
+                className={`block px-4 py-2.5 text-sm font-semibold rounded-lg ${
+                  active
+                    ? "text-[#0f3d2e] bg-emerald-50"
+                    : "text-black hover:bg-emerald-50 hover:text-[#0f3d2e]"
+                }`}
+              >
+                {t(link.idLabel, link.enLabel)}
+              </Link>
+            );
+          })}
           <div className="flex gap-3 pt-4">
             {session ? (
               <div className="flex w-full gap-3">
