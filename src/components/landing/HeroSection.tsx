@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowRight, ShieldCheck, Leaf, Waves, TrendingUp } from "lucide-react";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
@@ -42,10 +42,68 @@ export default function HeroSection() {
   const [legacyHeroImage, setLegacyHeroImage] = useState<string | null>(null);
   const { language, t } = useLanguage();
 
+  // Cursor-driven parallax: depth layers shift by different amounts to build
+  // a sense of z-depth. Transforms are written straight to the DOM inside one
+  // rAF frame — no React state, so moving the mouse never triggers a re-render.
+  // The whole thing is gated behind a fine-pointer + motion-OK media query, so
+  // phones/tablets and reduced-motion users get a static, cheap scene.
+  const sceneRef = useRef<HTMLDivElement>(null);
+  const bgRef = useRef<HTMLDivElement>(null);
+  const orb1Ref = useRef<HTMLDivElement>(null);
+  const orb2Ref = useRef<HTMLDivElement>(null);
+  const copyRef = useRef<HTMLDivElement>(null);
+
   // Legacy fallback: per-browser hero image saved in IndexedDB by the old
   // hero-image setter. Only used when Convex has no live record yet.
   useEffect(() => {
     getHeroImage().then((img) => setLegacyHeroImage(img || null));
+  }, []);
+
+  useEffect(() => {
+    const el = sceneRef.current;
+    if (!el) return;
+
+    const canParallax = window.matchMedia(
+      "(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)"
+    );
+    if (!canParallax.matches) return;
+
+    let frame = 0;
+    let x = 0;
+    let y = 0;
+
+    const apply = () => {
+      frame = 0;
+      if (bgRef.current)
+        bgRef.current.style.transform = `translate3d(${x * -18}px, ${y * -18}px, 0) scale(1.12)`;
+      if (orb1Ref.current)
+        orb1Ref.current.style.transform = `translate3d(${x * 40}px, ${y * 40}px, 0)`;
+      if (orb2Ref.current)
+        orb2Ref.current.style.transform = `translate3d(${x * 60}px, ${y * 60}px, 0)`;
+      if (copyRef.current)
+        copyRef.current.style.transform = `translate3d(${x * 12}px, ${y * 12}px, 0)`;
+    };
+
+    const onMove = (e: PointerEvent) => {
+      if (e.pointerType !== "mouse") return;
+      const rect = el.getBoundingClientRect();
+      x = (e.clientX - rect.left) / rect.width - 0.5;
+      y = (e.clientY - rect.top) / rect.height - 0.5;
+      if (!frame) frame = requestAnimationFrame(apply);
+    };
+    const onLeave = () => {
+      x = 0;
+      y = 0;
+      if (!frame) frame = requestAnimationFrame(apply);
+    };
+
+    el.addEventListener("pointermove", onMove);
+    el.addEventListener("pointerleave", onLeave);
+    return () => {
+      el.removeEventListener("pointermove", onMove);
+      el.removeEventListener("pointerleave", onLeave);
+      if (frame) cancelAnimationFrame(frame);
+    };
   }, []);
 
   // Resolve a stat by Convex key, falling back to seed-data numbers
@@ -83,23 +141,30 @@ export default function HeroSection() {
   ];
 
   return (
-    <section className="relative overflow-hidden bg-[#06140f] perspective-1500">
-      {/* ===== Depth background layers ===== */}
-      {/* Deep base image */}
+    <section
+      ref={sceneRef}
+      className="relative overflow-hidden bg-[#06140f] perspective-1500"
+    >
+      {/* ===== Depth background layers (parallax) ===== */}
+      {/* Deep base image, pushed furthest back */}
       <div
-        className="absolute inset-0 bg-cover bg-center scale-[1.12]"
+        ref={bgRef}
+        className="absolute inset-0 bg-cover bg-center scale-[1.12] transition-transform duration-300 ease-out"
         style={{ backgroundImage: `url('${heroImage}')` }}
       />
       {/* Tonal wash to sink the image into a dark, glowing scene */}
       <div className="absolute inset-0 bg-gradient-to-br from-[#06140f]/95 via-[#0b2e22]/85 to-[#06140f]/70" />
       <div className="absolute inset-0 bg-gradient-to-t from-[#06140f] via-transparent to-[#06140f]/40" />
 
-      {/* Floating glow orbs — desktop only (blur-3xl is costly on mobile GPUs).
-          Ambient pulse only — no longer cursor-driven, so reading the hero copy
-          stays distraction-free. */}
-      <div className="hidden md:block absolute -top-24 -left-16 h-80 w-80 rounded-full bg-emerald-500/25 blur-3xl md:animate-glow-pulse" />
+      {/* Floating glow orbs — desktop only (blur-3xl is costly to composite on
+          mobile GPUs). Hidden below md so phones stay light. */}
       <div
-        className="hidden md:block absolute top-1/3 right-0 h-96 w-96 rounded-full bg-teal-400/20 blur-3xl md:animate-glow-pulse"
+        ref={orb1Ref}
+        className="hidden md:block absolute -top-24 -left-16 h-80 w-80 rounded-full bg-emerald-500/25 blur-3xl md:animate-glow-pulse will-change-transform"
+      />
+      <div
+        ref={orb2Ref}
+        className="hidden md:block absolute top-1/3 right-0 h-96 w-96 rounded-full bg-teal-400/20 blur-3xl md:animate-glow-pulse will-change-transform"
         style={{ animationDelay: "1.5s" }}
       />
 
@@ -120,8 +185,11 @@ export default function HeroSection() {
       {/* ===== Content ===== */}
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pt-28 md:pt-36 pb-24 md:pb-32">
         <div className="grid lg:grid-cols-12 gap-10 items-center">
-          {/* Left: copy */}
-          <div className="lg:col-span-7 animate-rise-fade">
+          {/* Left: copy, lifted toward viewer */}
+          <div
+            ref={copyRef}
+            className="lg:col-span-7 animate-rise-fade transition-transform duration-300 ease-out"
+          >
             <div className="inline-flex items-center gap-2 rounded-full border border-emerald-300/25 bg-emerald-400/10 px-4 py-2 text-emerald-100 md:backdrop-blur-md text-sm font-medium mb-6 shadow-[0_8px_30px_-12px_rgba(16,185,129,0.6)]">
               <ShieldCheck className="h-4 w-4" />
               {badge}
@@ -164,7 +232,6 @@ export default function HeroSection() {
             <TiltCard
               maxTilt={12}
               liftZ={30}
-              glare={false}
               className="md:animate-float-tilt rounded-3xl"
             >
               <div className="relative rounded-3xl overflow-hidden border border-white/15 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.8)]">
