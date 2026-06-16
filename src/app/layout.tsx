@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     "MRV",
     "blue carbon",
   ],
-  metadataBase: new URL("https://idmap-pesisir.vercel.app"),
+  metadataBase: new URL("https://www.id-map.app"),
   openGraph: {
     type: "website",
     locale: "id_ID",
@@ -48,12 +48,12 @@ export const metadata: Metadata = {
     title: "ID-MAP - Integrasi Data & Manajemen Pesisir",
     description:
       "Satu platform untuk seluruh ekosistem mangrove & pesisir Indonesia. Donasi QRIS langsung tersalurkan ke Pokmaswas pelaksana, dengan sertifikat digital yang dapat dibagikan.",
-    url: "https://idmap-pesisir.vercel.app",
+    url: "https://www.id-map.app",
     images: [
       {
-        url: "/images/hero-mangrove.webp",
-        width: 1920,
-        height: 1080,
+        url: "/images/og-image.jpg",
+        width: 2400,
+        height: 1246,
         alt: "Hutan mangrove pesisir Indonesia - ID-MAP",
       },
     ],
@@ -63,7 +63,7 @@ export const metadata: Metadata = {
     title: "ID-MAP - Integrasi Data & Manajemen Pesisir",
     description:
       "Donasi QRIS langsung tersalurkan ke Pokmaswas pelaksana. Sertifikat digital otomatis. Data pesisir Indonesia dalam satu platform.",
-    images: ["/images/hero-mangrove.webp"],
+    images: ["/images/og-image.jpg"],
   },
   alternates: {
     canonical: "/",
