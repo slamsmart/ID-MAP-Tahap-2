@@ -72,12 +72,12 @@ export default function DashboardHeader({ title, avatarInitials, avatarCls }: Pr
                 <span className="text-white font-bold text-sm leading-none">
                   {s.value}
                 </span>
-                <span className="text-white/35 text-[10px] leading-none hidden md:inline truncate">
+                <span className="text-white/60 text-[10px] leading-none hidden md:inline truncate">
                   {s.sub}
                 </span>
               </div>
               {/* Label */}
-              <p className="text-white/45 text-[10px] mt-0.5 leading-none truncate">
+              <p className="text-white/70 text-[10px] mt-0.5 leading-none truncate">
                 {s.label}
               </p>
             </div>
@@ -86,7 +86,7 @@ export default function DashboardHeader({ title, avatarInitials, avatarCls }: Pr
 
         {/* Source tag — hanya desktop */}
         <div className="hidden xl:flex items-center px-4 sm:px-5 flex-shrink-0">
-          <span className="text-[9px] text-white/20 uppercase tracking-widest whitespace-nowrap">
+          <span className="text-[9px] text-white/40 uppercase tracking-widest whitespace-nowrap">
             Sumber: PMN · KKMD · BRGMN 2025
           </span>
         </div>

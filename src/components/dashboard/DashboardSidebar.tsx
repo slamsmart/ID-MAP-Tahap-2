@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import {
   LayoutDashboard,
   FolderTree,
@@ -139,35 +140,64 @@ export default function DashboardSidebar({ type }: DashboardSidebarProps) {
       </div>
 
       <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
-        {items.map((item) => {
-          const isActive = pathname === item.href;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={() => setMobileOpen(false)}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                isActive
-                  ? "bg-emerald-50 text-emerald-900"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-              }`}
-            >
-              <item.icon className={`w-4 h-4 flex-shrink-0 ${isActive ? "text-emerald-700" : "text-gray-400"}`} />
-              {item.label}
-            </Link>
-          );
-        })}
+        <AnimatePresence mode="popLayout">
+          {items.map((item, i) => {
+            const isActive = pathname === item.href;
+            return (
+              <motion.div
+                key={item.href}
+                initial={{ opacity: 0, x: -12 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.03, duration: 0.25 }}
+              >
+                <Link
+                  href={item.href}
+                  prefetch
+                  onClick={() => setMobileOpen(false)}
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 group relative overflow-hidden ${
+                    isActive
+                      ? "bg-emerald-50 text-emerald-900 shadow-sm"
+                      : "text-black hover:bg-gray-50 hover:text-gray-900 hover:shadow-sm"
+                  }`}
+                >
+                  {/* Active indicator bar */}
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeTab"
+                      className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-emerald-500 rounded-r-full"
+                      transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                    />
+                  )}
+                  <item.icon
+                    className={`w-4 h-4 flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${
+                      isActive ? "text-emerald-700" : "text-gray-400 group-hover:text-gray-600"
+                    }`}
+                  />
+                  <span className="transition-transform duration-200 group-hover:translate-x-0.5">
+                    {item.label}
+                  </span>
+                  {/* Hover glow */}
+                  <div className="absolute inset-0 rounded-lg bg-emerald-500/0 group-hover:bg-emerald-500/[0.03] transition-colors duration-300" />
+                </Link>
+              </motion.div>
+            );
+          })}
+        </AnimatePresence>
       </nav>
 
       <div className="p-3 border-t border-gray-100">
         <button
-          onClick={() => {
+          onClick={async () => {
             if (typeof window !== "undefined") {
+              // Clear both session stores for consistency
               localStorage.removeItem("idmap_session");
+              try {
+                await fetch("/api/auth/logout", { method: "POST" });
+              } catch {}
               window.location.href = "/";
             }
           }}
-          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-colors w-full"
+          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-colors w-full focus:outline-none focus:ring-2 focus:ring-red-300 focus:ring-offset-1"
         >
           <LogOut className="w-4 h-4 flex-shrink-0" />
           Keluar
@@ -202,3 +232,4 @@ export default function DashboardSidebar({ type }: DashboardSidebarProps) {
     </>
   );
 }
+
