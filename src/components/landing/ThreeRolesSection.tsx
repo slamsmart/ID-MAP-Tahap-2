@@ -5,6 +5,8 @@ import Image from "next/image";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { useLanguage } from "@/contexts/LanguageContext";
+import TiltCard from "@/components/shared/TiltCard";
+import ScrollReveal from "@/components/shared/ScrollReveal";
 
 type CardData = {
   key: string;
@@ -137,8 +139,10 @@ export default function ThreeRolesSection() {
     .sort((a, b) => a.order - b.order);
 
   return (
-    <section className="py-14 bg-white">
-      <div className="mx-auto max-w-7xl px-6">
+    <section className="relative py-16 bg-gradient-to-b from-white via-emerald-50/40 to-white overflow-hidden">
+      {/* soft depth glow behind the cards */}
+      <div className="pointer-events-none absolute left-1/2 top-1/3 h-72 w-[42rem] -translate-x-1/2 rounded-full bg-emerald-300/20 blur-3xl" />
+      <div className="relative mx-auto max-w-7xl px-6">
         <div className="text-center mb-10">
           <h2 className="text-4xl font-extrabold tracking-tight text-[#0f3d2e]">
             {headline}
@@ -146,8 +150,8 @@ export default function ThreeRolesSection() {
           <p className="mt-3 text-slate-600 max-w-2xl mx-auto">{subtitle}</p>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-6">
-          {cards.map((card) => {
+        <div className="grid lg:grid-cols-3 gap-6 perspective-1500">
+          {cards.map((card, i) => {
             const title = language === "en" ? card.titleEn : card.titleId;
             const bullets =
               language === "en"
@@ -157,10 +161,15 @@ export default function ThreeRolesSection() {
             const isExternal = card.href.startsWith("http");
 
             return (
-              <article
-                key={card.key}
-                className="group flex flex-col rounded-2xl border border-gray-200 p-6 bg-white shadow-sm hover:shadow-md transition-shadow duration-300"
+              <ScrollReveal key={card.key} delay={i * 120} className="h-full">
+              <TiltCard
+                maxTilt={9}
+                liftZ={28}
+                className="h-full rounded-2xl"
               >
+                <article
+                  className="group flex h-full flex-col rounded-2xl border border-emerald-100 p-6 bg-white shadow-[0_24px_60px_-24px_rgba(16,185,129,0.45)] hover:shadow-[0_36px_80px_-22px_rgba(16,185,129,0.6)] transition-shadow duration-300"
+                >
                 <div className="flex items-start justify-between gap-4">
                   <h3 className="text-xl font-bold text-[#0f3d2e]">{title}</h3>
                   <div
@@ -204,6 +213,8 @@ export default function ThreeRolesSection() {
                   </a>
                 </div>
               </article>
+              </TiltCard>
+              </ScrollReveal>
             );
           })}
         </div>

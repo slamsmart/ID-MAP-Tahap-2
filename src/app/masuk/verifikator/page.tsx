@@ -16,6 +16,8 @@ import {
 import { setSession, getDashboardPath, User } from "@/lib/auth";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getAuthBgImage } from "@/lib/heroImageStore";
+import { useQuery } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
 
 const DEMO = { email: "verifikator@idmap.id", password: "verif123" };
 
@@ -49,6 +51,12 @@ function VerifikatorLoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const DEFAULT_BG = "/images/hero-mangrove.webp";
   const [bgImage, setBgImage] = useState(DEFAULT_BG);
+  const stats = useQuery(api.platformStats.getAll);
+  const statByKey = new Map((stats ?? []).map((s) => [s.key, s.value]));
+  const sahabatStat = statByKey.get("sahabat_terlibat") ?? "12.456";
+  const bibitStat = statByKey.get("bibit_ditanam") ?? "1.285.760";
+  const carbonStat = statByKey.get("serapan_karbon") ?? "823.456";
+  const valueStat = statByKey.get("potensi_nilai_carbon") ?? "Rp 98,65 M";
 
   useEffect(() => {
     getAuthBgImage()
@@ -196,18 +204,22 @@ function VerifikatorLoginForm() {
               )}
             </p>
 
-            <div className="flex gap-8 pt-4">
+            <div className="flex gap-6 pt-4">
               <div>
-                <div className="text-2xl font-extrabold text-white">12K+</div>
-                <div className="text-xs text-white/50 mt-0.5">{t("Hektar Terestorasi", "Hectares Restored")}</div>
+                <div className="text-2xl font-extrabold text-white">{sahabatStat}</div>
+                <div className="text-xs text-white/50 mt-0.5">{t("Sahabat Terlibat", "Partners Involved")}</div>
               </div>
               <div>
-                <div className="text-2xl font-extrabold text-emerald-300">500+</div>
-                <div className="text-xs text-white/50 mt-0.5">{t("Mitra Aktif", "Active Partners")}</div>
+                <div className="text-2xl font-extrabold text-emerald-300">{bibitStat}</div>
+                <div className="text-xs text-white/50 mt-0.5">{t("Bibit Ditanam", "Seedlings Planted")}</div>
               </div>
               <div>
-                <div className="text-2xl font-extrabold text-white">8.5K</div>
-                <div className="text-xs text-white/50 mt-0.5">{t("Kredit Karbon", "Carbon Credits")}</div>
+                <div className="text-2xl font-extrabold text-white">{carbonStat} <span className="text-sm font-semibold">Ton</span></div>
+                <div className="text-xs text-white/50 mt-0.5">{t("Serapan Karbon (CO₂e)", "Carbon Absorption (CO₂e)")}</div>
+              </div>
+              <div>
+                <div className="text-2xl font-extrabold text-white">{valueStat}</div>
+                <div className="text-xs text-white/50 mt-0.5">{t("Potensi Nilai Carbon", "Potential Carbon Value")}</div>
               </div>
             </div>
           </div>
