@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import { Heart, MapPin, Leaf, ShieldCheck, ArrowRight, Loader2 } from "lucide-react";
 import { api } from "../../../convex/_generated/api";
 import { getSession } from "@/lib/auth";
+import TiltCard from "@/components/shared/TiltCard";
+import ScrollReveal from "@/components/shared/ScrollReveal";
 
 const FUNDING_PROJECT_TITLES = [
   "Pokmaswas GOAL — Rehabilitasi Mangrove",
@@ -49,7 +51,7 @@ export default function PokmaswasCampaignSection() {
     <section className="bg-gradient-to-b from-white via-emerald-50/30 to-white py-16">
       <div className="container mx-auto px-4">
         {/* Header */}
-        <div className="text-center mb-10">
+        <ScrollReveal className="text-center mb-10">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold tracking-widest uppercase text-emerald-700 bg-emerald-100 rounded-full mb-3">
             <Heart className="w-3 h-3" />
             Dukung Proyek Aktif
@@ -61,7 +63,7 @@ export default function PokmaswasCampaignSection() {
             3 proyek mangrove terverifikasi siap menerima dukungan.
             Scan QRIS, dananya langsung tersalurkan ke kelompok masyarakat pesisir & mitra pelaksana.
           </p>
-        </div>
+        </ScrollReveal>
 
         {/* Loading state */}
         {allProjects === undefined && (
@@ -72,16 +74,17 @@ export default function PokmaswasCampaignSection() {
 
         {/* Cards */}
         {allProjects !== undefined && campaigns.length > 0 && (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-            {campaigns.map((p) => {
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto perspective-1500">
+            {campaigns.map((p, i) => {
               const raised = p.fundingRaised ?? 0;
               const target = p.fundingTarget ?? 100_000_000;
               const pct = Math.min(100, Math.round((raised / target) * 100));
 
               return (
+                <ScrollReveal key={p._id} delay={i * 110} className="h-full">
+                <TiltCard maxTilt={9} liftZ={28} className="h-full rounded-2xl">
                 <article
-                  key={p._id}
-                  className="bg-white rounded-2xl border border-emerald-100 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col"
+                  className="bg-white rounded-2xl border border-emerald-100 overflow-hidden shadow-[0_24px_60px_-24px_rgba(16,185,129,0.4)] hover:shadow-[0_36px_80px_-22px_rgba(16,185,129,0.55)] transition-shadow duration-300 flex flex-col h-full"
                 >
                   {/* Thumbnail */}
                   <div className="relative h-44 overflow-hidden">
@@ -178,6 +181,8 @@ export default function PokmaswasCampaignSection() {
                     )}
                   </div>
                 </article>
+                </TiltCard>
+                </ScrollReveal>
               );
             })}
           </div>

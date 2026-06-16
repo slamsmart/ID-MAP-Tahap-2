@@ -4,6 +4,8 @@ import { TreePine, Sprout, BarChart3, Fish, Shield, Users, CheckCircle2 } from "
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { useLanguage } from "@/contexts/LanguageContext";
+import TiltCard from "@/components/shared/TiltCard";
+import ScrollReveal from "@/components/shared/ScrollReveal";
 
 const services = [
   {
@@ -160,7 +162,7 @@ export default function OurServicesSection() {
     <section className="py-16 bg-gray-50">
       <div className="mx-auto max-w-7xl px-6">
         {/* Header */}
-        <div className="text-center mb-12">
+        <ScrollReveal className="text-center mb-12">
           <span className="inline-block px-3 py-1 text-xs font-semibold tracking-widest uppercase text-emerald-700 bg-emerald-100 rounded-full mb-3">
             {t("Layanan Kami", "Our Services")}
           </span>
@@ -173,17 +175,18 @@ export default function OurServicesSection() {
               "ID-MAP provides comprehensive services for the restoration, monitoring, and protection of Indonesia's mangrove and coastal ecosystems."
             )}
           </p>
-        </div>
+        </ScrollReveal>
 
         {/* Cards */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {displayServices.map((svc) => {
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 perspective-1500">
+          {displayServices.map((svc, i) => {
             const Icon = svc.icon;
             return (
-              <div
-                key={svc.key}
-                className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 flex flex-col"
-              >
+              <ScrollReveal key={svc.key} delay={i * 100} className="h-full">
+              <TiltCard maxTilt={9} liftZ={28} className="h-full rounded-2xl">
+                <div
+                  className="group bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-[0_20px_50px_-22px_rgba(15,61,46,0.25)] hover:shadow-[0_32px_70px_-22px_rgba(15,61,46,0.4)] transition-shadow duration-300 flex flex-col h-full"
+                >
                 {/* Thumbnail */}
                 <div className="relative h-44 overflow-hidden">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -223,7 +226,9 @@ export default function OurServicesSection() {
                     ))}
                   </div>
                 </div>
-              </div>
+                </div>
+              </TiltCard>
+              </ScrollReveal>
             );
           })}
         </div>
