@@ -18,6 +18,7 @@ import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
+import ScrollReveal from "@/components/shared/ScrollReveal";
 
 export default function Footer() {
   const { t } = useLanguage();
@@ -33,7 +34,7 @@ export default function Footer() {
   return (
     <footer className="bg-[#0a1c15] text-white">
       {/* CTA Banner */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <ScrollReveal as="div" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="relative overflow-hidden rounded-[32px] p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8"
              style={{
                background: "rgba(255, 255, 255, 0.05)",
@@ -97,11 +98,11 @@ export default function Footer() {
             </div>
           </div>
         </div>
-      </div>
+      </ScrollReveal>
 
       {/* Footer Links */}
       <div className="border-t border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <ScrollReveal as="div" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-10 lg:gap-12">
             {/* Brand */}
             <div>
@@ -208,12 +209,12 @@ export default function Footer() {
               </ul>
             </div>
           </div>
-        </div>
+        </ScrollReveal>
       </div>
 
       {/* Copyright & Badges */}
       <div className="border-t border-white/10 bg-black/20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <ScrollReveal as="div" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
             <div className="flex flex-col sm:flex-row items-center gap-4 text-sm text-gray-500 font-medium">
               <Leaf className="w-6 h-6 text-emerald-600" />
@@ -255,7 +256,7 @@ export default function Footer() {
               </div>
             </div>
           </div>
-        </div>
+        </ScrollReveal>
       </div>
     </footer>
   );

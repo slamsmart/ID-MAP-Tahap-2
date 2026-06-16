@@ -78,6 +78,29 @@ body {
   .reveal.is-visible { animation: none; }
 }
 
+/* ===== Back-to-top pill: slide+scale+pulse glow ===== */
+@keyframes back-to-top-in {
+  from { opacity: 0; transform: translate3d(0, 24px, 0) scale(0.6); }
+  to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+@keyframes back-to-top-pulse {
+  0%, 100% { box-shadow: 0 12px 30px -8px rgba(16,185,129,0.7), 0 0 0 0 rgba(110,231,183,0.55); }
+  50% { box-shadow: 0 14px 36px -8px rgba(16,185,129,0.85), 0 0 0 12px rgba(110,231,183,0); }
+}
+.back-to-top.is-hidden {
+  opacity: 0;
+  transform: translate3d(0, 24px, 0) scale(0.6);
+  pointer-events: none;
+}
+.back-to-top.is-visible {
+  animation: back-to-top-in 0.45s var(--ease-out-expo) both,
+             back-to-top-pulse 2.4s ease-in-out 0.45s infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .back-to-top.is-hidden { opacity: 0; transform: none; }
+  .back-to-top.is-visible { animation: none; opacity: 1; transform: none; }
+}
+
 @layer base {
   * {
     @apply border-gray-200;

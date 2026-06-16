@@ -4,6 +4,7 @@ import "./globals.css";
 import { ConvexClientProvider } from "./ConvexClientProvider";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import LiveChat from "@/components/chat/LiveChat";
+import BackToTop from "@/components/shared/BackToTop";
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -107,6 +108,7 @@ export default function RootLayout({
           <LanguageProvider>
             {children}
             <LiveChat />
+            <BackToTop />
           </LanguageProvider>
         </ConvexClientProvider>
       </body>
