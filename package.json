@@ -17,6 +17,7 @@
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-slot": "^1.2.4",
     "@radix-ui/react-tabs": "^1.1.13",
+    "@turf/area": "^7.3.5",
     "@turf/turf": "^7.3.5",
     "@types/bcryptjs": "^2.4.6",
     "@types/nodemailer": "^8.0.0",

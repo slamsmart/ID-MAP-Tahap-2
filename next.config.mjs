@@ -6,6 +6,10 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  experimental: {
+    // Tree-shake import ikon/komponen besar → bundle peta & halaman lebih ringan
+    optimizePackageImports: ["lucide-react"],
+  },
   webpack: (config, { isServer, dev }) => {
     if (isServer && !dev) {
       config.output.chunkFilename = "chunks/[id].js";

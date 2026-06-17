@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { MapContainer, TileLayer, Polygon, useMapEvents, CircleMarker, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import * as turf from "@turf/turf";
+import area from "@turf/area";
 
 interface NativeMapProps {
   onAreaCalculated: (areaHa: number) => void;
@@ -150,8 +150,8 @@ export default function NativeMap({ onAreaCalculated, transparent, carbonStock =
 
   useEffect(() => {
     if (points.length >= 3) {
-      const turfPolygon = turf.polygon([[...points.map(p => [p[1], p[0]]), [points[0][1], points[0][0]]]]);
-      const areaSqMeters = turf.area(turfPolygon);
+      const ring = [...points.map(p => [p[1], p[0]]), [points[0][1], points[0][0]]];
+      const areaSqMeters = area({ type: "Polygon", coordinates: [ring] });
       const areaHa = areaSqMeters / 10000;
       onAreaCalculated(areaHa);
     } else if (points.length === 0) {

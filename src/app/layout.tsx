@@ -100,6 +100,14 @@ export default function RootLayout({
           href="/images/hero-mangrove.webp"
           type="image/webp"
         />
+        {/* Resource hints — mempercepat koneksi awal peta interaktif (Earth Engine iframe + tile satelit) */}
+        <link
+          rel="preconnect"
+          href="https://ee-dimassyarifworkspace.projects.earthengine.app"
+        />
+        <link rel="dns-prefetch" href="https://earthengine.googleapis.com" />
+        <link rel="dns-prefetch" href="https://server.arcgisonline.com" />
+        <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com" />
       </head>
       <body
         className={`${plusJakarta.variable} ${inter.variable} font-sans antialiased`}
