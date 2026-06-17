@@ -21,6 +21,7 @@ import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
+import ScrollReveal from "@/components/shared/ScrollReveal";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 // Mapping nama icon (string yang disimpan di Convex) ke komponen Lucide
@@ -174,17 +175,19 @@ export default function TentangPage() {
                 const Icon = ICON_MAP[svc.iconKey] ?? Sprout;
                 const svcImage = "image" in svc ? svc.image : undefined;
                 return (
-                  <div key={idx} className="bg-white rounded-xl border border-gray-100 p-6 overflow-hidden">
+                  <ScrollReveal key={idx} delay={idx * 90} className="h-full">
+                  <div className="group h-full bg-white rounded-xl border border-gray-100 hover:border-emerald-200 p-6 overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
                     {svcImage && (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={svcImage} alt={svc.titleId} className="w-full h-32 object-cover rounded-lg mb-4 -mt-2" />
                     )}
-                    <div className="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center mb-4">
+                    <div className="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110">
                       <Icon className="w-5 h-5 text-emerald-600" />
                     </div>
                     <h3 className="font-semibold text-gray-900 mb-2">{pick(svc.titleId, svc.titleEn)}</h3>
                     <p className="text-sm text-gray-600">{pick(svc.descId, svc.descEn)}</p>
                   </div>
+                  </ScrollReveal>
                 );
               })}
             </div>
@@ -201,13 +204,15 @@ export default function TentangPage() {
               {c.whyCards.map((item, idx) => {
                 const Icon = ICON_MAP[item.iconKey] ?? Shield;
                 return (
-                  <div key={idx} className="bg-white rounded-xl border border-gray-100 p-6">
-                    <div className="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center mb-4">
+                  <ScrollReveal key={idx} delay={idx * 90} className="h-full">
+                  <div className="group h-full bg-white rounded-xl border border-gray-100 hover:border-emerald-200 p-6 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
+                    <div className="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110">
                       <Icon className="w-5 h-5 text-emerald-600" />
                     </div>
                     <h3 className="font-semibold text-gray-900 mb-2">{pick(item.titleId, item.titleEn)}</h3>
                     <p className="text-sm text-gray-600">{pick(item.descId, item.descEn)}</p>
                   </div>
+                  </ScrollReveal>
                 );
               })}
             </div>

@@ -1,5 +1,6 @@
 import { Handshake, Building2, Shield, Leaf, Users } from "lucide-react";
 import Navbar from "@/components/shared/Navbar";
+import ScrollReveal from "@/components/shared/ScrollReveal";
 
 const partners = [
   {
@@ -61,8 +62,9 @@ export default function MitraKamiPage() {
             </div>
 
             <div className="grid sm:grid-cols-2 gap-6">
-              {partners.map((p) => (
-                <div key={p.name} className="bg-white rounded-2xl border border-gray-100 p-6 sm:p-8 hover:shadow-lg transition-shadow">
+              {partners.map((p, i) => (
+                <ScrollReveal key={p.name} delay={i * 90} className="h-full">
+                <div className="h-full bg-white rounded-2xl border border-gray-100 p-6 sm:p-8 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
                   <div className="flex items-start gap-4">
                     <div className={`w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 ${p.color}`}>
                       <p.icon className="w-7 h-7" />
@@ -76,6 +78,7 @@ export default function MitraKamiPage() {
                     </div>
                   </div>
                 </div>
+                </ScrollReveal>
               ))}
             </div>
           </div>

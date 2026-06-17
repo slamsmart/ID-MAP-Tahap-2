@@ -6,6 +6,7 @@ import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
+import ScrollReveal from "@/components/shared/ScrollReveal";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 // Default 11 FAQ — dipakai sebelum verifikator publish konten Convex.
@@ -116,7 +117,8 @@ export default function FAQPage() {
                 const q = pick(faq.questionId, faq.questionEn);
                 const a = pick(faq.answerId, faq.answerEn);
                 return (
-                  <div key={i} className="border border-gray-200 rounded-xl overflow-hidden">
+                  <ScrollReveal key={i} delay={Math.min(i, 6) * 70}>
+                  <div className="border border-gray-200 rounded-xl overflow-hidden">
                     <button
                       onClick={() => setOpenIndex(openIndex === i ? null : i)}
                       aria-expanded={openIndex === i}
@@ -135,6 +137,7 @@ export default function FAQPage() {
                       </div>
                     )}
                   </div>
+                  </ScrollReveal>
                 );
               })}
             </div>
