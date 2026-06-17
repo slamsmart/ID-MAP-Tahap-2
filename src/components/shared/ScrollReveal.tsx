@@ -10,15 +10,19 @@ type ScrollRevealProps = {
   delay?: number;
   /** Render as a different element if the wrapper must stay layout-neutral. */
   as?: "div" | "li" | "article";
+  /** Animate only the first time it enters. Default false → re-animates on every entry. */
+  once?: boolean;
 };
 
 /**
- * Reveals its children with a "float up into place" depth animation the first
- * time it scrolls into view. Uses a single IntersectionObserver and toggles a
- * CSS class — the animation itself (and its reduced-motion fallback) lives in
- * globals.css under `.reveal`. Once revealed it stops observing, so there is no
- * lingering work. Safe to nest a TiltCard inside: this wrapper and the tilt
- * target are different elements, so their transforms never fight.
+ * Reveals its children with a "float up into place" depth animation when it
+ * scrolls into view. Uses a single IntersectionObserver and toggles a CSS class
+ * — the animation itself (and its reduced-motion fallback) lives in globals.css
+ * under `.reveal`. By default the effect repeats: it resets when the element
+ * leaves the viewport and replays when it re-enters, so scrolling up then back
+ * down re-triggers it. Pass `once` to keep the old fire-once behaviour. Safe to
+ * nest a TiltCard inside: this wrapper and the tilt target are different
+ * elements, so their transforms never fight.
  */
 export default function ScrollReveal({
   children,
@@ -26,6 +30,7 @@ export default function ScrollReveal({
   style,
   delay = 0,
   as: Tag = "div",
+  once = false,
 }: ScrollRevealProps) {
   const ref = useRef<HTMLElement>(null);
 
@@ -44,7 +49,10 @@ export default function ScrollReveal({
         for (const entry of entries) {
           if (entry.isIntersecting) {
             el.classList.add("is-visible");
-            io.unobserve(el);
+            if (once) io.unobserve(el);
+          } else if (!once) {
+            // Reset so the entrance animation can replay on the next entry.
+            el.classList.remove("is-visible");
           }
         }
       },
@@ -52,7 +60,7 @@ export default function ScrollReveal({
     );
     io.observe(el);
     return () => io.disconnect();
-  }, []);
+  }, [once]);
 
   return (
     <Tag
