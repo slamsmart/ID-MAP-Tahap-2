@@ -157,27 +157,30 @@ export default function ThreeRolesSection() {
             const cta = language === "en" ? card.ctaEn : card.ctaId;
             const isExternal = card.href.startsWith("http");
 
-            // Per-role tint (overlay on photo + accent ring/btn).
+            // Per-role tint (solid gradient panel kiri + accent CTA).
             const tint =
               card.key === "sahabat"
                 ? {
-                    overlay:
-                      "linear-gradient(135deg, rgba(13,71,161,0.92) 0%, rgba(2,136,209,0.78) 60%, rgba(2,136,209,0.35) 100%)",
+                    panel:
+                      "linear-gradient(135deg, #0d47a1 0%, #0288d1 70%, #29b6f6 100%)",
                     accent: "from-sky-500 to-blue-700",
                     bullet: "text-sky-100",
+                    seam: "rgba(13,71,161,0.55)",
                   }
                 : card.key === "mitra"
                 ? {
-                    overlay:
-                      "linear-gradient(135deg, rgba(15,61,46,0.92) 0%, rgba(31,111,84,0.78) 60%, rgba(52,211,153,0.35) 100%)",
+                    panel:
+                      "linear-gradient(135deg, #0f3d2e 0%, #1f6f54 65%, #34d399 100%)",
                     accent: "from-emerald-500 to-emerald-700",
                     bullet: "text-emerald-100",
+                    seam: "rgba(15,61,46,0.55)",
                   }
                 : {
-                    overlay:
-                      "linear-gradient(135deg, rgba(13,90,80,0.92) 0%, rgba(20,158,134,0.78) 50%, rgba(234,179,8,0.45) 100%)",
+                    panel:
+                      "linear-gradient(135deg, #0d5a50 0%, #149e86 60%, #eab308 100%)",
                     accent: "from-teal-500 to-amber-600",
                     bullet: "text-amber-50",
+                    seam: "rgba(13,90,80,0.55)",
                   };
 
             return (
@@ -189,22 +192,11 @@ export default function ThreeRolesSection() {
                 className="h-full rounded-3xl"
               >
                 <article className="group relative h-full grid grid-cols-[1.05fr_0.95fr] rounded-3xl overflow-hidden border border-white/10 shadow-[0_28px_70px_-22px_rgba(15,61,46,0.55)] hover:shadow-[0_38px_90px_-22px_rgba(15,61,46,0.7)] transition-shadow duration-300">
-                  {/* Left: tinted text panel over photo */}
-                  <div className="relative flex flex-col justify-between p-6 md:p-7 min-h-[420px]">
-                    {/* photo background, lower-opacity so text stays legible */}
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={card.image}
-                      alt=""
-                      aria-hidden="true"
-                      className="absolute inset-0 w-full h-full object-cover"
-                      loading="lazy"
-                    />
-                    {/* tint overlay — gives the role its identity color */}
-                    <div
-                      className="absolute inset-0"
-                      style={{ backgroundImage: tint.overlay }}
-                    />
+                  {/* Left: solid tint panel (no photo here) */}
+                  <div
+                    className="relative flex flex-col justify-between p-6 md:p-7 min-h-[420px]"
+                    style={{ backgroundImage: tint.panel }}
+                  >
                     {/* soft top-left vignette for extra depth */}
                     <div className="absolute inset-0 bg-gradient-to-br from-black/15 to-transparent" />
 
@@ -236,7 +228,7 @@ export default function ThreeRolesSection() {
                     </a>
                   </div>
 
-                  {/* Right: full-bleed photo */}
+                  {/* Right: full-bleed photo (single image per card) */}
                   <div className="relative">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
@@ -249,8 +241,7 @@ export default function ThreeRolesSection() {
                     <div
                       className="absolute inset-y-0 left-0 w-16"
                       style={{
-                        backgroundImage:
-                          "linear-gradient(to right, rgba(15,61,46,0.45), rgba(15,61,46,0))",
+                        backgroundImage: `linear-gradient(to right, ${tint.seam}, rgba(0,0,0,0))`,
                       }}
                     />
                   </div>
