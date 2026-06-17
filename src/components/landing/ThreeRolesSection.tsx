@@ -1,7 +1,6 @@
 "use client";
 
 import { ArrowRight, CheckCircle2 } from "lucide-react";
-import Image from "next/image";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -104,20 +103,18 @@ export default function ThreeRolesSection() {
             {[0, 1, 2].map((i) => (
               <div
                 key={i}
-                className="flex flex-col rounded-2xl border border-gray-200 p-6 bg-white shadow-sm"
+                className="grid grid-cols-[1.05fr_0.95fr] rounded-3xl overflow-hidden border border-gray-200 min-h-[420px] bg-white shadow-sm"
               >
-                <div className="flex items-start justify-between gap-4">
-                  <div className="h-6 w-32 rounded bg-gray-100 animate-pulse" />
-                  <div className="h-24 w-24 rounded-xl bg-gray-100 animate-pulse flex-shrink-0" />
+                <div className="p-6 space-y-4 bg-gray-100">
+                  <div className="h-7 w-3/4 rounded bg-gray-200 animate-pulse" />
+                  <div className="space-y-2 mt-4">
+                    {[0, 1, 2].map((b) => (
+                      <div key={b} className="h-3.5 w-2/3 rounded bg-gray-200 animate-pulse" />
+                    ))}
+                  </div>
+                  <div className="h-9 w-32 rounded-full bg-gray-200 animate-pulse mt-6" />
                 </div>
-                <ul className="mt-5 space-y-3 flex-grow">
-                  {[0, 1, 2].map((b) => (
-                    <li key={b} className="h-4 w-3/4 rounded bg-gray-100 animate-pulse" />
-                  ))}
-                </ul>
-                <div className="mt-6 pt-4">
-                  <div className="h-10 w-40 rounded-full bg-gray-100 animate-pulse" />
-                </div>
+                <div className="bg-gray-100 animate-pulse" />
               </div>
             ))}
           </div>
@@ -160,59 +157,104 @@ export default function ThreeRolesSection() {
             const cta = language === "en" ? card.ctaEn : card.ctaId;
             const isExternal = card.href.startsWith("http");
 
+            // Per-role tint (overlay on photo + accent ring/btn).
+            const tint =
+              card.key === "sahabat"
+                ? {
+                    overlay:
+                      "linear-gradient(135deg, rgba(13,71,161,0.92) 0%, rgba(2,136,209,0.78) 60%, rgba(2,136,209,0.35) 100%)",
+                    accent: "from-sky-500 to-blue-700",
+                    bullet: "text-sky-100",
+                  }
+                : card.key === "mitra"
+                ? {
+                    overlay:
+                      "linear-gradient(135deg, rgba(15,61,46,0.92) 0%, rgba(31,111,84,0.78) 60%, rgba(52,211,153,0.35) 100%)",
+                    accent: "from-emerald-500 to-emerald-700",
+                    bullet: "text-emerald-100",
+                  }
+                : {
+                    overlay:
+                      "linear-gradient(135deg, rgba(13,90,80,0.92) 0%, rgba(20,158,134,0.78) 50%, rgba(234,179,8,0.45) 100%)",
+                    accent: "from-teal-500 to-amber-600",
+                    bullet: "text-amber-50",
+                  };
+
             return (
               <ScrollReveal key={card.key} delay={i * 120} className="h-full">
               <TiltCard
                 maxTilt={9}
                 liftZ={28}
-                className="h-full rounded-2xl"
+                glare={false}
+                className="h-full rounded-3xl"
               >
-                <article
-                  className="group flex h-full flex-col rounded-2xl border border-emerald-100 p-6 bg-white shadow-[0_24px_60px_-24px_rgba(16,185,129,0.45)] hover:shadow-[0_36px_80px_-22px_rgba(16,185,129,0.6)] transition-shadow duration-300"
-                >
-                <div className="flex items-start justify-between gap-4">
-                  <h3 className="text-xl font-bold text-[#0f3d2e]">{title}</h3>
-                  <div
-                    className="relative h-24 w-24 flex-shrink-0 grid place-items-center transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:scale-[1.06]"
-                    aria-hidden="true"
-                  >
-                    {/* Soft circular green glow that bleeds outside the disc */}
-                    <span className="absolute inset-0 rounded-full bg-emerald-400/35 blur-2xl scale-110" />
-                    <Image
+                <article className="group relative h-full grid grid-cols-[1.05fr_0.95fr] rounded-3xl overflow-hidden border border-white/10 shadow-[0_28px_70px_-22px_rgba(15,61,46,0.55)] hover:shadow-[0_38px_90px_-22px_rgba(15,61,46,0.7)] transition-shadow duration-300">
+                  {/* Left: tinted text panel over photo */}
+                  <div className="relative flex flex-col justify-between p-6 md:p-7 min-h-[420px]">
+                    {/* photo background, lower-opacity so text stays legible */}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
                       src={card.image}
-                      alt={title}
-                      width={144}
-                      height={144}
-                      className="relative h-24 w-24 rounded-full object-cover ring-1 ring-emerald-100/50 shadow-[0_10px_28px_-6px_rgba(16,185,129,0.55)]"
+                      alt=""
+                      aria-hidden="true"
+                      className="absolute inset-0 w-full h-full object-cover"
                       loading="lazy"
                     />
-                  </div>
-                </div>
+                    {/* tint overlay — gives the role its identity color */}
+                    <div
+                      className="absolute inset-0"
+                      style={{ backgroundImage: tint.overlay }}
+                    />
+                    {/* soft top-left vignette for extra depth */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-black/15 to-transparent" />
 
-                <ul className="mt-5 space-y-3 flex-grow">
-                  {bullets.map((bullet) => (
-                    <li
-                      key={bullet}
-                      className="flex items-center gap-2.5 text-sm text-slate-700"
+                    <div className="relative z-10">
+                      <h3 className="font-extrabold text-white tracking-tight leading-[1.1] text-[28px] md:text-[34px]">
+                        {title}
+                      </h3>
+                      <ul className="mt-5 space-y-2.5">
+                        {bullets.map((bullet) => (
+                          <li
+                            key={bullet}
+                            className={`flex items-start gap-2 text-[13px] leading-snug ${tint.bullet}`}
+                          >
+                            <CheckCircle2 className="h-4 w-4 mt-0.5 flex-shrink-0 text-white/85" />
+                            <span>{bullet}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <a
+                      href={card.href}
+                      target={isExternal ? "_blank" : undefined}
+                      rel={isExternal ? "noopener noreferrer" : undefined}
+                      className={`relative z-10 mt-6 inline-flex items-center justify-center gap-2 self-start rounded-full bg-gradient-to-r ${tint.accent} px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-black/20 hover:brightness-110 transition`}
                     >
-                      <CheckCircle2 className="h-4.5 w-4.5 text-emerald-600 flex-shrink-0" />
-                      <span>{bullet}</span>
-                    </li>
-                  ))}
-                </ul>
+                      {cta}
+                      <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                    </a>
+                  </div>
 
-                <div className="mt-6 pt-4">
-                  <a
-                    href={card.href}
-                    target={isExternal ? "_blank" : undefined}
-                    rel={isExternal ? "noopener noreferrer" : undefined}
-                    className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white bg-[#1f6f54] hover:bg-[#0f3d2e] transition-colors"
-                  >
-                    {cta}
-                    <ArrowRight className="h-4 w-4" />
-                  </a>
-                </div>
-              </article>
+                  {/* Right: full-bleed photo */}
+                  <div className="relative">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={card.image}
+                      alt={title}
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                      loading="lazy"
+                    />
+                    {/* feathered seam between text panel and photo */}
+                    <div
+                      className="absolute inset-y-0 left-0 w-16"
+                      style={{
+                        backgroundImage:
+                          "linear-gradient(to right, rgba(15,61,46,0.45), rgba(15,61,46,0))",
+                      }}
+                    />
+                  </div>
+                </article>
               </TiltCard>
               </ScrollReveal>
             );
