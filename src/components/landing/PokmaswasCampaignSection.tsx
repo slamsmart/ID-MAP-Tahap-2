@@ -82,9 +82,9 @@ export default function PokmaswasCampaignSection() {
 
               return (
                 <ScrollReveal key={p._id} delay={i * 110} className="h-full">
-                <TiltCard maxTilt={9} liftZ={28} className="h-full rounded-2xl">
+                <TiltCard maxTilt={9} liftZ={28} glare={false} className="h-full rounded-2xl">
                 <article
-                  className="bg-white rounded-2xl border border-emerald-100 overflow-hidden shadow-[0_24px_60px_-24px_rgba(16,185,129,0.4)] hover:shadow-[0_36px_80px_-22px_rgba(16,185,129,0.55)] transition-shadow duration-300 flex flex-col h-full"
+                  className="group shine bg-white rounded-2xl border border-emerald-100 hover:border-emerald-300 overflow-hidden shadow-[0_24px_60px_-24px_rgba(16,185,129,0.4)] hover:shadow-[0_36px_80px_-22px_rgba(16,185,129,0.55)] transition-all duration-300 flex flex-col h-full"
                 >
                   {/* Thumbnail */}
                   <div className="relative h-44 overflow-hidden">
@@ -92,14 +92,14 @@ export default function PokmaswasCampaignSection() {
                     <img
                       src={p.image}
                       alt={p.title}
-                      className="w-full h-full object-cover"
+                      className="card-zoom w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                    <span className="absolute top-3 right-3 inline-flex items-center gap-1 text-[10px] font-bold text-white bg-emerald-600 px-2.5 py-1 rounded-full">
+                    <span className="absolute top-3 right-3 z-10 inline-flex items-center gap-1 text-[10px] font-bold text-white bg-emerald-600 px-2.5 py-1 rounded-full">
                       <ShieldCheck className="w-3 h-3" />
                       Terverifikasi
                     </span>
-                    <div className="absolute bottom-3 left-4 text-white">
+                    <div className="absolute bottom-3 left-4 z-10 text-white">
                       <div className="flex items-center gap-1 text-[11px] opacity-90">
                         <MapPin className="w-3 h-3" />
                         {p.province}
@@ -109,7 +109,7 @@ export default function PokmaswasCampaignSection() {
 
                   {/* Content */}
                   <div className="p-5 flex flex-col flex-1 gap-3">
-                    <h3 className="font-bold text-[#0f3d2e] text-base leading-snug line-clamp-2">
+                    <h3 className="font-bold text-[#0f3d2e] text-base leading-snug line-clamp-2 group-hover:text-emerald-700 transition-colors">
                       {p.title}
                     </h3>
                     <p className="text-xs text-slate-500 leading-relaxed line-clamp-2 flex-1">
@@ -128,7 +128,7 @@ export default function PokmaswasCampaignSection() {
                       </div>
                       <div className="h-2 bg-emerald-50 rounded-full overflow-hidden">
                         <div
-                          className="h-full bg-gradient-to-r from-emerald-500 to-teal-500 transition-all duration-500"
+                          className="bar-grow h-full bg-gradient-to-r from-emerald-500 to-teal-500"
                           style={{ width: `${pct}%` }}
                         />
                       </div>
