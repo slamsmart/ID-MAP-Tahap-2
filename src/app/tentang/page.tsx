@@ -107,14 +107,14 @@ export default function TentangPage() {
           className={`relative ${c.heroImage ? "bg-cover bg-center" : "bg-[#0f3d2e]"} text-white py-16 sm:py-20`}
           style={c.heroImage ? { backgroundImage: `linear-gradient(rgba(15, 61, 46, 0.85), rgba(15, 61, 46, 0.85)), url('${c.heroImage}')` } : undefined}
         >
-          <div className="mx-auto max-w-5xl px-4 sm:px-6 text-center">
+          <ScrollReveal className="mx-auto max-w-5xl px-4 sm:px-6 text-center">
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
               {pick(c.heroTitleId, c.heroTitleEn)}
             </h1>
             <p className="mt-4 text-lg sm:text-xl text-emerald-200 max-w-3xl mx-auto">
               {pick(c.heroSubtitleId, c.heroSubtitleEn)}
             </p>
-          </div>
+          </ScrollReveal>
         </section>
 
         {/* Apa itu + Misi Visi */}
