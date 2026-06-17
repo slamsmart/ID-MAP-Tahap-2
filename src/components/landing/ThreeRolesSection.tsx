@@ -140,12 +140,12 @@ export default function ThreeRolesSection() {
       {/* soft depth glow behind the cards */}
       <div className="pointer-events-none absolute left-1/2 top-1/3 h-72 w-[42rem] -translate-x-1/2 rounded-full bg-emerald-300/20 blur-3xl" />
       <div className="relative mx-auto max-w-7xl px-6">
-        <div className="text-center mb-10">
+        <ScrollReveal className="text-center mb-10">
           <h2 className="text-4xl font-extrabold tracking-tight text-[#0f3d2e]">
             {headline}
           </h2>
           <p className="mt-3 text-slate-600 max-w-2xl mx-auto">{subtitle}</p>
-        </div>
+        </ScrollReveal>
 
         <div className="grid lg:grid-cols-3 gap-6 perspective-1500">
           {cards.map((card, i) => {
