@@ -121,7 +121,7 @@ export default function TentangPage() {
         <section className="py-12 sm:py-16">
           <div className="mx-auto max-w-5xl px-4 sm:px-6">
             <div className="grid md:grid-cols-2 gap-10 items-center">
-              <div>
+              <ScrollReveal>
                 <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
                   {pick(c.apaItuTitleId, c.apaItuTitleEn)}
                 </h2>
@@ -131,9 +131,9 @@ export default function TentangPage() {
                 <p className="text-gray-600 leading-relaxed">
                   {pick(c.apaItuParagraph2Id, c.apaItuParagraph2En)}
                 </p>
-              </div>
+              </ScrollReveal>
 
-              <div className="bg-emerald-50 rounded-2xl p-8 space-y-6">
+              <ScrollReveal delay={120} className="bg-emerald-50 rounded-2xl p-8 space-y-6">
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <Target className="w-5 h-5 text-emerald-700" />
@@ -152,7 +152,7 @@ export default function TentangPage() {
                     <p className="text-sm text-gray-600 mt-1">{pick(c.visionId, c.visionEn)}</p>
                   </div>
                 </div>
-              </div>
+              </ScrollReveal>
             </div>
           </div>
         </section>
@@ -222,7 +222,7 @@ export default function TentangPage() {
         {/* Kontak */}
         <section className="py-12 sm:py-16 bg-emerald-50/40">
           <div className="mx-auto max-w-3xl px-4 sm:px-6">
-            <div className="bg-white rounded-2xl border border-gray-100 p-8 shadow-sm">
+            <ScrollReveal className="bg-white rounded-2xl border border-gray-100 p-8 shadow-sm">
               <h2 className="text-xl font-bold text-gray-900 text-center mb-6">
                 {isEn ? "Contact Us" : "Hubungi Kami"}
               </h2>
@@ -251,13 +251,13 @@ export default function TentangPage() {
                   </div>
                 </div>
               </div>
-            </div>
+            </ScrollReveal>
           </div>
         </section>
 
         {/* CTA */}
         <section className="py-12 sm:py-16">
-          <div className="mx-auto max-w-5xl px-4 sm:px-6 text-center">
+          <ScrollReveal className="mx-auto max-w-5xl px-4 sm:px-6 text-center">
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
               {isEn ? "Ready to Contribute?" : "Siap Berkontribusi?"}
             </h2>
@@ -274,7 +274,7 @@ export default function TentangPage() {
                 {isEn ? "Back to Home" : "Kembali ke Beranda"}
               </a>
             </div>
-          </div>
+          </ScrollReveal>
         </section>
       </main>
       <Footer />
