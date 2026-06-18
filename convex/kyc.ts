@@ -96,7 +96,7 @@ export const listAll = query({
     const allDocs = await ctx.db
       .query("kycDocuments")
       .order("desc")
-      .collect();
+      .take(200);
 
     const results = [];
     for (const doc of allDocs) {
@@ -173,12 +173,16 @@ export const getStats = query({
     rejected: v.number(),
   }),
   handler: async (ctx) => {
-    const allDocs = await ctx.db.query("kycDocuments").collect();
+    const [pendingDocs, approvedDocs, rejectedDocs] = await Promise.all([
+      ctx.db.query("kycDocuments").withIndex("by_status", (q) => q.eq("status", "Menunggu")).collect(),
+      ctx.db.query("kycDocuments").withIndex("by_status", (q) => q.eq("status", "Disetujui")).collect(),
+      ctx.db.query("kycDocuments").withIndex("by_status", (q) => q.eq("status", "Ditolak")).collect(),
+    ]);
     return {
-      totalSubmissions: allDocs.length,
-      pending: allDocs.filter((d) => d.status === "Menunggu").length,
-      approved: allDocs.filter((d) => d.status === "Disetujui").length,
-      rejected: allDocs.filter((d) => d.status === "Ditolak").length,
+      totalSubmissions: pendingDocs.length + approvedDocs.length + rejectedDocs.length,
+      pending: pendingDocs.length,
+      approved: approvedDocs.length,
+      rejected: rejectedDocs.length,
     };
   },
 });

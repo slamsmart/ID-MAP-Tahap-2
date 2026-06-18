@@ -136,17 +136,21 @@ export const getStats = query({
     kycDitolak: v.number(),
   }),
   handler: async (ctx) => {
-    const all = await ctx.db.query("users").collect();
+    const byRole = async (role: string) =>
+      (await ctx.db.query("users").withIndex("by_role", (q) => q.eq("role", role as never)).collect()).length;
+    const byKyc = async (status: string) =>
+      (await ctx.db.query("users").withIndex("by_kycStatus", (q) => q.eq("kycStatus", status as never)).collect()).length;
+
+    const [sahabat, mitra, mitraFacilitator, verifikator, admin, corporate,
+           kycMenunggu, kycTerverifikasi, kycDitolak] = await Promise.all([
+      byRole("sahabat"), byRole("mitra"), byRole("mitra_facilitator"),
+      byRole("verifikator"), byRole("admin"), byRole("corporate"),
+      byKyc("menunggu"), byKyc("terverifikasi"), byKyc("ditolak"),
+    ]);
     return {
-      total: all.length,
-      sahabat: all.filter((u) => u.role === "sahabat").length,
-      mitra: all.filter((u) => u.role === "mitra").length,
-      verifikator: all.filter((u) => u.role === "verifikator").length,
-      admin: all.filter((u) => u.role === "admin").length,
-      corporate: all.filter((u) => u.role === "corporate").length,
-      kycMenunggu: all.filter((u) => u.kycStatus === "menunggu").length,
-      kycTerverifikasi: all.filter((u) => u.kycStatus === "terverifikasi").length,
-      kycDitolak: all.filter((u) => u.kycStatus === "ditolak").length,
+      total: sahabat + mitra + mitraFacilitator + verifikator + admin + corporate,
+      sahabat, mitra, verifikator, admin, corporate,
+      kycMenunggu, kycTerverifikasi, kycDitolak,
     };
   },
 });

@@ -80,10 +80,12 @@ export const getStats = query({
     totalSeeds: v.number(),
   }),
   handler: async (ctx) => {
-    const all = await ctx.db.query("projects").collect();
-    const verified = all.filter((p) => p.status === "Terverifikasi");
-    const inProgress = all.filter((p) => p.status === "Dalam Proses");
-
+    const [verified, inProgress, draft] = await Promise.all([
+      ctx.db.query("projects").withIndex("by_status", (q) => q.eq("status", "Terverifikasi")).collect(),
+      ctx.db.query("projects").withIndex("by_status", (q) => q.eq("status", "Dalam Proses")).collect(),
+      ctx.db.query("projects").withIndex("by_status", (q) => q.eq("status", "Draft")).collect(),
+    ]);
+    const all = [...verified, ...inProgress, ...draft];
     return {
       totalProjects: all.length,
       verifiedProjects: verified.length,

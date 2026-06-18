@@ -69,8 +69,10 @@ export const getTotalStats = query({
     totalAmount: v.number(),
   }),
   handler: async (ctx) => {
-    const txs = await ctx.db.query("transactions").collect();
-    const completed = txs.filter((t) => t.status === "Selesai");
+    const completed = await ctx.db
+      .query("transactions")
+      .withIndex("by_status", (q) => q.eq("status", "Selesai"))
+      .collect();
     return {
       totalTransactions: completed.length,
       totalAmount: completed.reduce((s, t) => s + t.totalAmount, 0),
