@@ -58,7 +58,7 @@ const fallback = {
       bullet2En: "Technical assistance",
       bullet3Id: "MRV & Registrasi SRN",
       bullet3En: "MRV & SRN Registration",
-      ctaId: "Daftar sebagai Mitra",
+      ctaId: "Daftar Mitra",
       ctaEn: "Register as Partner",
       href: "/daftar?peran=mitra",
       image: "/images/roles/mitra.webp",
@@ -103,18 +103,18 @@ export default function ThreeRolesSection() {
             {[0, 1, 2].map((i) => (
               <div
                 key={i}
-                className="grid grid-cols-[1.05fr_0.95fr] rounded-3xl overflow-hidden border border-gray-200 min-h-[420px] bg-white shadow-sm"
+                className="flex items-stretch gap-5 rounded-3xl overflow-hidden border border-gray-200 min-h-[340px] bg-white p-6 shadow-sm"
               >
-                <div className="p-6 space-y-4 bg-gray-100">
+                <div className="w-[40%] flex-shrink-0 rounded-2xl bg-gray-100 animate-pulse" />
+                <div className="flex flex-col justify-center flex-1 space-y-4">
                   <div className="h-7 w-3/4 rounded bg-gray-200 animate-pulse" />
-                  <div className="space-y-2 mt-4">
+                  <div className="space-y-2">
                     {[0, 1, 2].map((b) => (
                       <div key={b} className="h-3.5 w-2/3 rounded bg-gray-200 animate-pulse" />
                     ))}
                   </div>
-                  <div className="h-9 w-32 rounded-full bg-gray-200 animate-pulse mt-6" />
+                  <div className="h-9 w-32 rounded-full bg-gray-200 animate-pulse mt-2" />
                 </div>
-                <div className="bg-gray-100 animate-pulse" />
               </div>
             ))}
           </div>
@@ -154,34 +154,11 @@ export default function ThreeRolesSection() {
               language === "en"
                 ? [card.bullet1En, card.bullet2En, card.bullet3En]
                 : [card.bullet1Id, card.bullet2Id, card.bullet3Id];
-            const cta = language === "en" ? card.ctaEn : card.ctaId;
+            const ctaRaw = language === "en" ? card.ctaEn : card.ctaId;
+            // Normalize legacy DB label "Daftar sebagai Mitra" -> "Daftar Mitra"
+            const cta =
+              ctaRaw === "Daftar sebagai Mitra" ? "Daftar Mitra" : ctaRaw;
             const isExternal = card.href.startsWith("http");
-
-            // Per-role tint (solid gradient panel kiri + accent CTA).
-            const tint =
-              card.key === "sahabat"
-                ? {
-                    panel:
-                      "linear-gradient(135deg, #0d47a1 0%, #0288d1 70%, #29b6f6 100%)",
-                    accent: "from-sky-500 to-blue-700",
-                    bullet: "text-sky-100",
-                    seam: "rgba(13,71,161,0.55)",
-                  }
-                : card.key === "mitra"
-                ? {
-                    panel:
-                      "linear-gradient(135deg, #0f3d2e 0%, #1f6f54 65%, #34d399 100%)",
-                    accent: "from-emerald-500 to-emerald-700",
-                    bullet: "text-emerald-100",
-                    seam: "rgba(15,61,46,0.55)",
-                  }
-                : {
-                    panel:
-                      "linear-gradient(135deg, #0d5a50 0%, #149e86 60%, #eab308 100%)",
-                    accent: "from-teal-500 to-amber-600",
-                    bullet: "text-amber-50",
-                    seam: "rgba(13,90,80,0.55)",
-                  };
 
             return (
               <ScrollReveal key={card.key} delay={i * 120} className="h-full">
@@ -191,59 +168,45 @@ export default function ThreeRolesSection() {
                 glare={false}
                 className="h-full rounded-3xl"
               >
-                <article className="group relative h-full grid grid-cols-[1.05fr_0.95fr] rounded-3xl overflow-hidden border border-white/10 shadow-[0_28px_70px_-22px_rgba(15,61,46,0.55)] hover:shadow-[0_38px_90px_-22px_rgba(15,61,46,0.7)] transition-shadow duration-300">
-                  {/* Left: solid tint panel (no photo here) */}
-                  <div
-                    className="relative flex flex-col justify-between p-6 md:p-7 min-h-[420px]"
-                    style={{ backgroundImage: tint.panel }}
-                  >
-                    {/* soft top-left vignette for extra depth */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-black/15 to-transparent" />
+                {/* Uniform dark-green card: uploadable image (left) + copy (right). */}
+                <article className="group relative h-full flex items-stretch gap-5 sm:gap-6 rounded-3xl overflow-hidden bg-[#0f3d2e] p-6 sm:p-7 border border-white/10 shadow-[0_28px_70px_-22px_rgba(15,61,46,0.55)] hover:shadow-[0_38px_90px_-22px_rgba(15,61,46,0.7)] transition-shadow duration-300 min-h-[340px]">
+                  {/* Left: uploadable image/icon slot (admin swaps card.image) */}
+                  <div className="relative w-[40%] flex-shrink-0 rounded-2xl overflow-hidden bg-white/5">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={card.image}
+                      alt={title}
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.05]"
+                      loading="lazy"
+                    />
+                  </div>
 
-                    <div className="relative z-10">
-                      <h3 className="font-extrabold text-white tracking-tight leading-[1.1] text-[28px] md:text-[34px]">
-                        {title}
-                      </h3>
-                      <ul className="mt-5 space-y-2.5">
-                        {bullets.map((bullet) => (
-                          <li
-                            key={bullet}
-                            className={`flex items-start gap-2 text-[13px] leading-snug ${tint.bullet}`}
-                          >
-                            <CheckCircle2 className="h-4 w-4 mt-0.5 flex-shrink-0 text-white/85" />
-                            <span>{bullet}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                  {/* Right: copy */}
+                  <div className="relative flex flex-col justify-center flex-1 py-1 pr-1">
+                    <h3 className="font-extrabold text-white tracking-tight leading-[1.15] text-xl sm:text-[22px]">
+                      {title}
+                    </h3>
+                    <ul className="mt-4 space-y-2.5">
+                      {bullets.map((bullet) => (
+                        <li
+                          key={bullet}
+                          className="flex items-start gap-2.5 text-sm sm:text-[15px] leading-snug text-emerald-100/85"
+                        >
+                          <CheckCircle2 className="h-5 w-5 mt-0.5 flex-shrink-0 text-lime-400" />
+                          <span>{bullet}</span>
+                        </li>
+                      ))}
+                    </ul>
 
                     <a
                       href={card.href}
                       target={isExternal ? "_blank" : undefined}
                       rel={isExternal ? "noopener noreferrer" : undefined}
-                      className={`relative z-10 mt-6 inline-flex items-center justify-center gap-2 self-start rounded-full bg-gradient-to-r ${tint.accent} px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-black/20 hover:brightness-110 transition`}
+                      className="mt-6 inline-flex items-center justify-center gap-2 self-start whitespace-nowrap rounded-full bg-lime-400 hover:bg-lime-300 px-6 py-3 text-[15px] font-bold text-black shadow-lg shadow-black/20 transition-colors"
                     >
                       {cta}
                       <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                     </a>
-                  </div>
-
-                  {/* Right: full-bleed photo (single image per card) */}
-                  <div className="relative">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={card.image}
-                      alt={title}
-                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-                      loading="lazy"
-                    />
-                    {/* feathered seam between text panel and photo */}
-                    <div
-                      className="absolute inset-y-0 left-0 w-16"
-                      style={{
-                        backgroundImage: `linear-gradient(to right, ${tint.seam}, rgba(0,0,0,0))`,
-                      }}
-                    />
                   </div>
                 </article>
               </TiltCard>

@@ -25,13 +25,25 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { language, setLanguage, t } = useLanguage();
   const [session, setSession] = useState<User | null>(null);
+  const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname() ?? "/";
+
+  // On the home page the navbar floats transparently over the green hero so
+  // they read as one scene; once scrolled (or on other pages) it goes solid.
+  const overlay = pathname === "/" && !scrolled && !mobileOpen;
 
   useEffect(() => {
     setSession(getSession());
     const onChange = () => setSession(getSession());
     window.addEventListener("session:change", onChange);
     return () => window.removeEventListener("session:change", onChange);
+  }, []);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   const handleLogout = async () => {
@@ -41,7 +53,15 @@ export default function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-emerald-900/10">
+    <header
+      className={`left-0 right-0 z-50 transition-colors duration-300 ${
+        overlay
+          ? "absolute top-0 bg-transparent"
+          : pathname === "/"
+          ? "fixed top-0 bg-[#0f3d2e] backdrop-blur-xl border-b border-white/5"
+          : "sticky top-0 bg-[#0f3d2e] border-b border-white/5"
+      }`}
+    >
       <div className="mx-auto max-w-7xl px-6 py-4 flex items-center justify-between">
         <Link href="/" className="flex items-center" aria-label="ID-MAP - Mangrove & Pesisir untuk Ekosistem Karbon Indonesia">
           <span className="inline-flex items-center justify-center h-20 w-20 md:h-24 md:w-24 rounded-full bg-white p-1">
@@ -56,7 +76,7 @@ export default function Navbar() {
           </span>
         </Link>
 
-        <nav className="hidden lg:flex items-center gap-9 text-sm font-semibold text-black">
+        <nav className="hidden lg:flex items-center gap-7 rounded-full bg-lime-400 px-7 py-3 text-sm font-semibold text-black shadow-lg shadow-emerald-950/30">
           {navLinks.map((link) => {
             const active = isLinkActive(pathname, link.href);
             return (
@@ -65,12 +85,12 @@ export default function Navbar() {
                 href={link.href}
                 aria-current={active ? "page" : undefined}
                 className={`relative transition-colors hover:text-[#0f3d2e] ${
-                  active ? "text-[#0f3d2e]" : ""
+                  active ? "text-black font-extrabold" : "text-black/80"
                 }`}
               >
                 {t(link.idLabel, link.enLabel)}
                 {active && (
-                  <span className="absolute -bottom-3 left-0 right-0 h-0.5 rounded-full bg-emerald-500" />
+                  <span className="absolute -bottom-1 left-0 right-0 h-0.5 rounded-full bg-[#0f3d2e]" />
                 )}
               </Link>
             );
@@ -99,14 +119,14 @@ export default function Navbar() {
             <div className="flex items-center gap-4">
               <Link
                 href={getDashboardPath(session.role)}
-                className="flex items-center gap-2 text-sm font-bold text-[#0f3d2e] hover:text-emerald-700 transition"
+                className="flex items-center gap-2 text-sm font-bold text-white hover:text-lime-300 transition"
               >
                 <UserCircle className="w-5 h-5" aria-hidden="true" />
                 <span>Dashboard ({session.name.split(" ")[0]})</span>
               </Link>
               <button
                 onClick={handleLogout}
-                className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-full transition"
+                className="p-2 text-emerald-100 hover:text-red-300 hover:bg-white/10 rounded-full transition"
                 aria-label="Keluar"
                 title="Keluar"
               >
@@ -117,13 +137,13 @@ export default function Navbar() {
             <>
               <Link
                 href="/masuk"
-                className="rounded-full border-2 border-[#0f3d2e] px-7 py-3 text-sm font-bold text-[#0f3d2e] hover:bg-emerald-50 transition focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+                className="rounded-full border-2 border-white/70 px-7 py-3 text-sm font-bold text-white hover:bg-white/10 transition focus:outline-none focus:ring-2 focus:ring-lime-400 focus:ring-offset-2 focus:ring-offset-[#0f3d2e]"
               >
                 {t("Masuk", "Log In")}
               </Link>
               <Link
                 href="/daftar"
-                className="rounded-full bg-[#0f3d2e] px-7 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-900/20 hover:bg-[#14523d] transition focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+                className="rounded-full bg-lime-400 px-7 py-3 text-sm font-bold text-black shadow-lg shadow-emerald-950/30 hover:bg-lime-300 transition focus:outline-none focus:ring-2 focus:ring-lime-400 focus:ring-offset-2 focus:ring-offset-[#0f3d2e]"
               >
                 {t("Daftar", "Sign Up")}
               </Link>
@@ -135,7 +155,7 @@ export default function Navbar() {
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-expanded={mobileOpen}
           aria-label={mobileOpen ? "Tutup menu" : "Buka menu navigasi"}
-          className="lg:hidden p-2 text-gray-600"
+          className="lg:hidden p-2 text-white"
         >
           {mobileOpen ? <X className="w-6 h-6" aria-hidden="true" /> : <Menu className="w-6 h-6" aria-hidden="true" />}
         </button>

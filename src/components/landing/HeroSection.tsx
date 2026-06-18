@@ -212,7 +212,7 @@ export default function HeroSection() {
             <div className="mt-10 flex flex-col sm:flex-row flex-wrap gap-4">
               <a
                 href={data.primaryCtaHref}
-                className="group inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-b from-[#34d399] to-[#10b981] px-6 py-3.5 text-sm font-bold text-[#06140f] shadow-[0_12px_30px_-8px_rgba(16,185,129,0.7)] hover:shadow-[0_18px_40px_-8px_rgba(16,185,129,0.85)] hover:-translate-y-0.5 transition-all focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:ring-offset-2 focus:ring-offset-[#06140f]"
+                className="group inline-flex items-center justify-center gap-2 rounded-xl bg-lime-400 hover:bg-lime-300 px-6 py-3.5 text-sm font-bold text-black shadow-[0_12px_30px_-8px_rgba(163,230,53,0.7)] hover:shadow-[0_18px_40px_-8px_rgba(163,230,53,0.85)] hover:-translate-y-0.5 transition-all focus:outline-none focus:ring-2 focus:ring-lime-300 focus:ring-offset-2 focus:ring-offset-[#06140f]"
               >
                 {primaryLabel}
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />

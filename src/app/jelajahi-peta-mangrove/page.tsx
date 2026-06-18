@@ -136,7 +136,7 @@ export default function JelajahiPetaMangrovePage() {
           <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
             <a
               href="mailto:id.map.admin@gmail.com?subject=Bantuan%20Peta%20Mangrove%20ID-MAP&body=Halo%20Tim%20ID-MAP%2C%0A%0ASaya%20butuh%20bantuan%20terkait%3A%20"
-              className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-[#235850] text-emerald-100 hover:bg-[#163F3A] transition-colors text-xs font-medium"
+              className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/40 bg-white/10 text-white hover:bg-white/20 transition-colors text-xs font-semibold"
               title="Hubungi tim ID-MAP via email"
             >
               <Info className="w-3.5 h-3.5" />
@@ -144,7 +144,7 @@ export default function JelajahiPetaMangrovePage() {
             </a>
             <Link
               href="/"
-              className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-lg bg-[#163F3A] hover:bg-[#235850] text-emerald-100 hover:text-white transition-colors border border-[#235850] shadow-sm text-xs font-bold"
+              className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-lg bg-lime-400 hover:bg-lime-300 text-black transition-colors shadow-sm shadow-emerald-950/30 text-xs font-bold"
               title="Kembali ke Beranda"
             >
               <Home className="w-4 h-4" />
