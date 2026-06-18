@@ -100,14 +100,14 @@ export default function FAQPage() {
       <Navbar />
       <main className="bg-white">
         <section className="bg-[#0f3d2e] text-white py-16 sm:py-20">
-          <div className="mx-auto max-w-5xl px-4 sm:px-6 text-center">
+          <ScrollReveal className="mx-auto max-w-5xl px-4 sm:px-6 text-center">
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
               {pick(c.heroTitleId, c.heroTitleEn)}
             </h1>
             <p className="mt-4 text-lg sm:text-xl text-emerald-200 max-w-3xl mx-auto">
               {pick(c.heroSubtitleId, c.heroSubtitleEn)}
             </p>
-          </div>
+          </ScrollReveal>
         </section>
 
         <section className="py-12 sm:py-16">
@@ -145,7 +145,7 @@ export default function FAQPage() {
         </section>
 
         <section className="py-12 sm:py-16 bg-gray-50">
-          <div className="mx-auto max-w-3xl px-4 sm:px-6 text-center">
+          <ScrollReveal className="mx-auto max-w-3xl px-4 sm:px-6 text-center">
             <h2 className="text-xl font-bold text-gray-900 mb-3">
               {isEn ? "Still have questions?" : "Masih ada pertanyaan?"}
             </h2>
@@ -157,7 +157,7 @@ export default function FAQPage() {
             <a href="/daftar" className="inline-flex items-center justify-center rounded-xl bg-[#0f3d2e] px-8 py-3.5 text-sm font-bold text-white hover:bg-[#14523d] transition shadow-lg">
               {isEn ? "Register Now" : "Daftar Sekarang"}
             </a>
-          </div>
+          </ScrollReveal>
         </section>
       </main>
       <Footer />

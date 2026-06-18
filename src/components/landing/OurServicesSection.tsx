@@ -188,43 +188,27 @@ export default function OurServicesSection() {
                   className="group shine bg-white rounded-2xl border border-gray-100 hover:border-emerald-200 overflow-hidden shadow-[0_20px_50px_-22px_rgba(15,61,46,0.25)] hover:shadow-[0_32px_70px_-22px_rgba(15,61,46,0.4)] transition-all duration-300 flex flex-col h-full"
                 >
                 {/* Thumbnail */}
-                <div className="relative h-44 overflow-hidden">
+                <div className="relative flex-1 min-h-[200px] overflow-hidden">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={svc.image}
                     alt={svc.title[0]}
                     className="card-zoom w-full h-full object-cover"
                   />
-                  {/* Overlay gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
                   {/* Badge top-right */}
                   <span className={`absolute top-3 right-3 z-10 text-[10px] font-bold text-white px-2.5 py-1 rounded-full ${svc.badge}`}>
                     {svc.badgeText}
                   </span>
-                  {/* Icon bottom-left */}
-                  <div className={`absolute bottom-3 left-4 z-10 w-12 h-12 rounded-xl flex items-center justify-center ${svc.iconBg} shadow-lg border-2 border-white transition-transform duration-300 group-hover:scale-110 group-hover:-translate-y-0.5`}>
-                    <Icon className="w-6 h-6 text-white" />
-                  </div>
                 </div>
 
-                {/* Content */}
-                <div className="p-5 flex flex-col flex-1 gap-3">
-                  <h3 className="font-bold text-[#0f3d2e] text-base leading-snug group-hover:text-emerald-700 transition-colors">
+                {/* Green label bar */}
+                <div className="flex items-center gap-3 bg-[#0f3d2e] px-4 py-3.5 group-hover:bg-[#14523d] transition-colors">
+                  <div className="w-9 h-9 rounded-lg bg-white/15 flex items-center justify-center flex-shrink-0">
+                    <Icon className="w-5 h-5 text-white" />
+                  </div>
+                  <h3 className="font-bold text-white text-sm leading-snug">
                     {t(svc.title[0], svc.title[1])}
                   </h3>
-                  <p className="text-sm text-slate-500 leading-relaxed flex-1">
-                    {t(svc.desc[0], svc.desc[1])}
-                  </p>
-
-                  {/* Value Points */}
-                  <div className="grid grid-cols-3 gap-1.5 pt-3 border-t border-gray-100">
-                    {svc.values.map(([val, lbl]) => (
-                      <div key={lbl} className="text-center">
-                        <p className="text-sm font-extrabold text-[#0f3d2e] leading-tight">{val}</p>
-                        <p className="text-[10px] text-slate-400 leading-tight mt-0.5">{lbl}</p>
-                      </div>
-                    ))}
-                  </div>
                 </div>
                 </div>
               </TiltCard>
