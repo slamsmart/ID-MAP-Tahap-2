@@ -59,7 +59,7 @@ export default function PokmaswasCampaignSection() {
           <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#0f3d2e]">
             Dukung via QRIS untuk Pokmaswas / Mitra
           </h2>
-          <p className="mt-3 text-slate-500 max-w-2xl mx-auto text-sm">
+          <p className="mt-3 text-slate-600 max-w-2xl mx-auto text-sm">
             3 proyek mangrove terverifikasi siap menerima dukungan.
             Scan QRIS, dananya langsung tersalurkan ke kelompok masyarakat pesisir & mitra pelaksana.
           </p>
@@ -84,7 +84,7 @@ export default function PokmaswasCampaignSection() {
                 <ScrollReveal key={p._id} delay={i * 110} className="h-full">
                 <TiltCard maxTilt={9} liftZ={28} glare={false} className="h-full rounded-2xl">
                 <article
-                  className="group shine bg-white rounded-2xl border border-emerald-100 hover:border-emerald-300 overflow-hidden shadow-[0_24px_60px_-24px_rgba(16,185,129,0.4)] hover:shadow-[0_36px_80px_-22px_rgba(16,185,129,0.55)] transition-all duration-300 flex flex-col h-full"
+                  className="group shine bg-white rounded-2xl border border-gray-100 hover:border-emerald-200 overflow-hidden shadow-[0_20px_50px_-22px_rgba(15,61,46,0.25)] hover:shadow-[0_32px_70px_-22px_rgba(15,61,46,0.4)] transition-all duration-300 flex flex-col h-full"
                 >
                   {/* Thumbnail */}
                   <div className="relative h-44 overflow-hidden">
@@ -108,74 +108,74 @@ export default function PokmaswasCampaignSection() {
                   </div>
 
                   {/* Content */}
-                  <div className="p-5 flex flex-col flex-1 gap-3">
-                    <h3 className="font-bold text-[#0f3d2e] text-base leading-snug line-clamp-2 group-hover:text-emerald-700 transition-colors">
+                  <div className="p-5 flex flex-col flex-1 gap-3 bg-[#0f3d2e]">
+                    <h3 className="font-bold text-white text-base leading-snug line-clamp-2 group-hover:text-lime-300 transition-colors">
                       {p.title}
                     </h3>
-                    <p className="text-xs text-slate-500 leading-relaxed line-clamp-2 flex-1">
+                    <p className="text-xs text-white/80 leading-relaxed line-clamp-2 flex-1">
                       {p.description}
                     </p>
 
                     {/* Funding bar */}
                     <div>
                       <div className="flex items-baseline justify-between mb-1.5">
-                        <span className="text-xs font-medium text-emerald-700">
+                        <span className="text-xs font-medium text-emerald-100">
                           Terkumpul
                         </span>
-                        <span className="text-xs font-bold text-emerald-700">
+                        <span className="text-xs font-bold text-lime-300">
                           {pct}%
                         </span>
                       </div>
-                      <div className="h-2 bg-emerald-50 rounded-full overflow-hidden">
+                      <div className="h-2 bg-white/15 rounded-full overflow-hidden">
                         <div
-                          className="bar-grow h-full bg-gradient-to-r from-emerald-500 to-teal-500"
+                          className="bar-grow h-full bg-gradient-to-r from-lime-400 to-emerald-400"
                           style={{ width: `${pct}%` }}
                         />
                       </div>
                       <div className="flex items-baseline justify-between mt-2">
-                        <p className="text-sm font-bold text-emerald-800">
+                        <p className="text-sm font-bold text-white">
                           {fmtRp(raised)}
                         </p>
-                        <p className="text-[11px] text-slate-400">
+                        <p className="text-[11px] text-emerald-200">
                           dari {fmtRp(target)}
                         </p>
                       </div>
                     </div>
 
                     {/* Stats mini */}
-                    <div className="grid grid-cols-3 gap-2 text-center pt-3 border-t border-emerald-50">
+                    <div className="grid grid-cols-3 gap-2 text-center pt-3 border-t border-white/10">
                       <div>
-                        <p className="text-sm font-bold text-emerald-800">
+                        <p className="text-sm font-bold text-white">
                           {p.area ?? "-"}
                         </p>
-                        <p className="text-[10px] text-slate-400">Hektare</p>
+                        <p className="text-[10px] text-emerald-200">Hektare</p>
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-emerald-800 flex items-center justify-center gap-0.5">
+                        <p className="text-sm font-bold text-white flex items-center justify-center gap-0.5">
                           <Leaf className="w-3 h-3" />
                           {(p.co2Absorption / 1000).toFixed(0)}k
                         </p>
-                        <p className="text-[10px] text-slate-400">tCO₂e/thn</p>
+                        <p className="text-[10px] text-emerald-200">tCO₂e/thn</p>
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-emerald-800">
+                        <p className="text-sm font-bold text-white">
                           {((p.seedsPlanted ?? 0) / 1000).toFixed(0)}k
                         </p>
-                        <p className="text-[10px] text-slate-400">Bibit</p>
+                        <p className="text-[10px] text-emerald-200">Bibit</p>
                       </div>
                     </div>
 
                     {/* CTA: scan QRIS donate */}
                     <Link
                       href={donateHref(p._id)}
-                      className="mt-2 inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold py-2.5 rounded-lg transition-colors"
+                      className="mt-2 inline-flex items-center justify-center gap-2 bg-lime-400 hover:bg-lime-300 text-slate-900 text-sm font-bold py-2.5 rounded-lg transition-colors"
                     >
                       <Heart className="w-4 h-4" />
                       Dukung Proyek (Scan QRIS)
                       <ArrowRight className="w-4 h-4" />
                     </Link>
                     {!hasSession && (
-                      <p className="text-[11px] text-center text-slate-400 -mt-1">
+                      <p className="text-[11px] text-center text-emerald-200 -mt-1">
                         Daftar gratis untuk lanjut donasi
                       </p>
                     )}

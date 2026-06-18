@@ -5,6 +5,8 @@ import { ConvexClientProvider } from "./ConvexClientProvider";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import LiveChat from "@/components/chat/LiveChat";
 import BackToTop from "@/components/shared/BackToTop";
+import ServiceWorkerRegistrar from "@/components/pwa/ServiceWorkerRegistrar";
+import InstallPrompt from "@/components/pwa/InstallPrompt";
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -70,6 +72,11 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "ID-MAP",
+  },
   robots: {
     index: true,
     follow: true,
@@ -84,6 +91,9 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: "#0f3d2e",
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -117,6 +127,8 @@ export default function RootLayout({
             {children}
             <LiveChat />
             <BackToTop />
+            <InstallPrompt />
+            <ServiceWorkerRegistrar />
           </LanguageProvider>
         </ConvexClientProvider>
       </body>

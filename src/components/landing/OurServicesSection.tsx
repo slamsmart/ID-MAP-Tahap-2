@@ -136,6 +136,7 @@ const iconMap = {
 export default function OurServicesSection() {
   const { t } = useLanguage();
   const editableServices = useQuery(api.serviceContent.list);
+  const isLoading = editableServices === undefined;
   const savedByKey = new Map((editableServices ?? []).map((svc) => [svc.key, svc]));
   const displayServices = services.map((svc) => {
     const saved = savedByKey.get(svc.key);
@@ -177,7 +178,27 @@ export default function OurServicesSection() {
           </p>
         </ScrollReveal>
 
+        {/* Loading skeleton — avoid flashing hardcoded fallback images
+            before Convex hydrates with verifikator-managed content */}
+        {isLoading && (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[0, 1, 2, 3, 4, 5].map((i) => (
+              <div
+                key={i}
+                className="rounded-2xl overflow-hidden border border-gray-100 bg-white shadow-[0_20px_50px_-22px_rgba(15,61,46,0.25)] flex flex-col h-full"
+              >
+                <div className="flex-1 min-h-[200px] bg-gray-100 animate-pulse" />
+                <div className="flex items-center gap-3 bg-[#0f3d2e] px-4 py-3.5">
+                  <div className="w-9 h-9 rounded-lg bg-white/15 flex-shrink-0" />
+                  <div className="h-4 w-2/3 rounded bg-white/20" />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
         {/* Cards */}
+        {!isLoading && (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 perspective-1500">
           {displayServices.map((svc, i) => {
             const Icon = svc.icon;
@@ -216,6 +237,7 @@ export default function OurServicesSection() {
             );
           })}
         </div>
+        )}
       </div>
     </section>
   );
