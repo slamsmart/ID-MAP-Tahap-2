@@ -39,19 +39,19 @@ export default function MitraKamiPage() {
       <Navbar />
       <main className="bg-white">
         <section className="bg-[#0f3d2e] text-white py-16 sm:py-20">
-          <div className="mx-auto max-w-5xl px-4 sm:px-6 text-center">
+          <ScrollReveal className="mx-auto max-w-5xl px-4 sm:px-6 text-center">
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
               Mitra Kami
             </h1>
             <p className="mt-4 text-lg sm:text-xl text-emerald-200 max-w-3xl mx-auto">
               Kolaborasi strategis dengan lembaga utama untuk ekosistem karbon mangrove Indonesia
             </p>
-          </div>
+          </ScrollReveal>
         </section>
 
         <section className="py-12 sm:py-16">
           <div className="mx-auto max-w-5xl px-4 sm:px-6">
-            <div className="text-center mb-10">
+            <ScrollReveal className="text-center mb-10">
               <div className="inline-flex items-center gap-2 bg-emerald-50 px-4 py-2 rounded-full text-sm font-medium text-emerald-700 mb-4">
                 <Handshake className="w-4 h-4" />
                 Kemitraan Strategis
@@ -59,7 +59,7 @@ export default function MitraKamiPage() {
               <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
                 Didukung oleh Lembaga Terpercaya
               </h2>
-            </div>
+            </ScrollReveal>
 
             <div className="grid sm:grid-cols-2 gap-6">
               {partners.map((p, i) => (
@@ -85,7 +85,7 @@ export default function MitraKamiPage() {
         </section>
 
         <section className="py-12 sm:py-16 bg-gray-50">
-          <div className="mx-auto max-w-5xl px-4 sm:px-6 text-center">
+          <ScrollReveal className="mx-auto max-w-5xl px-4 sm:px-6 text-center">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Ingin Menjadi Mitra?</h2>
             <p className="text-gray-600 max-w-2xl mx-auto mb-8">
               Bergabunglah sebagai mitra ID-MAP dan dukung pengembangan ekosistem karbon mangrove Indonesia.
@@ -99,7 +99,7 @@ export default function MitraKamiPage() {
                 Kembali ke Beranda
               </a>
             </div>
-          </div>
+          </ScrollReveal>
         </section>
       </main>
     </>
