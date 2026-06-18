@@ -160,7 +160,7 @@ export default function TentangPage() {
         {/* 6 Layanan Inti */}
         <section className="py-12 sm:py-16 bg-gray-50">
           <div className="mx-auto max-w-5xl px-4 sm:px-6">
-            <div className="text-center mb-10">
+            <ScrollReveal className="text-center mb-10">
               <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
                 {isEn ? "Six Core Ecosystem Services" : "Enam Layanan Solusi Ekosistem"}
               </h2>
@@ -169,7 +169,7 @@ export default function TentangPage() {
                   ? "ID-MAP services aligned with the real needs of coastal communities, regional DKP, and executing partners."
                   : "Cakupan layanan ID-MAP berdasarkan kebutuhan nyata komunitas pesisir, DKP daerah, dan mitra pelaksana."}
               </p>
-            </div>
+            </ScrollReveal>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {c.services.map((svc, idx) => {
                 const Icon = ICON_MAP[svc.iconKey] ?? Sprout;
@@ -197,9 +197,11 @@ export default function TentangPage() {
         {/* Mengapa */}
         <section className="py-12 sm:py-16">
           <div className="mx-auto max-w-5xl px-4 sm:px-6">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center mb-10">
-              {isEn ? `Why ${brandName}?` : `Mengapa ${brandName}?`}
-            </h2>
+            <ScrollReveal>
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center mb-10">
+                {isEn ? `Why ${brandName}?` : `Mengapa ${brandName}?`}
+              </h2>
+            </ScrollReveal>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {c.whyCards.map((item, idx) => {
                 const Icon = ICON_MAP[item.iconKey] ?? Shield;
