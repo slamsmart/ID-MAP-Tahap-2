@@ -101,6 +101,10 @@ export async function POST(req: NextRequest) {
     const address = typeof body.address === "string" ? body.address : undefined;
     const partnerType = typeof body.partnerType === "string" ? body.partnerType : undefined;
     const projectLocation = typeof body.projectLocation === "string" ? body.projectLocation.trim() : undefined;
+    const referredByCode =
+      typeof body.referredByCode === "string"
+        ? body.referredByCode.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 16) || undefined
+        : undefined;
 
     if (role === "mitra" && (!partnerType || !projectLocation)) {
       return NextResponse.json(
@@ -133,6 +137,7 @@ export async function POST(req: NextRequest) {
         ...(phone ? { phone } : {}),
         ...(organization ? { organization } : {}),
         ...(address ? { address } : {}),
+        ...(referredByCode ? { referredByCode } : {}),
       });
     } catch (err: any) {
       const msg = typeof err?.data === "string" ? err.data : err?.data?.message ?? err?.message ?? "";

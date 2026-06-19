@@ -782,3 +782,88 @@ export const seedDummyCertificates = mutation({
     return `Dummy certs seeded for ${sahabat.email}: ${issued} certificates. Numbers: ${certNumbers.join(", ")}`;
   },
 });
+
+// ─── Dummy Gamifikasi (Leaderboard + Referral) ─────────────────────
+// Buat ~12 sahabat dummy dengan poin/streak/bibit + rantai referral
+// supaya leaderboard & kartu referral terisi realistis. Idempoten:
+// skip kalau dummy sudah ada (cek email penanda).
+export const seedGamificationDummy = mutation({
+  args: {},
+  returns: v.string(),
+  handler: async (ctx) => {
+    const marker = await ctx.db
+      .query("users")
+      .withIndex("by_email", (q) => q.eq("email", "rani.dummy@idmap.id"))
+      .first();
+    if (marker) {
+      return "Skipped: dummy gamifikasi sudah ada.";
+    }
+
+    const now = Date.now();
+    const code = (name: string, n: number) =>
+      name.toUpperCase().replace(/[^A-Z]/g, "").slice(0, 3).padEnd(3, "X") +
+      (1000 + n).toString();
+
+    // points, streak, seedlingsCheckin, kyc — bervariasi untuk ranking.
+    const dummies = [
+      { name: "Rani Kusuma", first: "rani", points: 1180, streak: 22, best: 30, seed: 2, kyc: "terverifikasi" as const },
+      { name: "Bagas Saputra", first: "bagas", points: 940, streak: 15, best: 18, seed: 1, kyc: "terverifikasi" as const },
+      { name: "Sinta Maharani", first: "sinta", points: 870, streak: 9, best: 16, seed: 1, kyc: "terverifikasi" as const },
+      { name: "Dewi Lestari", first: "dewi", points: 760, streak: 12, best: 15, seed: 1, kyc: "terverifikasi" as const },
+      { name: "Fajar Nugroho", first: "fajar", points: 610, streak: 7, best: 11, seed: 0, kyc: "terverifikasi" as const },
+      { name: "Putri Andini", first: "putri", points: 540, streak: 5, best: 9, seed: 0, kyc: "terverifikasi" as const },
+      { name: "Yoga Pratama", first: "yoga", points: 430, streak: 3, best: 8, seed: 0, kyc: "menunggu" as const },
+      { name: "Maya Anggraini", first: "maya", points: 360, streak: 6, best: 6, seed: 0, kyc: "terverifikasi" as const },
+      { name: "Rizal Hakim", first: "rizal", points: 280, streak: 2, best: 5, seed: 0, kyc: "belum" as const },
+      { name: "Nadia Salsabila", first: "nadia", points: 190, streak: 4, best: 4, seed: 0, kyc: "menunggu" as const },
+      { name: "Galih Permana", first: "galih", points: 120, streak: 1, best: 3, seed: 0, kyc: "belum" as const },
+      { name: "Tari Wulandari", first: "tari", points: 60, streak: 1, best: 2, seed: 0, kyc: "terverifikasi" as const },
+    ];
+
+    const ids: Record<string, any> = {};
+    let i = 0;
+    for (const d of dummies) {
+      const id = await ctx.db.insert("users", {
+        email: `${d.first}.dummy@idmap.id`,
+        password: hp("dummy123"),
+        name: d.name,
+        role: "sahabat",
+        kycStatus: d.kyc,
+        phone: `0812-9000-${(1000 + i).toString().slice(-4)}`,
+        referralCode: code(d.first, i),
+        points: d.points,
+        checkInStreak: d.streak,
+        bestStreak: d.best,
+        lastCheckInDate: jakartaDate(now - 86400000), // kemarin → streak bisa lanjut
+        checkInTotal: d.best + 5,
+        seedlingsCheckin: d.seed,
+        createdAt: now - (i + 1) * 86400000,
+      });
+      ids[d.first] = id;
+      i++;
+    }
+
+    // Rantai referral ter-KYC → top users punya referral count.
+    // Rani ajak 12 (semua verified) → 1 bibit referral; Bagas ajak 8.
+    const setRef = async (childFirst: string, parentFirst: string) => {
+      if (ids[childFirst] && ids[parentFirst]) {
+        await ctx.db.patch(ids[childFirst], { referredBy: ids[parentFirst] });
+      }
+    };
+    // Rani referral chain
+    for (const c of ["bagas", "sinta", "dewi", "fajar", "putri", "maya", "tari"]) {
+      await setRef(c, "rani");
+    }
+    // Bagas referral
+    for (const c of ["yoga", "nadia", "rizal", "galih"]) {
+      await setRef(c, "bagas");
+    }
+
+    return `Seeded ${dummies.length} dummy sahabat untuk leaderboard + referral.`;
+  },
+});
+
+// Jakarta date helper (UTC+7) — sama dengan convex/gamification.ts
+function jakartaDate(ms: number): string {
+  return new Date(ms + 7 * 60 * 60 * 1000).toISOString().slice(0, 10);
+}

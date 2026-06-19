@@ -27,10 +27,31 @@ export default defineSchema({
     organization: v.optional(v.string()),
     address: v.optional(v.string()),
     createdAt: v.number(),
+    // ─── Gamifikasi (Sahabat Pesisir) ──────────────────────────────
+    referralCode: v.optional(v.string()),     // kode unik untuk ajak teman
+    referredBy: v.optional(v.id("users")),    // siapa yang mengajak
+    points: v.optional(v.number()),           // poin dari check-in harian
+    checkInStreak: v.optional(v.number()),    // streak beruntun saat ini
+    bestStreak: v.optional(v.number()),       // streak terbaik
+    lastCheckInDate: v.optional(v.string()),  // YYYY-MM-DD (Asia/Jakarta)
+    checkInTotal: v.optional(v.number()),     // total hari check-in
+    seedlingsCheckin: v.optional(v.number()), // bibit dari check-in (per 15 streak)
   })
     .index("by_email", ["email"])
     .index("by_role", ["role"])
-    .index("by_kycStatus", ["kycStatus"]),
+    .index("by_kycStatus", ["kycStatus"])
+    .index("by_referralCode", ["referralCode"])
+    .index("by_referredBy", ["referredBy"]),
+
+  // ─── Daily Check-ins (Gamifikasi) ────────────────────────────────
+  // Satu baris per user per hari. Cegah double check-in + audit streak.
+  checkIns: defineTable({
+    userId: v.id("users"),
+    date: v.string(), // YYYY-MM-DD (Asia/Jakarta)
+    createdAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_user_and_date", ["userId", "date"]),
 
   // ─── Projects (Proyek Mangrove) ──────────────────────────────────
   projects: defineTable({

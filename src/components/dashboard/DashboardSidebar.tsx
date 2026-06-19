@@ -32,6 +32,7 @@ import {
   Building2,
   FileBadge,
   Calculator,
+  Trophy,
 } from "lucide-react";
 
 interface SidebarItem {
@@ -58,6 +59,7 @@ const userItems: SidebarItem[] = [
   { icon: Globe, label: "Riwayat Scan", href: "/user/riwayat" },
   { icon: ArrowRightLeft, label: "Donasi & Kontribusi", href: "/user/donasi" },
   { icon: BarChart3, label: "Dampak Saya", href: "/user/dampak" },
+  { icon: Trophy, label: "Gamifikasi", href: "/user/gamifikasi" },
   { icon: CheckCircle, label: "Sertifikat", href: "/user/sertifikat" },
   { icon: ShieldCheck, label: "Lengkapi KYC", href: "/user/kyc" },
   { icon: Bell, label: "Pemberitahuan", href: "/user/notifikasi" },

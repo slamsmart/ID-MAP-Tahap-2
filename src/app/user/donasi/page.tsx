@@ -8,7 +8,7 @@ import {
 import { QRCodeSVG } from "qrcode.react";
 import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
-import { getSession, User } from "@/lib/auth";
+import { getSession, refreshSession, User } from "@/lib/auth";
 import { Id } from "../../../../convex/_generated/dataModel";
 
 const PRESET_AMOUNTS = [1000, 10000, 25000, 100000];
@@ -23,6 +23,10 @@ interface QrisData {
   co2Equivalent: number;
   isDummy: boolean;
   isSandbox: boolean;
+}
+
+function getErrorMessage(err: unknown, fallback: string): string {
+  return err instanceof Error ? err.message : fallback;
 }
 
 function KycGate({ status }: { status?: string }) {
@@ -57,7 +61,7 @@ function KycGate({ status }: { status?: string }) {
         <p className="text-xs text-gray-500 mt-1 leading-relaxed">{c.desc}</p>
       </div>
       <a
-        href="/user/pengaturan"
+        href="/user/kyc"
         className="mt-1 inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg transition-colors"
       >
         <ShieldCheck className="w-3.5 h-3.5" />
@@ -76,7 +80,23 @@ export default function DonasiPage() {
   const [qrisData, setQrisData] = useState<QrisData | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
 
-  useEffect(() => { setUser(getSession()); }, []);
+  useEffect(() => {
+    let mounted = true;
+    const syncSession = () => {
+      if (mounted) setUser(getSession());
+    };
+
+    syncSession();
+    void refreshSession().then((nextUser) => {
+      if (mounted) setUser(nextUser);
+    });
+    window.addEventListener("session:change", syncSession);
+
+    return () => {
+      mounted = false;
+      window.removeEventListener("session:change", syncSession);
+    };
+  }, []);
 
   const projects = useQuery(api.projects.listVerified);
   const userData = useQuery(
@@ -132,8 +152,8 @@ export default function DonasiPage() {
       if (!res.ok) throw new Error(data.error ?? "Gagal membuat QRIS");
       setQrisData(data as QrisData);
       setState("waiting");
-    } catch (err: any) {
-      setErrorMsg(err.message ?? "Terjadi kesalahan");
+    } catch (err: unknown) {
+      setErrorMsg(getErrorMessage(err, "Terjadi kesalahan"));
       setState("error");
     }
   }
@@ -150,8 +170,8 @@ export default function DonasiPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Simulasi gagal");
       setState("paid");
-    } catch (err: any) {
-      setErrorMsg(err.message ?? "Simulasi gagal");
+    } catch (err: unknown) {
+      setErrorMsg(getErrorMessage(err, "Simulasi gagal"));
       setState("error");
     }
   }

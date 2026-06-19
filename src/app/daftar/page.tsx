@@ -30,6 +30,12 @@ function RegisterForm() {
     return "sahabat";
   };
 
+  // Referral code dari link ajakan (?ref=CODE) — uppercase, A-Z0-9 saja.
+  const referralCode = (searchParams.get("ref") ?? "")
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, "")
+    .slice(0, 16);
+
   const [role, setRole] = useState<Role>(getInitialRole);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -171,6 +177,7 @@ function RegisterForm() {
             projectLocation: projectLocation.trim(),
           } : {}),
           ...(turnstileToken ? { turnstileToken } : {}),
+          ...(referralCode ? { referredByCode: referralCode } : {}),
         }),
       });
       if (!r.ok) {

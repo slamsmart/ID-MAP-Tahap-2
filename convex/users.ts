@@ -3,6 +3,8 @@ import { v } from "convex/values";
 import { ConvexError } from "convex/values";
 import bcrypt from "bcryptjs";
 import { requireAdmin, requireOwnerOrAdmin } from "./authz";
+import type { MutationCtx } from "./_generated/server";
+import type { Id } from "./_generated/dataModel";
 
 // Password hashing — Convex V8 isolate jalankan bcryptjs (pure JS).
 // Cost factor 10 = ~10ms hash di server, balance keamanan vs latency.
@@ -21,10 +23,48 @@ function verifyPassword(plain: string, stored: string): boolean {
     // re-hash password ke bcrypt untuk migrasi gradual.
     return plain === stored;
   }
-  return bcrypt.compareSync(plain, stored);
+  try {
+    return bcrypt.compareSync(plain, stored);
+  } catch {
+    return false;
+  }
 }
 
 // ─── Shared Validator ──────────────────────────────────────────────
+
+async function genReferralCode(ctx: MutationCtx, name: string): Promise<string> {
+  const base = (name || "SHB")
+    .toUpperCase()
+    .replace(/[^A-Z]/g, "")
+    .slice(0, 3)
+    .padEnd(3, "X");
+  const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  for (let attempt = 0; attempt < 12; attempt++) {
+    let suffix = "";
+    for (let i = 0; i < 4; i++) {
+      suffix += alphabet[Math.floor(Math.random() * alphabet.length)];
+    }
+    const code = `${base}${suffix}`;
+    const clash = await ctx.db
+      .query("users")
+      .withIndex("by_referralCode", (q) => q.eq("referralCode", code))
+      .first();
+    if (!clash) return code;
+  }
+  return `${base}${Date.now().toString(36).toUpperCase().slice(-5)}`;
+}
+
+async function ensureUserReferralCode(
+  ctx: MutationCtx,
+  userId: Id<"users">
+): Promise<string> {
+  const user = await ctx.db.get(userId);
+  if (!user) throw new ConvexError({ code: "NOT_FOUND", message: "User tidak ditemukan" });
+  if (user.referralCode) return user.referralCode;
+  const code = await genReferralCode(ctx, user.name);
+  await ctx.db.patch(userId, { referralCode: code });
+  return code;
+}
 
 const roleValidator = v.union(
   v.literal("sahabat"),
@@ -73,16 +113,24 @@ type RawUser = {
 };
 
 function toPublicUser(u: RawUser) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { password, ...rest } = u;
-  return rest;
+  return {
+    _id: u._id,
+    _creationTime: u._creationTime,
+    email: u.email,
+    name: u.name,
+    role: u.role,
+    createdAt: u.createdAt ?? u._creationTime,
+    ...(u.kycStatus !== undefined ? { kycStatus: u.kycStatus } : {}),
+    ...(u.phone !== undefined ? { phone: u.phone } : {}),
+    ...(u.organization !== undefined ? { organization: u.organization } : {}),
+    ...(u.address !== undefined ? { address: u.address } : {}),
+  };
 }
 
 // ─── Queries ───────────────────────────────────────────────────────
 
 export const list = query({
   args: {},
-  returns: v.array(publicUserValidator),
   handler: async (ctx) => {
     const rows = await ctx.db.query("users").collect();
     return rows.map(toPublicUser);
@@ -91,7 +139,6 @@ export const list = query({
 
 export const get = query({
   args: { userId: v.id("users") },
-  returns: v.union(publicUserValidator, v.null()),
   handler: async (ctx, args) => {
     const u = await ctx.db.get(args.userId);
     return u ? toPublicUser(u) : null;
@@ -100,7 +147,6 @@ export const get = query({
 
 export const getByEmail = query({
   args: { email: v.string() },
-  returns: v.union(publicUserValidator, v.null()),
   handler: async (ctx, args) => {
     const u = await ctx.db
       .query("users")
@@ -112,7 +158,6 @@ export const getByEmail = query({
 
 export const listByRole = query({
   args: { role: roleValidator },
-  returns: v.array(publicUserValidator),
   handler: async (ctx, args) => {
     const rows = await ctx.db
       .query("users")
@@ -166,6 +211,7 @@ export const create = mutation({
     phone: v.optional(v.string()),
     organization: v.optional(v.string()),
     address: v.optional(v.string()),
+    referredByCode: v.optional(v.string()), // kode referral pengajak
   },
   returns: v.id("users"),
   handler: async (ctx, args) => {
@@ -186,12 +232,35 @@ export const create = mutation({
 
     const hashedPassword = hashPassword(args.password);
 
-    return await ctx.db.insert("users", {
-      ...args,
+    // Resolve referral code → pengajak (jangan boleh self/invalid).
+    let referredBy: import("./_generated/dataModel").Id<"users"> | undefined;
+    if (args.referredByCode) {
+      const referrer = await ctx.db
+        .query("users")
+        .withIndex("by_referralCode", (q) =>
+          q.eq("referralCode", args.referredByCode!.toUpperCase())
+        )
+        .first();
+      if (referrer) referredBy = referrer._id;
+    }
+
+    const { referredByCode: _drop, ...userArgs } = args;
+    const userId = await ctx.db.insert("users", {
+      ...userArgs,
       password: hashedPassword,
       kycStatus: needsKyc ? "belum" : undefined,
+      ...(referredBy ? { referredBy } : {}),
+      points: 0,
+      checkInStreak: 0,
+      checkInTotal: 0,
+      seedlingsCheckin: 0,
       createdAt: Date.now(),
     });
+
+    // Generate kode referral unik untuk user baru.
+    await ensureUserReferralCode(ctx, userId);
+
+    return userId;
   },
 });
 
@@ -200,7 +269,6 @@ export const login = mutation({
     email: v.string(),
     password: v.string(),
   },
-  returns: v.union(publicUserValidator, v.null()),
   handler: async (ctx, args) => {
     const email = args.email.trim().toLowerCase();
     const user = await ctx.db
@@ -222,6 +290,85 @@ export const login = mutation({
       return toPublicUser({ ...user, password: newHash });
     }
 
+    return toPublicUser(user);
+  },
+});
+
+export const ensureDemoAccount = mutation({
+  args: {
+    email: v.string(),
+    password: v.string(),
+    name: v.string(),
+    role: v.union(v.literal("sahabat"), v.literal("mitra")),
+  },
+  handler: async (ctx, args) => {
+    const email = args.email.trim().toLowerCase();
+    const demoAccounts: Record<
+      string,
+      { password: string; name: string; role: "sahabat" | "mitra" }
+    > = {
+      "user@idmap.id": {
+        password: "user123",
+        name: "Andi Pratama",
+        role: "sahabat",
+      },
+      "mitra@idmap.id": {
+        password: "mitra123",
+        name: "Mitra Proyek Mangrove",
+        role: "mitra",
+      },
+    };
+    const demo = demoAccounts[email];
+
+    if (
+      !demo ||
+      args.password !== demo.password ||
+      args.name !== demo.name ||
+      args.role !== demo.role
+    ) {
+      throw new ConvexError({
+        code: "INVALID_DEMO_ACCOUNT",
+        message: "Akun demo tidak valid.",
+      });
+    }
+
+    const existing = await ctx.db
+      .query("users")
+      .withIndex("by_email", (q) => q.eq("email", email))
+      .first();
+
+    if (existing) {
+      const patched = {
+        ...existing,
+        email,
+        name: demo.name,
+        password: hashPassword(demo.password),
+        role: demo.role,
+      };
+      await ctx.db.patch(existing._id, {
+        name: demo.name,
+        password: patched.password,
+        role: demo.role,
+      });
+      return toPublicUser(patched);
+    }
+
+    const userId = await ctx.db.insert("users", {
+      email,
+      name: demo.name,
+      password: hashPassword(demo.password),
+      role: demo.role,
+      kycStatus: "belum",
+      points: 0,
+      checkInStreak: 0,
+      checkInTotal: 0,
+      seedlingsCheckin: 0,
+      createdAt: Date.now(),
+    });
+    await ensureUserReferralCode(ctx, userId);
+
+    const user = await ctx.db.get(userId);
+    if (!user) throw new ConvexError("Gagal membuat akun demo.");
     return toPublicUser(user);
   },
 });

@@ -18,11 +18,6 @@ const roleHints: Record<Role, { email: string; password: string }> = {
   mitra: { email: "mitra@idmap.id", password: "mitra123" },
 };
 
-const demoNames: Record<Role, string> = {
-  sahabat: "Andi Pratama",
-  mitra: "Mitra Proyek Mangrove",
-};
-
 export default function LoginPage() {
   return (
     <Suspense
@@ -101,52 +96,10 @@ function LoginForm() {
         const data = await r.json().catch(() => null);
         return (data?.user as User | null) ?? null;
       };
-      const tryRegister = async (input: {
-        email: string;
-        password: string;
-        name: string;
-        role: Role;
-      }) => {
-        const r = await fetch("/api/auth/register", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "same-origin",
-          body: JSON.stringify(input),
-        });
-        if (!r.ok) return null;
-        const data = await r.json().catch(() => null);
-        return (data?.user as User | null) ?? null;
-      };
-
       const user = await tryLogin(normalizedEmail, password);
 
       if (!user) {
-        const demoRole = roles.find((r) => {
-          const hint = roleHints[r];
-          return hint.email === normalizedEmail && hint.password === password;
-        });
-
-        if (!demoRole) {
-          setError(t("Email atau password salah.", "Invalid email or password."));
-          return;
-        }
-
-        let demoUser = await tryRegister({
-          email: roleHints[demoRole].email,
-          password: roleHints[demoRole].password,
-          name: demoNames[demoRole],
-          role: demoRole,
-        });
-        if (!demoUser) {
-          demoUser = await tryLogin(roleHints[demoRole].email, roleHints[demoRole].password);
-        }
-        if (!demoUser) {
-          setError(t("Email atau password salah.", "Invalid email or password."));
-          return;
-        }
-
-        setSession(demoUser);
-        router.push(safeNext ?? getDashboardPath(demoUser.role));
+        setError(t("Email atau password salah.", "Invalid email or password."));
         return;
       }
 
