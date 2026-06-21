@@ -4,7 +4,6 @@ import "./globals.css";
 import { ConvexClientProvider } from "./ConvexClientProvider";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import LiveChat from "@/components/chat/LiveChat";
-import BackToTop from "@/components/shared/BackToTop";
 import ServiceWorkerRegistrar from "@/components/pwa/ServiceWorkerRegistrar";
 import InstallPrompt from "@/components/pwa/InstallPrompt";
 
@@ -126,7 +125,6 @@ export default function RootLayout({
           <LanguageProvider>
             {children}
             <LiveChat />
-            <BackToTop />
             <InstallPrompt />
             <ServiceWorkerRegistrar />
           </LanguageProvider>

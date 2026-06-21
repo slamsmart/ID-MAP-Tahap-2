@@ -16,7 +16,6 @@ export default function AdminLayout({
         <DashboardSidebar type="admin" />
         <div className="flex-1 flex flex-col min-w-0">
           <DashboardHeader
-            title="Dashboard Admin"
             avatarInitials="AD"
             avatarCls="bg-red-500/20 text-red-300"
           />

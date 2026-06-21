@@ -12,7 +12,6 @@ export default function VerifikatorLayout({ children }: { children: React.ReactN
         <DashboardSidebar type="verifikator" />
         <div className="flex-1 flex flex-col min-w-0">
           <DashboardHeader
-            title="Dashboard Verifikator"
             avatarInitials="VR"
             avatarCls="bg-emerald-500/20 text-teal-300"
           />

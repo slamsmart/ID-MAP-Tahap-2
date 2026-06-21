@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
@@ -13,8 +14,6 @@ import {
   ArrowRightLeft,
   BarChart3,
   Settings,
-  Leaf,
-  LogOut,
   Menu,
   X,
   FileText,
@@ -124,18 +123,20 @@ export default function DashboardSidebar({ type }: DashboardSidebarProps) {
 
   const sidebarContent = (
     <>
-      <div className="p-4 border-b border-gray-100 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-emerald-900 rounded-full flex items-center justify-center">
-            <Leaf className="w-4 h-4 text-white" />
-          </div>
-          <span className="font-display font-bold text-lg text-emerald-900">
-            ID-MAP
-          </span>
+      <div className="relative px-4 h-16 border-b border-white/10 flex items-center justify-center">
+        <Link href="/" className="flex items-center" aria-label="Beranda ID-MAP">
+          <Image
+            src="/images/logo-white.png"
+            alt="ID-MAP"
+            width={470}
+            height={428}
+            className="h-10 w-auto object-contain"
+            priority
+          />
         </Link>
         <button
           onClick={() => setMobileOpen(false)}
-          className="md:hidden p-1 text-gray-400"
+          className="md:hidden absolute right-3 top-1/2 -translate-y-1/2 p-1 text-white/60 hover:text-white"
         >
           <X className="w-5 h-5" />
         </button>
@@ -158,28 +159,28 @@ export default function DashboardSidebar({ type }: DashboardSidebarProps) {
                   onClick={() => setMobileOpen(false)}
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 group relative overflow-hidden ${
                     isActive
-                      ? "bg-emerald-50 text-emerald-900 shadow-sm"
-                      : "text-black hover:bg-gray-50 hover:text-gray-900 hover:shadow-sm"
+                      ? "bg-white/10 text-white shadow-sm"
+                      : "text-white/70 hover:bg-white/5 hover:text-white"
                   }`}
                 >
                   {/* Active indicator bar */}
                   {isActive && (
                     <motion.div
                       layoutId="activeTab"
-                      className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-emerald-500 rounded-r-full"
+                      className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-lime-400 rounded-r-full"
                       transition={{ type: "spring", stiffness: 500, damping: 30 }}
                     />
                   )}
                   <item.icon
                     className={`w-4 h-4 flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${
-                      isActive ? "text-emerald-700" : "text-gray-400 group-hover:text-gray-600"
+                      isActive ? "text-lime-300" : "text-white/50 group-hover:text-white/80"
                     }`}
                   />
                   <span className="transition-transform duration-200 group-hover:translate-x-0.5">
                     {item.label}
                   </span>
                   {/* Hover glow */}
-                  <div className="absolute inset-0 rounded-lg bg-emerald-500/0 group-hover:bg-emerald-500/[0.03] transition-colors duration-300" />
+                  <div className="absolute inset-0 rounded-lg bg-white/0 group-hover:bg-white/[0.04] transition-colors duration-300" />
                 </Link>
               </motion.div>
             );
@@ -187,24 +188,6 @@ export default function DashboardSidebar({ type }: DashboardSidebarProps) {
         </AnimatePresence>
       </nav>
 
-      <div className="p-3 border-t border-gray-100">
-        <button
-          onClick={async () => {
-            if (typeof window !== "undefined") {
-              // Clear both session stores for consistency
-              localStorage.removeItem("idmap_session");
-              try {
-                await fetch("/api/auth/logout", { method: "POST" });
-              } catch {}
-              window.location.href = "/";
-            }
-          }}
-          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-colors w-full focus:outline-none focus:ring-2 focus:ring-red-300 focus:ring-offset-1"
-        >
-          <LogOut className="w-4 h-4 flex-shrink-0" />
-          Keluar
-        </button>
-      </div>
     </>
   );
 
@@ -225,7 +208,7 @@ export default function DashboardSidebar({ type }: DashboardSidebarProps) {
       )}
 
       <aside
-        className={`fixed md:sticky top-0 left-0 z-50 md:z-auto w-60 bg-white border-r border-gray-100 min-h-screen flex flex-col transition-transform duration-200 ${
+        className={`fixed md:sticky top-0 left-0 z-50 md:z-auto w-60 bg-[#0f3d2e] border-r border-white/10 min-h-screen flex flex-col transition-transform duration-200 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}
       >
@@ -234,4 +217,3 @@ export default function DashboardSidebar({ type }: DashboardSidebarProps) {
     </>
   );
 }
-

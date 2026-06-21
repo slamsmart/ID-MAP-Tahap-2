@@ -253,9 +253,9 @@ function RegisterForm() {
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center justify-center">
             <img
-              src="/images/logo2.webp"
+              src="/images/logo-white.png"
               alt="ID-MAP"
-              className="w-20 h-20 rounded-full object-contain shadow-lg shadow-black/10 bg-white"
+              className="h-20 w-auto object-contain"
             />
           </Link>
           <p className="text-sm font-medium text-emerald-50 mt-2 drop-shadow-sm">{t("Buat akun baru", "Create a new account")}</p>

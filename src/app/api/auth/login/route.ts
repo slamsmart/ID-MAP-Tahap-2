@@ -45,6 +45,19 @@ function getErrorData(err: unknown): unknown {
     : undefined;
 }
 
+async function ensureDemoLogin(
+  email: string,
+  password: string,
+  demo: (typeof DEMO_ACCOUNTS)[keyof typeof DEMO_ACCOUNTS]
+) {
+  return convex.mutation(api.users.ensureDemoAccount, {
+    email,
+    password,
+    name: demo.name,
+    role: demo.role,
+  });
+}
+
 export async function POST(req: NextRequest) {
   const startedAt = Date.now();
   try {
@@ -89,6 +102,7 @@ export async function POST(req: NextRequest) {
         // disimpan di DB oleh ensureDemoSession sebelumnya.
         try {
           user = await convex.mutation(api.users.login, { email, password });
+          if (!user) user = await ensureDemoLogin(email, password, demo);
         } catch {
           // users.login juga gagal (misal user belum ada) — lempar error asli
           throw err;

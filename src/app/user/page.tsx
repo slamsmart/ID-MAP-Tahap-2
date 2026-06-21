@@ -54,7 +54,7 @@ export default function UserDashboard() {
   const verifiedProjects = projects?.filter((p) => p.status === "Terverifikasi") ?? [];
   const featuredProject = verifiedProjects[0];
   const siteUrl =
-    process.env.NEXT_PUBLIC_SITE_URL ?? "https://idmap-pesisir.vercel.app";
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://id-map.app";
   const donationLink = featuredProject
     ? `${siteUrl}/donasi-cepat/${featuredProject._id}`
     : `${siteUrl}/proyek`;

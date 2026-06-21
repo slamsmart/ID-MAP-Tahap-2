@@ -16,7 +16,6 @@ export default function CorporateLayout({
         <DashboardSidebar type="corporate" />
         <div className="flex-1 flex flex-col min-w-0">
           <DashboardHeader
-            title="Dashboard Corporate"
             avatarInitials="CP"
             avatarCls="bg-violet-500/20 text-violet-300"
           />

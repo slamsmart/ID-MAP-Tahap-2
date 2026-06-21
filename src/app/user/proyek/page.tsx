@@ -139,7 +139,7 @@ export default function UserProyekPage() {
                   </div>
                   <Link
                     href={`/donasi-cepat/${p._id}`}
-                    className="w-full mt-4 px-4 py-2.5 bg-emerald-900 text-white rounded-lg text-sm font-semibold hover:bg-emerald-800 flex items-center justify-center gap-2 transition-colors"
+                    className="w-full mt-4 px-4 py-2.5 bg-lime-400 text-emerald-950 rounded-lg text-sm font-bold hover:bg-lime-300 shadow-sm shadow-lime-500/30 flex items-center justify-center gap-2 transition-colors"
                   >
                     <Leaf className="w-4 h-4" /> Dukung Proyek Ini
                   </Link>

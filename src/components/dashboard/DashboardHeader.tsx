@@ -1,6 +1,9 @@
-import { Leaf, BarChart2, AlertTriangle } from "lucide-react";
+"use client";
 
-// Data mangrove nasional — PMN · KKMD · BRGMN 2025 (statis)
+import { useRouter } from "next/navigation";
+import { Leaf, BarChart2, AlertTriangle, LogOut } from "lucide-react";
+import { logout } from "@/lib/auth";
+
 const STATS = [
   {
     icon: Leaf,
@@ -29,66 +32,73 @@ const STATS = [
 ] as const;
 
 interface Props {
-  title: string;
   avatarInitials: string;
   avatarCls: string;
 }
 
-export default function DashboardHeader({ title, avatarInitials, avatarCls }: Props) {
+export default function DashboardHeader({ avatarInitials, avatarCls }: Props) {
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    await logout();
+    router.push("/");
+    router.refresh();
+  };
+
   return (
-    <header className="bg-[#0c1a2e] border-b border-white/10 shadow-sm shadow-black/20">
-
-      {/* ── Baris atas: judul + avatar ── */}
-      <div className="flex items-center justify-between px-4 sm:px-6 h-14">
-        <div className="md:hidden w-8" />
-        <h2 className="font-display font-semibold text-white/90 text-sm tracking-wide">
-          {title}
-        </h2>
-        <div
-          className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${avatarCls}`}
-        >
-          {avatarInitials}
-        </div>
-      </div>
-
-      {/* ── Baris bawah: stats mangrove nasional ── */}
-      <div className="flex items-stretch border-t border-white/[0.06] divide-x divide-white/[0.06]">
-        {STATS.map((s) => (
-          <div
-            key={s.label}
-            className="flex flex-1 items-center gap-2.5 px-4 sm:px-5 py-2.5 min-w-0 group hover:bg-white/[0.03] transition-colors"
-          >
-            {/* Icon bubble */}
+    <header className="bg-[#0f3d2e] shadow-sm shadow-emerald-950/20">
+      <div className="flex min-h-[68px] items-center gap-3 px-4 sm:px-6">
+        <div className="grid min-w-0 flex-1 grid-cols-1 gap-2 sm:grid-cols-3 lg:gap-4">
+          {STATS.map((s) => (
             <div
-              className={`hidden sm:flex w-7 h-7 rounded-lg items-center justify-center flex-shrink-0 ${s.glowCls}`}
+              key={s.label}
+              className="flex min-w-0 items-center gap-2.5 rounded-lg px-1.5 py-1.5 transition-colors hover:bg-white/[0.03] sm:px-2"
             >
-              <s.icon className={`w-3.5 h-3.5 ${s.iconCls}`} />
-            </div>
-
-            {/* Text */}
-            <div className="min-w-0">
-              {/* Value + sub-text inline on wide screens */}
-              <div className="flex items-baseline gap-1.5 flex-wrap">
-                <span className="text-white font-bold text-sm leading-none">
-                  {s.value}
-                </span>
-                <span className="text-white/60 text-[10px] leading-none hidden md:inline truncate">
-                  {s.sub}
-                </span>
+              <div
+                className={`hidden h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg sm:flex ${s.glowCls}`}
+              >
+                <s.icon className={`h-4 w-4 ${s.iconCls}`} />
               </div>
-              {/* Label */}
-              <p className="text-white/70 text-[10px] mt-0.5 leading-none truncate">
-                {s.label}
-              </p>
-            </div>
-          </div>
-        ))}
 
-        {/* Source tag — hanya desktop */}
-        <div className="hidden xl:flex items-center px-4 sm:px-5 flex-shrink-0">
-          <span className="text-[9px] text-white/40 uppercase tracking-widest whitespace-nowrap">
-            Sumber: PMN · KKMD · BRGMN 2025
+              <div className="min-w-0">
+                <div className="flex min-w-0 items-baseline gap-1.5">
+                  <span className="shrink-0 text-base font-bold leading-none text-white">
+                    {s.value}
+                  </span>
+                  <span className="hidden truncate text-[11px] leading-none text-white/60 md:inline">
+                    {s.sub}
+                  </span>
+                </div>
+                <p className="mt-1 truncate text-[11px] leading-none text-white/72">
+                  {s.label}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="ml-auto hidden items-center xl:flex">
+          <span className="whitespace-nowrap text-[10px] font-semibold uppercase tracking-[0.18em] text-white/85">
+            Sumber: PMN / KKMD / BRGMN 2025
           </span>
+        </div>
+
+        <div className="flex flex-shrink-0 items-center gap-2">
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="inline-flex h-9 items-center gap-2 rounded-lg border border-white/10 px-3 text-sm font-semibold text-white/80 transition-colors hover:bg-white/10 hover:text-white focus:outline-none focus:ring-2 focus:ring-emerald-300/60"
+            aria-label="Keluar dari akun"
+            title="Keluar"
+          >
+            <LogOut className="h-4 w-4" aria-hidden="true" />
+            <span className="hidden sm:inline">Keluar</span>
+          </button>
+          <div
+            className={`flex h-10 w-10 items-center justify-center rounded-full text-base font-semibold ${avatarCls}`}
+          >
+            {avatarInitials}
+          </div>
         </div>
       </div>
     </header>

@@ -146,9 +146,9 @@ function LoginForm() {
           {/* Top: Logo */}
           <Link href="/" className="inline-flex items-center justify-center group">
             <img
-              src="/images/logo2.webp"
+              src="/images/logo-white.png"
               alt="ID-MAP"
-              className="w-14 h-14 rounded-full object-contain bg-white/95 shadow-lg group-hover:scale-105 transition-transform"
+              className="h-14 w-auto object-contain group-hover:scale-105 transition-transform"
             />
           </Link>
 

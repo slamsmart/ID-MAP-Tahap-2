@@ -30,7 +30,7 @@ export default function ScrollReveal({
   style,
   delay = 0,
   as: Tag = "div",
-  once = false,
+  once = true,
 }: ScrollRevealProps) {
   const ref = useRef<HTMLElement>(null);
 
@@ -50,13 +50,16 @@ export default function ScrollReveal({
           if (entry.isIntersecting) {
             el.classList.add("is-visible");
             if (once) io.unobserve(el);
-          } else if (!once) {
-            // Reset so the entrance animation can replay on the next entry.
+          } else if (!once && entry.intersectionRatio === 0) {
+            // Reset only when fully out of view, so the entrance can replay on
+            // the next entry. Resetting at the 0.15 boundary instead would let
+            // the rise transform push the element back across the threshold,
+            // re-toggling every frame (visible "vibration" near the page foot).
             el.classList.remove("is-visible");
           }
         }
       },
-      { threshold: 0.15, rootMargin: "0px 0px -10% 0px" }
+      { threshold: [0, 0.15], rootMargin: "0px 0px -10% 0px" }
     );
     io.observe(el);
     return () => io.disconnect();

@@ -15,6 +15,7 @@ import {
   CheckCircle2
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
@@ -34,7 +35,7 @@ export default function Footer() {
   return (
     <footer className="bg-[#0a1c15] text-white">
       {/* CTA Banner */}
-      <ScrollReveal as="div" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <ScrollReveal as="div" once className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="relative overflow-hidden rounded-[32px] p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8"
              style={{
                background: "rgba(255, 255, 255, 0.05)",
@@ -45,14 +46,13 @@ export default function Footer() {
              }}>
 
           <div className="relative z-10 flex flex-col sm:flex-row items-start gap-6 w-full md:w-auto">
-            <div className="hidden sm:flex w-20 h-20 rounded-full items-center justify-center shrink-0 shadow-lg"
-                 style={{
-                   background: "rgba(255,255,255,0.08)",
-                   border: "1px solid rgba(255,255,255,0.18)",
-                   boxShadow: "inset 0 1px 0 rgba(255,255,255,0.15)",
-                 }}>
-              <Leaf className="w-10 h-10 text-emerald-300" />
-            </div>
+            <Image
+              src="/images/logo-white.png"
+              alt="ID-MAP"
+              width={470}
+              height={428}
+              className="hidden sm:block h-20 w-auto object-contain shrink-0"
+            />
             <div>
               <h3 className="font-display font-bold text-3xl md:text-4xl mb-2 text-white">
                 {t("Terus Dukung Proyek", "Keep Supporting")}<br/>
@@ -102,7 +102,7 @@ export default function Footer() {
 
       {/* Footer Links */}
       <div className="border-t border-white/10">
-        <ScrollReveal as="div" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <ScrollReveal as="div" once className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-10 lg:gap-12">
             {/* Brand */}
             <div>
@@ -214,7 +214,7 @@ export default function Footer() {
 
       {/* Copyright & Badges */}
       <div className="border-t border-white/10 bg-black/20">
-        <ScrollReveal as="div" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <ScrollReveal as="div" once className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
             <div className="flex flex-col sm:flex-row items-center gap-4 text-sm text-gray-500 font-medium">
               <Leaf className="w-6 h-6 text-emerald-600" />

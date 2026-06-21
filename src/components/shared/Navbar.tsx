@@ -12,7 +12,7 @@ const navLinks = [
   { href: "/", idLabel: "Beranda", enLabel: "Home" },
   { href: "/jelajahi-peta-mangrove", idLabel: "Jelajahi Peta Restorasi Lingkungan", enLabel: "Explore Environmental Restoration Map" },
   { href: "/tentang", idLabel: "Tentang Kami", enLabel: "About Us" },
-  { href: "/mitra-kami", idLabel: "Mitra", enLabel: "Partners" },
+  { href: "/leaderboard", idLabel: "Leaderboard", enLabel: "Leaderboard" },
   { href: "/faq", idLabel: "FAQ", enLabel: "FAQ" },
 ];
 
@@ -64,16 +64,14 @@ export default function Navbar() {
     >
       <div className="mx-auto max-w-7xl px-6 py-4 flex items-center justify-between">
         <Link href="/" className="flex items-center" aria-label="ID-MAP - Mangrove & Pesisir untuk Ekosistem Karbon Indonesia">
-          <span className="inline-flex items-center justify-center h-20 w-20 md:h-24 md:w-24 rounded-full bg-white p-1">
-            <Image
-              src="/images/logo2.webp"
-              alt="ID-MAP"
-              width={192}
-              height={192}
-              className="h-full w-full object-contain"
-              priority
-            />
-          </span>
+          <Image
+            src="/images/logo-white.png"
+            alt="ID-MAP"
+            width={470}
+            height={428}
+            className="h-14 w-auto object-contain md:h-20"
+            priority
+          />
         </Link>
 
         <nav className="hidden lg:flex items-center gap-7 rounded-full bg-lime-400 px-7 py-3 text-sm font-semibold text-black shadow-lg shadow-emerald-950/30">
