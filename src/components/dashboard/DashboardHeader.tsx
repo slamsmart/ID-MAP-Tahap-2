@@ -47,12 +47,13 @@ export default function DashboardHeader({ avatarInitials, avatarCls }: Props) {
 
   return (
     <header className="bg-[#0f3d2e] shadow-sm shadow-emerald-950/20">
-      <div className="flex min-h-[68px] items-center gap-3 px-4 sm:px-6">
-        <div className="grid min-w-0 flex-1 grid-cols-1 gap-2 sm:grid-cols-3 lg:gap-4">
+      {/* pl-14 on mobile to clear the fixed hamburger button (left-3 + 40px width) */}
+      <div className="flex min-h-[56px] items-center gap-2 pl-14 pr-3 sm:min-h-[68px] sm:gap-3 sm:px-6">
+        <div className="grid min-w-0 flex-1 grid-cols-3 gap-x-1 gap-y-0 sm:gap-2 lg:gap-4">
           {STATS.map((s) => (
             <div
               key={s.label}
-              className="flex min-w-0 items-center gap-2.5 rounded-lg px-1.5 py-1.5 transition-colors hover:bg-white/[0.03] sm:px-2"
+              className="flex min-w-0 items-center gap-1.5 rounded-lg px-1 py-1 transition-colors hover:bg-white/[0.03] sm:gap-2.5 sm:px-2 sm:py-1.5"
             >
               <div
                 className={`hidden h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg sm:flex ${s.glowCls}`}
@@ -61,15 +62,15 @@ export default function DashboardHeader({ avatarInitials, avatarCls }: Props) {
               </div>
 
               <div className="min-w-0">
-                <div className="flex min-w-0 items-baseline gap-1.5">
-                  <span className="shrink-0 text-base font-bold leading-none text-white">
+                <div className="flex min-w-0 items-baseline gap-1">
+                  <span className="shrink-0 text-[11px] font-bold leading-none text-white sm:text-base">
                     {s.value}
                   </span>
                   <span className="hidden truncate text-[11px] leading-none text-white/60 md:inline">
                     {s.sub}
                   </span>
                 </div>
-                <p className="mt-1 truncate text-[11px] leading-none text-white/72">
+                <p className="mt-0.5 truncate text-[9px] leading-none text-white/70 sm:mt-1 sm:text-[11px]">
                   {s.label}
                 </p>
               </div>
@@ -83,19 +84,19 @@ export default function DashboardHeader({ avatarInitials, avatarCls }: Props) {
           </span>
         </div>
 
-        <div className="flex flex-shrink-0 items-center gap-2">
+        <div className="flex flex-shrink-0 items-center gap-1.5 sm:gap-2">
           <button
             type="button"
             onClick={handleLogout}
-            className="inline-flex h-9 items-center gap-2 rounded-lg border border-white/10 px-3 text-sm font-semibold text-white/80 transition-colors hover:bg-white/10 hover:text-white focus:outline-none focus:ring-2 focus:ring-emerald-300/60"
+            className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-white/10 px-2.5 text-xs font-semibold text-white/80 transition-colors hover:bg-white/10 hover:text-white focus:outline-none focus:ring-2 focus:ring-emerald-300/60 sm:h-9 sm:gap-2 sm:px-3 sm:text-sm"
             aria-label="Keluar dari akun"
             title="Keluar"
           >
-            <LogOut className="h-4 w-4" aria-hidden="true" />
+            <LogOut className="h-3.5 w-3.5 sm:h-4 sm:w-4" aria-hidden="true" />
             <span className="hidden sm:inline">Keluar</span>
           </button>
           <div
-            className={`flex h-10 w-10 items-center justify-center rounded-full text-base font-semibold ${avatarCls}`}
+            className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold sm:h-10 sm:w-10 sm:text-base ${avatarCls}`}
           >
             {avatarInitials}
           </div>
