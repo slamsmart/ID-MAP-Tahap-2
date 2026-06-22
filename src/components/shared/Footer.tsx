@@ -107,9 +107,13 @@ export default function Footer() {
             {/* Brand */}
             <div>
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 bg-emerald-800 rounded-full flex items-center justify-center">
-                  <Leaf className="w-5 h-5 text-emerald-300" />
-                </div>
+                <Image
+                  src="/images/logo-white.png"
+                  alt="ID-MAP"
+                  width={40}
+                  height={40}
+                  className="h-10 w-10 object-contain"
+                />
                 <span className="font-display font-bold text-2xl tracking-tight">{brandName}</span>
               </div>
               <p className="text-sm text-gray-400 mb-6 leading-relaxed">
@@ -217,10 +221,15 @@ export default function Footer() {
         <ScrollReveal as="div" once className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
             <div className="flex flex-col sm:flex-row items-center gap-4 text-sm text-gray-500 font-medium">
-              <Leaf className="w-6 h-6 text-emerald-600" />
+              <Image
+                src="/images/logo-white.png"
+                alt="ID-MAP"
+                width={24}
+                height={24}
+                className="h-6 w-6 object-contain opacity-70"
+              />
               <div className="text-center sm:text-left">
-                &copy; {new Date().getFullYear()} ID-MAP. {t("Hak cipta dilindungi.", "All rights reserved.")}<br/>
-                <span className="text-gray-600">Pre-Market Carbon Infrastructure Platform.</span>
+                &copy; {new Date().getFullYear()} ID-MAP. {t("Hak cipta dilindungi.", "All rights reserved.")}
               </div>
             </div>
             

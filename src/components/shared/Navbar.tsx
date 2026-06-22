@@ -69,7 +69,7 @@ export default function Navbar() {
             alt="ID-MAP"
             width={470}
             height={428}
-            className="h-14 w-auto object-contain md:h-20"
+            className="h-11 w-auto object-contain md:h-16"
             priority
           />
         </Link>

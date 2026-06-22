@@ -50,16 +50,19 @@ export default function ScrollReveal({
           if (entry.isIntersecting) {
             el.classList.add("is-visible");
             if (once) io.unobserve(el);
-          } else if (!once && entry.intersectionRatio === 0) {
-            // Reset only when fully out of view, so the entrance can replay on
-            // the next entry. Resetting at the 0.15 boundary instead would let
-            // the rise transform push the element back across the threshold,
-            // re-toggling every frame (visible "vibration" near the page foot).
+          } else if (!once) {
+            // Reset on every exit so the entrance replays consistently whether
+            // you scroll down OR back up — nothing ends up statically visible.
             el.classList.remove("is-visible");
           }
         }
       },
-      { threshold: [0, 0.15], rootMargin: "0px 0px -10% 0px" }
+      // Inset the trigger zone on BOTH edges (~12%). The element flips visible
+      // once it is comfortably inside the viewport, so the 36px depth-rise can
+      // never push it back across the boundary and re-toggle (the old
+      // "vibration" bug). Insetting both edges also means the element resets as
+      // soon as it leaves either side, giving symmetric up/down replay.
+      { threshold: 0, rootMargin: "-12% 0px -12% 0px" }
     );
     io.observe(el);
     return () => io.disconnect();
