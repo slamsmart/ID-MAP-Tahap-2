@@ -218,7 +218,7 @@ export default function Footer() {
 
       {/* Copyright & Badges */}
       <div className="border-t border-white/10 bg-black/20">
-        <ScrollReveal as="div" once className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
             <div className="flex flex-col sm:flex-row items-center gap-4 text-sm text-gray-500 font-medium">
               <Image
@@ -265,7 +265,7 @@ export default function Footer() {
               </div>
             </div>
           </div>
-        </ScrollReveal>
+        </div>
       </div>
     </footer>
   );
