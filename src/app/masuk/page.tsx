@@ -3,12 +3,13 @@
 import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Leaf, Eye, EyeOff, Globe, ArrowRight, ShieldCheck, Lock, Mail } from "lucide-react";
+import { Leaf, Eye, EyeOff, Globe, ArrowRight, ShieldCheck, Lock, Mail, Fingerprint, Loader2 } from "lucide-react";
 import { setSession, getDashboardPath, User } from "@/lib/auth";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getAuthBgImage } from "@/lib/heroImageStore";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
+import { isWebAuthnAvailable, isPlatformAuthenticatorAvailable, verifyBiometric, generateChallenge } from "@/lib/webauthn";
 
 const roles = ["sahabat", "mitra"] as const;
 type Role = (typeof roles)[number];
@@ -47,9 +48,15 @@ function LoginForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [platformBiometric, setPlatformBiometric] = useState(false);
+  const [biometricScanning, setBiometricScanning] = useState(false);
+  const [biometricError, setBiometricError] = useState("");
   const DEFAULT_BG = "/images/hero-mangrove.webp";
   const [bgImage, setBgImage] = useState(DEFAULT_BG);
   const stats = useQuery(api.platformStats.getAll);
+  const emailNorm = email.includes("@") ? email.trim().toLowerCase() : null;
+  const hasWebAuthn = useQuery(api.webauthn.hasWebAuthn, emailNorm ? { email: emailNorm } : "skip");
+  const credentialIds = useQuery(api.webauthn.getCredentialsByEmail, hasWebAuthn && emailNorm ? { email: emailNorm } : "skip");
   const statByKey = new Map((stats ?? []).map((s) => [s.key, s.value]));
   const sahabatStat = statByKey.get("sahabat_terlibat") ?? "12.456";
   const bibitStat = statByKey.get("bibit_ditanam") ?? "1.285.760";
@@ -60,6 +67,11 @@ function LoginForm() {
     getAuthBgImage()
       .then((img) => { if (img) setBgImage(img); })
       .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    if (!isWebAuthnAvailable()) return;
+    isPlatformAuthenticatorAvailable().then(setPlatformBiometric).catch(() => {});
   }, []);
 
   const roleLabels: Record<Role, string> = {
@@ -118,6 +130,42 @@ function LoginForm() {
     setPassword(hint.password);
     setError("");
   };
+
+  const handleBiometricLogin = async () => {
+    if (!credentialIds?.length) return;
+    setBiometricScanning(true);
+    setBiometricError("");
+    setError("");
+    try {
+      const challenge = generateChallenge();
+      const { credentialId, counter } = await verifyBiometric({ challenge, credentialIds });
+      const r = await fetch("/api/auth/webauthn-login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify({ email: email.trim().toLowerCase(), credentialId, counter, challenge }),
+      });
+      if (!r.ok) {
+        const data = await r.json().catch(() => null);
+        throw new Error(data?.error ?? "Login biometrik gagal.");
+      }
+      const data = await r.json();
+      const user = data.user as User;
+      setSession(user);
+      router.push(safeNext ?? getDashboardPath(user.role));
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Login biometrik gagal.";
+      setBiometricError(
+        msg.includes("NotAllowedError") || msg.includes("cancelled") || msg.includes("dibatalkan")
+          ? t("Dibatalkan. Coba lagi.", "Cancelled. Try again.")
+          : msg
+      );
+    } finally {
+      setBiometricScanning(false);
+    }
+  };
+
+  const showBiometricButton = platformBiometric && hasWebAuthn && (credentialIds?.length ?? 0) > 0;
 
   return (
     <div className="min-h-screen flex">
@@ -385,6 +433,42 @@ function LoginForm() {
                 )}
               </button>
             </form>
+
+            {/* Biometric login */}
+            {showBiometricButton && (
+              <div className="mt-5">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex-1 h-px bg-gray-200" />
+                  <span className="text-xs text-gray-400 font-medium whitespace-nowrap">
+                    {t("atau masuk dengan", "or sign in with")}
+                  </span>
+                  <div className="flex-1 h-px bg-gray-200" />
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleBiometricLogin}
+                  disabled={biometricScanning}
+                  className="group flex items-center justify-center gap-2.5 w-full py-3 border-2 border-emerald-200 bg-emerald-50 text-emerald-800 font-bold rounded-xl hover:bg-emerald-100 hover:border-emerald-300 transition-all text-sm disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {biometricScanning ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin text-emerald-600" />
+                      {t("Tempelkan jari...", "Touch sensor...")}
+                    </>
+                  ) : (
+                    <>
+                      <Fingerprint className="w-5 h-5 text-emerald-600 group-hover:scale-110 transition-transform" />
+                      {t("Masuk dengan Biometrik", "Sign in with Biometrics")}
+                    </>
+                  )}
+                </button>
+
+                {biometricError && (
+                  <p className="text-xs text-red-500 text-center mt-2">{biometricError}</p>
+                )}
+              </div>
+            )}
 
             {/* Demo account section */}
             <div className="mt-6 p-4 bg-white rounded-xl border border-gray-200 shadow-sm">

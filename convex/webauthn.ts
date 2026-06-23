@@ -130,3 +130,15 @@ export const hasWebAuthn = query({
     return (user.webauthnCredentials ?? []).length > 0;
   },
 });
+
+export const getCredentialsByEmail = query({
+  args: { email: v.string() },
+  handler: async (ctx, args) => {
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_email", (q) => q.eq("email", args.email.toLowerCase()))
+      .first();
+    if (!user) return [];
+    return (user.webauthnCredentials ?? []).map((c) => c.credentialId);
+  },
+});
