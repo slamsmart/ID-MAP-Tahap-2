@@ -1,11 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { Plus_Jakarta_Sans, Inter } from "next/font/google";
+import { Plus_Jakarta_Sans, Inter, Montserrat } from "next/font/google";
 import "./globals.css";
 import { ConvexClientProvider } from "./ConvexClientProvider";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import LiveChat from "@/components/chat/LiveChat";
 import ServiceWorkerRegistrar from "@/components/pwa/ServiceWorkerRegistrar";
 import InstallPrompt from "@/components/pwa/InstallPrompt";
+import SplashScreen from "@/components/pwa/SplashScreen";
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -18,6 +19,13 @@ const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
   weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
+
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  variable: "--font-montserrat",
+  weight: ["400", "700"],
   display: "swap",
 });
 
@@ -119,10 +127,11 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com" />
       </head>
       <body
-        className={`${plusJakarta.variable} ${inter.variable} font-sans antialiased`}
+        className={`${plusJakarta.variable} ${inter.variable} ${montserrat.variable} font-sans antialiased`}
       >
         <ConvexClientProvider>
           <LanguageProvider>
+            <SplashScreen />
             {children}
             <LiveChat />
             <InstallPrompt />
