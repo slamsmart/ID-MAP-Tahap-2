@@ -13,124 +13,136 @@ function isStandalone() {
   );
 }
 
+const DISPLAY_MS = 2800;
+const FADE_MS = 600;
+
 export default function SplashScreen() {
-  const [phase, setPhase] = useState<"hidden" | "visible" | "fading">("hidden");
+  const [phase, setPhase] = useState<"hidden" | "enter" | "visible" | "fading">("hidden");
   const router = useRouter();
 
   useEffect(() => {
     if (!isStandalone()) return;
-    // Show once per session so navigation doesn't re-trigger it
     if (sessionStorage.getItem("idmap-splash") === "1") return;
     sessionStorage.setItem("idmap-splash", "1");
 
-    setPhase("visible");
-
-    const t1 = setTimeout(() => setPhase("fading"), 2400);
-    const t2 = setTimeout(() => {
+    // stagger: hidden → enter (animate in) → visible → fading → redirect
+    const t0 = setTimeout(() => setPhase("enter"), 60);
+    const t1 = setTimeout(() => setPhase("visible"), 400);
+    const t2 = setTimeout(() => setPhase("fading"), DISPLAY_MS);
+    const t3 = setTimeout(() => {
       setPhase("hidden");
-      // Skip landing page — route to dashboard or login
       const session = getSession();
       if (session) {
         router.replace(getDashboardPath(session.role));
       } else {
-        router.replace("/masuk");
+        router.replace("/"); // → landing page, user pilih Daftar atau Masuk
       }
-    }, 2900);
+    }, DISPLAY_MS + FADE_MS);
 
-    return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-    };
+    return () => { clearTimeout(t0); clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
   }, [router]);
 
   if (phase === "hidden") return null;
+
+  const contentVisible = phase === "visible" || phase === "fading";
+  const fading = phase === "fading";
 
   return (
     <div
       className="fixed inset-0 z-[9999] overflow-hidden"
       style={{
-        opacity: phase === "fading" ? 0 : 1,
-        transition: "opacity 500ms ease-out",
-        pointerEvents: phase === "fading" ? "none" : "auto",
+        opacity: fading ? 0 : 1,
+        transition: `opacity ${FADE_MS}ms cubic-bezier(0.4,0,0.2,1)`,
+        pointerEvents: fading ? "none" : "auto",
       }}
     >
-      {/* Background: hero photo + dark green overlay */}
-      <div className="absolute inset-0 bg-[#062d22]">
+      {/* ── Background ─────────────────────────────────────────── */}
+      <div className="absolute inset-0 bg-[#051e15]">
         <Image
-          src="/images/hero-mangrove.webp"
+          src="/images/hero-mangrove2.webp"
           alt=""
           fill
-          className="object-cover opacity-55"
+          className="object-cover"
+          style={{ opacity: contentVisible ? 0.45 : 0, transition: "opacity 600ms ease" }}
           priority
         />
-        {/* gradient: dark top + dark bottom, clear middle so photo shows */}
+        {/* cinematic vignette */}
         <div
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(135deg, rgba(6,45,34,0.82) 0%, rgba(15,61,46,0.55) 50%, rgba(26,92,68,0.40) 100%)",
+              "radial-gradient(ellipse at center, transparent 30%, rgba(5,30,21,0.65) 100%)",
           }}
         />
         <div
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(to bottom, rgba(6,45,34,0.70) 0%, transparent 40%, transparent 60%, rgba(6,45,34,0.85) 100%)",
+              "linear-gradient(to bottom, rgba(5,30,21,0.80) 0%, rgba(5,30,21,0.10) 35%, rgba(5,30,21,0.10) 60%, rgba(5,30,21,0.92) 100%)",
           }}
         />
       </div>
 
-      {/* Main content */}
-      <div className="relative z-10 flex h-full flex-col items-center justify-center gap-5 px-8 text-center">
+      {/* ── Main content ───────────────────────────────────────── */}
+      <div
+        className="relative z-10 flex h-full flex-col items-center justify-center px-8 text-center"
+        style={{
+          opacity: contentVisible ? 1 : 0,
+          transform: contentVisible ? "translateY(0)" : "translateY(16px)",
+          transition: "opacity 500ms ease, transform 500ms ease",
+        }}
+      >
         {/* Logo */}
         <Image
           src="/images/logo-white.png"
           alt="ID-MAP"
           width={470}
           height={428}
-          className="h-14 w-auto drop-shadow-xl"
+          className="h-16 w-auto drop-shadow-2xl mb-6"
           priority
         />
 
-        {/* Big title */}
-        <div>
-          <h1 className="text-6xl font-black tracking-tight leading-none">
-            <span className="text-white">ID-</span>
-            <span className="text-lime-400">MAP</span>
-          </h1>
-          <p className="mt-3 text-sm font-medium text-emerald-100 leading-relaxed max-w-xs">
-            Satu Platform, Seluruh Ekosistem
-            <br />
-            Mangrove &amp; Pesisir Indonesia
-          </p>
-        </div>
+        {/* Title */}
+        <h1 className="text-5xl font-black tracking-tight leading-none mb-3">
+          <span className="text-white">ID</span>
+          <span className="text-lime-400">-MAP</span>
+        </h1>
 
-        {/* Tags pill */}
-        <div className="flex flex-wrap justify-center items-center gap-x-3 gap-y-1 rounded-full border border-white/20 bg-white/5 px-5 py-2 text-xs font-medium text-white/80 backdrop-blur-sm">
-          <span>Data</span>
-          <span className="text-white/30">|</span>
-          <span>Restorasi</span>
-          <span className="text-white/30">|</span>
-          <span>Rehabilitasi</span>
-          <span className="text-white/30">|</span>
-          <span>Keberlanjutan</span>
-        </div>
+        {/* Tagline */}
+        <p className="text-sm font-medium text-white/70 leading-relaxed max-w-[260px] mb-8">
+          Platform Integrasi Data Ekosistem
+          <br />
+          Mangrove &amp; Pesisir Indonesia
+        </p>
 
-        {/* Bouncing dots loader */}
-        <div className="flex gap-2 mt-1">
-          {[0, 140, 280].map((delay) => (
-            <div
-              key={delay}
-              className="h-2 w-2 rounded-full bg-lime-400 animate-bounce"
-              style={{ animationDelay: `${delay}ms` }}
-            />
+        {/* Feature chips */}
+        <div className="flex flex-wrap justify-center gap-2 mb-10">
+          {["Restorasi", "Rehabilitasi", "Carbon Credit", "MRV"].map((tag) => (
+            <span
+              key={tag}
+              className="text-[11px] font-semibold text-white/60 border border-white/15 rounded-full px-3 py-1 bg-white/5 backdrop-blur-sm"
+            >
+              {tag}
+            </span>
           ))}
         </div>
       </div>
 
-      {/* Bottom domain */}
-      <div className="absolute bottom-8 left-0 right-0 text-center text-xs font-medium text-white/40 tracking-widest">
-        id-map.app
+      {/* ── Progress bar ───────────────────────────────────────── */}
+      <div className="absolute bottom-0 left-0 right-0">
+        <div className="h-[2px] bg-white/10">
+          <div
+            className="h-full bg-lime-400"
+            style={{
+              width: contentVisible ? "100%" : "0%",
+              transition: `width ${DISPLAY_MS - 400}ms linear`,
+              transitionDelay: "400ms",
+            }}
+          />
+        </div>
+        <p className="text-center text-[11px] font-semibold tracking-[0.2em] text-white/30 py-5">
+          ID-MAP.APP
+        </p>
       </div>
     </div>
   );
