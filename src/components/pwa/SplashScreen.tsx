@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { getSession, getDashboardPath } from "@/lib/auth";
 
 function isStandalone() {
   if (typeof window === "undefined") return false;
@@ -13,6 +15,7 @@ function isStandalone() {
 
 export default function SplashScreen() {
   const [phase, setPhase] = useState<"hidden" | "visible" | "fading">("hidden");
+  const router = useRouter();
 
   useEffect(() => {
     if (!isStandalone()) return;
@@ -21,13 +24,24 @@ export default function SplashScreen() {
     sessionStorage.setItem("idmap-splash", "1");
 
     setPhase("visible");
+
     const t1 = setTimeout(() => setPhase("fading"), 2400);
-    const t2 = setTimeout(() => setPhase("hidden"), 2900);
+    const t2 = setTimeout(() => {
+      setPhase("hidden");
+      // Skip landing page — route to dashboard or login
+      const session = getSession();
+      if (session) {
+        router.replace(getDashboardPath(session.role));
+      } else {
+        router.replace("/masuk");
+      }
+    }, 2900);
+
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
     };
-  }, []);
+  }, [router]);
 
   if (phase === "hidden") return null;
 
