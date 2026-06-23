@@ -1,6 +1,16 @@
 "use client";
 
-import { TreePine, Sprout, BarChart3, Fish, Shield, Users, CheckCircle2 } from "lucide-react";
+import { useRef, useState, useCallback, useEffect, type CSSProperties } from "react";
+import {
+  TreePine,
+  Sprout,
+  BarChart3,
+  Fish,
+  Shield,
+  Users,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -26,6 +36,8 @@ const services = [
     iconBg: "bg-emerald-700",
     badge: "bg-emerald-600",
     badgeText: "Ekosistem",
+    accentFrom: "from-emerald-950/95",
+    accentVia: "via-emerald-900/80",
   },
   {
     key: "penyulaman-mangrove",
@@ -45,6 +57,8 @@ const services = [
     iconBg: "bg-teal-700",
     badge: "bg-teal-600",
     badgeText: "Revegetasi",
+    accentFrom: "from-teal-950/95",
+    accentVia: "via-teal-900/80",
   },
   {
     key: "monev-mangrove",
@@ -64,6 +78,8 @@ const services = [
     iconBg: "bg-blue-700",
     badge: "bg-blue-600",
     badgeText: "Teknologi",
+    accentFrom: "from-blue-950/95",
+    accentVia: "via-blue-900/80",
   },
   {
     key: "decarbonisasi-aquaculture",
@@ -83,6 +99,8 @@ const services = [
     iconBg: "bg-cyan-700",
     badge: "bg-cyan-600",
     badgeText: "Carbon Credit",
+    accentFrom: "from-cyan-950/95",
+    accentVia: "via-cyan-900/80",
   },
   {
     key: "habitat-penyu",
@@ -102,6 +120,8 @@ const services = [
     iconBg: "bg-orange-600",
     badge: "bg-orange-500",
     badgeText: "Konservasi",
+    accentFrom: "from-orange-950/95",
+    accentVia: "via-orange-900/80",
   },
   {
     key: "pemberdayaan-pesisir",
@@ -121,27 +141,29 @@ const services = [
     iconBg: "bg-purple-700",
     badge: "bg-purple-600",
     badgeText: "Komunitas",
+    accentFrom: "from-purple-950/95",
+    accentVia: "via-purple-900/80",
   },
 ];
 
-const iconMap = {
-  TreePine,
-  Sprout,
-  BarChart3,
-  Fish,
-  Shield,
-  Users,
-};
+const iconMap = { TreePine, Sprout, BarChart3, Fish, Shield, Users };
+
+// SVG timer ring constants
+const TIMER_MS = 3500;
+const R = 18;
+const CIRC = 2 * Math.PI * R;
 
 export default function OurServicesSection() {
   const { t } = useLanguage();
   const editableServices = useQuery(api.serviceContent.list);
   const isLoading = editableServices === undefined;
   const savedByKey = new Map((editableServices ?? []).map((svc) => [svc.key, svc]));
+
   const displayServices = services.map((svc) => {
     const saved = savedByKey.get(svc.key);
     if (!saved) return svc;
     return {
+      ...svc,
       key: saved.key,
       iconName: saved.iconName,
       icon: iconMap[saved.iconName as keyof typeof iconMap] ?? svc.icon,
@@ -159,84 +181,229 @@ export default function OurServicesSection() {
     };
   });
 
-  return (
-    <section className="py-16 bg-gray-50">
-      <div className="mx-auto max-w-7xl px-6">
-        {/* Header */}
-        <ScrollReveal className="text-center mb-12">
-          <span className="inline-block px-3 py-1 text-xs font-semibold tracking-widest uppercase text-emerald-700 bg-emerald-100 rounded-full mb-3">
-            {t("Layanan Kami", "Our Services")}
-          </span>
-          <h2 className="text-4xl font-extrabold tracking-tight text-[#0f3d2e]">
-            {t("Solusi Ekosistem Pesisir", "Coastal Ecosystem Solutions")}
-          </h2>
-          <p className="mt-3 text-slate-500 max-w-2xl mx-auto text-sm">
-            {t(
-              "ID-MAP menyediakan layanan komprehensif untuk pemulihan, pemantauan, dan perlindungan ekosistem mangrove dan pesisir Indonesia.",
-              "ID-MAP provides comprehensive services for the restoration, monitoring, and protection of Indonesia's mangrove and coastal ecosystems."
-            )}
-          </p>
-        </ScrollReveal>
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [timerPct, setTimerPct] = useState(0);
+  const totalCards = displayServices.length;
 
-        {/* Loading skeleton — avoid flashing hardcoded fallback images
-            before Convex hydrates with verifikator-managed content */}
-        {isLoading && (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[0, 1, 2, 3, 4, 5].map((i) => (
-              <div
+  // Scroll carousel to active card
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el || isLoading) return;
+    const cards = Array.from(el.children) as HTMLElement[];
+    const card = cards[activeIndex];
+    if (card) {
+      el.scrollTo({ left: card.offsetLeft, behavior: "smooth" });
+    }
+  }, [activeIndex, isLoading]);
+
+  // Auto-advance timer using rAF
+  useEffect(() => {
+    if (isLoading) return;
+    setTimerPct(0);
+    const start = performance.now();
+    let rafId: number;
+
+    const tick = (now: number) => {
+      const pct = Math.min((now - start) / TIMER_MS, 1);
+      setTimerPct(pct);
+      if (pct < 1) {
+        rafId = requestAnimationFrame(tick);
+      } else {
+        setActiveIndex((prev) => (prev + 1) % totalCards);
+      }
+    };
+
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
+  }, [activeIndex, isLoading, totalCards]);
+
+  const navigate = useCallback(
+    (dir: "left" | "right") => {
+      setActiveIndex((prev) =>
+        dir === "right" ? (prev + 1) % totalCards : (prev - 1 + totalCards) % totalCards
+      );
+    },
+    [totalCards]
+  );
+
+  const goTo = useCallback((i: number) => setActiveIndex(i), []);
+
+  const secondsLeft = Math.ceil((1 - timerPct) * (TIMER_MS / 1000));
+
+  return (
+    <section className="py-20 bg-[#e8e3d0]">
+      <div className="mx-auto max-w-7xl px-6">
+
+        {/* ── Header row ─────────────────────────────────────────── */}
+        <div className="flex items-start justify-between mb-10 gap-6">
+          <ScrollReveal>
+            <h2 className="text-4xl font-extrabold tracking-tight text-[#0f3d2e] leading-tight">
+              {t("Solusi Ekosistem Pesisir", "Coastal Ecosystem Solutions")}
+            </h2>
+          </ScrollReveal>
+
+          {/* Green nav arrows — top right (matches reference) */}
+          <div className="flex gap-3 flex-shrink-0 pt-1">
+            <button
+              onClick={() => navigate("left")}
+              aria-label="Sebelumnya"
+              className="w-12 h-12 rounded-full bg-emerald-500 text-white flex items-center justify-center hover:bg-emerald-400 active:scale-95 transition-all duration-200 shadow-md"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <button
+              onClick={() => navigate("right")}
+              aria-label="Berikutnya"
+              className="w-12 h-12 rounded-full bg-emerald-500 text-white flex items-center justify-center hover:bg-emerald-400 active:scale-95 transition-all duration-200 shadow-md"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+
+        {/* ── Carousel track ──────────────────────────────────────── */}
+        <div
+          ref={scrollRef}
+          className="flex gap-5 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          style={{ scrollSnapType: "x mandatory" }}
+        >
+          {isLoading
+            ? [0, 1, 2].map((i) => (
+                <div
+                  key={i}
+                  className="flex-shrink-0 rounded-2xl bg-stone-300/60 animate-pulse"
+                  style={{
+                    width: "clamp(300px, 55vw, 680px)",
+                    height: 420,
+                    scrollSnapAlign: "start",
+                  }}
+                />
+              ))
+            : displayServices.map((svc, i) => {
+                const Icon = svc.icon;
+                const isActive = i === activeIndex;
+
+                return (
+                  <TiltCard
+                    key={svc.key}
+                    maxTilt={15}
+                    liftZ={40}
+                    glare={false}
+                    className="flex-shrink-0 rounded-2xl"
+                    style={
+                      {
+                        width: "clamp(300px, 55vw, 680px)",
+                        scrollSnapAlign: "start",
+                      } as CSSProperties
+                    }
+                  >
+                    {/* Card inner — click to jump to this card */}
+                    <div
+                      className="relative overflow-hidden rounded-2xl group cursor-pointer"
+                      style={{ height: 420 }}
+                      onClick={() => goTo(i)}
+                    >
+                      {/* ── Full-bleed background photo ── */}
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={svc.image}
+                        alt={svc.title[0]}
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+
+                      {/* ── Dark gradient overlay — text side (left 65%) ── */}
+                      <div
+                        className={`absolute inset-0 bg-gradient-to-r ${svc.accentFrom ?? "from-black/90"} ${svc.accentVia ?? "via-black/70"} to-transparent`}
+                      />
+
+                      {/* ── Card content ── */}
+                      <div className="absolute inset-0 flex flex-col justify-between p-8">
+
+                        {/* Top: badge */}
+                        <span
+                          className={`self-start text-[11px] font-bold tracking-wide text-white px-3 py-1 rounded-full ${svc.badge}`}
+                        >
+                          {svc.badgeText}
+                        </span>
+
+                        {/* Bottom: title + description */}
+                        <div className="max-w-[62%]">
+                          <div className="flex items-center gap-2 mb-3">
+                            <div
+                              className={`w-8 h-8 rounded-lg ${svc.iconBg} flex items-center justify-center flex-shrink-0`}
+                            >
+                              <Icon className="w-4 h-4 text-white" />
+                            </div>
+                          </div>
+                          <h3 className="text-2xl font-bold text-white leading-tight mb-3">
+                            {t(svc.title[0], svc.title[1])}
+                          </h3>
+                          <p className="text-white/70 text-sm leading-relaxed line-clamp-3">
+                            {t(svc.desc[0], svc.desc[1])}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* ── Timer ring (bottom-right, only active card) ── */}
+                      {isActive && (
+                        <div className="absolute bottom-5 right-5 pointer-events-none">
+                          <svg
+                            width="48"
+                            height="48"
+                            viewBox="0 0 48 48"
+                            className="-rotate-90"
+                          >
+                            {/* Track */}
+                            <circle
+                              cx="24"
+                              cy="24"
+                              r={R}
+                              fill="none"
+                              stroke="rgba(255,255,255,0.2)"
+                              strokeWidth="3"
+                            />
+                            {/* Progress */}
+                            <circle
+                              cx="24"
+                              cy="24"
+                              r={R}
+                              fill="none"
+                              stroke="white"
+                              strokeWidth="3"
+                              strokeDasharray={CIRC}
+                              strokeDashoffset={CIRC * (1 - timerPct)}
+                              strokeLinecap="round"
+                            />
+                          </svg>
+                          {/* Countdown number */}
+                          <span className="absolute inset-0 flex items-center justify-center text-white text-[11px] font-bold rotate-90">
+                            {secondsLeft}s
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </TiltCard>
+                );
+              })}
+        </div>
+
+        {/* ── Dot indicators ──────────────────────────────────────── */}
+        {!isLoading && (
+          <div className="flex gap-2 mt-6 justify-center">
+            {displayServices.map((_, i) => (
+              <button
                 key={i}
-                className="rounded-2xl overflow-hidden border border-gray-100 bg-white shadow-[0_20px_50px_-22px_rgba(15,61,46,0.25)] flex flex-col h-full"
-              >
-                <div className="flex-1 min-h-[200px] bg-gray-100 animate-pulse" />
-                <div className="flex items-center gap-3 bg-[#0f3d2e] px-4 py-3.5">
-                  <div className="w-9 h-9 rounded-lg bg-white/15 flex-shrink-0" />
-                  <div className="h-4 w-2/3 rounded bg-white/20" />
-                </div>
-              </div>
+                onClick={() => goTo(i)}
+                aria-label={`Ke layanan ${i + 1}`}
+                className={`h-2 rounded-full transition-all duration-300 ${
+                  i === activeIndex
+                    ? "w-8 bg-emerald-600"
+                    : "w-2 bg-emerald-300 hover:bg-emerald-400"
+                }`}
+              />
             ))}
           </div>
-        )}
-
-        {/* Cards */}
-        {!isLoading && (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 perspective-1500">
-          {displayServices.map((svc, i) => {
-            const Icon = svc.icon;
-            return (
-              <ScrollReveal key={svc.key} delay={i * 100} className="h-full">
-              <TiltCard maxTilt={9} liftZ={28} glare={false} className="h-full rounded-2xl">
-                <div
-                  className="group shine bg-white rounded-2xl border border-gray-100 hover:border-emerald-200 overflow-hidden shadow-[0_20px_50px_-22px_rgba(15,61,46,0.25)] hover:shadow-[0_32px_70px_-22px_rgba(15,61,46,0.4)] transition-all duration-300 flex flex-col h-full"
-                >
-                {/* Thumbnail */}
-                <div className="relative flex-1 min-h-[200px] overflow-hidden">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={svc.image}
-                    alt={svc.title[0]}
-                    className="card-zoom w-full h-full object-cover"
-                  />
-                  {/* Badge top-right */}
-                  <span className={`absolute top-3 right-3 z-10 text-[10px] font-bold text-white px-2.5 py-1 rounded-full ${svc.badge}`}>
-                    {svc.badgeText}
-                  </span>
-                </div>
-
-                {/* Green label bar */}
-                <div className="flex items-center gap-3 bg-[#0f3d2e] px-4 py-3.5 group-hover:bg-[#14523d] transition-colors">
-                  <div className="w-9 h-9 rounded-lg bg-white/15 flex items-center justify-center flex-shrink-0">
-                    <Icon className="w-5 h-5 text-white" />
-                  </div>
-                  <h3 className="font-bold text-white text-sm leading-snug">
-                    {t(svc.title[0], svc.title[1])}
-                  </h3>
-                </div>
-                </div>
-              </TiltCard>
-              </ScrollReveal>
-            );
-          })}
-        </div>
         )}
       </div>
     </section>
