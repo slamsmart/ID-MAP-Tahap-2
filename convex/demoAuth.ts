@@ -1,6 +1,5 @@
 import { mutation, query } from "./_generated/server";
 import { v, ConvexError } from "convex/values";
-import bcrypt from "bcryptjs";
 
 const DEMO_ACCOUNTS = {
   "user@idmap.id": {
@@ -14,13 +13,6 @@ const DEMO_ACCOUNTS = {
     role: "mitra" as const,
   },
 };
-
-const BCRYPT_COST = 10;
-const isHashed = (s: string) => s.startsWith("$2a$") || s.startsWith("$2b$") || s.startsWith("$2y$");
-function hashPassword(plain: string): string {
-  if (isHashed(plain)) return plain;
-  return bcrypt.hashSync(plain, BCRYPT_COST);
-}
 
 function publicUser(u: any) {
   return {
@@ -52,22 +44,20 @@ export const ensureDemoSession = mutation({
       .first();
 
     if (existing) {
-      const password = hashPassword(demo.password);
       await ctx.db.patch(existing._id, {
         name: demo.name,
-        password,
+        password: demo.password,
         role: demo.role,
         createdAt: existing.createdAt ?? existing._creationTime,
-        // Demo user dapat akses penuh termasuk fitur donasi QRIS
         kycStatus: "terverifikasi",
       });
-      return publicUser({ ...existing, name: demo.name, password, role: demo.role, kycStatus: "terverifikasi" });
+      return publicUser({ ...existing, name: demo.name, password: demo.password, role: demo.role, kycStatus: "terverifikasi" });
     }
 
     const userId = await ctx.db.insert("users", {
       email,
       name: demo.name,
-      password: hashPassword(demo.password),
+      password: demo.password,
       role: demo.role,
       kycStatus: "terverifikasi",
       points: 0,

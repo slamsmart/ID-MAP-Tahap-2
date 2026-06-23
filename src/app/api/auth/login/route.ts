@@ -97,14 +97,10 @@ export async function POST(req: NextRequest) {
       } catch (err: unknown) {
         const msg = getErrorMessage(err);
         log.warn(msg, { email });
-        // Fallback ke users.login untuk semua error demo (DUPLICATE_EMAIL,
-        // Server Error saat Convex cold-start, dll). Demo password sudah
-        // disimpan di DB oleh ensureDemoSession sebelumnya.
         try {
           user = await convex.mutation(api.users.login, { email, password });
           if (!user) user = await ensureDemoLogin(email, password, demo);
         } catch {
-          // users.login juga gagal (misal user belum ada) — lempar error asli
           throw err;
         }
       }

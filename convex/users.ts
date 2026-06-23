@@ -281,13 +281,17 @@ export const login = mutation({
     const ok = verifyPassword(args.password, user.password);
     if (!ok) return null;
 
-    // Lazy migration: kalau password masih plaintext (legacy seed),
-    // re-hash ke bcrypt setelah login berhasil sehingga next login
-    // sudah pakai compare yang aman.
+    // Lazy migration: re-hash plaintext passwords to bcrypt on first login.
+    // Wrapped in try-catch so bcrypt failure never blocks login.
     if (!isHashed(user.password)) {
-      const newHash = hashPassword(args.password);
-      await ctx.db.patch(user._id, { password: newHash });
-      return toPublicUser({ ...user, password: newHash });
+      try {
+        const newHash = hashPassword(args.password);
+        await ctx.db.patch(user._id, { password: newHash });
+        return toPublicUser({ ...user, password: newHash });
+      } catch {
+        // bcrypt unavailable in this runtime — return user with plaintext kept
+        return toPublicUser(user);
+      }
     }
 
     return toPublicUser(user);
@@ -338,25 +342,18 @@ export const ensureDemoAccount = mutation({
       .first();
 
     if (existing) {
-      const patched = {
-        ...existing,
-        email,
-        name: demo.name,
-        password: hashPassword(demo.password),
-        role: demo.role,
-      };
       await ctx.db.patch(existing._id, {
         name: demo.name,
-        password: patched.password,
+        password: demo.password,
         role: demo.role,
       });
-      return toPublicUser(patched);
+      return toPublicUser({ ...existing, name: demo.name, password: demo.password, role: demo.role });
     }
 
     const userId = await ctx.db.insert("users", {
       email,
       name: demo.name,
-      password: hashPassword(demo.password),
+      password: demo.password,
       role: demo.role,
       kycStatus: "belum",
       points: 0,

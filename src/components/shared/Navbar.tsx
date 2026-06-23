@@ -69,12 +69,12 @@ export default function Navbar() {
             alt="ID-MAP"
             width={470}
             height={428}
-            className="h-11 w-auto object-contain md:h-16"
+            className="h-11 w-auto md:h-12"
             priority
           />
         </Link>
 
-        <nav className="hidden lg:flex items-center gap-7 rounded-full bg-lime-400 px-7 py-3 text-sm font-semibold text-black shadow-lg shadow-emerald-950/30">
+        <nav className="hidden lg:flex items-center gap-2 rounded-full bg-white/95 p-1.5 text-sm font-bold text-[#0f3d2e] shadow-lg shadow-emerald-950/30">
           {navLinks.map((link) => {
             const active = isLinkActive(pathname, link.href);
             return (
@@ -82,14 +82,13 @@ export default function Navbar() {
                 key={link.idLabel}
                 href={link.href}
                 aria-current={active ? "page" : undefined}
-                className={`relative transition-colors hover:text-[#0f3d2e] ${
-                  active ? "text-black font-extrabold" : "text-black/80"
+                className={`rounded-full px-5 py-2.5 transition-colors whitespace-nowrap ${
+                  active
+                    ? "bg-[#0f3d2e] text-white shadow-md"
+                    : "text-[#0f3d2e] hover:bg-emerald-50"
                 }`}
               >
                 {t(link.idLabel, link.enLabel)}
-                {active && (
-                  <span className="absolute -bottom-1 left-0 right-0 h-0.5 rounded-full bg-[#0f3d2e]" />
-                )}
               </Link>
             );
           })}
