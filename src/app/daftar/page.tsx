@@ -8,19 +8,24 @@ import { setSession, getDashboardPath, User } from "@/lib/auth";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getAuthBgImage } from "@/lib/heroImageStore";
 import Turnstile from "@/components/shared/Turnstile";
+import BiometricStep from "@/components/auth/BiometricStep";
+import { getVisitorId } from "@/lib/fingerprint";
+import { type RegisterResult } from "@/lib/webauthn";
 
 const roles = ["sahabat", "mitra"] as const;
 type Role = (typeof roles)[number];
 
-// â”€â”€â”€ Inner form â€” uses useSearchParams, must be inside <Suspense> â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// â"€â"€â"€ Inner form â€" uses useSearchParams, must be inside <Suspense> â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 function RegisterForm() {
   const router = useRouter();
   const { t } = useLanguage();
   const searchParams = useSearchParams();
 
   const [showPassword, setShowPassword] = useState(false);
-  const [step, setStep] = useState<"form" | "otp">("form");
+  const [step, setStep] = useState<"form" | "otp" | "biometric">("form");
   const [otpValue, setOtpValue] = useState("");
+  const [newUserId, setNewUserId] = useState("");
+  const [redirectPath, setRedirectPath] = useState("");
   const [resendCooldown, setResendCooldown] = useState(0);
 
   // Pre-select role from ?peran= URL param (e.g. /daftar?peran=mitra)
@@ -200,7 +205,10 @@ function RegisterForm() {
       const safeNext = nextPath && nextPath.startsWith("/") && !nextPath.startsWith("//")
         ? nextPath
         : null;
-      router.push(safeNext ?? getDashboardPath(role));
+      const dest = safeNext ?? getDashboardPath(role);
+      setNewUserId(newUser._id);
+      setRedirectPath(dest);
+      setStep("biometric");
     } catch (err: any) {
       const msg =
         typeof err?.data === "string"
@@ -241,8 +249,31 @@ function RegisterForm() {
     }
   };
 
+  const handleBiometricSuccess = async (credential: RegisterResult, challenge: string) => {
+    try {
+      const visitorId = await getVisitorId();
+      await fetch("/api/auth/webauthn", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...credential,
+          challenge,
+          visitorId,
+          userId: newUserId,
+        }),
+      });
+    } catch {
+      // non-fatal — user already registered, biometric storage failed silently
+    }
+    router.push(redirectPath);
+  };
+
+  const handleBiometricSkip = () => {
+    router.push(redirectPath);
+  };
+
   return (
-    <div 
+    <div
       className="min-h-screen flex items-center justify-center p-4 bg-cover bg-center relative"
       style={{ backgroundImage: `url('${bgImage}')` }}
     >
@@ -263,36 +294,43 @@ function RegisterForm() {
 
         <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/50 p-6 sm:p-8">
 
-          {/* â”€â”€ Stepper 2-step (Form â†’ OTP) â”€â”€ */}
-          <div className="flex items-center justify-center gap-2 mb-6">
-            <div className="flex items-center gap-2">
-              <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
-                step === "form" || step === "otp"
+          {/* â"€â"€ Stepper 3-step (Form â†’ OTP â†’ Biometrik) â"€â"€ */}
+          <div className="flex items-center justify-center gap-1 mb-6">
+            <div className="flex items-center gap-1.5">
+              <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold transition-colors ${
+                step === "form" || step === "otp" || step === "biometric"
                   ? "bg-emerald-600 text-white"
                   : "bg-gray-200 text-gray-500"
-              }`}>
-                1
-              </div>
-              <span className={`text-xs font-semibold ${step === "form" ? "text-emerald-700" : "text-gray-400"}`}>
+              }`}>1</div>
+              <span className={`text-[11px] font-semibold ${step === "form" ? "text-emerald-700" : "text-gray-400"}`}>
                 {t("Isi Data", "Fill Data")}
               </span>
             </div>
-            <div className={`flex-1 h-0.5 max-w-12 ${step === "otp" ? "bg-emerald-600" : "bg-gray-200"}`} />
-            <div className="flex items-center gap-2">
-              <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
-                step === "otp"
+            <div className={`flex-1 h-0.5 max-w-8 ${step === "otp" || step === "biometric" ? "bg-emerald-600" : "bg-gray-200"}`} />
+            <div className="flex items-center gap-1.5">
+              <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold transition-colors ${
+                step === "otp" || step === "biometric"
                   ? "bg-emerald-600 text-white"
                   : "bg-gray-200 text-gray-500"
-              }`}>
-                2
-              </div>
-              <span className={`text-xs font-semibold ${step === "otp" ? "text-emerald-700" : "text-gray-400"}`}>
-                {t("Verifikasi OTP", "Verify OTP")}
+              }`}>2</div>
+              <span className={`text-[11px] font-semibold ${step === "otp" ? "text-emerald-700" : "text-gray-400"}`}>
+                {t("Verifikasi OTP", "OTP")}
+              </span>
+            </div>
+            <div className={`flex-1 h-0.5 max-w-8 ${step === "biometric" ? "bg-emerald-600" : "bg-gray-200"}`} />
+            <div className="flex items-center gap-1.5">
+              <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold transition-colors ${
+                step === "biometric"
+                  ? "bg-emerald-600 text-white"
+                  : "bg-gray-200 text-gray-500"
+              }`}>3</div>
+              <span className={`text-[11px] font-semibold ${step === "biometric" ? "text-emerald-700" : "text-gray-400"}`}>
+                {t("Biometrik", "Biometric")}
               </span>
             </div>
           </div>
 
-          {/* â”€â”€ Step OTP â”€â”€ */}
+          {/* â"€â"€ Step OTP â"€â"€ */}
           {step === "otp" && (
             <div>
               <div className="text-center mb-6">
@@ -370,7 +408,18 @@ function RegisterForm() {
             </div>
           )}
 
-          {/* â”€â”€ Step Form â”€â”€ */}
+          {/* â"€â"€ Step Biometric â"€â"€ */}
+          {step === "biometric" && (
+            <BiometricStep
+              userId={email.trim().toLowerCase()}
+              userName={email.trim().toLowerCase()}
+              displayName={name}
+              onSuccess={handleBiometricSuccess}
+              onSkip={handleBiometricSkip}
+            />
+          )}
+
+          {/* â"€â"€ Step Form â"€â"€ */}
           {step === "form" && <>
           {/* Role tabs */}
           <div className="flex rounded-lg bg-gray-100 p-1 mb-6">
@@ -626,7 +675,7 @@ function RegisterForm() {
   );
 }
 
-// â”€â”€â”€ Page export â€” wraps form in Suspense for useSearchParams â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// â"€â"€â"€ Page export â€" wraps form in Suspense for useSearchParams â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 export default function RegisterPage() {
   return (
     <Suspense

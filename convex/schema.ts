@@ -36,12 +36,33 @@ export default defineSchema({
     lastCheckInDate: v.optional(v.string()),  // YYYY-MM-DD (Asia/Jakarta)
     checkInTotal: v.optional(v.number()),     // total hari check-in
     seedlingsCheckin: v.optional(v.number()), // bibit dari check-in (per 15 streak)
+    // ─── Security (Fingerprint + WebAuthn) ─────────────────────────
+    visitorId: v.optional(v.string()),        // FP Pro device fingerprint ID
+    webauthnCredentials: v.optional(v.array(v.object({
+      credentialId: v.string(),               // base64url credential ID
+      publicKey: v.string(),                  // base64url COSE public key
+      counter: v.number(),                    // anti-replay signature counter
+      deviceName: v.optional(v.string()),     // e.g. "Pixel 8", "iPhone 15"
+      createdAt: v.number(),
+    }))),
   })
     .index("by_email", ["email"])
     .index("by_role", ["role"])
     .index("by_kycStatus", ["kycStatus"])
     .index("by_referralCode", ["referralCode"])
-    .index("by_referredBy", ["referredBy"]),
+    .index("by_referredBy", ["referredBy"])
+    .index("by_visitorId", ["visitorId"]),
+
+  // ─── WebAuthn Challenges (Temporary, 5-min TTL) ──────────────────
+  webauthnChallenges: defineTable({
+    challenge: v.string(),                    // base64url random 32-byte challenge
+    email: v.optional(v.string()),            // pre-registration (sebelum user dibuat)
+    userId: v.optional(v.id("users")),        // login flow (setelah user ada)
+    expiresAt: v.number(),                    // unix ms, 5 menit dari createdAt
+    used: v.boolean(),
+  })
+    .index("by_challenge", ["challenge"])
+    .index("by_email", ["email"]),
 
   // ─── Daily Check-ins (Gamifikasi) ────────────────────────────────
   // Satu baris per user per hari. Cegah double check-in + audit streak.

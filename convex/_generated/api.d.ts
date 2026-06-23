@@ -29,6 +29,7 @@ import type * as seed from "../seed.js";
 import type * as serviceContent from "../serviceContent.js";
 import type * as transactions from "../transactions.js";
 import type * as users from "../users.js";
+import type * as webauthn from "../webauthn.js";
 
 import type {
   ApiFromModules,
@@ -58,6 +59,7 @@ declare const fullApi: ApiFromModules<{
   serviceContent: typeof serviceContent;
   transactions: typeof transactions;
   users: typeof users;
+  webauthn: typeof webauthn;
 }>;
 
 /**
