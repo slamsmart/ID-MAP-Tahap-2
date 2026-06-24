@@ -7,7 +7,6 @@ import { api } from "../../../convex/_generated/api";
 import { getHeroImage } from "@/lib/heroImageStore";
 import { useLanguage } from "@/contexts/LanguageContext";
 import TiltCard from "@/components/shared/TiltCard";
-import ScrollReveal from "@/components/shared/ScrollReveal";
 
 const DEFAULT_IMAGE = "/images/hero-mangrove.webp";
 
@@ -140,6 +139,33 @@ export default function HeroSection() {
     { icon: TrendingUp, value: valueStat, label: t("Potensi Nilai Carbon", "Potential Carbon Value") },
   ];
 
+  const impactStatCards = [
+    {
+      icon: statCards[0].icon,
+      value: sahabatStat,
+      suffix: t("Orang", "People"),
+      label: t("Sahabat terlibat", "Partners involved"),
+    },
+    {
+      icon: statCards[1].icon,
+      value: bibitStat,
+      suffix: t("Pohon", "Trees"),
+      label: t("Bibit mangrove ditanam", "Mangrove seedlings planted"),
+    },
+    {
+      icon: statCards[2].icon,
+      value: carbonStat,
+      suffix: "Ton CO2e",
+      label: t("Serapan karbon terukur", "Measured carbon absorption"),
+    },
+    {
+      icon: statCards[3].icon,
+      value: valueStat,
+      suffix: "",
+      label: t("Potensi nilai karbon", "Carbon value potential"),
+    },
+  ];
+
   return (
     <section
       ref={sceneRef}
@@ -200,7 +226,7 @@ export default function HeroSection() {
               <br />
               <span className="drop-shadow-[0_4px_24px_rgba(0,0,0,0.5)]">{line2}</span>
               <br />
-              <span className="bg-gradient-to-r from-[#6ee7b7] via-[#34d399] to-[#5eead4] bg-clip-text text-transparent">
+              <span className="text-white">
                 {accent}
               </span>
             </h1>
@@ -254,32 +280,32 @@ export default function HeroSection() {
           </div>
         </div>
 
-        {/* ===== Floating glass stat cards ===== */}
-        <div className="mt-16 grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-          {statCards.map((stat, i) => {
-            const Icon = stat.icon;
-            return (
-              <ScrollReveal key={stat.label} delay={i * 110} className="h-full">
-              <TiltCard
-                maxTilt={8}
-                liftZ={24}
-                glare={false}
-                className={`h-full rounded-2xl ${i % 2 === 0 ? "md:animate-float-slow" : "md:animate-float-medium"}`}
-                style={{ animationDelay: `${i * 0.4}s` }}
-              >
-                <div className="h-full rounded-2xl border border-white/12 bg-white/[0.1] md:bg-white/[0.07] p-5 md:backdrop-blur-xl shadow-[0_28px_70px_-24px_rgba(0,0,0,0.85)]">
-                  <span className="inline-grid h-10 w-10 place-items-center rounded-xl bg-emerald-400/15 text-emerald-300 ring-1 ring-emerald-300/20">
-                    <Icon className="h-5 w-5" />
-                  </span>
-                  <p className="mt-4 text-2xl sm:text-3xl font-extrabold text-white whitespace-nowrap">
-                    {stat.value}
+        {/* ===== Live impact stats ===== */}
+        <div
+          className="mt-14"
+          aria-label={t("Statistik dampak ID-MAP", "ID-MAP impact statistics")}
+        >
+          <div className="grid grid-cols-2 gap-x-8 gap-y-6 md:grid-cols-4 md:gap-x-10 lg:gap-x-14">
+            {impactStatCards.map((stat) => {
+              return (
+                <div key={stat.label} className="min-w-0">
+                  <p className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.65)]">
+                    <span className="break-words text-2xl font-extrabold leading-none text-white sm:text-3xl lg:text-[2rem]">
+                      {stat.value}
+                    </span>
+                    {stat.suffix && (
+                      <span className="text-sm font-bold leading-none text-white sm:text-base">
+                        {stat.suffix}
+                      </span>
+                    )}
                   </p>
-                  <p className="text-sm text-emerald-100/70 mt-0.5">{stat.label}</p>
+                  <p className="mt-2 text-sm font-medium leading-snug text-emerald-50/70 sm:text-base">
+                    {stat.label}
+                  </p>
                 </div>
-              </TiltCard>
-              </ScrollReveal>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>

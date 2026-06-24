@@ -48,15 +48,15 @@ export default function PokmaswasCampaignSection() {
       : `/daftar?peran=sahabat&next=${encodeURIComponent(`/donasi-cepat/${projectId}`)}`;
 
   return (
-    <section className="bg-gradient-to-b from-white via-emerald-50/30 to-white py-16">
-      <div className="container mx-auto px-4">
+    <section className="bg-gradient-to-b from-white via-emerald-50/30 to-white py-14 sm:py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
         {/* Header */}
-        <ScrollReveal className="text-center mb-10">
+        <ScrollReveal className="text-center mb-8 sm:mb-10">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold tracking-widest uppercase text-emerald-700 bg-emerald-100 rounded-full mb-3">
             <Heart className="w-3 h-3" />
             Dukung Proyek Aktif
           </span>
-          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#0f3d2e]">
+          <h2 className="font-display text-3xl font-extrabold leading-tight tracking-tight text-[#0f3d2e] sm:text-4xl">
             Dukung via QRIS untuk Pokmaswas / Mitra
           </h2>
           <p className="mt-3 text-slate-600 max-w-2xl mx-auto text-sm">
@@ -74,7 +74,7 @@ export default function PokmaswasCampaignSection() {
 
         {/* Cards */}
         {allProjects !== undefined && campaigns.length > 0 && (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto perspective-1500">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-7xl mx-auto perspective-1500">
             {campaigns.map((p, i) => {
               const raised = p.fundingRaised ?? 0;
               const target = p.fundingTarget ?? 100_000_000;
@@ -108,11 +108,11 @@ export default function PokmaswasCampaignSection() {
                   </div>
 
                   {/* Content */}
-                  <div className="p-5 flex flex-col flex-1 gap-3 bg-[#0f3d2e]">
-                    <h3 className="font-bold text-white text-base leading-snug line-clamp-2 group-hover:text-lime-300 transition-colors">
+                  <div className="p-5 sm:p-6 flex flex-col flex-1 gap-4 bg-[#0f3d2e]">
+                    <h3 className="font-display font-bold text-white text-base leading-snug line-clamp-2 group-hover:text-lime-300 transition-colors">
                       {p.title}
                     </h3>
-                    <p className="text-xs text-white/80 leading-relaxed line-clamp-2 flex-1">
+                    <p className="text-sm text-white leading-relaxed line-clamp-2 flex-1">
                       {p.description}
                     </p>
 
@@ -148,34 +148,34 @@ export default function PokmaswasCampaignSection() {
                         <p className="text-sm font-bold text-white">
                           {p.area ?? "-"}
                         </p>
-                        <p className="text-[10px] text-emerald-200">Hektare</p>
+                        <p className="text-xs text-emerald-200">Hektare</p>
                       </div>
                       <div>
                         <p className="text-sm font-bold text-white flex items-center justify-center gap-0.5">
                           <Leaf className="w-3 h-3" />
                           {(p.co2Absorption / 1000).toFixed(0)}k
                         </p>
-                        <p className="text-[10px] text-emerald-200">tCO₂e/thn</p>
+                        <p className="text-xs text-emerald-200">tCO₂e/thn</p>
                       </div>
                       <div>
                         <p className="text-sm font-bold text-white">
                           {((p.seedsPlanted ?? 0) / 1000).toFixed(0)}k
                         </p>
-                        <p className="text-[10px] text-emerald-200">Bibit</p>
+                        <p className="text-xs text-emerald-200">Bibit</p>
                       </div>
                     </div>
 
                     {/* CTA: scan QRIS donate */}
                     <Link
                       href={donateHref(p._id)}
-                      className="mt-2 inline-flex items-center justify-center gap-2 bg-white hover:bg-gray-100 text-black text-sm font-bold py-2.5 rounded-lg transition-colors border border-gray-200"
+                      className="mt-2 inline-flex items-center justify-center gap-2 bg-white hover:bg-gray-100 text-black text-sm font-bold py-3 rounded-xl transition-colors border border-gray-200"
                     >
                       <Heart className="w-4 h-4" />
                       Dukung Proyek (Scan QRIS)
                       <ArrowRight className="w-4 h-4" />
                     </Link>
                     {!hasSession && (
-                      <p className="text-[11px] text-center text-emerald-200 -mt-1">
+                      <p className="text-xs text-center text-emerald-200 -mt-1">
                         Daftar gratis untuk lanjut donasi
                       </p>
                     )}

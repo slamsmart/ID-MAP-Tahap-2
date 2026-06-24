@@ -232,30 +232,30 @@ export default function OurServicesSection() {
   const secondsLeft = Math.ceil((1 - timerPct) * (TIMER_MS / 1000));
 
   return (
-    <section className="py-20 bg-white">
-      <div className="mx-auto max-w-7xl px-6">
+    <section className="bg-white py-14 sm:py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
 
         {/* ── Header row ─────────────────────────────────────────── */}
-        <div className="flex items-start justify-between mb-10 gap-6">
+        <div className="mb-8 flex flex-col gap-5 sm:mb-10 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
           <ScrollReveal>
-            <h2 className="font-display text-4xl font-extrabold tracking-tight text-[#0f3d2e] leading-tight">
+            <h2 className="max-w-[12ch] font-display text-3xl font-extrabold leading-tight tracking-tight text-[#0f3d2e] sm:max-w-none sm:text-4xl">
               {t("Solusi Ekosistem Pesisir", "Coastal Ecosystem Solutions")}
             </h2>
           </ScrollReveal>
 
           {/* Green nav arrows — top right (matches reference) */}
-          <div className="flex gap-3 flex-shrink-0 pt-1">
+          <div className="flex flex-shrink-0 gap-3 pt-1">
             <button
               onClick={() => navigate("left")}
               aria-label="Sebelumnya"
-              className="w-12 h-12 rounded-full bg-emerald-500 text-white flex items-center justify-center hover:bg-emerald-400 active:scale-95 transition-all duration-200 shadow-md"
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-emerald-500 text-white shadow-md transition-all duration-200 hover:bg-emerald-400 active:scale-95 sm:h-12 sm:w-12"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
             <button
               onClick={() => navigate("right")}
               aria-label="Berikutnya"
-              className="w-12 h-12 rounded-full bg-emerald-500 text-white flex items-center justify-center hover:bg-emerald-400 active:scale-95 transition-all duration-200 shadow-md"
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-emerald-500 text-white shadow-md transition-all duration-200 hover:bg-emerald-400 active:scale-95 sm:h-12 sm:w-12"
             >
               <ChevronRight className="w-5 h-5" />
             </button>
@@ -265,17 +265,15 @@ export default function OurServicesSection() {
         {/* ── Carousel track ──────────────────────────────────────── */}
         <div
           ref={scrollRef}
-          className="flex gap-5 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="-mx-4 flex gap-4 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:gap-5 sm:px-0 [&::-webkit-scrollbar]:hidden"
           style={{ scrollSnapType: "x mandatory" }}
         >
           {isLoading
             ? [0, 1, 2].map((i) => (
                 <div
                   key={i}
-                  className="flex-shrink-0 rounded-2xl bg-stone-300/60 animate-pulse"
+                  className="h-[440px] w-[calc(100vw-2rem)] flex-shrink-0 rounded-2xl bg-stone-300/60 animate-pulse sm:h-[420px] sm:w-[min(72vw,680px)] lg:w-[min(55vw,680px)]"
                   style={{
-                    width: "clamp(300px, 55vw, 680px)",
-                    height: 420,
                     scrollSnapAlign: "start",
                   }}
                 />
@@ -289,18 +287,16 @@ export default function OurServicesSection() {
                     maxTilt={15}
                     liftZ={40}
                     glare={false}
-                    className="flex-shrink-0 rounded-2xl"
+                    className="w-[calc(100vw-2rem)] flex-shrink-0 rounded-2xl sm:w-[min(72vw,680px)] lg:w-[min(55vw,680px)]"
                     style={
                       {
-                        width: "clamp(300px, 55vw, 680px)",
                         scrollSnapAlign: "start",
                       } as CSSProperties
                     }
                   >
                     {/* Card inner — click to jump to this card */}
                     <div
-                      className="relative overflow-hidden rounded-2xl border-[6px] border-[#f4efd8] bg-[#f4efd8] group cursor-pointer shadow-sm"
-                      style={{ height: 420 }}
+                      className="group relative h-[440px] cursor-pointer overflow-hidden rounded-2xl border-[6px] border-[#f4efd8] bg-[#f4efd8] shadow-sm sm:h-[420px]"
                       onClick={() => goTo(i)}
                     >
                       {/* ── Full-bleed background photo ── */}
@@ -312,17 +308,17 @@ export default function OurServicesSection() {
                       />
 
                       {/* ── Panel: standby = gradasi semi-transparan, hover = solid ── */}
-                      <div className="absolute inset-y-0 left-0 w-[50%] rounded-r-3xl bg-gradient-to-r from-[#071f17]/90 via-[#0f3d2e]/75 to-[#0f3d2e]/30 backdrop-blur-[3px] transition-all duration-500 ease-out group-hover:w-[52%] group-hover:rounded-r-none group-hover:bg-[#0f3d2e] group-hover:from-[#0f3d2e] group-hover:via-[#0f3d2e] group-hover:to-[#0f3d2e] group-hover:backdrop-blur-0" />
+                      <div className="absolute inset-x-0 bottom-0 h-[68%] rounded-t-3xl bg-gradient-to-t from-[#071f17]/95 via-[#0f3d2e]/82 to-[#0f3d2e]/10 backdrop-blur-[2px] transition-all duration-500 ease-out sm:inset-x-auto sm:inset-y-0 sm:left-0 sm:h-auto sm:w-[50%] sm:rounded-r-3xl sm:rounded-t-none sm:bg-gradient-to-r sm:from-[#071f17]/90 sm:via-[#0f3d2e]/75 sm:to-[#0f3d2e]/30 sm:backdrop-blur-[3px] sm:group-hover:w-[52%] sm:group-hover:rounded-r-none sm:group-hover:bg-[#0f3d2e] sm:group-hover:from-[#0f3d2e] sm:group-hover:via-[#0f3d2e] sm:group-hover:to-[#0f3d2e] sm:group-hover:backdrop-blur-0" />
 
                       {/* ── Card content ── */}
-                      <div className="absolute inset-y-0 left-0 flex w-[50%] flex-col justify-between p-7 md:p-9">
+                      <div className="absolute inset-x-0 bottom-0 flex min-h-[68%] flex-col justify-between p-5 sm:inset-x-auto sm:inset-y-0 sm:left-0 sm:min-h-0 sm:w-[50%] sm:p-7 md:p-9">
                         <div>
-                          <h3 className="font-display text-3xl md:text-4xl font-extrabold text-white leading-[0.95] transition-colors duration-300 group-hover:text-[#ffd84d]">
+                          <h3 className="max-w-full break-words font-display text-2xl font-extrabold leading-tight text-white transition-colors duration-300 group-hover:text-[#ffd84d] sm:text-3xl sm:leading-[1.02] md:text-4xl">
                             {t(svc.title[0], svc.title[1])}
                           </h3>
                         </div>
                         <div>
-                          <p className="font-sans font-normal text-white text-base md:text-lg leading-snug">
+                          <p className="mt-5 max-w-[34ch] font-sans text-sm font-normal leading-relaxed text-white sm:mt-0 sm:text-base sm:leading-snug md:text-lg">
                             {t(svc.desc[0], svc.desc[1])}
                           </p>
                         </div>
