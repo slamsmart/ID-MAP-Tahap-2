@@ -104,7 +104,7 @@ export default function FAQPage() {
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
               {pick(c.heroTitleId, c.heroTitleEn)}
             </h1>
-            <p className="mt-4 text-lg sm:text-xl text-emerald-200 max-w-3xl mx-auto">
+            <p className="mt-4 text-lg sm:text-xl text-white max-w-3xl mx-auto">
               {pick(c.heroSubtitleId, c.heroSubtitleEn)}
             </p>
           </ScrollReveal>

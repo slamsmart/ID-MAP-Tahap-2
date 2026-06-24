@@ -32,7 +32,7 @@ export default function LeaderboardPage() {
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
               Papan Peringkat Sahabat Pesisir
             </h1>
-            <p className="mt-4 text-lg sm:text-xl text-emerald-200 max-w-3xl mx-auto">
+            <p className="mt-4 text-lg sm:text-xl text-white max-w-3xl mx-auto">
               Peringkat berdasarkan total poin: check-in harian dan bonus referral
               ter-KYC. Ajak lebih banyak teman, naik ke puncak.
             </p>
