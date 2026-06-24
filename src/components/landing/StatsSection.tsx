@@ -54,36 +54,28 @@ export default function StatsSection() {
   return (
     <section className="relative -mt-4 z-30">
       <div className="mx-auto max-w-7xl px-6 pb-8">
-        <div 
-          className="rounded-[28px] shadow-2xl shadow-emerald-950/20 p-5 grid md:grid-cols-4 gap-4 text-white"
+        <div
+          className="rounded-[28px] shadow-2xl shadow-emerald-950/20 px-2 py-4 grid md:grid-cols-4 gap-0 text-white"
           style={{ background: "linear-gradient(90deg, #065F46 0%, #0D9488 100%)" }}
         >
           {isLoading
             ? statsList.map((stat) => (
-                <div key={stat.key} className="flex items-center gap-4 px-4 py-3 md:border-r border-white/15 last:border-r-0 animate-pulse">
-                  <div className="h-14 w-14 rounded-2xl bg-white/10 flex-shrink-0" />
-                  <div className="space-y-2 flex-1">
-                    <div className="h-3 bg-white/20 rounded w-24" />
-                    <div className="h-6 bg-white/20 rounded w-20" />
-                  </div>
+                <div key={stat.key} className="flex flex-col px-6 py-4 md:border-r border-white/15 last:border-r-0 animate-pulse">
+                  <div className="h-8 bg-white/20 rounded w-28 mb-2" />
+                  <div className="h-3 bg-white/15 rounded w-20" />
                 </div>
               ))
-            : statsList.map((stat) => {
-                const Icon = stat.icon;
-                return (
-                  <div key={stat.key} className="flex items-center gap-4 px-4 py-3 md:border-r border-white/15 last:border-r-0">
-                    <div className="h-14 w-14 rounded-2xl bg-white/10 flex items-center justify-center text-emerald-200 flex-shrink-0">
-                      <Icon className="h-7 w-7" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-emerald-100">{stat.label}</p>
-                      <p className="text-2xl font-extrabold mt-1">
-                        {stat.value} <span className="text-sm font-medium text-white/65">{stat.suffix}</span>
-                      </p>
-                    </div>
-                  </div>
-                );
-              })}
+            : statsList.map((stat) => (
+                <div key={stat.key} className="flex flex-col px-6 py-4 md:border-r border-white/15 last:border-r-0">
+                  <p className="text-3xl font-extrabold text-white leading-none">
+                    {stat.value}
+                    {stat.suffix && (
+                      <span className="text-base font-semibold text-white/70 ml-1">{stat.suffix}</span>
+                    )}
+                  </p>
+                  <p className="text-sm text-emerald-100/80 mt-2 leading-snug">{stat.label}</p>
+                </div>
+              ))}
         </div>
         <p className="text-center text-xs text-slate-400 mt-3">
           {t(
