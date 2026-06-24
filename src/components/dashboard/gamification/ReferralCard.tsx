@@ -58,7 +58,7 @@ export default function ReferralCard({
           <button
             onClick={copy}
             disabled={!link}
-            className="inline-flex items-center gap-1.5 rounded-full bg-lime-400 hover:bg-lime-300 disabled:opacity-50 px-3 py-1.5 text-xs font-bold text-slate-900 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-full bg-white hover:bg-gray-100 disabled:opacity-50 px-3 py-1.5 text-xs font-bold text-black transition-colors border border-gray-200"
           >
             {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
             {copied ? "Tersalin" : "Salin Link"}

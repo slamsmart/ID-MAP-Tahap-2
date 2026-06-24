@@ -107,7 +107,7 @@ export default function InstallPrompt() {
               </p>
               <button
                 onClick={install}
-                className="mt-3 inline-flex items-center justify-center gap-1.5 rounded-full bg-lime-400 px-4 py-2 text-xs font-bold text-slate-900 transition hover:bg-lime-300"
+                className="mt-3 inline-flex items-center justify-center gap-1.5 rounded-full bg-white px-4 py-2 text-xs font-bold text-black transition hover:bg-gray-100 border border-gray-200"
               >
                 <Download className="h-4 w-4" />
                 Install Sekarang

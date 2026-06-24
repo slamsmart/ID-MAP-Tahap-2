@@ -68,7 +68,7 @@ export default function LeaderboardPage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
                 href="/daftar?peran=sahabat"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-lime-400 px-8 py-3.5 text-sm font-bold text-emerald-950 hover:bg-lime-300 shadow-lg shadow-lime-500/30 transition"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-8 py-3.5 text-sm font-bold text-black hover:bg-gray-100 shadow-lg shadow-black/10 transition border border-gray-200"
               >
                 <Sprout className="w-4 h-4" />
                 Daftar sebagai Sahabat

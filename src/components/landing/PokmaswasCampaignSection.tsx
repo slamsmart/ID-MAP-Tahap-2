@@ -168,7 +168,7 @@ export default function PokmaswasCampaignSection() {
                     {/* CTA: scan QRIS donate */}
                     <Link
                       href={donateHref(p._id)}
-                      className="mt-2 inline-flex items-center justify-center gap-2 bg-lime-400 hover:bg-lime-300 text-slate-900 text-sm font-bold py-2.5 rounded-lg transition-colors"
+                      className="mt-2 inline-flex items-center justify-center gap-2 bg-white hover:bg-gray-100 text-black text-sm font-bold py-2.5 rounded-lg transition-colors border border-gray-200"
                     >
                       <Heart className="w-4 h-4" />
                       Dukung Proyek (Scan QRIS)

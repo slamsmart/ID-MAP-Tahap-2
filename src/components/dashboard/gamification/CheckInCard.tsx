@@ -109,7 +109,7 @@ export default function CheckInCard({
         disabled={!gam.canCheckInToday || busy}
         className={`w-full py-2.5 rounded-lg text-sm font-bold flex items-center justify-center gap-2 transition-colors ${
           gam.canCheckInToday && !busy
-            ? "bg-lime-400 hover:bg-lime-300 text-slate-900"
+            ? "bg-white hover:bg-gray-100 text-black border border-gray-200"
             : "bg-gray-100 text-gray-400 cursor-not-allowed"
         }`}
       >

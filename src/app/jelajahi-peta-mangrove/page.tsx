@@ -144,7 +144,7 @@ export default function JelajahiPetaMangrovePage() {
             </a>
             <Link
               href="/"
-              className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-lg bg-lime-400 hover:bg-lime-300 text-black transition-colors shadow-sm shadow-emerald-950/30 text-xs font-bold"
+              className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-lg bg-white hover:bg-gray-100 text-black transition-colors shadow-sm shadow-black/10 text-xs font-bold border border-gray-200"
               title="Kembali ke Beranda"
             >
               <Home className="w-4 h-4" />

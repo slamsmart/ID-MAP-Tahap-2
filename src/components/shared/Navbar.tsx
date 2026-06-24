@@ -140,7 +140,7 @@ export default function Navbar() {
               </Link>
               <Link
                 href="/daftar"
-                className="rounded-full bg-lime-400 px-7 py-3 text-sm font-bold text-black shadow-lg shadow-emerald-950/30 hover:bg-lime-300 transition focus:outline-none focus:ring-2 focus:ring-lime-400 focus:ring-offset-2 focus:ring-offset-[#0f3d2e]"
+                className="rounded-full bg-white px-7 py-3 text-sm font-bold text-black shadow-lg shadow-black/20 hover:bg-gray-100 transition focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 focus:ring-offset-[#0f3d2e]"
               >
                 {t("Daftar", "Sign Up")}
               </Link>

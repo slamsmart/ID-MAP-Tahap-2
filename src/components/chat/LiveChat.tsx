@@ -168,7 +168,7 @@ export default function LiveChat() {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-lime-300 text-emerald-950 shadow-[0_14px_32px_-10px_rgba(132,204,22,0.75)] ring-1 ring-lime-500/30 transition-transform hover:scale-105 hover:bg-lime-200 focus:outline-none focus:ring-2 focus:ring-lime-400 focus:ring-offset-2"
+          className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-white text-emerald-700 shadow-[0_14px_32px_-10px_rgba(0,0,0,0.25)] ring-1 ring-gray-200 transition-transform hover:scale-105 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2"
           aria-label="Buka Live Chat"
         >
           <MessageCircle size={28} />
@@ -179,12 +179,12 @@ export default function LiveChat() {
       {isOpen && (
         <div className="fixed bottom-6 right-6 z-50 flex h-[520px] w-[360px] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-2xl border border-lime-200 bg-white shadow-2xl">
           {/* Header */}
-          <div className="flex flex-shrink-0 items-center justify-between bg-lime-300 p-4 text-emerald-950">
+          <div className="flex flex-shrink-0 items-center justify-between bg-[#0f3d2e] p-4 text-white">
             <div className="flex items-center gap-2">
               <Bot size={20} />
               <div>
                 <h3 className="font-semibold text-sm">ID-MAP Assistant</h3>
-                <p className="flex items-center gap-1 text-xs text-emerald-950/70">
+                <p className="flex items-center gap-1 text-xs text-white/70">
                   <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-800" />
                   Powered by NVIDIA NIM
                 </p>
@@ -192,7 +192,7 @@ export default function LiveChat() {
             </div>
             <button
               onClick={() => setIsOpen(false)}
-              className="rounded-full p-1 text-emerald-950 transition-colors hover:bg-emerald-950/10 focus:outline-none focus:ring-2 focus:ring-emerald-800/40"
+              className="rounded-full p-1 text-white transition-colors hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/30"
               aria-label="Tutup Live Chat"
             >
               <X size={20} />
@@ -203,7 +203,7 @@ export default function LiveChat() {
           {!guest && (
             <div className="flex-1 flex flex-col justify-center p-5 bg-gray-50">
               <div className="text-center mb-5">
-                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-lime-200 text-emerald-950">
+                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
                   <Leaf size={22} />
                 </div>
                 <p className="text-sm font-semibold text-gray-800">Sebelum memulai chat</p>
@@ -236,7 +236,7 @@ export default function LiveChat() {
                 )}
                 <button
                   type="submit"
-                  className="w-full rounded-xl bg-lime-300 py-2.5 text-sm font-semibold text-emerald-950 transition-colors hover:bg-lime-200 focus:outline-none focus:ring-2 focus:ring-lime-400"
+                  className="w-full rounded-xl bg-white py-2.5 text-sm font-semibold text-black transition-colors hover:bg-gray-100 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300"
                 >
                   Mulai Chat
                 </button>
@@ -253,14 +253,14 @@ export default function LiveChat() {
                 className={`flex w-full ${msg.role === "user" ? "justify-end" : "justify-start"}`}
               >
                 {msg.role === "assistant" && (
-                  <div className="mr-2 mt-1 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-lime-200 text-emerald-950">
+                  <div className="mr-2 mt-1 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
                     <Bot size={14} />
                   </div>
                 )}
                 <div
                   className={`max-w-[78%] p-3 rounded-2xl text-sm shadow-sm ${
                     msg.role === "user"
-                      ? "bg-lime-300 text-emerald-950 rounded-br-sm"
+                      ? "bg-emerald-700 text-white rounded-br-sm"
                       : "bg-white text-gray-800 rounded-bl-sm border border-gray-100"
                   }`}
                 >
@@ -270,13 +270,13 @@ export default function LiveChat() {
                     <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
                   )}
                   {msg.content !== "" && (
-                    <p className={`mt-1 text-right text-[10px] ${msg.role === "user" ? "text-emerald-950/55" : "text-gray-400"}`}>
+                    <p className={`mt-1 text-right text-[10px] ${msg.role === "user" ? "text-white/55" : "text-gray-400"}`}>
                       {msg.timestamp.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}
                     </p>
                   )}
                 </div>
                 {msg.role === "user" && (
-                  <div className="ml-2 mt-1 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-lime-300 text-emerald-950">
+                  <div className="ml-2 mt-1 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-emerald-700 text-white">
                     <User size={14} />
                   </div>
                 )}
@@ -303,7 +303,7 @@ export default function LiveChat() {
             <button
               type="submit"
               disabled={!inputValue.trim() || isLoading}
-              className="flex-shrink-0 rounded-full bg-lime-300 p-2 text-emerald-950 transition-colors hover:bg-lime-200 disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-lime-400"
+              className="flex-shrink-0 rounded-full bg-white p-2 text-emerald-700 border border-gray-200 transition-colors hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-gray-300"
             >
               {isLoading ? (
                 <Loader2 size={18} className="animate-spin" />
