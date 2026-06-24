@@ -311,8 +311,8 @@ export default function OurServicesSection() {
                         className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
 
-                      {/* ── Solid panel — always solid, darker on hover ── */}
-                      <div className="absolute inset-y-0 left-0 w-[50%] bg-[#587434] transition-all duration-500 ease-out group-hover:w-[52%] group-hover:bg-[#4a6029]" />
+                      {/* ── Panel: standby = gradasi semi-transparan, hover = solid ── */}
+                      <div className="absolute inset-y-0 left-0 w-[50%] rounded-r-3xl bg-gradient-to-r from-[#3d5220]/90 via-[#587434]/75 to-[#587434]/30 backdrop-blur-[3px] transition-all duration-500 ease-out group-hover:w-[52%] group-hover:rounded-r-none group-hover:bg-[#587434] group-hover:from-[#587434] group-hover:via-[#587434] group-hover:to-[#587434] group-hover:backdrop-blur-0" />
 
                       {/* ── Card content ── */}
                       <div className="absolute inset-y-0 left-0 flex w-[50%] flex-col justify-between p-7 md:p-9">
