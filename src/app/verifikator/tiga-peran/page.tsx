@@ -16,6 +16,34 @@ import {
   ImageUp,
 } from "lucide-react";
 
+/** Resize + convert any image to WebP via Canvas. Max 400×400, quality 0.85. */
+async function compressToWebP(file: File, maxPx = 400, quality = 0.85): Promise<File> {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const scale = Math.min(1, maxPx / Math.max(img.width, img.height));
+      const w = Math.round(img.width * scale);
+      const h = Math.round(img.height * scale);
+      const canvas = document.createElement("canvas");
+      canvas.width = w;
+      canvas.height = h;
+      canvas.getContext("2d")!.drawImage(img, 0, 0, w, h);
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) { reject(new Error("Gagal kompres gambar")); return; }
+          resolve(new File([blob], "logo.webp", { type: "image/webp" }));
+        },
+        "image/webp",
+        quality
+      );
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("Gagal baca gambar")); };
+    img.src = url;
+  });
+}
+
 type CardForm = {
   key: string;
   titleId: string;
@@ -171,8 +199,9 @@ export default function TigaPeranPage() {
     setUploadingKey(cardKey);
     setError(null);
     try {
+      const compressed = await compressToWebP(file);
       const fd = new FormData();
-      fd.append("file", file);
+      fd.append("file", compressed);
       const res = await fetch("/api/cloudinary-upload", {
         method: "POST",
         body: fd,
