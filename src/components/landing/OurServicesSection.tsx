@@ -289,7 +289,7 @@ export default function OurServicesSection() {
                     maxTilt={15}
                     liftZ={40}
                     glare={false}
-                    className="flex-shrink-0 rounded-[24px]"
+                    className="flex-shrink-0 rounded-2xl"
                     style={
                       {
                         width: "clamp(300px, 55vw, 680px)",
@@ -299,7 +299,7 @@ export default function OurServicesSection() {
                   >
                     {/* Card inner — click to jump to this card */}
                     <div
-                      className="relative overflow-hidden rounded-[24px] border-[6px] border-[#f4efd8] bg-[#f4efd8] group cursor-pointer shadow-sm"
+                      className="relative overflow-hidden rounded-2xl border-[6px] border-[#f4efd8] bg-[#f4efd8] group cursor-pointer shadow-sm"
                       style={{ height: 420 }}
                       onClick={() => goTo(i)}
                     >
@@ -312,7 +312,7 @@ export default function OurServicesSection() {
                       />
 
                       {/* ── Panel: standby = gradasi semi-transparan, hover = solid ── */}
-                      <div className="absolute inset-y-0 left-0 w-[50%] rounded-r-3xl bg-gradient-to-r from-[#3d5220]/90 via-[#587434]/75 to-[#587434]/30 backdrop-blur-[3px] transition-all duration-500 ease-out group-hover:w-[52%] group-hover:rounded-r-none group-hover:bg-[#587434] group-hover:from-[#587434] group-hover:via-[#587434] group-hover:to-[#587434] group-hover:backdrop-blur-0" />
+                      <div className="absolute inset-y-0 left-0 w-[50%] rounded-r-3xl bg-gradient-to-r from-[#071f17]/90 via-[#0f3d2e]/75 to-[#0f3d2e]/30 backdrop-blur-[3px] transition-all duration-500 ease-out group-hover:w-[52%] group-hover:rounded-r-none group-hover:bg-[#0f3d2e] group-hover:from-[#0f3d2e] group-hover:via-[#0f3d2e] group-hover:to-[#0f3d2e] group-hover:backdrop-blur-0" />
 
                       {/* ── Card content ── */}
                       <div className="absolute inset-y-0 left-0 flex w-[50%] flex-col justify-between p-7 md:p-9">

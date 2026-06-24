@@ -24,13 +24,6 @@ type CardData = {
   order: number;
 };
 
-const CARD_COLORS: Record<string, { bg: string; btn: string; shadow: string }> = {
-  sahabat:    { bg: "#2d7d52", btn: "rgba(255,255,255,0.18)", shadow: "rgba(45,125,82,0.45)" },
-  mitra:      { bg: "#2a5fa5", btn: "rgba(255,255,255,0.18)", shadow: "rgba(42,95,165,0.45)" },
-  perusahaan: { bg: "#b87010", btn: "rgba(255,255,255,0.18)", shadow: "rgba(184,112,16,0.45)" },
-};
-const DEFAULT_COLOR = { bg: "#2d7d52", btn: "rgba(255,255,255,0.18)", shadow: "rgba(45,125,82,0.45)" };
-
 const fallback = {
   headlineId: "Tiga Peran, Satu Ekosistem",
   headlineEn: "Three Roles, One Ecosystem",
@@ -106,7 +99,7 @@ export default function ThreeRolesSection() {
             {[0, 1, 2].map((i) => (
               <div
                 key={i}
-                className="flex flex-col items-center rounded-3xl bg-gray-100 animate-pulse min-h-[400px] p-8"
+                className="flex flex-col items-center rounded-2xl bg-gray-100 animate-pulse min-h-[400px] p-8"
               >
                 <div className="w-20 h-20 rounded-full bg-gray-200 mb-5" />
                 <div className="h-7 w-1/2 rounded bg-gray-200 mb-6" />
@@ -156,7 +149,6 @@ export default function ThreeRolesSection() {
             const ctaRaw = language === "en" ? card.ctaEn : card.ctaId;
             const cta = ctaRaw === "Daftar sebagai Mitra" ? "Daftar Mitra" : ctaRaw;
             const isExternal = card.href.startsWith("http");
-            const color = CARD_COLORS[card.key] ?? DEFAULT_COLOR;
 
             return (
               <ScrollReveal key={card.key} delay={i * 120} className="h-full">
@@ -164,14 +156,10 @@ export default function ThreeRolesSection() {
                   maxTilt={9}
                   liftZ={28}
                   glare={false}
-                  className="h-full rounded-3xl"
+                  className="h-full rounded-2xl"
                 >
                   <article
-                    className="group relative flex flex-col items-center text-center rounded-3xl border border-white/10 min-h-[400px] p-8 pt-10"
-                    style={{
-                      backgroundColor: color.bg,
-                      boxShadow: `0 28px 70px -22px ${color.shadow}`,
-                    }}
+                    className="group relative flex flex-col items-center text-center rounded-2xl border border-white/10 min-h-[400px] p-8 pt-10 bg-[#0f3d2e] shadow-[0_28px_70px_-22px_rgba(15,61,46,0.45)]"
                   >
                     {/* Circular logo */}
                     <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-white/30 shadow-lg mb-5 flex-shrink-0">
@@ -185,7 +173,7 @@ export default function ThreeRolesSection() {
                     </div>
 
                     {/* Title */}
-                    <h3 className="font-extrabold text-white text-2xl tracking-tight leading-snug mb-6">
+                    <h3 className="font-montserrat font-extrabold text-white text-2xl tracking-tight leading-snug mb-6 group-hover:text-lime-300 transition-colors duration-300">
                       {title}
                     </h3>
 
@@ -202,13 +190,12 @@ export default function ThreeRolesSection() {
                       ))}
                     </ul>
 
-                    {/* CTA */}
+                    {/* CTA — matches Pokmaswas solid white button */}
                     <a
                       href={card.href}
                       target={isExternal ? "_blank" : undefined}
                       rel={isExternal ? "noopener noreferrer" : undefined}
-                      className="mt-8 inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-bold text-white border border-white/40 transition-all duration-200 hover:bg-white/20"
-                      style={{ backgroundColor: color.btn }}
+                      className="mt-8 inline-flex items-center justify-center gap-2 rounded-lg px-6 py-2.5 text-sm font-bold text-black bg-white hover:bg-gray-100 border border-gray-200 transition-colors"
                     >
                       {cta}
                       <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
