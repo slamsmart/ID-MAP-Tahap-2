@@ -159,7 +159,7 @@ export default function ThreeRolesSection() {
                   className="h-full rounded-2xl"
                 >
                   <article
-                    className="group relative flex flex-col items-center text-center rounded-2xl border border-white/10 min-h-[400px] p-8 pt-10 bg-[#0f3d2e] shadow-[0_28px_70px_-22px_rgba(15,61,46,0.45)]"
+                    className="group relative flex flex-col items-center text-center rounded-2xl border border-white/10 h-full min-h-[460px] p-8 pt-10 bg-[#0f3d2e] shadow-[0_28px_70px_-22px_rgba(15,61,46,0.45)]"
                   >
                     {/* Circular logo */}
                     <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-white/30 shadow-lg mb-5 flex-shrink-0">
