@@ -60,7 +60,6 @@ const config: Config = {
       fontFamily: {
         display: ["var(--font-plus-jakarta)", "sans-serif"],
         sans: ["var(--font-inter)", "sans-serif"],
-        montserrat: ["var(--font-montserrat)", "sans-serif"],
         dashboard: ["var(--font-inter)", "sans-serif"],
         hero: ["var(--font-inter)", "sans-serif"],
       },

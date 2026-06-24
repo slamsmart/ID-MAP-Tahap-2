@@ -173,7 +173,7 @@ export default function ThreeRolesSection() {
                     </div>
 
                     {/* Title */}
-                    <h3 className="font-montserrat font-extrabold text-white text-2xl tracking-tight leading-snug mb-6 group-hover:text-lime-300 transition-colors duration-300">
+                    <h3 className="font-display font-extrabold text-white text-2xl tracking-tight leading-snug mb-6 group-hover:text-lime-300 transition-colors duration-300">
                       {title}
                     </h3>
 

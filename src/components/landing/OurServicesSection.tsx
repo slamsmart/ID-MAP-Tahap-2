@@ -238,7 +238,7 @@ export default function OurServicesSection() {
         {/* ── Header row ─────────────────────────────────────────── */}
         <div className="flex items-start justify-between mb-10 gap-6">
           <ScrollReveal>
-            <h2 className="font-montserrat text-4xl font-extrabold tracking-tight text-[#0f3d2e] leading-tight">
+            <h2 className="font-display text-4xl font-extrabold tracking-tight text-[#0f3d2e] leading-tight">
               {t("Solusi Ekosistem Pesisir", "Coastal Ecosystem Solutions")}
             </h2>
           </ScrollReveal>
@@ -317,12 +317,12 @@ export default function OurServicesSection() {
                       {/* ── Card content ── */}
                       <div className="absolute inset-y-0 left-0 flex w-[50%] flex-col justify-between p-7 md:p-9">
                         <div>
-                          <h3 className="font-montserrat text-3xl md:text-4xl font-extrabold text-white leading-[0.95] transition-colors duration-300 group-hover:text-[#ffd84d]">
+                          <h3 className="font-display text-3xl md:text-4xl font-extrabold text-white leading-[0.95] transition-colors duration-300 group-hover:text-[#ffd84d]">
                             {t(svc.title[0], svc.title[1])}
                           </h3>
                         </div>
                         <div>
-                          <p className="font-montserrat font-normal text-white text-base md:text-lg leading-snug">
+                          <p className="font-sans font-normal text-white text-base md:text-lg leading-snug">
                             {t(svc.desc[0], svc.desc[1])}
                           </p>
                         </div>
