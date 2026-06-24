@@ -10,6 +10,8 @@ import { rateLimitAsync } from "@/lib/rateLimit";
 import { verifyTurnstile, isTurnstileEnabled } from "@/lib/turnstile";
 import { createLogger } from "@/lib/logger";
 
+export const dynamic = "force-dynamic";
+
 const log = createLogger("api.auth.register");
 const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 

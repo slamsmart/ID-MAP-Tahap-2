@@ -5,6 +5,8 @@ import { api } from "../../../../../convex/_generated/api";
 import { rateLimitAsync } from "@/lib/rateLimit";
 import { createLogger } from "@/lib/logger";
 
+export const dynamic = "force-dynamic";
+
 const log = createLogger("api.auth.send-otp");
 const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
