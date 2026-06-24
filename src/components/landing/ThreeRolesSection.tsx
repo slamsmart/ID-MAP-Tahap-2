@@ -36,8 +36,8 @@ const fallback = {
       key: "sahabat",
       titleId: "Sahabat Pesisir",
       titleEn: "Sahabat Pesisir",
-      bullet1Id: "Kontribusi mudah via QRIS",
-      bullet1En: "Easy contribution via QRIS",
+      bullet1Id: "Dukungan via QRIS untuk Kelompok Masyarakat Pesisir dan Perikanan",
+      bullet1En: "QRIS support for Coastal and Fisheries Community Groups",
       bullet2Id: "Pantau dampak real-time",
       bullet2En: "Monitor impact in real-time",
       bullet3Id: "Transparan dan terpercaya",
@@ -173,7 +173,7 @@ export default function ThreeRolesSection() {
                     </div>
 
                     {/* Title */}
-                    <h3 className="font-display font-extrabold text-white text-2xl tracking-tight leading-snug mb-6 group-hover:text-lime-300 transition-colors duration-300">
+                    <h3 className="font-display font-extrabold text-white text-3xl tracking-tight leading-snug mb-6 group-hover:text-lime-300 transition-colors duration-300">
                       {title}
                     </h3>
 
@@ -182,7 +182,7 @@ export default function ThreeRolesSection() {
                       {bullets.map((bullet) => (
                         <li
                           key={bullet}
-                          className="flex items-start gap-3 text-white/90 text-sm leading-snug"
+                          className="flex items-start gap-3 text-white/90 text-base leading-snug"
                         >
                           <CheckCircle2 className="h-4 w-4 mt-0.5 flex-shrink-0 text-white/70" />
                           <span>{bullet}</span>
