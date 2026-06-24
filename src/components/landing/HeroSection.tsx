@@ -195,7 +195,7 @@ export default function HeroSection() {
               {badge}
             </div>
 
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-[1.08] tracking-tight text-white">
+            <h1 className="font-hero text-4xl sm:text-5xl md:text-6xl font-extrabold leading-[1.08] tracking-tight text-white">
               <span className="drop-shadow-[0_4px_24px_rgba(0,0,0,0.5)]">{line1}</span>
               <br />
               <span className="drop-shadow-[0_4px_24px_rgba(0,0,0,0.5)]">{line2}</span>

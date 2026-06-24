@@ -13,20 +13,28 @@ import { createLogger } from "@/lib/logger";
 const log = createLogger("api.auth.register");
 const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
-const ALLOWED_ROLES = new Set(["sahabat", "mitra", "verifikator", "admin", "corporate"]);
+type PublicRegisterRole = "sahabat" | "mitra";
 
-// CATATAN SUBMISSION TAHAP 2:
-// Endpoint sengaja menerima role apapun untuk kebutuhan demo juri â€”
-// agar penilai bisa membuat akun di setiap role tanpa setup manual.
-// Untuk tahap pilot/produksi, restrict ALLOWED_ROLES = ["sahabat"] dan
-// pindahkan provisioning admin/verifikator ke /api/admin/users/create
-// dengan requireRole(["admin"]) gating.
-//
-// Mitigasi sementara: dual rate limit (IP + email) supaya endpoint tidak
-// jadi vector spam mass-account-creation.
+const ALLOWED_ROLES = new Set<PublicRegisterRole>(["sahabat", "mitra"]);
+
+// Public registration is limited to citizen/partner roles. Admin,
+// verifier, and corporate accounts must be provisioned through a
+// privileged server-side flow, never from a public client request.
+
+function getConvexErrorMessage(err: unknown, fallback = "") {
+  if (err instanceof Error) return err.message;
+  if (typeof err === "object" && err !== null) {
+    const data = "data" in err ? (err as { data?: unknown }).data : undefined;
+    if (typeof data === "string") return data;
+    if (typeof data === "object" && data !== null && "message" in data) {
+      const message = (data as { message?: unknown }).message;
+      if (typeof message === "string") return message;
+    }
+  }
+  return fallback;
+}
 
 export async function POST(req: NextRequest) {
-  const startedAt = Date.now();
   try {
     const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
     const ipRl = await rateLimitAsync({
@@ -50,13 +58,14 @@ export async function POST(req: NextRequest) {
     const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
     const password = typeof body.password === "string" ? body.password : "";
     const name = typeof body.name === "string" ? body.name.trim() : "";
-    const role = typeof body.role === "string" ? body.role : "";
+    const requestedRole = typeof body.role === "string" ? body.role : "";
     const turnstileToken = typeof body.turnstileToken === "string" ? body.turnstileToken : "";
     const otpCode = typeof body.otpCode === "string" ? body.otpCode.trim() : "";
 
-    if (!email || !password || !name || !ALLOWED_ROLES.has(role)) {
+    if (!email || !password || !name || !ALLOWED_ROLES.has(requestedRole as PublicRegisterRole)) {
       return NextResponse.json({ error: "Field tidak lengkap." }, { status: 400 });
     }
+    const role = requestedRole as PublicRegisterRole;
     if (password.length < 6) {
       return NextResponse.json({ error: "Password minimal 6 karakter." }, { status: 400 });
     }
@@ -118,11 +127,8 @@ export async function POST(req: NextRequest) {
     // skip endpoint OTP atau replay kode lama.
     try {
       await convex.mutation(api.otpCodes.verifyOtp, { email, code: otpCode });
-    } catch (err: any) {
-      const msg =
-        typeof err?.data === "string"
-          ? err.data
-          : err?.data?.message ?? err?.message ?? "Kode OTP tidak valid.";
+    } catch (err: unknown) {
+      const msg = getConvexErrorMessage(err, "Kode OTP tidak valid.");
       log.warn("register_otp_invalid", { email, msg });
       return NextResponse.json({ error: msg }, { status: 400 });
     }
@@ -133,14 +139,14 @@ export async function POST(req: NextRequest) {
         email,
         password,
         name,
-        role: role as "sahabat" | "mitra" | "verifikator" | "admin" | "corporate",
+        role,
         ...(phone ? { phone } : {}),
         ...(organization ? { organization } : {}),
         ...(address ? { address } : {}),
         ...(referredByCode ? { referredByCode } : {}),
       });
-    } catch (err: any) {
-      const msg = typeof err?.data === "string" ? err.data : err?.data?.message ?? err?.message ?? "";
+    } catch (err: unknown) {
+      const msg = getConvexErrorMessage(err);
       if (msg.includes("DUPLICATE_EMAIL") || msg.includes("sudah terdaftar")) {
         return NextResponse.json({ error: "Email sudah terdaftar." }, { status: 409 });
       }
@@ -152,7 +158,7 @@ export async function POST(req: NextRequest) {
       uid: userId,
       email,
       name,
-      role: role as any,
+      role,
     });
 
     const res = NextResponse.json({
@@ -173,4 +179,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Terjadi kesalahan server." }, { status: 500 });
   }
 }
-

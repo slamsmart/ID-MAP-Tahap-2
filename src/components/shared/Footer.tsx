@@ -180,7 +180,7 @@ export default function Footer() {
               </div>
               <ul className="space-y-4 text-sm text-gray-400 font-medium">
                 {[
-                  { label: "Edukasi Pengelolaan Kawasan Ekosistem Pesisir", href: "/edukasi-ekosistem-pesisir" },
+                  { label: "Berita Terkini", href: "/berita-terkini" },
                   { label: "FAQ", href: "#" },
                 ].map((item) => (
                   <li key={item.label}>
@@ -202,10 +202,14 @@ export default function Footer() {
                 <h4 className="font-display font-bold text-lg">{t("Legal", "Legal")}</h4>
               </div>
               <ul className="space-y-4 text-sm text-gray-400 font-medium">
-                {["Kebijakan Privasi", "Syarat & Ketentuan", "Tentang Kami"].map((item, idx) => (
+                {[
+                  { label: "Kebijakan Privasi", href: "/kebijakan-privasi" },
+                  { label: "Syarat & Ketentuan", href: "/syarat-ketentuan" },
+                  { label: "Tentang Kami", href: "/tentang" },
+                ].map((item, idx) => (
                   <li key={idx}>
-                    <Link href="#" className="flex items-center justify-between hover:text-white group">
-                      <span>{t(item, item)}</span>
+                    <Link href={item.href} className="flex items-center justify-between hover:text-white group">
+                      <span>{t(item.label, item.label)}</span>
                       <ChevronRight className="w-4 h-4 text-gray-600 group-hover:text-emerald-400 transition-colors" />
                     </Link>
                   </li>

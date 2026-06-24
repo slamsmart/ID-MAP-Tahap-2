@@ -1,41 +1,30 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { motion, useAnimation } from "motion/react";
+import { useEffect, useState } from "react";
+import { motion } from "motion/react";
 
-/** Top-loading bar that animates on Next.js route changes */
+/** Top-loading bar that animates on Next.js route changes. */
 export default function TopLoadingBar() {
   const [visible, setVisible] = useState(false);
-  const controls = useAnimation();
-  // Guards controls.start(): framer-motion throws if start() runs before the
-  // animated element is mounted. We only animate once the effect has run.
-  const mounted = useRef(false);
+  const [phase, setPhase] = useState<"idle" | "start" | "done">("idle");
 
   useEffect(() => {
-    mounted.current = true;
-    let timer: NodeJS.Timeout;
+    let finishTimer: ReturnType<typeof setTimeout>;
+    let hideTimer: ReturnType<typeof setTimeout>;
 
     const show = () => {
-      if (!mounted.current) return;
+      clearTimeout(finishTimer);
+      clearTimeout(hideTimer);
       setVisible(true);
-      controls.set({ width: "0%", opacity: 1 });
-      controls.start({ width: "30%" }, { duration: 0.3 });
+      setPhase("start");
     };
 
     const done = () => {
-      if (!mounted.current) return;
-      controls
-        .start({ width: "100%" }, { duration: 0.3 })
-        .then(() => {
-          if (!mounted.current) return;
-          controls.start({ opacity: 0 }, { duration: 0.2 });
-          timer = setTimeout(() => {
-            if (mounted.current) setVisible(false);
-          }, 250);
-        })
-        .catch(() => {
-          // animation interrupted (e.g. rapid navigation) — ignore
-        });
+      setPhase("done");
+      hideTimer = setTimeout(() => {
+        setVisible(false);
+        setPhase("idle");
+      }, 520);
     };
 
     const originalPushState = window.history.pushState;
@@ -44,12 +33,13 @@ export default function TopLoadingBar() {
     window.history.pushState = function (...args) {
       show();
       originalPushState.apply(window.history, args);
-      requestAnimationFrame(() => done());
+      finishTimer = setTimeout(done, 120);
     };
+
     window.history.replaceState = function (...args) {
       show();
       originalReplaceState.apply(window.history, args);
-      requestAnimationFrame(() => done());
+      finishTimer = setTimeout(done, 120);
     };
 
     const handleClick = (e: MouseEvent) => {
@@ -69,14 +59,13 @@ export default function TopLoadingBar() {
 
     document.addEventListener("click", handleClick);
     return () => {
-      mounted.current = false;
       document.removeEventListener("click", handleClick);
-      clearTimeout(timer);
-      // Restore the originals so HMR / remounts don't stack patches.
+      clearTimeout(finishTimer);
+      clearTimeout(hideTimer);
       window.history.pushState = originalPushState;
       window.history.replaceState = originalReplaceState;
     };
-  }, [controls]);
+  }, []);
 
   return (
     <div
@@ -85,8 +74,22 @@ export default function TopLoadingBar() {
       style={{ visibility: visible ? "visible" : "hidden" }}
     >
       <motion.div
-        initial={{ width: "0%", opacity: 1 }}
-        animate={controls}
+        initial={false}
+        animate={
+          phase === "idle"
+            ? { width: "0%", opacity: 0 }
+            : phase === "start"
+            ? { width: "30%", opacity: 1 }
+            : { width: "100%", opacity: 0 }
+        }
+        transition={
+          phase === "done"
+            ? {
+                width: { duration: 0.3 },
+                opacity: { duration: 0.2, delay: 0.3 },
+              }
+            : { duration: 0.3 }
+        }
         className="h-1 bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)] rounded-r-full"
       />
     </div>

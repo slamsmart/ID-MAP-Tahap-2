@@ -232,13 +232,13 @@ export default function OurServicesSection() {
   const secondsLeft = Math.ceil((1 - timerPct) * (TIMER_MS / 1000));
 
   return (
-    <section className="py-20 bg-[#e8e3d0]">
+    <section className="py-20 bg-white">
       <div className="mx-auto max-w-7xl px-6">
 
         {/* ── Header row ─────────────────────────────────────────── */}
         <div className="flex items-start justify-between mb-10 gap-6">
           <ScrollReveal>
-            <h2 className="text-4xl font-extrabold tracking-tight text-[#0f3d2e] leading-tight">
+            <h2 className="font-montserrat text-4xl font-extrabold tracking-tight text-[#0f3d2e] leading-tight">
               {t("Solusi Ekosistem Pesisir", "Coastal Ecosystem Solutions")}
             </h2>
           </ScrollReveal>
@@ -281,7 +281,6 @@ export default function OurServicesSection() {
                 />
               ))
             : displayServices.map((svc, i) => {
-                const Icon = svc.icon;
                 const isActive = i === activeIndex;
 
                 return (
@@ -290,7 +289,7 @@ export default function OurServicesSection() {
                     maxTilt={15}
                     liftZ={40}
                     glare={false}
-                    className="flex-shrink-0 rounded-2xl"
+                    className="flex-shrink-0 rounded-[24px]"
                     style={
                       {
                         width: "clamp(300px, 55vw, 680px)",
@@ -300,7 +299,7 @@ export default function OurServicesSection() {
                   >
                     {/* Card inner — click to jump to this card */}
                     <div
-                      className="relative overflow-hidden rounded-2xl group cursor-pointer"
+                      className="relative overflow-hidden rounded-[24px] border-[6px] border-[#f4efd8] bg-[#f4efd8] group cursor-pointer shadow-sm"
                       style={{ height: 420 }}
                       onClick={() => goTo(i)}
                     >
@@ -312,34 +311,18 @@ export default function OurServicesSection() {
                         className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
 
-                      {/* ── Dark gradient overlay — text side (left 65%) ── */}
-                      <div
-                        className={`absolute inset-0 bg-gradient-to-r ${svc.accentFrom ?? "from-black/90"} ${svc.accentVia ?? "via-black/70"} to-transparent`}
-                      />
+                      {/* ── Gradient overlay standby → solid on hover ── */}
+                      <div className="absolute inset-y-0 left-0 w-[50%] bg-[#587434]/55 backdrop-blur-sm border-r-2 border-white/25 transition-all duration-500 ease-out group-hover:w-[52%] group-hover:bg-[#587434] group-hover:backdrop-blur-0 group-hover:border-transparent" />
 
                       {/* ── Card content ── */}
-                      <div className="absolute inset-0 flex flex-col justify-between p-8">
-
-                        {/* Top: badge */}
-                        <span
-                          className={`self-start text-[11px] font-bold tracking-wide text-white px-3 py-1 rounded-full ${svc.badge}`}
-                        >
-                          {svc.badgeText}
-                        </span>
-
-                        {/* Bottom: title + description */}
-                        <div className="max-w-[62%]">
-                          <div className="flex items-center gap-2 mb-3">
-                            <div
-                              className={`w-8 h-8 rounded-lg ${svc.iconBg} flex items-center justify-center flex-shrink-0`}
-                            >
-                              <Icon className="w-4 h-4 text-white" />
-                            </div>
-                          </div>
-                          <h3 className="text-2xl font-bold text-white leading-tight mb-3">
+                      <div className="absolute inset-y-0 left-0 flex w-[50%] flex-col justify-between p-7 md:p-9">
+                        <div>
+                          <h3 className="font-montserrat text-3xl md:text-4xl font-extrabold text-white leading-[0.95] transition-colors duration-300 group-hover:text-[#ffd84d]">
                             {t(svc.title[0], svc.title[1])}
                           </h3>
-                          <p className="text-white/70 text-sm leading-relaxed line-clamp-3">
+                        </div>
+                        <div>
+                          <p className="font-montserrat font-normal text-white text-base md:text-lg leading-snug">
                             {t(svc.desc[0], svc.desc[1])}
                           </p>
                         </div>

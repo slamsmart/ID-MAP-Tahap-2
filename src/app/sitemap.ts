@@ -17,7 +17,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/tentang", priority: 0.7, changeFrequency: "monthly" },
     { path: "/faq", priority: 0.7, changeFrequency: "monthly" },
     { path: "/mitra-kami", priority: 0.7, changeFrequency: "monthly" },
-    { path: "/edukasi-ekosistem-pesisir", priority: 0.6, changeFrequency: "monthly" },
+    { path: "/berita-terkini", priority: 0.8, changeFrequency: "daily" },
     { path: "/daftar", priority: 0.5, changeFrequency: "yearly" },
     { path: "/masuk", priority: 0.5, changeFrequency: "yearly" },
   ];

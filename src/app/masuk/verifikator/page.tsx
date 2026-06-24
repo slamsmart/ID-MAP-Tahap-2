@@ -90,30 +90,7 @@ function VerifikatorLoginForm() {
         const data = await r.json().catch(() => null);
         return (data?.user as User | null) ?? null;
       };
-      const tryRegister = async () => {
-        const r = await fetch("/api/auth/register", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "same-origin",
-          body: JSON.stringify({
-            email: DEMO.email,
-            password: DEMO.password,
-            name: "Tim Verifikator Pesisir",
-            role: "verifikator",
-          }),
-        });
-        if (!r.ok) return null;
-        const data = await r.json().catch(() => null);
-        return (data?.user as User | null) ?? null;
-      };
-
-      let user = await tryLogin(normalizedEmail, password);
-
-      if (!user) {
-        if (normalizedEmail === DEMO.email && password === DEMO.password) {
-          user = (await tryRegister()) ?? (await tryLogin(DEMO.email, DEMO.password));
-        }
-      }
+      const user = await tryLogin(normalizedEmail, password);
 
       if (!user) {
         setError(

@@ -1,6 +1,12 @@
 "use client";
 
-import { useEffect, useRef, type ReactNode, type CSSProperties } from "react";
+import {
+  createElement,
+  useEffect,
+  useRef,
+  type CSSProperties,
+  type ReactNode,
+} from "react";
 
 type ScrollRevealProps = {
   children: ReactNode;
@@ -68,13 +74,13 @@ export default function ScrollReveal({
     return () => io.disconnect();
   }, [once]);
 
-  return (
-    <Tag
-      ref={ref as React.Ref<HTMLDivElement>}
-      className={`reveal ${className}`}
-      style={{ animationDelay: delay ? `${delay}ms` : undefined, ...style }}
-    >
-      {children}
-    </Tag>
+  return createElement(
+    Tag,
+    {
+      ref,
+      className: `reveal ${className}`,
+      style: { animationDelay: delay ? `${delay}ms` : undefined, ...style },
+    },
+    children
   );
 }

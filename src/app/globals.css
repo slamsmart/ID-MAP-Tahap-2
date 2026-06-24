@@ -19,6 +19,86 @@ body {
 body {
   color: var(--foreground);
   background: var(--background);
+  font-family: var(--font-inter), sans-serif;
+  font-weight: 400;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-plus-jakarta), sans-serif;
+  font-weight: 700;
+}
+
+.dashboard-surface {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 14px;
+  line-height: 1.55;
+  font-variant-numeric: tabular-nums;
+  text-rendering: optimizeLegibility;
+}
+
+.dashboard-surface h1,
+.dashboard-surface h2,
+.dashboard-surface h3,
+.dashboard-surface .font-display {
+  font-family: var(--font-plus-jakarta), sans-serif;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.dashboard-surface p,
+.dashboard-surface li,
+.dashboard-surface label,
+.dashboard-surface input,
+.dashboard-surface textarea,
+.dashboard-surface select,
+.dashboard-surface button,
+.dashboard-surface a {
+  font-family: var(--font-inter), sans-serif;
+}
+
+.dashboard-surface table {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.dashboard-surface th {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.dashboard-surface td {
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.dashboard-surface aside,
+.dashboard-surface nav {
+  font-family: var(--font-inter), sans-serif;
+}
+
+.dashboard-surface aside a,
+.dashboard-surface nav a {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+p,
+li,
+span,
+label,
+input,
+textarea,
+select,
+button,
+a {
+  font-family: inherit;
 }
 
 @layer utilities {

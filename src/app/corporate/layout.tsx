@@ -12,7 +12,7 @@ export default function CorporateLayout({
   return (
     <SessionGuard allowedRoles={["corporate"]}>
       <TopLoadingBar />
-      <div className="flex min-h-screen bg-gray-50">
+      <div className="dashboard-surface font-dashboard flex min-h-screen bg-gray-50">
         <DashboardSidebar type="corporate" />
         <div className="flex-1 flex flex-col min-w-0">
           <DashboardHeader
