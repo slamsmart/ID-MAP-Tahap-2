@@ -142,3 +142,27 @@ export const getCredentialsByEmail = query({
     return (user.webauthnCredentials ?? []).map((c) => c.credentialId);
   },
 });
+
+export const getUserByCredentialId = query({
+  args: { credentialId: v.string() },
+  handler: async (ctx, args) => {
+    const users = await ctx.db.query("users").take(10000);
+    for (const user of users) {
+      const creds = (user.webauthnCredentials ?? []) as Array<{
+        credentialId: string;
+        counter: number;
+      }>;
+      const matched = creds.find((c) => c.credentialId === args.credentialId);
+      if (matched) {
+        return {
+          _id: user._id,
+          email: user.email,
+          name: user.name,
+          role: user.role,
+          counter: matched.counter,
+        };
+      }
+    }
+    return null;
+  },
+});

@@ -51,6 +51,8 @@ function LoginForm() {
   const [platformBiometric, setPlatformBiometric] = useState(false);
   const [biometricScanning, setBiometricScanning] = useState(false);
   const [biometricError, setBiometricError] = useState("");
+  const [biometricDirectScanning, setBiometricDirectScanning] = useState(false);
+  const [biometricDirectError, setBiometricDirectError] = useState("");
   const DEFAULT_BG = "/images/hero-mangrove.webp";
   const [bgImage, setBgImage] = useState(DEFAULT_BG);
   const stats = useQuery(api.platformStats.getAll);
@@ -166,6 +168,40 @@ function LoginForm() {
   };
 
   const showBiometricButton = platformBiometric && hasWebAuthn && (credentialIds?.length ?? 0) > 0;
+
+  const handleBiometricLoginDirect = async () => {
+    setBiometricDirectScanning(true);
+    setBiometricDirectError("");
+    setError("");
+    try {
+      const challenge = generateChallenge();
+      // Empty credentialIds = discoverable credentials; browser shows available passkeys for this origin
+      const { credentialId, counter } = await verifyBiometric({ challenge, credentialIds: [] });
+      const r = await fetch("/api/auth/webauthn-login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify({ credentialId, counter, challenge }),
+      });
+      if (!r.ok) {
+        const data = await r.json().catch(() => null);
+        throw new Error(data?.error ?? "Login biometrik gagal.");
+      }
+      const data = await r.json();
+      const user = data.user as User;
+      setSession(user);
+      router.push(safeNext ?? getDashboardPath(user.role));
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Login biometrik gagal.";
+      setBiometricDirectError(
+        msg.includes("NotAllowedError") || msg.includes("cancelled") || msg.includes("dibatalkan")
+          ? t("Dibatalkan. Coba lagi.", "Cancelled. Try again.")
+          : msg
+      );
+    } finally {
+      setBiometricDirectScanning(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex">
@@ -338,6 +374,40 @@ function LoginForm() {
               <p className="text-xs text-emerald-700">{roleDescriptions[role]}</p>
             </div>
 
+            {/* Biometric quick login — prominent, no email required */}
+            {platformBiometric && (
+              <div className="mb-5">
+                <button
+                  type="button"
+                  onClick={handleBiometricLoginDirect}
+                  disabled={biometricDirectScanning}
+                  className="group relative flex items-center justify-center gap-3 w-full py-3.5 bg-[#0f3d2e] text-white font-bold rounded-xl hover:bg-[#14523d] transition-all text-sm shadow-lg shadow-emerald-900/20 disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {biometricDirectScanning ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      {t("Tempelkan jari...", "Touch sensor...")}
+                    </>
+                  ) : (
+                    <>
+                      <Fingerprint className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                      {t("Masuk dengan Biometrik", "Sign in with Biometrics")}
+                    </>
+                  )}
+                </button>
+                {biometricDirectError && (
+                  <p className="text-xs text-red-500 text-center mt-2">{biometricDirectError}</p>
+                )}
+                <div className="flex items-center gap-3 mt-4">
+                  <div className="flex-1 h-px bg-gray-200" />
+                  <span className="text-xs text-gray-400 font-medium whitespace-nowrap">
+                    {t("atau masuk dengan email", "or sign in with email")}
+                  </span>
+                  <div className="flex-1 h-px bg-gray-200" />
+                </div>
+              </div>
+            )}
+
             {/* Error message */}
             {error && (
               <div id="login-error" role="alert" aria-live="assertive" className="bg-red-50 text-red-600 text-sm px-4 py-3 rounded-xl mb-5 border border-red-100 flex items-start gap-2">
@@ -434,17 +504,9 @@ function LoginForm() {
               </button>
             </form>
 
-            {/* Biometric login */}
-            {showBiometricButton && (
-              <div className="mt-5">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="flex-1 h-px bg-gray-200" />
-                  <span className="text-xs text-gray-400 font-medium whitespace-nowrap">
-                    {t("atau masuk dengan", "or sign in with")}
-                  </span>
-                  <div className="flex-1 h-px bg-gray-200" />
-                </div>
-
+            {/* Email-specific biometric hint — only when email is filled and has saved credentials */}
+            {showBiometricButton && !platformBiometric && (
+              <div className="mt-4">
                 <button
                   type="button"
                   onClick={handleBiometricLogin}
@@ -463,7 +525,6 @@ function LoginForm() {
                     </>
                   )}
                 </button>
-
                 {biometricError && (
                   <p className="text-xs text-red-500 text-center mt-2">{biometricError}</p>
                 )}
