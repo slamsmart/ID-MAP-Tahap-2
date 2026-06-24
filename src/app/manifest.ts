@@ -24,6 +24,11 @@ export default function manifest(): MetadataRoute.Manifest {
       { src: "/icon-512.png?v=2", sizes: "512x512", type: "image/png", purpose: "maskable" },
       { src: "/apple-icon.png?v=2", sizes: "180x180", type: "image/png", purpose: "maskable" },
     ],
+    // form_factor & label not yet in Next 14 types but valid per W3C spec
+    screenshots: [
+      { src: "/screenshot-wide.jpg",   sizes: "1280x664",  type: "image/jpeg", form_factor: "wide",   label: "Dasbor proyek mangrove & pesisir Indonesia" },
+      { src: "/screenshot-narrow.jpg", sizes: "1080x1920", type: "image/jpeg", form_factor: "narrow", label: "ID-MAP di perangkat mobile" },
+    ] as unknown as MetadataRoute.Manifest["screenshots"],
     shortcuts: [
       {
         name: "Jelajahi Peta",
