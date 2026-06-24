@@ -24,6 +24,13 @@ type CardData = {
   order: number;
 };
 
+const CARD_COLORS: Record<string, { bg: string; btn: string; shadow: string }> = {
+  sahabat:    { bg: "#2d7d52", btn: "rgba(255,255,255,0.18)", shadow: "rgba(45,125,82,0.45)" },
+  mitra:      { bg: "#2a5fa5", btn: "rgba(255,255,255,0.18)", shadow: "rgba(42,95,165,0.45)" },
+  perusahaan: { bg: "#b87010", btn: "rgba(255,255,255,0.18)", shadow: "rgba(184,112,16,0.45)" },
+};
+const DEFAULT_COLOR = { bg: "#2d7d52", btn: "rgba(255,255,255,0.18)", shadow: "rgba(45,125,82,0.45)" };
+
 const fallback = {
   headlineId: "Tiga Peran, Satu Ekosistem",
   headlineEn: "Three Roles, One Ecosystem",
@@ -87,10 +94,6 @@ export default function ThreeRolesSection() {
   const { language, t } = useLanguage();
   const data = useQuery(api.rolesSection.get);
 
-  // Loading state — render a skeleton while Convex hydrates so we don't
-  // flash the hard-coded Unsplash fallback before swapping to the
-  // verifikator-managed images. data === undefined means still loading;
-  // data === null means no record yet (use fallback).
   if (data === undefined) {
     return (
       <section className="py-14 bg-white">
@@ -103,17 +106,14 @@ export default function ThreeRolesSection() {
             {[0, 1, 2].map((i) => (
               <div
                 key={i}
-                className="flex items-stretch gap-5 rounded-3xl overflow-hidden border border-gray-200 min-h-[340px] bg-white p-6 shadow-sm"
+                className="flex flex-col items-center rounded-3xl bg-gray-100 animate-pulse min-h-[400px] p-8"
               >
-                <div className="w-[40%] flex-shrink-0 rounded-2xl bg-gray-100 animate-pulse" />
-                <div className="flex flex-col justify-center flex-1 space-y-4">
-                  <div className="h-7 w-3/4 rounded bg-gray-200 animate-pulse" />
-                  <div className="space-y-2">
-                    {[0, 1, 2].map((b) => (
-                      <div key={b} className="h-3.5 w-2/3 rounded bg-gray-200 animate-pulse" />
-                    ))}
-                  </div>
-                  <div className="h-9 w-32 rounded-full bg-gray-200 animate-pulse mt-2" />
+                <div className="w-20 h-20 rounded-full bg-gray-200 mb-5" />
+                <div className="h-7 w-1/2 rounded bg-gray-200 mb-6" />
+                <div className="space-y-3 w-full">
+                  {[0, 1, 2].map((b) => (
+                    <div key={b} className="h-3.5 w-3/4 rounded bg-gray-200" />
+                  ))}
                 </div>
               </div>
             ))}
@@ -137,7 +137,6 @@ export default function ThreeRolesSection() {
 
   return (
     <section className="relative py-16 bg-gradient-to-b from-white via-emerald-50/40 to-white overflow-hidden">
-      {/* soft depth glow behind the cards */}
       <div className="pointer-events-none absolute left-1/2 top-1/3 h-72 w-[42rem] -translate-x-1/2 rounded-full bg-emerald-300/20 blur-3xl" />
       <div className="relative mx-auto max-w-7xl px-6">
         <ScrollReveal className="text-center mb-10">
@@ -147,7 +146,7 @@ export default function ThreeRolesSection() {
           <p className="mt-3 text-slate-600 max-w-2xl mx-auto">{subtitle}</p>
         </ScrollReveal>
 
-        <div className="grid lg:grid-cols-3 gap-6 perspective-1500">
+        <div className="grid lg:grid-cols-3 gap-6">
           {cards.map((card, i) => {
             const title = language === "en" ? card.titleEn : card.titleId;
             const bullets =
@@ -155,61 +154,67 @@ export default function ThreeRolesSection() {
                 ? [card.bullet1En, card.bullet2En, card.bullet3En]
                 : [card.bullet1Id, card.bullet2Id, card.bullet3Id];
             const ctaRaw = language === "en" ? card.ctaEn : card.ctaId;
-            // Normalize legacy DB label "Daftar sebagai Mitra" -> "Daftar Mitra"
-            const cta =
-              ctaRaw === "Daftar sebagai Mitra" ? "Daftar Mitra" : ctaRaw;
+            const cta = ctaRaw === "Daftar sebagai Mitra" ? "Daftar Mitra" : ctaRaw;
             const isExternal = card.href.startsWith("http");
+            const color = CARD_COLORS[card.key] ?? DEFAULT_COLOR;
 
             return (
               <ScrollReveal key={card.key} delay={i * 120} className="h-full">
-              <TiltCard
-                maxTilt={9}
-                liftZ={28}
-                glare={false}
-                className="h-full rounded-3xl"
-              >
-                {/* Uniform dark-green card: uploadable image (left) + copy (right). */}
-                <article className="group relative h-full flex items-stretch gap-5 sm:gap-6 rounded-3xl overflow-hidden bg-[#0f3d2e] p-6 sm:p-7 border border-white/10 shadow-[0_28px_70px_-22px_rgba(15,61,46,0.55)] hover:shadow-[0_38px_90px_-22px_rgba(15,61,46,0.7)] transition-shadow duration-300 min-h-[340px]">
-                  {/* Left: uploadable image/icon slot (admin swaps card.image) */}
-                  <div className="relative w-[40%] flex-shrink-0 rounded-2xl overflow-hidden bg-white/5">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={card.image}
-                      alt={title}
-                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.05]"
-                      loading="lazy"
-                    />
-                  </div>
+                <TiltCard
+                  maxTilt={9}
+                  liftZ={28}
+                  glare={false}
+                  className="h-full rounded-3xl"
+                >
+                  <article
+                    className="group relative flex flex-col items-center text-center rounded-3xl border border-white/10 min-h-[400px] p-8 pt-10"
+                    style={{
+                      backgroundColor: color.bg,
+                      boxShadow: `0 28px 70px -22px ${color.shadow}`,
+                    }}
+                  >
+                    {/* Circular logo */}
+                    <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-white/30 shadow-lg mb-5 flex-shrink-0">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={card.image}
+                        alt={title}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        loading="lazy"
+                      />
+                    </div>
 
-                  {/* Right: copy */}
-                  <div className="relative flex flex-col justify-center flex-1 py-1 pr-1">
-                    <h3 className="font-extrabold text-white tracking-tight leading-[1.15] text-xl sm:text-[22px]">
+                    {/* Title */}
+                    <h3 className="font-extrabold text-white text-2xl tracking-tight leading-snug mb-6">
                       {title}
                     </h3>
-                    <ul className="mt-4 space-y-2.5">
+
+                    {/* Bullets — left-aligned */}
+                    <ul className="space-y-3 text-left w-full flex-1">
                       {bullets.map((bullet) => (
                         <li
                           key={bullet}
-                          className="flex items-start gap-2.5 text-sm sm:text-[15px] leading-snug text-emerald-100/85"
+                          className="flex items-start gap-3 text-white/90 text-sm leading-snug"
                         >
-                          <CheckCircle2 className="h-5 w-5 mt-0.5 flex-shrink-0 text-lime-400" />
+                          <CheckCircle2 className="h-4 w-4 mt-0.5 flex-shrink-0 text-white/70" />
                           <span>{bullet}</span>
                         </li>
                       ))}
                     </ul>
 
+                    {/* CTA */}
                     <a
                       href={card.href}
                       target={isExternal ? "_blank" : undefined}
                       rel={isExternal ? "noopener noreferrer" : undefined}
-                      className="mt-6 inline-flex items-center justify-center gap-2 self-start whitespace-nowrap rounded-full bg-lime-400 hover:bg-lime-300 px-6 py-3 text-[15px] font-bold text-black shadow-lg shadow-black/20 transition-colors"
+                      className="mt-8 inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-bold text-white border border-white/40 transition-all duration-200 hover:bg-white/20"
+                      style={{ backgroundColor: color.btn }}
                     >
                       {cta}
                       <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                     </a>
-                  </div>
-                </article>
-              </TiltCard>
+                  </article>
+                </TiltCard>
               </ScrollReveal>
             );
           })}
