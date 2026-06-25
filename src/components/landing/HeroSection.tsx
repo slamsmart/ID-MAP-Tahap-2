@@ -216,7 +216,7 @@ export default function HeroSection() {
             ref={copyRef}
             className="lg:col-span-7 animate-rise-fade transition-transform duration-300 ease-out"
           >
-            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-300/25 bg-emerald-400/10 px-4 py-2 text-emerald-100 md:backdrop-blur-md text-sm font-medium mb-6 shadow-[0_8px_30px_-12px_rgba(16,185,129,0.6)]">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/5 px-4 py-2 text-white md:backdrop-blur-md text-sm font-medium mb-6">
               <ShieldCheck className="h-4 w-4" />
               {badge}
             </div>
