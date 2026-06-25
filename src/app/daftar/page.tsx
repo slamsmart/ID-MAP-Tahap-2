@@ -10,7 +10,7 @@ import { getAuthBgImage } from "@/lib/heroImageStore";
 import Turnstile from "@/components/shared/Turnstile";
 import BiometricStep from "@/components/auth/BiometricStep";
 import { getVisitorId } from "@/lib/fingerprint";
-import { type RegisterResult } from "@/lib/webauthn";
+import { rememberBiometricEmail, type RegisterResult } from "@/lib/webauthn";
 
 const roles = ["sahabat", "mitra"] as const;
 type Role = (typeof roles)[number];
@@ -252,7 +252,7 @@ function RegisterForm() {
   const handleBiometricSuccess = async (credential: RegisterResult, challenge: string) => {
     try {
       const visitorId = await getVisitorId();
-      await fetch("/api/auth/webauthn", {
+      const res = await fetch("/api/auth/webauthn", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -262,6 +262,9 @@ function RegisterForm() {
           userId: newUserId,
         }),
       });
+      if (res.ok) {
+        rememberBiometricEmail(email);
+      }
     } catch {
       // non-fatal — user already registered, biometric storage failed silently
     }
@@ -689,4 +692,3 @@ export default function RegisterPage() {
     </Suspense>
   );
 }
-

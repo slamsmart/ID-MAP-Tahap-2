@@ -1,11 +1,42 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../../../../convex/_generated/api";
+import type { Id } from "../../../../../convex/_generated/dataModel";
 import { verifySessionToken, SESSION_COOKIE } from "@/lib/sessionToken";
 
 export const dynamic = "force-dynamic";
 
 const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
+
+function getSessionFromRequest(req: NextRequest) {
+  const token = req.cookies.get(SESSION_COOKIE)?.value;
+  return verifySessionToken(token);
+}
+
+export async function GET(req: NextRequest) {
+  const session = getSessionFromRequest(req);
+  if (!session) return NextResponse.json({ error: "Tidak terautentikasi." }, { status: 401 });
+
+  try {
+    const credentials = await convex.query(api.webauthn.getCredentials, {
+      userId: session.uid as Id<"users">,
+    });
+
+    return NextResponse.json({
+      enabled: credentials.length > 0,
+      count: credentials.length,
+      credentials: credentials.map((credential) => ({
+        deviceName: credential.deviceName ?? "Perangkat",
+        createdAt: credential.createdAt,
+      })),
+    });
+  } catch {
+    return NextResponse.json(
+      { error: "Gagal mengambil status biometrik." },
+      { status: 500 }
+    );
+  }
+}
 
 /**
  * POST /api/auth/webauthn
@@ -27,8 +58,7 @@ export async function POST(req: NextRequest) {
     // fall back to session cookie for post-login credential additions.
     let targetUserId = userId;
     if (!targetUserId) {
-      const token = req.cookies.get(SESSION_COOKIE)?.value;
-      const session = verifySessionToken(token);
+      const session = getSessionFromRequest(req);
       if (!session) return NextResponse.json({ error: "Tidak terautentikasi." }, { status: 401 });
       targetUserId = session.uid;
     }

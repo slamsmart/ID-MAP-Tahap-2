@@ -1,6 +1,36 @@
 import { mutation, query } from "./_generated/server";
 import { v, ConvexError } from "convex/values";
 
+type WebAuthnCredential = {
+  credentialId?: unknown;
+  publicKey?: unknown;
+  counter?: unknown;
+  deviceName?: unknown;
+  createdAt?: unknown;
+};
+
+function getValidCredentials(creds: unknown): Array<{
+  credentialId: string;
+  publicKey: string;
+  counter: number;
+  deviceName?: string;
+  createdAt: number;
+}> {
+  if (!Array.isArray(creds)) return [];
+  return creds.flatMap((cred: WebAuthnCredential) => {
+    if (typeof cred.credentialId !== "string" || cred.credentialId.length === 0) {
+      return [];
+    }
+    return [{
+      credentialId: cred.credentialId,
+      publicKey: typeof cred.publicKey === "string" ? cred.publicKey : "",
+      counter: typeof cred.counter === "number" ? cred.counter : 0,
+      ...(typeof cred.deviceName === "string" ? { deviceName: cred.deviceName } : {}),
+      createdAt: typeof cred.createdAt === "number" ? cred.createdAt : 0,
+    }];
+  });
+}
+
 // ─── Challenge Management ─────────────────────────────────────────────────────
 
 export const createChallenge = mutation({
@@ -109,7 +139,7 @@ export const getCredentials = query({
   handler: async (ctx, args) => {
     const user = await ctx.db.get(args.userId);
     if (!user) return [];
-    return (user.webauthnCredentials ?? []).map((c) => ({
+    return getValidCredentials(user.webauthnCredentials).map((c) => ({
       credentialId: c.credentialId,
       publicKey: c.publicKey,
       counter: c.counter,
@@ -127,7 +157,7 @@ export const hasWebAuthn = query({
       .withIndex("by_email", (q) => q.eq("email", args.email.toLowerCase()))
       .first();
     if (!user) return false;
-    return (user.webauthnCredentials ?? []).length > 0;
+    return getValidCredentials(user.webauthnCredentials).length > 0;
   },
 });
 
@@ -139,7 +169,31 @@ export const getCredentialsByEmail = query({
       .withIndex("by_email", (q) => q.eq("email", args.email.toLowerCase()))
       .first();
     if (!user) return [];
-    return (user.webauthnCredentials ?? []).map((c) => c.credentialId);
+    return getValidCredentials(user.webauthnCredentials).map((c) => c.credentialId);
+  },
+});
+
+export const getUserByEmailAndCredentialId = query({
+  args: { email: v.string(), credentialId: v.string() },
+  handler: async (ctx, args) => {
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_email", (q) => q.eq("email", args.email.toLowerCase()))
+      .first();
+    if (!user) return null;
+
+    const matched = getValidCredentials(user.webauthnCredentials).find(
+      (c) => c.credentialId === args.credentialId
+    );
+    if (!matched) return null;
+
+    return {
+      _id: user._id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      counter: matched.counter,
+    };
   },
 });
 
@@ -148,10 +202,7 @@ export const getUserByCredentialId = query({
   handler: async (ctx, args) => {
     const users = await ctx.db.query("users").take(10000);
     for (const user of users) {
-      const creds = (user.webauthnCredentials ?? []) as Array<{
-        credentialId: string;
-        counter: number;
-      }>;
+      const creds = getValidCredentials(user.webauthnCredentials);
       const matched = creds.find((c) => c.credentialId === args.credentialId);
       if (matched) {
         return {

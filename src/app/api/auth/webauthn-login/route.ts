@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../../../../convex/_generated/api";
+import type { Id } from "../../../../../convex/_generated/dataModel";
 import {
   createSessionToken,
   SESSION_COOKIE,
@@ -11,41 +12,73 @@ export const dynamic = "force-dynamic";
 
 const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
+export async function GET(req: NextRequest) {
+  try {
+    const email = req.nextUrl.searchParams.get("email")?.trim().toLowerCase();
+    if (!email) {
+      return NextResponse.json({ error: "Email wajib diisi." }, { status: 400 });
+    }
+
+    const credentialIds = await convex.query(api.webauthn.getCredentialsByEmail, {
+      email,
+    });
+    return NextResponse.json({ credentialIds });
+  } catch {
+    return NextResponse.json(
+      { error: "Gagal mengambil data biometrik." },
+      { status: 500 }
+    );
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json().catch(() => null);
     if (!body) return NextResponse.json({ error: "Body tidak valid." }, { status: 400 });
 
-    const { email, credentialId, counter } = body;
+    const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
+    const credentialId = typeof body.credentialId === "string" ? body.credentialId : "";
+    const counter = typeof body.counter === "number" ? body.counter : undefined;
     if (!credentialId) {
       return NextResponse.json({ error: "Data tidak lengkap." }, { status: 400 });
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let resolvedUser: any = null;
+    let resolvedUser: {
+      _id: Id<"users">;
+      email: string;
+      name: string;
+      role: "sahabat" | "mitra" | "mitra_facilitator" | "verifikator" | "admin" | "corporate";
+      counter: number;
+    } | null = null;
     let resolvedCounter = 0;
 
     if (email) {
       // Email-based lookup (user typed email first)
-      resolvedUser = await convex.query(api.users.getByEmail, {
-        email: email.toLowerCase().trim(),
+      resolvedUser = await convex.query(api.webauthn.getUserByEmailAndCredentialId, {
+        email,
+        credentialId,
       });
       if (!resolvedUser) {
-        return NextResponse.json({ error: "Akun tidak ditemukan." }, { status: 401 });
-      }
-      const creds: Array<{ credentialId: string; counter: number }> =
-        resolvedUser.webauthnCredentials ?? [];
-      const matched = creds.find((c) => c.credentialId === credentialId);
-      if (!matched) {
         return NextResponse.json(
           { error: "Biometrik tidak dikenali untuk akun ini." },
           { status: 401 }
         );
       }
-      resolvedCounter = matched.counter;
+      resolvedCounter = resolvedUser.counter;
     } else {
       // Discoverable-credential lookup (no email, browser presented passkey)
-      const found = await convex.query(api.webauthn.getUserByCredentialId, { credentialId });
+      let found = null;
+      try {
+        found = await convex.query(api.webauthn.getUserByCredentialId, { credentialId });
+      } catch {
+        return NextResponse.json(
+          {
+            error:
+              "Login biometrik perlu email sekali di perangkat ini. Masukkan email lalu coba tombol biometrik lagi.",
+          },
+          { status: 400 }
+        );
+      }
       if (!found) {
         return NextResponse.json({ error: "Biometrik tidak dikenali." }, { status: 401 });
       }
@@ -81,8 +114,10 @@ export async function POST(req: NextRequest) {
     });
 
     return res;
-  } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
-    return NextResponse.json({ error: msg }, { status: 500 });
+  } catch {
+    return NextResponse.json(
+      { error: "Terjadi kesalahan server biometrik. Silakan coba lagi." },
+      { status: 500 }
+    );
   }
 }

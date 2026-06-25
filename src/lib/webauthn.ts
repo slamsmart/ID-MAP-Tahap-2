@@ -47,6 +47,21 @@ export interface RegisterResult {
   deviceName: string;
 }
 
+const LAST_BIOMETRIC_EMAIL_KEY = "idmap:last_biometric_email";
+
+export function rememberBiometricEmail(email: string): void {
+  if (typeof window === "undefined") return;
+  const normalizedEmail = email.trim().toLowerCase();
+  if (!normalizedEmail.includes("@")) return;
+  localStorage.setItem(LAST_BIOMETRIC_EMAIL_KEY, normalizedEmail);
+}
+
+export function getRememberedBiometricEmail(): string | null {
+  if (typeof window === "undefined") return null;
+  const email = localStorage.getItem(LAST_BIOMETRIC_EMAIL_KEY)?.trim().toLowerCase();
+  return email && email.includes("@") ? email : null;
+}
+
 export async function registerBiometric(opts: {
   userId: string;     // opaque user handle (email works)
   userName: string;
