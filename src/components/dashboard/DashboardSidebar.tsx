@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import Image from "next/image";
@@ -53,12 +53,12 @@ const adminItems: SidebarItem[] = [
 
 const userItems: SidebarItem[] = [
   { icon: LayoutDashboard, label: "Beranda", href: "/user" },
+  { icon: Trophy, label: "Gamifikasi", href: "/user/gamifikasi" },
   { icon: Brain, label: "Analisis AI", href: "/user/analisis-ai" },
   { icon: FolderTree, label: "Proyek", href: "/user/proyek" },
   { icon: Globe, label: "Riwayat Scan", href: "/user/riwayat" },
   { icon: ArrowRightLeft, label: "Donasi & Kontribusi", href: "/user/donasi" },
   { icon: BarChart3, label: "Dampak Saya", href: "/user/dampak" },
-  { icon: Trophy, label: "Gamifikasi", href: "/user/gamifikasi" },
   { icon: CheckCircle, label: "Sertifikat", href: "/user/sertifikat" },
   { icon: ShieldCheck, label: "Lengkapi KYC", href: "/user/kyc" },
   { icon: Bell, label: "Pemberitahuan", href: "/user/notifikasi" },

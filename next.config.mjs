@@ -8,7 +8,7 @@ const nextConfig = {
   },
   experimental: {
     // Tree-shake import ikon/komponen besar → bundle peta & halaman lebih ringan
-    optimizePackageImports: ["lucide-react"],
+    optimizePackageImports: ["lucide-react", "recharts", "motion"],
   },
   webpack: (config, { isServer, dev }) => {
     if (isServer && !dev) {
