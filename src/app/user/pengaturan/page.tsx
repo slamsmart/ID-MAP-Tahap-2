@@ -1,13 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Save, User, Bell, Shield } from "lucide-react";
+import { useEffect, useState, useRef } from "react";
+import { Save, User, Bell, Shield, CheckCircle2, Loader2 } from "lucide-react";
 import { getSession } from "@/lib/auth";
 import BiometricEnrollCard from "@/components/settings/BiometricEnrollCard";
+
+type SaveState = "idle" | "saving" | "success";
 
 export default function PengaturanUserPage() {
   const [userName, setUserName] = useState("—");
   const [userEmail, setUserEmail] = useState("—");
+  const [saveState, setSaveState] = useState<SaveState>("idle");
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const s = getSession();
@@ -15,7 +19,16 @@ export default function PengaturanUserPage() {
       setUserName(s.name ?? "—");
       setUserEmail(s.email ?? "—");
     }
+    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
   }, []);
+
+  async function handleSave() {
+    if (saveState !== "idle") return;
+    setSaveState("saving");
+    await new Promise((r) => setTimeout(r, 900));
+    setSaveState("success");
+    timerRef.current = setTimeout(() => setSaveState("idle"), 2500);
+  }
 
   return (
     <div className="flex-1 p-6 bg-gray-50">
@@ -116,9 +129,25 @@ export default function PengaturanUserPage() {
           </div>
         </div>
 
-        <div className="flex justify-end">
-          <button className="flex items-center gap-2 px-6 py-2.5 bg-emerald-900 text-white rounded-lg text-sm font-semibold hover:bg-emerald-800">
-            <Save className="w-4 h-4" /> Simpan Perubahan
+        <div className="flex items-center justify-end gap-3">
+          {saveState === "success" && (
+            <span className="flex items-center gap-1.5 text-sm text-emerald-600 animate-in fade-in slide-in-from-right-2 duration-300">
+              <CheckCircle2 className="w-4 h-4" /> Perubahan tersimpan
+            </span>
+          )}
+          <button
+            onClick={handleSave}
+            disabled={saveState !== "idle"}
+            className="flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold text-white transition-all duration-200 disabled:cursor-not-allowed
+              bg-emerald-900 hover:bg-emerald-800 disabled:opacity-70"
+          >
+            {saveState === "saving" ? (
+              <><Loader2 className="w-4 h-4 animate-spin" /> Menyimpan…</>
+            ) : saveState === "success" ? (
+              <><CheckCircle2 className="w-4 h-4" /> Tersimpan</>
+            ) : (
+              <><Save className="w-4 h-4" /> Simpan Perubahan</>
+            )}
           </button>
         </div>
       </div>
