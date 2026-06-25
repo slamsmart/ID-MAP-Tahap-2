@@ -57,7 +57,7 @@ export default function PokmaswasCampaignSection() {
             Dukung Proyek Aktif
           </span>
           <h2 className="font-display text-3xl font-extrabold leading-tight tracking-tight text-[#0f3d2e] sm:text-4xl">
-            Dukung via QRIS untuk Pokmaswas / Mitra
+            Dukung via QRIS untuk Kelompok Masyarakat Pesisir / Mitra
           </h2>
           <p className="mt-3 text-slate-600 max-w-2xl mx-auto text-sm">
             3 proyek mangrove terverifikasi siap menerima dukungan.
