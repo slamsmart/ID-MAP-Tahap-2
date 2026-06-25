@@ -79,6 +79,7 @@ export default function DonasiPage() {
   const [state, setState] = useState<PaymentState>("idle");
   const [qrisData, setQrisData] = useState<QrisData | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
+  const [showToast, setShowToast] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -170,6 +171,8 @@ export default function DonasiPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Simulasi gagal");
       setState("paid");
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 4000);
     } catch (err: unknown) {
       setErrorMsg(getErrorMessage(err, "Simulasi gagal"));
       setState("error");
@@ -184,6 +187,15 @@ export default function DonasiPage() {
 
   return (
     <div className="flex-1 p-6 bg-gray-50">
+      {showToast && qrisData && (
+        <div className="fixed top-4 right-4 z-50 flex items-center gap-3 bg-emerald-600 text-white px-4 py-3 rounded-xl shadow-xl">
+          <CheckCircle className="w-5 h-5 shrink-0" />
+          <div>
+            <p className="font-semibold text-sm">Pembayaran Berhasil!</p>
+            <p className="text-xs text-emerald-100">{formatRp(qrisData.amount)} telah diterima</p>
+          </div>
+        </div>
+      )}
       <div className="mb-6">
         <h1 className="text-2xl font-display font-bold text-gray-900">Donasi & Kontribusi</h1>
         <p className="text-sm text-gray-500 mt-1">
@@ -402,7 +414,7 @@ export default function DonasiPage() {
                       value={`https://mayar.id/pay/demo?amount=${qrisData.amount}&ref=${qrisData.paymentId}`}
                       size={176}
                       level="M"
-                      fgColor="#064E3B"
+                      fgColor="#000000"
                     />
                   )}
                 </div>

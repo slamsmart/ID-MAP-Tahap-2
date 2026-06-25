@@ -3,13 +3,20 @@
 import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Leaf, Eye, EyeOff, Globe, ArrowRight, ShieldCheck, Lock, Mail, Fingerprint, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Globe, ArrowRight, ShieldCheck, Lock, Mail, Fingerprint, Loader2 } from "lucide-react";
 import { setSession, getDashboardPath, User } from "@/lib/auth";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getAuthBgImage } from "@/lib/heroImageStore";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
-import { isWebAuthnAvailable, isPlatformAuthenticatorAvailable, verifyBiometric, generateChallenge } from "@/lib/webauthn";
+import {
+  getRememberedBiometricEmail,
+  isWebAuthnAvailable,
+  isPlatformAuthenticatorAvailable,
+  rememberBiometricEmail,
+  verifyBiometric,
+  generateChallenge,
+} from "@/lib/webauthn";
 
 const roles = ["sahabat", "mitra"] as const;
 type Role = (typeof roles)[number];
@@ -53,12 +60,11 @@ function LoginForm() {
   const [biometricError, setBiometricError] = useState("");
   const [biometricDirectScanning, setBiometricDirectScanning] = useState(false);
   const [biometricDirectError, setBiometricDirectError] = useState("");
+  const [emailCredentialIds, setEmailCredentialIds] = useState<string[]>([]);
   const DEFAULT_BG = "/images/hero-mangrove.webp";
   const [bgImage, setBgImage] = useState(DEFAULT_BG);
   const stats = useQuery(api.platformStats.getAll);
   const emailNorm = email.includes("@") ? email.trim().toLowerCase() : null;
-  const hasWebAuthn = useQuery(api.webauthn.hasWebAuthn, emailNorm ? { email: emailNorm } : "skip");
-  const credentialIds = useQuery(api.webauthn.getCredentialsByEmail, hasWebAuthn && emailNorm ? { email: emailNorm } : "skip");
   const statByKey = new Map((stats ?? []).map((s) => [s.key, s.value]));
   const sahabatStat = statByKey.get("sahabat_terlibat") ?? "12.456";
   const bibitStat = statByKey.get("bibit_ditanam") ?? "1.285.760";
@@ -75,6 +81,28 @@ function LoginForm() {
     if (!isWebAuthnAvailable()) return;
     isPlatformAuthenticatorAvailable().then(setPlatformBiometric).catch(() => {});
   }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    setEmailCredentialIds([]);
+    if (!emailNorm) return;
+
+    fetch(`/api/auth/webauthn-login?email=${encodeURIComponent(emailNorm)}`, {
+      credentials: "same-origin",
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (cancelled) return;
+        setEmailCredentialIds(Array.isArray(data?.credentialIds) ? data.credentialIds : []);
+      })
+      .catch(() => {
+        if (!cancelled) setEmailCredentialIds([]);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [emailNorm]);
 
   const roleLabels: Record<Role, string> = {
     sahabat: t("Sahabat", "Sahabat"),
@@ -134,13 +162,16 @@ function LoginForm() {
   };
 
   const handleBiometricLogin = async () => {
-    if (!credentialIds?.length) return;
+    if (!emailCredentialIds.length) return;
     setBiometricScanning(true);
     setBiometricError("");
     setError("");
     try {
       const challenge = generateChallenge();
-      const { credentialId, counter } = await verifyBiometric({ challenge, credentialIds });
+      const { credentialId, counter } = await verifyBiometric({
+        challenge,
+        credentialIds: emailCredentialIds,
+      });
       const r = await fetch("/api/auth/webauthn-login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -154,6 +185,7 @@ function LoginForm() {
       const data = await r.json();
       const user = data.user as User;
       setSession(user);
+      rememberBiometricEmail(user.email);
       router.push(safeNext ?? getDashboardPath(user.role));
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Login biometrik gagal.";
@@ -167,7 +199,7 @@ function LoginForm() {
     }
   };
 
-  const showBiometricButton = platformBiometric && hasWebAuthn && (credentialIds?.length ?? 0) > 0;
+  const showBiometricButton = platformBiometric && emailCredentialIds.length > 0;
 
   const handleBiometricLoginDirect = async () => {
     setBiometricDirectScanning(true);
@@ -175,13 +207,40 @@ function LoginForm() {
     setError("");
     try {
       const challenge = generateChallenge();
-      // Empty credentialIds = discoverable credentials; browser shows available passkeys for this origin
-      const { credentialId, counter } = await verifyBiometric({ challenge, credentialIds: [] });
+      const rememberedEmail = getRememberedBiometricEmail();
+      let loginEmail: string | null = rememberedEmail;
+      let loginCredentialIds: string[] = [];
+
+      if (rememberedEmail) {
+        const credentials = await fetch(
+          `/api/auth/webauthn-login?email=${encodeURIComponent(rememberedEmail)}`,
+          { credentials: "same-origin" }
+        );
+        if (credentials.ok) {
+          const data = await credentials.json().catch(() => null);
+          loginCredentialIds = Array.isArray(data?.credentialIds) ? data.credentialIds : [];
+        } else {
+          loginEmail = null;
+        }
+      }
+
+      // Empty credentialIds = discoverable credentials; browser shows available passkeys for this origin.
+      // Some Android/browser combinations do not create discoverable credentials, so prefer the remembered
+      // local email when available and only fall back to account-less lookup when needed.
+      const { credentialId, counter } = await verifyBiometric({
+        challenge,
+        credentialIds: loginCredentialIds,
+      });
       const r = await fetch("/api/auth/webauthn-login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "same-origin",
-        body: JSON.stringify({ credentialId, counter, challenge }),
+        body: JSON.stringify({
+          ...(loginEmail ? { email: loginEmail } : {}),
+          credentialId,
+          counter,
+          challenge,
+        }),
       });
       if (!r.ok) {
         const data = await r.json().catch(() => null);
@@ -190,6 +249,7 @@ function LoginForm() {
       const data = await r.json();
       const user = data.user as User;
       setSession(user);
+      rememberBiometricEmail(user.email);
       router.push(safeNext ?? getDashboardPath(user.role));
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Login biometrik gagal.";
@@ -248,7 +308,7 @@ function LoginForm() {
             <h2 className="text-3xl xl:text-4xl font-extrabold text-white leading-tight tracking-tight">
               {t("Satu Platform.", "One Platform.")}<br />
               {t("Seluruh Ekosistem Mangrove & Pesisir", "The Entire Mangrove & Coastal Ecosystem")}<br />
-              <span className="text-emerald-300">{t("Indonesia.", "Indonesia.")}</span>
+              <span className="text-white">{t("Indonesia.", "Indonesia.")}</span>
             </h2>
 
             <p className="text-base text-white/70 max-w-sm leading-relaxed">
@@ -265,7 +325,7 @@ function LoginForm() {
                 <div className="text-xs text-white/50 mt-0.5">{t("Sahabat Terlibat", "Partners Involved")}</div>
               </div>
               <div>
-                <div className="text-2xl font-extrabold text-emerald-300">{bibitStat}</div>
+                <div className="text-2xl font-extrabold text-white">{bibitStat}</div>
                 <div className="text-xs text-white/50 mt-0.5">{t("Bibit Ditanam", "Seedlings Planted")}</div>
               </div>
               <div>
@@ -303,10 +363,14 @@ function LoginForm() {
         {/* Top bar: Language switcher + back link */}
         <div className="flex items-center justify-between px-6 sm:px-10 py-5">
           <Link href="/" className="inline-flex items-center gap-2 lg:hidden" aria-label="Beranda ID-MAP">
-            <div className="w-9 h-9 bg-[#0f3d2e] rounded-lg flex items-center justify-center">
-              <Leaf className="w-4 h-4 text-white" aria-hidden="true" />
+            <div className="flex h-12 w-16 items-center justify-center rounded-xl bg-[#0f3d2e] px-2 shadow-sm">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/images/logo-white.png"
+                alt="ID-MAP"
+                className="h-9 w-auto object-contain"
+              />
             </div>
-            <span className="font-bold text-lg text-[#0f3d2e]">ID-MAP</span>
           </Link>
           <div className="hidden lg:block" /> {/* spacer for desktop */}
           

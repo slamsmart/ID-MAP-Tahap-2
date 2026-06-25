@@ -16,8 +16,6 @@ export default function MitraLayout({
         <DashboardSidebar type="mitra" />
         <div className="flex-1 flex flex-col min-w-0">
           <DashboardHeader
-            avatarInitials="MP"
-            avatarCls="bg-blue-500/20 text-blue-300"
           />
           <main className="flex-1 p-4 sm:p-6 overflow-auto">
             <PageTransition>{children}</PageTransition>

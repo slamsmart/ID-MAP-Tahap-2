@@ -1,8 +1,15 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { Leaf, BarChart2, AlertTriangle, LogOut } from "lucide-react";
-import { logout } from "@/lib/auth";
+import { logout, getSession, refreshSession, type User } from "@/lib/auth";
+
+function getInitials(name: string): string {
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
 
 const STATS = [
   {
@@ -31,13 +38,18 @@ const STATS = [
   },
 ] as const;
 
-interface Props {
-  avatarInitials: string;
-  avatarCls: string;
-}
-
-export default function DashboardHeader({ avatarInitials, avatarCls }: Props) {
+export default function DashboardHeader() {
   const router = useRouter();
+  const [user, setUser] = useState<User | null>(() => getSession());
+
+  useEffect(() => {
+    if (!user) void refreshSession().then(setUser);
+    const handler = () => setUser(getSession());
+    window.addEventListener("session:change", handler);
+    return () => window.removeEventListener("session:change", handler);
+  }, []);
+
+  const initials = user?.name ? getInitials(user.name) : "??";
 
   const handleLogout = async () => {
     await logout();
@@ -96,9 +108,9 @@ export default function DashboardHeader({ avatarInitials, avatarCls }: Props) {
             <span className="hidden sm:inline">Keluar</span>
           </button>
           <div
-            className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold sm:h-10 sm:w-10 sm:text-base ${avatarCls}`}
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 text-sm font-semibold text-white sm:h-10 sm:w-10 sm:text-base"
           >
-            {avatarInitials}
+            {initials}
           </div>
         </div>
       </div>

@@ -171,7 +171,7 @@ function VerifikatorLoginForm() {
             <h2 className="text-3xl xl:text-4xl font-extrabold text-white leading-tight tracking-tight">
               {t("Satu Platform.", "One Platform.")}<br />
               {t("Seluruh Ekosistem Mangrove & Pesisir", "The Entire Mangrove & Coastal Ecosystem")}<br />
-              <span className="text-emerald-300">{t("Indonesia.", "Indonesia.")}</span>
+              <span className="text-white">{t("Indonesia.", "Indonesia.")}</span>
             </h2>
 
             <p className="text-base text-white/70 max-w-sm leading-relaxed">
@@ -187,7 +187,7 @@ function VerifikatorLoginForm() {
                 <div className="text-xs text-white/50 mt-0.5">{t("Sahabat Terlibat", "Partners Involved")}</div>
               </div>
               <div>
-                <div className="text-2xl font-extrabold text-emerald-300">{bibitStat}</div>
+                <div className="text-2xl font-extrabold text-white">{bibitStat}</div>
                 <div className="text-xs text-white/50 mt-0.5">{t("Bibit Ditanam", "Seedlings Planted")}</div>
               </div>
               <div>

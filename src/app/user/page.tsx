@@ -210,7 +210,7 @@ export default function UserDashboard() {
                 <QRCodeSVG
                   value={donationLink}
                   size={180}
-                  fgColor="#064E3B"
+                  fgColor="#000000"
                   level="M"
                 />
               </a>

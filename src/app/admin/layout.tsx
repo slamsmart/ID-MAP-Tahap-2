@@ -16,8 +16,6 @@ export default function AdminLayout({
         <DashboardSidebar type="admin" />
         <div className="flex-1 flex flex-col min-w-0">
           <DashboardHeader
-            avatarInitials="AD"
-            avatarCls="bg-red-500/20 text-red-300"
           />
           <main className="flex-1 p-4 sm:p-6 overflow-auto">
             <PageTransition>{children}</PageTransition>
