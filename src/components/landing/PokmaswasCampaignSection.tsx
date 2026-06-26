@@ -56,7 +56,7 @@ export default function PokmaswasCampaignSection() {
             <Heart className="w-3 h-3" />
             Dukung Proyek Aktif
           </span>
-          <h2 className="font-display text-3xl font-extrabold leading-tight tracking-tight text-[#0f3d2e] sm:text-4xl">
+          <h2 className="text-3xl font-semibold leading-tight tracking-tight text-[#0f3d2e] sm:text-4xl">
             Dukung via QRIS untuk Kelompok Masyarakat Pesisir / Mitra
           </h2>
           <p className="mt-3 text-slate-600 max-w-2xl mx-auto text-sm">
@@ -109,7 +109,7 @@ export default function PokmaswasCampaignSection() {
 
                   {/* Content */}
                   <div className="p-5 sm:p-6 flex flex-col flex-1 gap-4 bg-[#0f3d2e]">
-                    <h3 className="font-display font-bold text-white text-base leading-snug line-clamp-2 group-hover:text-lime-300 transition-colors">
+                    <h3 className="font-sans font-bold text-white text-base leading-snug line-clamp-2 group-hover:text-lime-300 transition-colors">
                       {p.title}
                     </h3>
                     <p className="text-sm text-white leading-relaxed line-clamp-2 flex-1">
@@ -198,3 +198,4 @@ export default function PokmaswasCampaignSection() {
     </section>
   );
 }
+

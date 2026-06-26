@@ -221,17 +221,15 @@ export default function HeroSection() {
               {badge}
             </div>
 
-            <h1 className="font-hero text-4xl sm:text-5xl md:text-6xl font-extrabold leading-[1.08] tracking-tight text-white">
+            <h1 className="font-hero text-4xl sm:text-5xl md:text-6xl font-extrabold leading-[1.02] tracking-tight text-white">
               <span className="drop-shadow-[0_4px_24px_rgba(0,0,0,0.5)]">{line1}</span>
               <br />
               <span className="drop-shadow-[0_4px_24px_rgba(0,0,0,0.5)]">{line2}</span>
               <br />
-              <span className="text-white">
-                {accent}
-              </span>
+              <span className="text-white">{accent}</span>
             </h1>
 
-            <p className="mt-6 max-w-2xl text-lg md:text-xl leading-relaxed text-emerald-50/90 font-medium">
+            <p className="mt-6 max-w-2xl text-lg md:text-xl leading-relaxed text-emerald-50/90 font-normal">
               {subhead}
             </p>
 

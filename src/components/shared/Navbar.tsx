@@ -60,7 +60,7 @@ export default function Navbar() {
           : pathname === "/"
           ? "fixed top-0 bg-[#0f3d2e] backdrop-blur-xl border-b border-white/5"
           : "sticky top-0 bg-[#0f3d2e] border-b border-white/5"
-      }`}
+      } font-sans`}
     >
       <div className="mx-auto max-w-7xl px-6 py-4 flex items-center justify-between">
         <Link href="/" className="flex items-center" aria-label="ID-MAP - Mangrove & Pesisir untuk Ekosistem Karbon Indonesia">
@@ -74,7 +74,7 @@ export default function Navbar() {
           />
         </Link>
 
-        <nav className="hidden lg:flex items-center gap-2 rounded-full bg-white/95 p-1.5 text-sm font-bold text-[#0f3d2e] shadow-lg shadow-emerald-950/30">
+        <nav className="hidden lg:flex items-center gap-2 rounded-full bg-white/95 p-1.5 text-base font-semibold text-black shadow-lg shadow-emerald-950/30">
           {navLinks.map((link) => {
             const active = isLinkActive(pathname, link.href);
             return (
@@ -85,8 +85,8 @@ export default function Navbar() {
                 className={`rounded-full px-5 py-2.5 transition-colors whitespace-nowrap ${
                   active
                     ? "bg-[#0f3d2e] text-white shadow-md"
-                    : "text-[#0f3d2e] hover:bg-emerald-50"
-                }`}
+                    : "text-black hover:bg-emerald-50"
+                } font-sans`}
               >
                 {t(link.idLabel, link.enLabel)}
               </Link>
@@ -184,11 +184,11 @@ export default function Navbar() {
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
                 aria-current={active ? "page" : undefined}
-                className={`block px-4 py-2.5 text-sm font-semibold rounded-lg ${
+                className={`block px-4 py-2.5 text-base font-semibold rounded-lg ${
                   active
                     ? "text-[#0f3d2e] bg-emerald-50"
                     : "text-black hover:bg-emerald-50 hover:text-[#0f3d2e]"
-                }`}
+                } font-sans`}
               >
                 {t(link.idLabel, link.enLabel)}
               </Link>
@@ -232,3 +232,5 @@ export default function Navbar() {
     </header>
   );
 }
+
+

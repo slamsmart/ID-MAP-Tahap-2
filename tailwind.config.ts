@@ -58,10 +58,10 @@ const config: Config = {
         modal: "1.5rem", // 24px — modals, hero panels
       },
       fontFamily: {
-        display: ["var(--font-plus-jakarta)", "sans-serif"],
-        sans: ["var(--font-inter)", "sans-serif"],
-        dashboard: ["var(--font-inter)", "sans-serif"],
-        hero: ["var(--font-inter)", "sans-serif"],
+        display: ["var(--font-plus-jakarta-sans)", "sans-serif"],
+        sans: ["var(--font-plus-jakarta-sans)", "sans-serif"],
+        dashboard: ["var(--font-plus-jakarta-sans)", "sans-serif"],
+        hero: ["var(--font-plus-jakarta-sans)", "sans-serif"],
       },
     },
   },

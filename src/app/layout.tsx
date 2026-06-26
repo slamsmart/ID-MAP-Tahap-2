@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Instrument_Sans, Fraunces } from "next/font/google";
+import { Instrument_Sans, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { ConvexClientProvider } from "./ConvexClientProvider";
 import { LanguageProvider } from "@/contexts/LanguageContext";
@@ -15,10 +15,10 @@ const instrumentSans = Instrument_Sans({
   display: "swap",
 });
 
-const fraunces = Fraunces({
+const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  variable: "--font-fraunces",
-  weight: ["400", "500", "700", "800"],
+  variable: "--font-plus-jakarta-sans",
+  weight: ["300", "400", "500", "600", "700", "800"],
   display: "swap",
 });
 
@@ -122,7 +122,7 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com" />
       </head>
       <body
-        className={`${instrumentSans.variable} ${fraunces.variable} font-sans antialiased`}
+        className={`${instrumentSans.variable} ${plusJakartaSans.variable} font-sans antialiased`}
       >
         <ConvexClientProvider>
           <LanguageProvider>

@@ -25,8 +25,8 @@ export default function LeaderboardPage() {
         {/* Hero */}
         <section className="bg-[#0f3d2e] text-white py-16 sm:py-20">
           <ScrollReveal className="mx-auto max-w-5xl px-4 sm:px-6 text-center">
-            <div className="inline-flex items-center gap-2 rounded-full bg-lime-400/15 px-4 py-2 text-sm font-semibold text-lime-300 mb-4">
-              <Trophy className="w-4 h-4" />
+            <div className="inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/20 px-4 py-2 text-sm font-semibold text-white mb-4">
+              <Trophy className="w-4 h-4 text-white" />
               Papan Peringkat
             </div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
@@ -68,14 +68,14 @@ export default function LeaderboardPage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
                 href="/daftar?peran=sahabat"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-8 py-3.5 text-sm font-bold text-black hover:bg-gray-100 shadow-lg shadow-black/10 transition border border-gray-200"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#0f3d2e] px-8 py-3.5 text-sm font-semibold text-white hover:bg-emerald-800 shadow-lg shadow-emerald-900/20 transition-all hover:-translate-y-0.5"
               >
                 <Sprout className="w-4 h-4" />
                 Daftar sebagai Sahabat
               </a>
               <a
                 href="/"
-                className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-[#0f3d2e] px-8 py-3.5 text-sm font-bold text-[#0f3d2e] hover:bg-emerald-50 transition"
+                className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-[#0f3d2e] px-8 py-3.5 text-sm font-semibold text-[#0f3d2e] hover:bg-[#0f3d2e] hover:text-white transition-all"
               >
                 Kembali ke Beranda
               </a>

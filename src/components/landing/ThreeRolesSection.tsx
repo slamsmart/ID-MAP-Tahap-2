@@ -133,7 +133,7 @@ export default function ThreeRolesSection() {
       <div className="pointer-events-none absolute left-1/2 top-1/3 h-72 w-[42rem] -translate-x-1/2 rounded-full bg-emerald-300/20 blur-3xl" />
       <div className="relative mx-auto max-w-7xl px-6">
         <ScrollReveal className="text-center mb-10">
-          <h2 className="text-4xl font-extrabold tracking-tight text-[#0f3d2e]">
+          <h2 className="text-4xl font-semibold tracking-tight text-[#0f3d2e]">
             {headline}
           </h2>
           <p className="mt-3 text-slate-600 max-w-2xl mx-auto">{subtitle}</p>
@@ -173,7 +173,7 @@ export default function ThreeRolesSection() {
                     </div>
 
                     {/* Title */}
-                    <h3 className="font-display font-extrabold text-white text-3xl tracking-tight leading-snug mb-6 group-hover:text-lime-300 transition-colors duration-300">
+                    <h3 className="font-semibold text-white text-3xl tracking-tight leading-snug mb-6 group-hover:text-lime-300 transition-colors duration-300">
                       {title}
                     </h3>
 
@@ -210,3 +210,4 @@ export default function ThreeRolesSection() {
     </section>
   );
 }
+

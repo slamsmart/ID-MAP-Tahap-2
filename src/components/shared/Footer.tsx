@@ -54,11 +54,11 @@ export default function Footer() {
               className="hidden sm:block h-20 w-auto object-contain shrink-0"
             />
             <div>
-              <h3 className="font-display font-bold text-3xl md:text-4xl mb-2 text-white">
+              <h3 className="font-semibold text-3xl md:text-4xl mb-2 text-white">
                 {t("Terus Dukung Proyek", "Keep Supporting")}<br/>
                 {t("Mangrove Indonesia", "Indonesia's Mangrove Projects")}
               </h3>
-              <p className="text-emerald-50 text-sm md:text-base font-medium mb-6">
+              <p className="text-emerald-50 text-sm md:text-base font-normal mb-6">
                 {t("Setiap aksi kecil Anda, berdampak besar untuk masa depan bumi.", "Every small action you take has a big impact on the future of our planet.")}
               </p>
 
@@ -88,7 +88,7 @@ export default function Footer() {
           </div>
 
           <div className="relative z-10 flex flex-col items-center md:items-end w-full md:w-auto">
-            <Link href="/daftar" className="flex items-center justify-center gap-3 px-8 py-4 w-full md:w-auto bg-white text-emerald-900 font-display font-bold rounded-2xl hover:bg-emerald-50 transition-all hover:scale-105 active:scale-95 shadow-xl">
+            <Link href="/daftar" className="flex items-center justify-center gap-3 px-8 py-4 w-full md:w-auto bg-white text-emerald-900 font-sans font-bold rounded-2xl hover:bg-emerald-50 transition-all hover:scale-105 active:scale-95 shadow-xl">
               {t("Dukung Proyek Sekarang", "Support Projects Now")}
               <ArrowRight className="w-5 h-5" />
             </Link>
@@ -114,7 +114,7 @@ export default function Footer() {
                   height={40}
                   className="h-10 w-10 object-contain"
                 />
-                <span className="font-display font-bold text-2xl tracking-tight">{brandName}</span>
+                <span className="font-sans font-bold text-2xl tracking-tight">{brandName}</span>
               </div>
               <p className="text-sm text-gray-400 mb-6 leading-relaxed">
                 {t(descId, descEn)}
@@ -156,7 +156,7 @@ export default function Footer() {
                 <div className="w-8 h-8 bg-emerald-900/50 rounded-full flex items-center justify-center">
                   <Leaf className="w-4 h-4 text-emerald-400" />
                 </div>
-                <h4 className="font-display font-bold text-lg">{t("Platform", "Platform")}</h4>
+                <h4 className="font-sans font-bold text-lg">{t("Platform", "Platform")}</h4>
               </div>
               <ul className="space-y-4 text-sm text-gray-400 font-medium">
                 {["Jelajahi Proyek", "Untuk Komunitas", "Untuk Perusahaan", "Kalkulator Karbon"].map((item, idx) => (
@@ -176,7 +176,7 @@ export default function Footer() {
                 <div className="w-8 h-8 bg-emerald-900/50 rounded-full flex items-center justify-center">
                   <BookOpen className="w-4 h-4 text-emerald-400" />
                 </div>
-                <h4 className="font-display font-bold text-lg">{t("Sumber Daya", "Resources")}</h4>
+                <h4 className="font-sans font-bold text-lg">{t("Sumber Daya", "Resources")}</h4>
               </div>
               <ul className="space-y-4 text-sm text-gray-400 font-medium">
                 {[
@@ -199,7 +199,7 @@ export default function Footer() {
                 <div className="w-8 h-8 bg-emerald-900/50 rounded-full flex items-center justify-center">
                   <ShieldCheck className="w-4 h-4 text-emerald-400" />
                 </div>
-                <h4 className="font-display font-bold text-lg">{t("Legal", "Legal")}</h4>
+                <h4 className="font-sans font-bold text-lg">{t("Legal", "Legal")}</h4>
               </div>
               <ul className="space-y-4 text-sm text-gray-400 font-medium">
                 {[
@@ -274,3 +274,4 @@ export default function Footer() {
     </footer>
   );
 }
+

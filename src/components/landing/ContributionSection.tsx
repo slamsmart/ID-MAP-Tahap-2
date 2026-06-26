@@ -25,7 +25,7 @@ const corporateSteps = [
 export default function ContributionSection() {
   return (
     <div>
-      <h2 className="font-display font-bold text-2xl md:text-3xl text-emerald-900 mb-8">
+      <h2 className="font-semibold text-2xl md:text-3xl text-emerald-900 mb-8">
         Dua Cara Mudah Berkontribusi
       </h2>
 
@@ -38,7 +38,7 @@ export default function ContributionSection() {
                 <Users className="w-6 h-6 text-emerald-700" />
               </div>
               <div>
-                <p className="font-display font-bold text-emerald-900 text-sm">
+                <p className="font-semibold text-emerald-900 text-sm">
                   Untuk Komunitas
                 </p>
                 <p className="text-xs text-gray-500">Dukung via QRIS</p>
@@ -50,7 +50,7 @@ export default function ContributionSection() {
                 <div key={step.num} className="flex items-center gap-2">
                   <div className="flex flex-col items-center text-center w-16">
                     <div className="w-10 h-10 bg-emerald-50 border border-emerald-100 rounded-full flex items-center justify-center mb-1">
-                      <span className="font-display font-bold text-emerald-700 text-xs">
+                      <span className="font-semibold text-emerald-700 text-xs">
                         {step.num}
                       </span>
                     </div>
@@ -76,7 +76,7 @@ export default function ContributionSection() {
                 <Building2 className="w-6 h-6 text-emerald-700" />
               </div>
               <div>
-                <p className="font-display font-bold text-emerald-900 text-sm">
+                <p className="font-semibold text-emerald-900 text-sm">
                   Untuk Perusahaan
                 </p>
                 <p className="text-xs text-gray-500">
@@ -90,7 +90,7 @@ export default function ContributionSection() {
                 <div key={step.num} className="flex items-center gap-2">
                   <div className="flex flex-col items-center text-center w-16">
                     <div className="w-10 h-10 bg-emerald-50 border border-emerald-100 rounded-full flex items-center justify-center mb-1">
-                      <span className="font-display font-bold text-emerald-700 text-xs">
+                      <span className="font-semibold text-emerald-700 text-xs">
                         {step.num}
                       </span>
                     </div>
@@ -111,3 +111,4 @@ export default function ContributionSection() {
     </div>
   );
 }
+

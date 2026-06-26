@@ -21,7 +21,7 @@ export default function ProjectsSection() {
             <button aria-label="Proyek selanjutnya" className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors">
               <ChevronRight className="w-5 h-5 text-gray-600" aria-hidden="true" />
             </button>
-            <h2 className="font-display font-bold text-2xl md:text-3xl text-gray-900">
+            <h2 className="font-semibold text-2xl md:text-3xl text-gray-900">
               {t("Proyek Layanan Ekosistem Mangrove", "Mangrove Ecosystem Service Projects")}
             </h2>
           </div>
@@ -72,7 +72,7 @@ export default function ProjectsSection() {
                         {project.serviceType}
                       </span>
                     )}
-                    <h3 className="font-display font-semibold text-gray-900 mb-1">
+                    <h3 className="font-sans font-semibold text-gray-900 mb-1">
                       {project.title}
                     </h3>
                     <div className="flex items-center gap-1 text-gray-500 text-sm mb-2">
@@ -90,3 +90,4 @@ export default function ProjectsSection() {
     </section>
   );
 }
+

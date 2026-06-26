@@ -238,7 +238,7 @@ export default function OurServicesSection() {
         {/* ── Header row ─────────────────────────────────────────── */}
         <div className="mb-8 flex flex-col gap-5 sm:mb-10 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
           <ScrollReveal>
-            <h2 className="max-w-[12ch] font-display text-3xl font-extrabold leading-tight tracking-tight text-[#0f3d2e] sm:max-w-none sm:text-4xl">
+            <h2 className="max-w-[12ch] text-3xl font-semibold leading-tight tracking-tight text-[#0f3d2e] sm:max-w-none sm:text-4xl">
               {t("Solusi Ekosistem Pesisir", "Coastal Ecosystem Solutions")}
             </h2>
           </ScrollReveal>
@@ -313,12 +313,12 @@ export default function OurServicesSection() {
                       {/* ── Card content ── */}
                       <div className="absolute inset-x-0 bottom-0 flex min-h-[68%] flex-col justify-between p-5 sm:inset-x-auto sm:inset-y-0 sm:left-0 sm:min-h-0 sm:w-[50%] sm:p-7 md:p-9">
                         <div>
-                          <h3 className="max-w-full break-words font-display text-2xl font-extrabold leading-tight text-white transition-colors duration-300 group-hover:text-[#ffd84d] sm:text-3xl sm:leading-[1.02] md:text-4xl">
+                          <h3 className="max-w-full break-words text-2xl font-semibold leading-tight text-white transition-colors duration-300 group-hover:text-[#ffd84d] sm:text-3xl sm:leading-[1.02] md:text-4xl">
                             {t(svc.title[0], svc.title[1])}
                           </h3>
                         </div>
                         <div>
-                          <p className="mt-5 max-w-[34ch] font-sans text-sm font-normal leading-relaxed text-white sm:mt-0 sm:text-base sm:leading-snug md:text-lg">
+                          <p className="mt-5 max-w-[34ch] text-sm font-normal leading-relaxed text-white sm:mt-0 sm:text-base sm:leading-snug md:text-lg">
                             {t(svc.desc[0], svc.desc[1])}
                           </p>
                         </div>
@@ -388,3 +388,4 @@ export default function OurServicesSection() {
     </section>
   );
 }
+
