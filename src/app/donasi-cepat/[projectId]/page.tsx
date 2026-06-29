@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "convex/react";
@@ -16,6 +16,7 @@ import {
   ShieldCheck,
   Sparkles,
   Wallet,
+  Download,
 } from "lucide-react";
 import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
@@ -72,6 +73,35 @@ export default function DonasiCepatPage() {
   const [qrisData, setQrisData] = useState<QrisData | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
   const [isSandbox, setIsSandbox] = useState(false);
+  const qrContainerRef = useRef<HTMLDivElement>(null);
+
+  const handleDownloadQris = async () => {
+    if (!qrisData) return;
+    if (qrisData.qrImageUrl) {
+      try {
+        const res = await fetch(qrisData.qrImageUrl);
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `QRIS-IDMAP-${qrisData.paymentId.slice(0, 8)}.png`;
+        a.click();
+        URL.revokeObjectURL(url);
+      } catch {
+        window.open(qrisData.qrImageUrl, "_blank");
+      }
+    } else {
+      const svg = qrContainerRef.current?.querySelector("svg");
+      if (!svg) return;
+      const blob = new Blob([svg.outerHTML], { type: "image/svg+xml" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `QRIS-IDMAP-${qrisData.paymentId.slice(0, 8)}.svg`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  };
 
   // Fetch sandbox flag once so banner persists sebelum user klik "Buat QR"
   // (qrisData.isSandbox baru tersedia setelah panggil /create-qris).
@@ -473,7 +503,7 @@ export default function DonasiCepatPage() {
                         Mode Demo — server belum punya MAYAR_API_KEY.
                       </div>
                     )}
-                    <div className="flex justify-center p-5 bg-gradient-to-br from-emerald-50/50 to-white border-2 border-emerald-100 rounded-2xl">
+                    <div ref={qrContainerRef} className="flex justify-center p-5 bg-gradient-to-br from-emerald-50/50 to-white border-2 border-emerald-100 rounded-2xl">
                       {qrisData.qrImageUrl ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
@@ -514,6 +544,14 @@ export default function DonasiCepatPage() {
                         Ref: {qrisData.paymentId.slice(0, 32)}…
                       </p>
                     </div>
+
+                    <button
+                      onClick={handleDownloadQris}
+                      className="w-full py-2.5 text-sm font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-xl transition-colors flex items-center justify-center gap-2"
+                    >
+                      <Download className="w-4 h-4" />
+                      Download QRIS
+                    </button>
 
                     <div className="flex items-center gap-2 text-xs text-gray-500 justify-center bg-gray-50 rounded-lg py-2">
                       <Loader2 className="w-3.5 h-3.5 animate-spin text-emerald-600" />
