@@ -25,17 +25,14 @@ export async function POST(request: NextRequest) {
   const startedAt = Date.now();
   const rawBody = await request.text();
 
-  // DEBUG: log incoming auth headers to diagnose token mismatch
-  const authHeader = request.headers.get("authorization") ?? "(none)";
-  const xSig = request.headers.get("x-mayar-signature") ?? request.headers.get("x-signature") ?? "(none)";
+  // DEBUG: log ALL incoming headers to find what Mayar actually sends
+  const allHeaders: Record<string, string> = {};
+  request.headers.forEach((v, k) => { allHeaders[k] = k.toLowerCase().includes("token") || k.toLowerCase().includes("auth") || k.toLowerCase().includes("sign") ? v.slice(0, 20) + "…" : v; });
   const expectedToken = process.env.MAYAR_WEBHOOK_TOKEN ?? "";
-  log.warn("webhook_debug", {
-    authPrefix: authHeader.slice(0, 20),
-    authLen: authHeader.length,
-    xSigPresent: xSig !== "(none)",
+  log.warn("webhook_debug_headers", {
+    headers: allHeaders,
     expectedLen: expectedToken.length,
     expectedPrefix: expectedToken.slice(0, 8),
-    userAgent: request.headers.get("user-agent") ?? "",
   });
 
   const verdict = verifyWebhook(rawBody, request.headers);
