@@ -45,7 +45,6 @@ function RegisterForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [address, setAddress] = useState("");
   const [partnerType, setPartnerType] = useState("");
   const [projectLocation, setProjectLocation] = useState("");
   const [password, setPassword] = useState("");
@@ -105,14 +104,6 @@ function RegisterForm() {
 
     if (!name || !email || !password) {
       setError(t("Semua field harus diisi.", "All fields are required."));
-      return;
-    }
-    if (role === "sahabat" && (!phone || !address)) {
-      setError(t("No HP dan alamat KTP wajib diisi untuk Sahabat Mangrove.", "Phone and KTP address are required for Sahabat Mangrove."));
-      return;
-    }
-    if (role === "mitra" && (!partnerType || !projectLocation.trim())) {
-      setError(t("Jenis mitra dan lokasi proyek wajib diisi untuk Mitra.", "Partner type and project location are required for partners."));
       return;
     }
     if (password.length < 6) {
@@ -175,7 +166,6 @@ function RegisterForm() {
           role,
           otpCode: otpValue.trim(),
           ...(phone ? { phone } : {}),
-          ...(address ? { address } : {}),
           ...(role === "mitra" ? {
             organization: name,
             partnerType,
@@ -486,80 +476,8 @@ function RegisterForm() {
               />
             </div>
 
-            {role === "sahabat" && (
-              <>
-                <div>
-                  <label htmlFor="register-phone" className="text-sm font-medium text-gray-700 block mb-1">
-                    {t("No. HP", "Phone Number")}
-                  </label>
-                  <input
-                    id="register-phone"
-                    type="tel"
-                    inputMode="numeric"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value.replace(/[^0-9+]/g, ""))}
-                    placeholder="0812xxxxxxxx"
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="register-address" className="text-sm font-medium text-gray-700 block mb-1">
-                    {t("Alamat sesuai KTP", "Address (as on ID card)")}
-                  </label>
-                  <textarea
-                    id="register-address"
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
-                    rows={2}
-                    placeholder={t("Alamat lengkap sesuai KTP", "Full address as on ID card")}
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent resize-none"
-                  />
-                  <p className="text-[11px] text-gray-400 mt-1">
-                    {t(
-                      "Untuk pencetakan sertifikat donasi. Tidak perlu unggah foto KTP.",
-                      "Used for printing your donation certificate. No KTP photo upload required."
-                    )}
-                  </p>
-                </div>
-              </>
-            )}
 
 
-            {role === "mitra" && (
-              <>
-                <div>
-                  <label htmlFor="register-partner-type" className="text-sm font-medium text-gray-700 block mb-1">
-                    {t("Jenis Mitra", "Partner Type")}
-                  </label>
-                  <select
-                    id="register-partner-type"
-                    value={partnerType}
-                    onChange={(e) => setPartnerType(e.target.value)}
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white"
-                  >
-                    <option value="">{t("Pilih jenis mitra", "Select partner type")}</option>
-                    <option value="ngo">{t("NGO / Lembaga Nirlaba", "NGO / Non-profit")}</option>
-                    <option value="developer">{t("Project Developer", "Project Developer")}</option>
-                    <option value="pemerintah">{t("Instansi Pemerintah", "Government Institution")}</option>
-                    <option value="akademisi">{t("Akademisi / Peneliti", "Academic / Researcher")}</option>
-                    <option value="koperasi">{t("Koperasi / Kelompok Tani", "Cooperative / Farmer Group")}</option>
-                  </select>
-                </div>
-                <div>
-                  <label htmlFor="register-location" className="text-sm font-medium text-gray-700 block mb-1">
-                    {t("Lokasi Proyek", "Project Location")}
-                  </label>
-                  <input
-                    id="register-location"
-                    type="text"
-                    value={projectLocation}
-                    onChange={(e) => setProjectLocation(e.target.value)}
-                    placeholder={t("Kabupaten / Kota, Provinsi", "Regency / City, Province")}
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                  />
-                </div>
-              </>
-            )}
 
             <div>
               <label htmlFor="register-password" className="text-sm font-medium text-gray-700 block mb-1">Password</label>
