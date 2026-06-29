@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../../../../convex/_generated/api";
+import { Id } from "../../../../../convex/_generated/dataModel";
 import {
   verifyWebhook,
   type MayarWebhookPayload,
@@ -24,6 +25,19 @@ export async function POST(request: NextRequest) {
   const startedAt = Date.now();
   const rawBody = await request.text();
 
+  // DEBUG: log incoming auth headers to diagnose token mismatch
+  const authHeader = request.headers.get("authorization") ?? "(none)";
+  const xSig = request.headers.get("x-mayar-signature") ?? request.headers.get("x-signature") ?? "(none)";
+  const expectedToken = process.env.MAYAR_WEBHOOK_TOKEN ?? "";
+  log.warn("webhook_debug", {
+    authPrefix: authHeader.slice(0, 20),
+    authLen: authHeader.length,
+    xSigPresent: xSig !== "(none)",
+    expectedLen: expectedToken.length,
+    expectedPrefix: expectedToken.slice(0, 8),
+    userAgent: request.headers.get("user-agent") ?? "",
+  });
+
   const verdict = verifyWebhook(rawBody, request.headers);
   if (!verdict.ok) {
     log.warn("webhook_rejected", { reason: verdict.reason, bodyLen: rawBody.length });
@@ -43,22 +57,51 @@ export async function POST(request: NextRequest) {
 
   const event = payload.event;
   const data = payload.data;
-  const paymentId =
-    data?.transactionId ?? data?.extraData?.transactionId ?? data?.id ?? "";
+  const contributionId = data?.extraData?.contributionId;
+  const paymentIds = [
+    data?.transactionId,
+    data?.extraData?.transactionId,
+    data?.extraData?.paymentId,
+    data?.id,
+  ].filter((id): id is string => typeof id === "string" && id.trim().length > 0);
+  const paymentId = paymentIds[0] ?? "";
 
-  if (!paymentId) {
-    log.warn("webhook_missing_payment_id", { event });
+  if (!contributionId && !paymentId) {
+    log.warn("webhook_missing_payment_reference", { event });
     return NextResponse.json({ error: "paymentId missing" }, { status: 400 });
   }
 
   try {
     if (event === "payment.received" && isPaid(data?.status)) {
-      await convex.mutation(api.contributions.confirmByPaymentId, {
+      const amount = typeof data?.amount === "number" ? data.amount : undefined;
+      if (contributionId) {
+        const alreadyPaid = await convex.query(api.contributions.getStatus, {
+          contributionId: contributionId as Id<"contributions">,
+        });
+        if (alreadyPaid?.paymentStatus === "paid") {
+          log.info("webhook_idempotent_skip", {
+            event,
+        contributionId,
         paymentId,
       });
+          return NextResponse.json({ received: true, event, skipped: true });
+        }
+        await convex.mutation(api.contributions.confirmPaymentFromWebhook, {
+          contributionId: contributionId as Id<"contributions">,
+          amount,
+      paymentId,
+    });
+      } else {
+        await convex.mutation(api.contributions.confirmByPaymentIds, {
+          paymentIds,
+          amount,
+        });
+      }
       log.info("payment_confirmed", {
         event,
+        contributionId,
         paymentId,
+        paymentIds,
         status: data?.status,
         durationMs: Date.now() - startedAt,
       });
@@ -81,8 +124,7 @@ export async function POST(request: NextRequest) {
 function isPaid(status: unknown): boolean {
   if (status === true) return true;
   if (typeof status === "string") {
-    const s = status.toLowerCase();
-    return s === "paid" || s === "success" || s === "completed";
+    return /^paid$/i.test(status.trim());
   }
   return false;
 }
@@ -94,3 +136,4 @@ export async function GET() {
     service: "id-map mayar webhook",
   });
 }
+
