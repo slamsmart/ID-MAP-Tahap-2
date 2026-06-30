@@ -213,76 +213,31 @@ export default function UserDashboard() {
             </a>
           </div>
 
-          {/* Impact Stats */}
+          {/* Edukasi & Insight */}
           <div className="bg-white rounded-xl border border-gray-100 p-5">
             <h3 className="font-display font-semibold text-gray-800 mb-4">
-              Dampak Keseluruhan Anda
+              Edukasi &amp; Insight
             </h3>
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-500">Total Transaksi</span>
-                <div className="flex items-baseline gap-1">
-                  <span className="font-display font-bold text-xl text-gray-900">
-                    {impact ? impact.totalContributions : "—"}
-                  </span>
-                  <span className="text-xs text-gray-400">kali</span>
+            <div className="space-y-3">
+              {articles.map((article) => (
+                <div
+                  key={article.title}
+                  className="flex items-start gap-3 p-3 rounded-lg bg-gray-50 hover:bg-emerald-50 transition-colors cursor-pointer"
+                >
+                  <BookOpen className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-semibold text-gray-800 mb-0.5">
+                      {article.title}
+                    </p>
+                    <p className="text-xs text-gray-500 mb-1.5">{article.desc}</p>
+                    <span className="flex items-center gap-1 text-xs text-emerald-600 font-medium hover:text-emerald-700">
+                      Baca Artikel <ArrowRight className="w-3 h-3" />
+                    </span>
+                  </div>
                 </div>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-500">
-                  Total CO₂e Didukung
-                </span>
-                <div className="flex items-baseline gap-1">
-                  <span className="font-display font-bold text-xl text-gray-900">
-                    {impact ? impact.totalCo2.toFixed(2) : "—"}
-                  </span>
-                  <span className="text-xs text-gray-400">ton CO₂e</span>
-                </div>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-500">
-                  Total Proyek Didukung
-                </span>
-                <div className="flex items-baseline gap-1">
-                  <span className="font-display font-bold text-xl text-gray-900">
-                    {impact ? impact.projectsSupported : "—"}
-                  </span>
-                  <span className="text-xs text-gray-400">proyek</span>
-                </div>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-500">Bergabung Sejak</span>
-                <span className="font-display font-semibold text-gray-900">
-                  {/* Just showing a placeholder since we don't fetch the user creation date directly here, or we could fetch the user document */}
-                  April 2026
-                </span>
-              </div>
+              ))}
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Education Section */}
-      <div>
-        <h3 className="font-display font-semibold text-gray-800 mb-4">
-          Edukasi & Insight
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {articles.map((article) => (
-            <div
-              key={article.title}
-              className="bg-white rounded-xl border border-gray-100 p-5 hover:shadow-md transition-shadow cursor-pointer"
-            >
-              <BookOpen className="w-5 h-5 text-emerald-600 mb-2" />
-              <h4 className="font-display font-semibold text-sm text-gray-800 mb-1">
-                {article.title}
-              </h4>
-              <p className="text-xs text-gray-500 mb-3">{article.desc}</p>
-              <button className="flex items-center gap-1 text-xs text-emerald-600 font-medium hover:text-emerald-700">
-                Baca Artikel <ArrowRight className="w-3 h-3" />
-              </button>
-            </div>
-          ))}
         </div>
       </div>
 
