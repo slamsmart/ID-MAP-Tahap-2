@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
-import { getSession, type User } from "@/lib/auth";
+import { getSession, refreshSession, type User } from "@/lib/auth";
 
 const PRESETS = [10_000, 25_000, 50_000, 100_000, 250_000, 500_000];
 
@@ -38,11 +38,24 @@ interface QrisData {
   qrImageUrl: string | null;
   amount: number;
   co2Equivalent: number;
-  isDummy: boolean;
   isSandbox: boolean;
 }
 
-// Public donation page — full-screen donor experience for /donasi-cepat/[id].
+async function parseApiResponse<T>(res: Response): Promise<T> {
+  const text = await res.text();
+  const contentType = res.headers.get("content-type") ?? "";
+
+  if (!contentType.toLowerCase().includes("application/json")) {
+    if (res.redirected || text.startsWith("<!DOCTYPE") || text.startsWith("<html")) {
+      throw new Error("Sesi login berakhir. Silakan muat ulang lalu masuk lagi.");
+    }
+    throw new Error("Server mengembalikan respons yang tidak valid.");
+  }
+
+  return JSON.parse(text) as T;
+}
+
+// Public donation page ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â full-screen donor experience for /donasi-cepat/[id].
 // Desktop: 2-column (project context | QRIS panel). Mobile: stacked.
 export default function DonasiCepatPage() {
   const router = useRouter();
@@ -52,16 +65,34 @@ export default function DonasiCepatPage() {
   const [authChecked, setAuthChecked] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   useEffect(() => {
-    const s = getSession();
-    if (!s) {
+    let active = true;
+
+    const resolveSession = async () => {
+      const cached = getSession();
+      if (cached) {
+        if (!active) return;
+        setUser(cached);
+        setAuthChecked(true);
+        return;
+      }
+
+      const fresh = await refreshSession();
+      if (!active) return;
+      if (fresh) {
+        setUser(fresh);
+        setAuthChecked(true);
+        return;
+      }
+
       const next = encodeURIComponent(`/donasi-cepat/${projectId ?? ""}`);
       router.replace(`/daftar?peran=sahabat&next=${next}`);
-      return;
-    }
-    setUser(s);
-    setAuthChecked(true);
-  }, [projectId, router]);
+    };
 
+    void resolveSession();
+    return () => {
+      active = false;
+    };
+  }, [projectId, router]);
   const project = useQuery(
     api.projects.get,
     projectId && authChecked ? { projectId: projectId as Id<"projects"> } : "skip"
@@ -106,7 +137,7 @@ export default function DonasiCepatPage() {
   // Fetch sandbox flag once so banner persists sebelum user klik "Buat QR"
   // (qrisData.isSandbox baru tersedia setelah panggil /create-qris).
   useEffect(() => {
-    fetch("/api/payment/config", { cache: "no-store" })
+    fetch("/api/payment/config", { cache: "no-store", credentials: "same-origin" })
       .then((r) => r.json())
       .then((c: { sandbox?: boolean }) => setIsSandbox(!!c.sandbox))
       .catch(() => {});
@@ -128,15 +159,16 @@ export default function DonasiCepatPage() {
     if (state !== "waiting" || !qrisData) return;
     const t = setInterval(async () => {
       try {
-        const res = await fetch(
-          `/api/payment/status?contributionId=${qrisData.contributionId}`,
-          { cache: "no-store" }
-        );
+        const res = await fetch(`/api/payment/status?contributionId=${qrisData.contributionId}`, { cache: "no-store", credentials: "same-origin" });
         if (!res.ok) return;
-        const j = (await res.json()) as { paymentStatus?: string };
-        if (j.paymentStatus === "paid") setState("paid");
+        const j = await parseApiResponse<{ paymentStatus?: string; source?: string }>(res);
+        if (j.paymentStatus === "paid") {
+          setQrisData(null);
+          setState("paid");
+          router.refresh();
+        }
       } catch {
-        // ignore — keep polling
+        // ignore ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â keep polling
       }
     }, 3000);
     return () => clearInterval(t);
@@ -151,6 +183,7 @@ export default function DonasiCepatPage() {
     setState("generating");
     try {
       const res = await fetch("/api/payment/create-qris", {
+        credentials: "same-origin",
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -159,7 +192,7 @@ export default function DonasiCepatPage() {
           userId: user?._id,
         }),
       });
-      const data = (await res.json()) as QrisData & { error?: string };
+      const data = await parseApiResponse<QrisData & { error?: string }>(res);
       if (!res.ok) throw new Error(data.error ?? "Gagal membuat QRIS");
       setQrisData(data);
       setState("waiting");
@@ -181,12 +214,14 @@ export default function DonasiCepatPage() {
     setState("simulating");
     try {
       const res = await fetch("/api/payment/simulate", {
+        credentials: "same-origin",
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ contributionId: qrisData.contributionId }),
       });
-      const data = (await res.json()) as { error?: string };
+      const data = await parseApiResponse<{ error?: string }>(res);
       if (!res.ok) throw new Error(data.error ?? "Simulasi gagal");
+      setQrisData(null);
       setState("paid");
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Simulasi gagal";
@@ -246,7 +281,7 @@ export default function DonasiCepatPage() {
           </div>
         </div>
 
-        {/* Mode Demo banner — persistent sepanjang halaman saat sandbox aktif.
+        {/* Mode Demo banner ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â persistent sepanjang halaman saat sandbox aktif.
             Memberi tahu juri/tester bahwa pembayaran tidak menggunakan uang
             sungguhan. Hilang otomatis di production (MAYAR_SANDBOX=false). */}
         {isSandbox && (
@@ -263,7 +298,7 @@ export default function DonasiCepatPage() {
 
         {/* Two-column layout */}
         <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-6 lg:gap-10 items-start">
-          {/* ─── LEFT: project context ─── */}
+          {/* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ LEFT: project context ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */}
           <div className="space-y-5">
             {/* Project hero card */}
             <div className="bg-white rounded-3xl border border-emerald-100/60 overflow-hidden shadow-sm">
@@ -362,7 +397,7 @@ export default function DonasiCepatPage() {
               </div>
             )}
 
-            {/* Greeting & impact line — desktop only */}
+            {/* Greeting & impact line ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â desktop only */}
             <div className="hidden lg:block bg-white rounded-3xl p-6 border border-emerald-100/60 shadow-sm">
               <div className="flex items-start gap-3">
                 <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center flex-shrink-0">
@@ -383,7 +418,7 @@ export default function DonasiCepatPage() {
             </div>
           </div>
 
-          {/* ─── RIGHT: QRIS panel ─── */}
+          {/* ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ RIGHT: QRIS panel ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ */}
           <div className="lg:sticky lg:top-6">
             <div className="bg-white rounded-3xl border border-emerald-100/60 shadow-lg shadow-emerald-900/5 overflow-hidden">
               {/* Panel header */}
@@ -497,12 +532,6 @@ export default function DonasiCepatPage() {
 
                 {state === "waiting" && qrisData && (
                   <div className="space-y-4">
-                    {qrisData.isDummy && (
-                      <div className="flex items-start gap-2 text-xs text-amber-800 bg-amber-50 border border-amber-100 rounded-xl px-3 py-2.5">
-                        <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-                        Mode Demo — server belum punya MAYAR_API_KEY.
-                      </div>
-                    )}
                     <div ref={qrContainerRef} className="flex justify-center p-5 bg-gradient-to-br from-emerald-50/50 to-white border-2 border-emerald-100 rounded-2xl">
                       {qrisData.qrImageUrl ? (
                         // eslint-disable-next-line @next/next/no-img-element
@@ -512,12 +541,9 @@ export default function DonasiCepatPage() {
                           className="w-64 h-64 sm:w-72 sm:h-72 object-contain"
                         />
                       ) : (
-                        <QRCodeSVG
-                          value={`https://mayar.id/pay/demo?amount=${qrisData.amount}&ref=${qrisData.paymentId}`}
-                          size={272}
-                          level="M"
-                          fgColor="#064E3B"
-                        />
+                        <div className="w-64 h-64 sm:w-72 sm:h-72 rounded-2xl border border-red-100 bg-red-50 px-4 py-6 text-center text-sm text-red-700 flex items-center justify-center">
+                          QRIS live tidak tersedia. Silakan buat ulang pembayaran.
+                        </div>
                       )}
                     </div>
 
@@ -541,7 +567,7 @@ export default function DonasiCepatPage() {
                         </span>
                       </p>
                       <p className="text-[10px] text-gray-400 font-mono break-all">
-                        Ref: {qrisData.paymentId.slice(0, 32)}…
+                        Ref: {qrisData.paymentId.slice(0, 32)}...
                       </p>
                     </div>
 
@@ -558,12 +584,14 @@ export default function DonasiCepatPage() {
                       Menunggu pembayaran… (otomatis terdeteksi)
                     </div>
 
+                    {qrisData.isSandbox && (
                     <button
                       onClick={handleSimulatePayment}
                       className="w-full py-2.5 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-100 rounded-xl transition-colors"
                     >
                       Simulasi Bayar (Demo Juri)
                     </button>
+                  )}
 
                     <button
                       onClick={reset}
@@ -635,3 +663,13 @@ export default function DonasiCepatPage() {
     </main>
   );
 }
+
+
+
+
+
+
+
+
+
+
