@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { QRCodeSVG } from "qrcode.react";
-import { ArrowRight, Leaf, MapPin, Camera, BookOpen } from "lucide-react";
+import { ArrowRight, Leaf, MapPin, Brain, BarChart2, BookOpen } from "lucide-react";
 import { getSession, User } from "@/lib/auth";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
@@ -48,16 +47,6 @@ export default function UserDashboard() {
   const recentProject = recentContribution 
     ? projects?.find(p => p._id === recentContribution.projectId) 
     : null;
-
-  // Pick the first verified project for the "scan-to-donate" QR.
-  // QR target = halaman publik /donasi-cepat/[projectId] yang QRIS-friendly.
-  const verifiedProjects = projects?.filter((p) => p.status === "Terverifikasi") ?? [];
-  const featuredProject = verifiedProjects[0];
-  const siteUrl =
-    process.env.NEXT_PUBLIC_SITE_URL ?? "https://id-map.app";
-  const donationLink = featuredProject
-    ? `${siteUrl}/donasi-cepat/${featuredProject._id}`
-    : `${siteUrl}/proyek`;
 
   return (
     <div className="space-y-6">
@@ -189,41 +178,38 @@ export default function UserDashboard() {
 
         {/* Right Column */}
         <div className="space-y-6">
-          {/* QR Scanner */}
+          {/* AI Analisis Mangrove Board */}
           <div className="bg-emerald-50 rounded-xl border border-emerald-100 p-5">
-            <h3 className="font-display font-semibold text-emerald-900 text-center mb-3">
-              {featuredProject ? featuredProject.title : "Scan Proyek Mangrove"}
-            </h3>
-            <p className="text-xs text-center text-gray-500 mb-4">
-              {featuredProject
-                ? `${featuredProject.location}, ${featuredProject.province}`
-                : "Belum ada proyek terverifikasi"}
-            </p>
-            <div className="flex justify-center mb-4">
-              <a
-                href={donationLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-white rounded-xl p-4 hover:shadow-md transition-shadow"
-                aria-label="Buka halaman donasi cepat"
-              >
-                <QRCodeSVG
-                  value={donationLink}
-                  size={180}
-                  fgColor="#000000"
-                  level="M"
-                />
-              </a>
+            <div className="flex items-center gap-2 mb-3">
+              <Brain className="w-5 h-5 text-emerald-600" />
+              <h3 className="font-display font-semibold text-emerald-900">
+                Analisis AI Mangrove
+              </h3>
             </div>
-            <p className="text-xs text-center text-gray-500 mb-3">
-              Scan dari HP, atau klik tombol di bawah untuk donasi langsung
+            <p className="text-xs text-gray-600 mb-4 leading-relaxed">
+              Gunakan kecerdasan buatan untuk menganalisis kondisi mangrove — deteksi abrasi,
+              estimasi karbon, dan rekomendasi restorasi berbasis data satelit.
             </p>
+            <div className="space-y-2 mb-5">
+              <div className="flex items-center gap-2 text-xs text-gray-600">
+                <Leaf className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                <span>Deteksi tutupan mangrove via citra satelit</span>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-gray-600">
+                <BarChart2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                <span>Estimasi serapan karbon CO₂e area pesisir</span>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-gray-600">
+                <MapPin className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                <span>Peta risiko abrasi dan rekomendasi restorasi</span>
+              </div>
+            </div>
             <a
-              href="/user/donasi"
+              href="/user/analisis-ai"
               className="w-full py-2.5 bg-emerald-700 text-white font-display font-semibold rounded-lg hover:bg-emerald-600 transition-colors text-sm flex items-center justify-center gap-2"
             >
-              <Camera className="w-4 h-4" />
-              Donasi via QRIS
+              <Brain className="w-4 h-4" />
+              Buka Board Analisis AI
             </a>
           </div>
 
