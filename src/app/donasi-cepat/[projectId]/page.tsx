@@ -106,6 +106,18 @@ export default function DonasiCepatPage() {
   const [isSandbox, setIsSandbox] = useState(false);
   const qrContainerRef = useRef<HTMLDivElement>(null);
 
+  // Real-time: Convex WebSocket pushes update the moment webhook confirms payment.
+  const pendingStatus = useQuery(
+    api.contributions.getStatus,
+    qrisData ? { contributionId: qrisData.contributionId as Id<"contributions"> } : "skip"
+  );
+  useEffect(() => {
+    if (state === "waiting" && pendingStatus?.paymentStatus === "paid") {
+      setState("paid");
+      router.refresh();
+    }
+  }, [pendingStatus, state, router]);
+
   const handleDownloadQris = async () => {
     if (!qrisData) return;
     if (qrisData.qrImageUrl) {
@@ -154,25 +166,6 @@ export default function DonasiCepatPage() {
       maximumFractionDigits: 0,
     }).format(n);
 
-  // Auto-poll the contribution status while waiting for webhook.
-  useEffect(() => {
-    if (state !== "waiting" || !qrisData) return;
-    const t = setInterval(async () => {
-      try {
-        const res = await fetch(`/api/payment/status?contributionId=${qrisData.contributionId}`, { cache: "no-store", credentials: "same-origin" });
-        if (!res.ok) return;
-        const j = await parseApiResponse<{ paymentStatus?: string; source?: string }>(res);
-        if (j.paymentStatus === "paid") {
-          setQrisData(null);
-          setState("paid");
-          router.refresh();
-        }
-      } catch {
-        // ignore ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â keep polling
-      }
-    }, 3000);
-    return () => clearInterval(t);
-  }, [state, qrisData]);
 
   async function handleCreateQris() {
     if (!finalAmount || finalAmount < 1000) {
