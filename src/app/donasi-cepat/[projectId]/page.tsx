@@ -572,9 +572,15 @@ export default function DonasiCepatPage() {
                       Download QRIS
                     </button>
 
-                    <div className="flex items-center gap-2 text-xs text-gray-500 justify-center bg-gray-50 rounded-lg py-2">
-                      <Loader2 className="w-3.5 h-3.5 animate-spin text-emerald-600" />
-                      Menunggu pembayaran… (otomatis terdeteksi)
+                    <div className="bg-gray-50 rounded-lg px-3 py-2.5 space-y-1.5">
+                      <div className="flex items-center gap-2 text-xs text-gray-500 justify-center">
+                        <Loader2 className="w-3.5 h-3.5 animate-spin text-emerald-600 shrink-0" />
+                        <span>Menunggu pembayaran… (otomatis terdeteksi)</span>
+                      </div>
+                      <p className="text-[11px] text-gray-400 text-center leading-relaxed">
+                        Setelah scan &amp; bayar, halaman ini otomatis berubah dalam 5–30 detik.<br />
+                        Ini adalah waktu verifikasi pembayaran dari bank — bukan error.
+                      </p>
                     </div>
 
                     {qrisData.isSandbox && (
