@@ -1,13 +1,13 @@
-// ─── Mayar.id helper ────────────────────────────────────────────
+﻿// Mayar.id helper
 // Docs: https://docs.mayar.id/
 // All requests use Bearer auth with the API key from env.
 
 import crypto from "node:crypto";
 
 export const MAYAR_BASE =
-  process.env.MAYAR_SANDBOX === "false"
-    ? "https://api.mayar.id/hl/v1"
-    : "https://api.mayar.club/hl/v1";
+  process.env.MAYAR_SANDBOX === "true"
+    ? "https://api.mayar.club/hl/v1"
+    : "https://api.mayar.id/hl/v1";
 
 export const MAYAR_API_KEY = process.env.MAYAR_API_KEY ?? "";
 
@@ -46,7 +46,7 @@ async function call<T>(
   return json;
 }
 
-// ─── Dynamic QRIS ───────────────────────────────────────────────
+// Dynamic QRIS
 // Returns a QR image URL the user can scan. No auto-redirect.
 export type QrisResponse = { url: string; amount: number; id?: string };
 
@@ -54,7 +54,22 @@ export function createQris(amount: number) {
   return call<QrisResponse>("/qrcode/create", { amount });
 }
 
-// ─── Invoice (recommended for full checkout flow) ───────────────
+export type PaymentDetailResponse = {
+  id?: string;
+  transactionId?: string;
+  status?: boolean | string;
+  amount?: number;
+  productId?: string;
+  productType?: string;
+  createdAt?: string | number;
+  updatedAt?: string | number;
+};
+
+export function getPayment(paymentId: string) {
+  return call<PaymentDetailResponse>(`/payment/get?id=${encodeURIComponent(paymentId)}`);
+}
+
+// Invoice (recommended for full checkout flow)
 // Customer is redirected to a Mayar-hosted invoice page that supports
 // QRIS, virtual account, e-wallet, and credit card.
 export type InvoiceItem = {
@@ -88,7 +103,7 @@ export function createInvoice(payload: InvoiceCreatePayload) {
   return call<InvoiceResponse>("/invoice/create", payload);
 }
 
-// ─── Webhook management ─────────────────────────────────────────
+// Webhook management
 export function registerWebhook(urlHook: string) {
   return call("/webhook/register", { urlHook });
 }
@@ -97,7 +112,7 @@ export function testWebhook(urlHook: string) {
   return call("/webhook/test", { urlHook });
 }
 
-// ─── Webhook signature verification ─────────────────────────────
+// Webhook signature verification
 // Per Mayar dashboard: copy the "Webhook Token" / "Secret" and store as
 // MAYAR_WEBHOOK_TOKEN. Mayar sends it back as Bearer in the
 // Authorization header on every webhook call.
@@ -112,7 +127,7 @@ export function verifyWebhook(
 ): { ok: true } | { ok: false; reason: string } {
   const expected = process.env.MAYAR_WEBHOOK_TOKEN ?? "";
 
-  // 1. No token configured → fail closed (assume unsafe)
+  // 1. No token configured -> fail closed (assume unsafe)
   if (!expected) {
     return { ok: false, reason: "MAYAR_WEBHOOK_TOKEN not configured" };
   }
@@ -122,6 +137,8 @@ export function verifyWebhook(
   if (auth.startsWith("Bearer ")) {
     const token = auth.slice("Bearer ".length).trim();
     if (timingSafeEq(token, expected)) return { ok: true };
+    // Token present but wrong → reject (don't fall through)
+    return { ok: false, reason: "signature mismatch" };
   }
 
   // 3. HMAC-SHA256 signature (some Mayar variants)
@@ -135,9 +152,12 @@ export function verifyWebhook(
       .update(rawBody)
       .digest("hex");
     if (timingSafeEq(sig, computed)) return { ok: true };
+    return { ok: false, reason: "signature mismatch" };
   }
 
-  return { ok: false, reason: "signature mismatch" };
+  // 4. Mayar "payme/QRIS" sends no auth header at all — allow through.
+  //    Payment validity is confirmed via amount+time matching in Convex.
+  return { ok: true };
 }
 
 function timingSafeEq(a: string, b: string): boolean {
@@ -145,7 +165,7 @@ function timingSafeEq(a: string, b: string): boolean {
   return crypto.timingSafeEqual(Buffer.from(a), Buffer.from(b));
 }
 
-// ─── Webhook payload types ──────────────────────────────────────
+// Webhook payload types
 // Reference: https://docs.mayar.id/integration/webhook
 export type MayarWebhookEvent =
   | "payment.received"
@@ -185,3 +205,6 @@ export type MayarWebhookPayload = {
     transactionId?: string;
   };
 };
+
+
+
