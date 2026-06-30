@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../../../../convex/_generated/api";
 import { Id } from "../../../../../convex/_generated/dataModel";
@@ -10,22 +10,7 @@ const log = createLogger("api.payment.create-qris");
 const CONVEX_URL = process.env.NEXT_PUBLIC_CONVEX_URL!;
 const convex = new ConvexHttpClient(CONVEX_URL);
 
-// Create a dynamic QRIS for community donation (B2C).
-//
-// Flow:
-//   1. Client POSTs { amount, projectId, userId? }.
-//   2. We hit Mayar /qrcode/create to mint a QR image URL.
-//   3. We persist a "pending" contribution in Convex tagged with the QR id.
-//   4. When user pays, Mayar POSTs the webhook → we flip status to "paid".
-//
-// If MAYAR_API_KEY is unset, we return a dummy paymentId so the UI can
-// still render a fallback QR (qrcode.react). Useful for local dev.
-//
-// SECURITY: endpoint sengaja public (juri/visitor bisa coba donasi tanpa
-// login). Rate limit per-IP melindungi Mayar quota & Convex insert spam.
 export async function POST(request: NextRequest) {
-  // Rate limit per IP: 10 QRIS / jam. Cukup untuk user normal,
-  // memblokir bot/looper. Pakai Redis kalau env ada → multi-instance correct.
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
   const rl = await rateLimitAsync({
     bucket: "qris:ip",
@@ -63,45 +48,71 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Conversion: Rp 5.000 ≈ 1 tCO2e support (UI only, not regulatory).
     const co2Equivalent = +(amount / 5000).toFixed(4);
+
+    if (!isMayarLive) {
+      log.error("create_qris_live_key_missing", { amount, projectId, mayarBase: MAYAR_BASE });
+      return NextResponse.json(
+        { error: "Payment live belum aktif. MAYAR_API_KEY tidak terbaca di production." },
+        { status: 503 }
+      );
+    }
 
     let qrImageUrl: string | null = null;
     let mayarPaymentId: string | null = null;
 
-    if (isMayarLive) {
-      try {
-        const res = await createQris(amount);
-        qrImageUrl = res.data?.url ?? null;
-        mayarPaymentId = res.data?.id ?? `mayar_${Date.now()}`;
-      } catch (err) {
-        log.warn("createQris_failed_fallback", { err: err as Error, amount });
-      }
-    }
+    try {
+      const res = await createQris(amount);
+      qrImageUrl = res.data?.url ?? null;
+      mayarPaymentId = res.data?.id ?? null;
 
-    if (!mayarPaymentId) {
-      mayarPaymentId = `dummy_${Date.now()}_${Math.random()
-        .toString(36)
-        .slice(2, 8)}`;
-    }
-
-    const contributionId = await convex.mutation(
-      api.contributions.createPending,
-      {
-        projectId: projectId as Id<"projects">,
-        userId: userId as Id<"users"> | undefined,
+      log.info("qris_provider_response", {
         amount,
-        co2Equivalent,
-        paymentId: mayarPaymentId,
-      }
-    );
+        hasQrImageUrl: Boolean(qrImageUrl),
+        hasPaymentId: Boolean(mayarPaymentId),
+        mayarBase: MAYAR_BASE,
+      });
+    } catch (err) {
+      log.error("createQris_failed_live", {
+        err: err as Error,
+        amount,
+        mayarBase: MAYAR_BASE,
+      });
+      return NextResponse.json(
+        { error: "Gagal membuat QRIS live dari Mayar." },
+        { status: 400 }
+      );
+    }
+
+    if (!qrImageUrl) {
+      log.error("create_qris_missing_qr_url", { amount, hasPaymentId: Boolean(mayarPaymentId) });
+      return NextResponse.json(
+        { error: "Mayar tidak mengembalikan QR image URL." },
+        { status: 400 }
+      );
+    }
+
+    // Mayar dynamic QRIS sometimes omits `id`; extract from URL path or generate fallback.
+    if (!mayarPaymentId) {
+      const urlId = qrImageUrl.match(/\/([a-zA-Z0-9_-]{8,})\.[a-z]+(?:[?#]|$)/)?.[1];
+      mayarPaymentId = urlId ?? `qris_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+      log.warn("create_qris_id_fallback", { amount, paymentId: mayarPaymentId, qrImageUrl });
+    }
+
+    const contributionId = await convex.mutation(api.contributions.createPending, {
+      projectId: projectId as Id<"projects">,
+      userId: userId as Id<"users"> | undefined,
+      amount,
+      co2Equivalent,
+      paymentId: mayarPaymentId,
+    });
 
     log.info("qris_created", {
-      paymentId: mayarPaymentId,
+      paymentId: mayarPaymentId ?? null,
       contributionId,
-      amount,
-      isDummy: !isMayarLive || !qrImageUrl,
+      amount,      hasQrImageUrl: true,
     });
+
     return NextResponse.json({
       success: true,
       contributionId,
@@ -109,18 +120,19 @@ export async function POST(request: NextRequest) {
       qrImageUrl,
       amount,
       co2Equivalent,
-      isSandbox: MAYAR_BASE.includes("mayar.club"),
-      isDummy: !isMayarLive || !qrImageUrl,
-    });
+      isSandbox: MAYAR_BASE.includes("mayar.club"),    });
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : "Gagal membuat QRIS";
     log.error("create_qris_exception", { err: error as Error });
-    return NextResponse.json({
-      error: msg,
-      debug: true,
-      convexUrl: CONVEX_URL,
-      isMayarLive,
-      mayarBase: MAYAR_BASE,
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        error: msg,
+        debug: true,
+        convexUrl: CONVEX_URL,
+        isMayarLive,
+      },
+      { status: 500 }
+    );
   }
 }
+
