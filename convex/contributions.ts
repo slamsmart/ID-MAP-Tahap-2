@@ -209,9 +209,9 @@ export const confirmByPaymentId = mutation({
       await writeAuditLog(ctx, {
         action: "contribution.webhook_match_miss",
         entityType: "contributions",
-        entityId: ids[0] ?? "unknown",
+        entityId: args.paymentId,
         source: "webhook",
-        after: { paymentIds: ids, amount: args.amount ?? null },
+        after: { paymentId: args.paymentId },
       });
       return null;
     }
@@ -248,8 +248,8 @@ export const confirmByPaymentIds = mutation({
         item.paymentStatus === "pending" &&
         item.method === "QRIS" &&
         // Allow webhook gross amount to be up to 5% above stored net (Mayar admin fee)
-        args.amount >= item.amount &&
-        args.amount <= item.amount * 1.05 + 100 &&
+        args.amount! >= item.amount &&
+        args.amount! <= item.amount * 1.05 + 100 &&
         item.createdAt >= cutoff
       ) ?? null;
       if (contrib) {
