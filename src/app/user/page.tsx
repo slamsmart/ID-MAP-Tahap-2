@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowRight, Leaf, MapPin, Brain, BarChart2, BookOpen } from "lucide-react";
+import { ArrowRight, Leaf, MapPin, BookOpen } from "lucide-react";
 import { getSession, User } from "@/lib/auth";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
@@ -178,41 +178,6 @@ export default function UserDashboard() {
 
         {/* Right Column */}
         <div className="space-y-6">
-          {/* AI Analisis Mangrove Board */}
-          <div className="bg-emerald-50 rounded-xl border border-emerald-100 p-5">
-            <div className="flex items-center gap-2 mb-3">
-              <Brain className="w-5 h-5 text-emerald-600" />
-              <h3 className="font-display font-semibold text-emerald-900">
-                Analisis AI Mangrove
-              </h3>
-            </div>
-            <p className="text-xs text-gray-600 mb-4 leading-relaxed">
-              Gunakan kecerdasan buatan untuk menganalisis kondisi mangrove — deteksi abrasi,
-              estimasi karbon, dan rekomendasi restorasi berbasis data satelit.
-            </p>
-            <div className="space-y-2 mb-5">
-              <div className="flex items-center gap-2 text-xs text-gray-600">
-                <Leaf className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                <span>Deteksi tutupan mangrove via citra satelit</span>
-              </div>
-              <div className="flex items-center gap-2 text-xs text-gray-600">
-                <BarChart2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                <span>Estimasi serapan karbon CO₂e area pesisir</span>
-              </div>
-              <div className="flex items-center gap-2 text-xs text-gray-600">
-                <MapPin className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                <span>Peta risiko abrasi dan rekomendasi restorasi</span>
-              </div>
-            </div>
-            <a
-              href="/user/analisis-ai"
-              className="w-full py-2.5 bg-emerald-700 text-white font-display font-semibold rounded-lg hover:bg-emerald-600 transition-colors text-sm flex items-center justify-center gap-2"
-            >
-              <Brain className="w-4 h-4" />
-              Buka Board Analisis AI
-            </a>
-          </div>
-
           {/* Edukasi & Insight */}
           <div className="bg-white rounded-xl border border-gray-100 p-5">
             <h3 className="font-display font-semibold text-gray-800 mb-4">
