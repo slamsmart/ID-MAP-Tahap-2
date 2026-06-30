@@ -1,5 +1,7 @@
-import { query, mutation } from "./_generated/server";
+﻿import { query, mutation, type MutationCtx } from "./_generated/server";
 import { v } from "convex/values";
+import type { Id } from "./_generated/dataModel";
+import { writeAuditLog } from "./audit";
 
 const contribValidator = v.object({
   _id: v.id("contributions"),
@@ -22,7 +24,7 @@ const contribValidator = v.object({
   createdAt: v.number(),
 });
 
-// ─── Queries ───────────────────────────────────────────────────────
+// ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ Queries ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬
 
 export const list = query({
   args: {},
@@ -86,7 +88,7 @@ export const getCommunityStats = query({
   },
 });
 
-// ─── Mutations ─────────────────────────────────────────────────────
+// ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ Mutations ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬
 
 export const create = mutation({
   args: {
@@ -102,10 +104,19 @@ export const create = mutation({
   },
   returns: v.id("contributions"),
   handler: async (ctx, args) => {
-    return await ctx.db.insert("contributions", {
+    const contributionId = await ctx.db.insert("contributions", {
       ...args,
       createdAt: Date.now(),
     });
+    await writeAuditLog(ctx, {
+      actorId: args.userId,
+      action: "contribution.create",
+      entityType: "contributions",
+      entityId: contributionId,
+      source: "convex",
+      after: { ...args, paymentStatus: undefined },
+    });
+    return contributionId;
   },
 });
 
@@ -120,7 +131,7 @@ export const createPending = mutation({
   },
   returns: v.id("contributions"),
   handler: async (ctx, args) => {
-    return await ctx.db.insert("contributions", {
+    const contributionId = await ctx.db.insert("contributions", {
       userId: args.userId,
       projectId: args.projectId,
       amount: args.amount,
@@ -130,6 +141,22 @@ export const createPending = mutation({
       paymentStatus: "pending",
       createdAt: Date.now(),
     });
+    await writeAuditLog(ctx, {
+      actorId: args.userId,
+      action: "contribution.create_pending",
+      entityType: "contributions",
+      entityId: contributionId,
+      source: "api",
+      after: {
+        projectId: args.projectId,
+        amount: args.amount,
+        co2Equivalent: args.co2Equivalent,
+        method: "QRIS",
+        paymentStatus: "pending",
+      },
+      metadata: { hasPaymentId: Boolean(args.paymentId) },
+    });
+    return contributionId;
   },
 });
 
@@ -141,7 +168,17 @@ export const attachPaymentId = mutation({
   },
   returns: v.null(),
   handler: async (ctx, args) => {
+    const before = await ctx.db.get(args.contributionId);
     await ctx.db.patch(args.contributionId, { paymentId: args.paymentId });
+    await writeAuditLog(ctx, {
+      actorId: before?.userId,
+      action: "contribution.attach_payment_id",
+      entityType: "contributions",
+      entityId: args.contributionId,
+      source: "api",
+      before: before ? { paymentId: before.paymentId } : undefined,
+      after: { paymentId: args.paymentId },
+    });
     return null;
   },
 });
@@ -153,32 +190,7 @@ export const confirmPayment = mutation({
   },
   returns: v.null(),
   handler: async (ctx, args) => {
-    const contrib = await ctx.db.get(args.contributionId);
-    if (!contrib) return null;
-    // Idempotent: only increment funding once per contribution
-    if (contrib.paymentStatus === "paid") return null;
-
-    await ctx.db.patch(args.contributionId, { paymentStatus: "paid" });
-
-    // Increment funding raised on the linked project
-    const project = await ctx.db.get(contrib.projectId);
-    if (project) {
-      const next = (project.fundingRaised ?? 0) + contrib.amount;
-      await ctx.db.patch(contrib.projectId, { fundingRaised: next });
-    }
-
-    // Auto-issue certificate (only if donor is a registered user)
-    if (contrib.userId) {
-      await ctx.db.insert("certificates", {
-        ownerId: contrib.userId,
-        projectId: contrib.projectId,
-        type: "contribution",
-        co2Amount: contrib.co2Equivalent,
-        issuedAt: Date.now(),
-        certificateNumber: `IDMAP-DON-${Date.now().toString(36).toUpperCase()}-${contrib._id.slice(-6).toUpperCase()}`,
-      });
-    }
-    return null;
+    return await confirmMatchedContribution(ctx, args.contributionId);
   },
 });
 
@@ -193,31 +205,119 @@ export const confirmByPaymentId = mutation({
       .query("contributions")
       .withIndex("by_paymentId", (q) => q.eq("paymentId", args.paymentId))
       .first();
-    if (!contrib) return null;
-    // Idempotent: only increment funding once per contribution
-    if (contrib.paymentStatus === "paid") return null;
-
-    await ctx.db.patch(contrib._id, { paymentStatus: "paid" });
-
-    // Increment funding raised on the linked project
-    const project = await ctx.db.get(contrib.projectId);
-    if (project) {
-      const next = (project.fundingRaised ?? 0) + contrib.amount;
-      await ctx.db.patch(contrib.projectId, { fundingRaised: next });
-    }
-
-    // Auto-issue certificate (only if donor is a registered user)
-    if (contrib.userId) {
-      await ctx.db.insert("certificates", {
-        ownerId: contrib.userId,
-        projectId: contrib.projectId,
-        type: "contribution",
-        co2Amount: contrib.co2Equivalent,
-        issuedAt: Date.now(),
-        certificateNumber: `IDMAP-DON-${Date.now().toString(36).toUpperCase()}-${contrib._id.slice(-6).toUpperCase()}`,
+    if (!contrib) {
+      await writeAuditLog(ctx, {
+        action: "contribution.webhook_match_miss",
+        entityType: "contributions",
+        entityId: ids[0] ?? "unknown",
+        source: "webhook",
+        after: { paymentIds: ids, amount: args.amount ?? null },
       });
+      return null;
     }
-    return null;
+    return await confirmMatchedContribution(ctx, contrib._id);
+  },
+});
+
+export const confirmByPaymentIds = mutation({
+  args: {
+    paymentIds: v.array(v.string()),
+    amount: v.optional(v.number()),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const ids = args.paymentIds.map((id) => id.trim()).filter(Boolean);
+    let contrib = null;
+    let matchedBy: "paymentId" | "amount+recent" | null = null;
+
+    for (const id of ids) {
+      contrib = await ctx.db
+        .query("contributions")
+        .withIndex("by_paymentId", (q) => q.eq("paymentId", id))
+        .first();
+      if (contrib) {
+        matchedBy = "paymentId";
+        break;
+      }
+    }
+
+    if (!contrib && typeof args.amount === "number" && args.amount > 0) {
+      const recent = await ctx.db.query("contributions").order("desc").take(25);
+      const cutoff = Date.now() - 30 * 60 * 1000;
+      contrib = recent.find((item) =>
+        item.paymentStatus === "pending" &&
+        item.method === "QRIS" &&
+        // Allow webhook gross amount to be up to 5% above stored net (Mayar admin fee)
+        args.amount >= item.amount &&
+        args.amount <= item.amount * 1.05 + 100 &&
+        item.createdAt >= cutoff
+      ) ?? null;
+      if (contrib) {
+        matchedBy = "amount+recent";
+        if (ids[0]) {
+          await ctx.db.patch(contrib._id, { paymentId: ids[0] });
+        }
+        await writeAuditLog(ctx, {
+          actorId: contrib.userId,
+          action: "contribution.webhook_match_fallback",
+          entityType: "contributions",
+          entityId: contrib._id,
+          source: "webhook",
+          before: { paymentId: contrib.paymentId, paymentStatus: contrib.paymentStatus },
+          after: { matchedBy, paymentId: ids[0] ?? null, amount: args.amount ?? null },
+        });
+      }
+    }
+
+    if (!contrib) {
+      await writeAuditLog(ctx, {
+        action: "contribution.webhook_match_miss",
+        entityType: "contributions",
+        entityId: ids[0] ?? "unknown",
+        source: "webhook",
+        after: { paymentIds: ids, amount: args.amount ?? null },
+      });
+      return null;
+    }
+
+    return await confirmMatchedContribution(ctx, contrib._id, args.amount);
+  },
+});
+export const confirmPaymentForContribution = mutation({
+  args: {
+    contributionId: v.id("contributions"),
+    amount: v.optional(v.number()),
+    paymentId: v.optional(v.string()),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const contrib = await ctx.db.get(args.contributionId);
+    if (!contrib) return null;
+    if (contrib.paymentStatus === "paid") return null;
+    if (typeof args.amount === "number" && args.amount > 0 && contrib.amount !== args.amount) {
+      return null;
+    }
+    if (args.paymentId && args.paymentId.trim().length > 0) {
+      await ctx.db.patch(args.contributionId, { paymentId: args.paymentId.trim() });
+    }
+    return await confirmMatchedContribution(ctx, args.contributionId, args.amount);
+  },
+});
+export const confirmPaymentFromWebhook = mutation({
+  args: {
+    contributionId: v.id("contributions"),
+    paymentId: v.optional(v.string()),
+    amount: v.optional(v.number()),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const contrib = await ctx.db.get(args.contributionId);
+    if (!contrib) return null;
+
+    if (args.paymentId && contrib.paymentId && args.paymentId !== contrib.paymentId) {
+      await ctx.db.patch(contrib._id, { paymentId: args.paymentId });
+    }
+    return await confirmMatchedContribution(ctx, contrib._id, args.amount);
   },
 });
 
@@ -238,3 +338,119 @@ export const getStatus = query({
     return { paymentStatus: c.paymentStatus };
   },
 });
+
+
+export const getStatusDetail = query({
+  args: { contributionId: v.id("contributions") },
+  returns: v.union(
+    v.object({
+      paymentStatus: v.optional(
+        v.union(v.literal("pending"), v.literal("paid"), v.literal("failed"))
+      ),
+      paymentId: v.optional(v.string()),
+      amount: v.number(),
+      createdAt: v.number(),
+      method: v.union(v.literal("QRIS"), v.literal("Transfer"), v.literal("CSR")),
+    }),
+    v.null()
+  ),
+  handler: async (ctx, args) => {
+    const c = await ctx.db.get(args.contributionId);
+    if (!c) return null;
+    return {
+      paymentStatus: c.paymentStatus,
+      paymentId: c.paymentId,
+      amount: c.amount,
+      createdAt: c.createdAt,
+      method: c.method,
+    };
+  },
+});
+
+async function confirmMatchedContribution(
+  ctx: MutationCtx,
+  contributionId: Id<"contributions">,
+  amount?: number
+) {
+  const contrib = await ctx.db.get(contributionId);
+  if (!contrib) return null;
+  if (contrib.paymentStatus === "paid") return null;
+  if (typeof amount === "number" && amount > 0 && contrib.amount !== amount) {
+    return null;
+  }
+
+  const existingCertificate = contrib.userId
+    ? await ctx.db
+        .query("certificates")
+        .withIndex("by_owner", (q) => q.eq("ownerId", contrib.userId!))
+        .filter((q) =>
+          q.and(
+            q.eq(q.field("projectId"), contrib.projectId),
+            q.eq(q.field("type"), "contribution")
+          )
+        )
+        .first()
+    : null;
+
+  await ctx.db.patch(contributionId, { paymentStatus: "paid" });
+  await writeAuditLog(ctx, {
+    actorId: contrib.userId,
+    action: "contribution.confirm_payment",
+    entityType: "contributions",
+    entityId: contributionId,
+    source: "webhook",
+    before: { paymentStatus: contrib.paymentStatus ?? "pending" },
+    after: { paymentStatus: "paid" },
+    metadata: {
+      projectId: contrib.projectId,
+      amount: contrib.amount,
+      paymentId: contrib.paymentId,
+    },
+  });
+
+  const project = await ctx.db.get(contrib.projectId);
+  if (project) {
+    const next = (project.fundingRaised ?? 0) + contrib.amount;
+    await ctx.db.patch(contrib.projectId, { fundingRaised: next });
+    await writeAuditLog(ctx, {
+      actorId: contrib.userId,
+      action: "project.funding_raised_update",
+      entityType: "projects",
+      entityId: contrib.projectId,
+      source: "webhook",
+      before: { fundingRaised: project.fundingRaised ?? 0 },
+      after: { fundingRaised: next },
+      metadata: { contributionId },
+    });
+  }
+
+  if (contrib.userId && !existingCertificate) {
+    await ctx.db.insert("certificates", {
+      ownerId: contrib.userId,
+      projectId: contrib.projectId,
+      type: "contribution",
+      co2Amount: contrib.co2Equivalent,
+      issuedAt: Date.now(),
+      certificateNumber: `IDMAP-DON-${Date.now().toString(36).toUpperCase()}-${contrib._id.slice(-6).toUpperCase()}`,
+    });
+  }
+  return null;
+}
+
+
+export const debugRecentPending = query({
+  args: { amount: v.optional(v.number()) },
+  returns: v.array(contribValidator),
+  handler: async (ctx, args) => {
+    const recent = await ctx.db.query("contributions").order("desc").take(30);
+    return recent.filter((item) =>
+      item.paymentStatus === "pending" &&
+      item.method === "QRIS" &&
+      (typeof args.amount === "number" ? item.amount === args.amount : true)
+    );
+  },
+});
+
+
+
+
