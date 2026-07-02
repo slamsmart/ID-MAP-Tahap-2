@@ -1,6 +1,7 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, ReactNode } from "react";
+import { useRouter } from "next/navigation";
 import {
   QrCode, Heart, Leaf, ArrowUpRight, CheckCircle,
   Loader2, RefreshCw, AlertCircle, ChevronDown, ShieldCheck, Clock,
@@ -21,12 +22,25 @@ interface QrisData {
   qrImageUrl: string | null;
   amount: number;
   co2Equivalent: number;
-  isDummy: boolean;
   isSandbox: boolean;
 }
 
 function getErrorMessage(err: unknown, fallback: string): string {
   return err instanceof Error ? err.message : fallback;
+}
+
+async function parseApiResponse<T>(res: Response): Promise<T> {
+  const text = await res.text();
+  const contentType = res.headers.get("content-type") ?? "";
+
+  if (!contentType.toLowerCase().includes("application/json")) {
+    if (res.redirected || text.startsWith("<!DOCTYPE") || text.startsWith("<html")) {
+      throw new Error("Sesi login berakhir. Silakan muat ulang lalu masuk lagi.");
+    }
+    throw new Error("Server mengembalikan respons yang tidak valid.");
+  }
+
+  return JSON.parse(text) as T;
 }
 
 function KycGate({ status }: { status?: string }) {
@@ -72,6 +86,7 @@ function KycGate({ status }: { status?: string }) {
 }
 
 export default function DonasiPage() {
+  const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [amount, setAmount] = useState(1000);
   const [customAmount, setCustomAmount] = useState("");
@@ -102,7 +117,7 @@ export default function DonasiPage() {
   const projects = useQuery(api.projects.listVerified);
   const userData = useQuery(
     api.users.get,
-    user?._id ? { userId: user._id as Id<"users"> } : "skip"
+    user?._id ? { actorId: user._id as Id<"users">, userId: user._id as Id<"users"> } : "skip"
   );
   const userImpact = useQuery(
     api.contributions.getUserImpact,
@@ -127,6 +142,37 @@ export default function DonasiPage() {
       style: "currency", currency: "IDR", maximumFractionDigits: 0,
     }).format(n);
 
+  useEffect(() => {
+    if (state !== "waiting" || !qrisData) return;
+
+    const pollPaymentStatus = async () => {
+      try {
+        const res = await fetch(`/api/payment/status?contributionId=${qrisData.contributionId}`, { cache: "no-store", credentials: "same-origin" });
+        if (!res.ok) return;
+
+        const data = (await res.json()) as { paymentStatus?: string };
+        if (data.paymentStatus === "paid") {
+          setQrisData(null);
+          setState("paid");
+          setShowToast(true);
+          router.refresh();
+          setTimeout(() => setShowToast(false), 4000);
+        }
+      } catch {
+        // ignore and keep polling while waiting
+      }
+    };
+
+    void pollPaymentStatus();
+    const timer = setInterval(() => {
+      void pollPaymentStatus();
+    }, 3000);
+
+    return () => clearInterval(timer);
+  }, [state, qrisData, router]);
+
+
+
   async function handleCreateQris() {
     if (!finalAmount || finalAmount < 1000) {
       setErrorMsg("Minimal donasi Rp 1.000");
@@ -141,6 +187,7 @@ export default function DonasiPage() {
 
     try {
       const res = await fetch("/api/payment/create-qris", {
+        credentials: "same-origin",
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -149,7 +196,7 @@ export default function DonasiPage() {
           userId: user?._id,
         }),
       });
-      const data = await res.json();
+      const data = await parseApiResponse<QrisData & { error?: string }>(res);
       if (!res.ok) throw new Error(data.error ?? "Gagal membuat QRIS");
       setQrisData(data as QrisData);
       setState("waiting");
@@ -164,14 +211,17 @@ export default function DonasiPage() {
     setState("simulating");
     try {
       const res = await fetch("/api/payment/simulate", {
+        credentials: "same-origin",
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ contributionId: qrisData.contributionId }),
       });
-      const data = await res.json();
+      const data = await parseApiResponse<{ error?: string }>(res);
       if (!res.ok) throw new Error(data.error ?? "Simulasi gagal");
+      setQrisData(null);
       setState("paid");
       setShowToast(true);
+      router.refresh();
       setTimeout(() => setShowToast(false), 4000);
     } catch (err: unknown) {
       setErrorMsg(getErrorMessage(err, "Simulasi gagal"));
@@ -199,12 +249,12 @@ export default function DonasiPage() {
       <div className="mb-6">
         <h1 className="text-2xl font-display font-bold text-gray-900">Donasi & Kontribusi</h1>
         <p className="text-sm text-gray-500 mt-1">
-          Dukung proyek mangrove melalui donasi QRIS · Powered by Mayar.id
+          Dukung proyek mangrove melalui donasi QRIS Â· Powered by Mayar.id
         </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* ── Stats + History ── */}
+        {/* â”€â”€ Stats + History â”€â”€ */}
         <div className="lg:col-span-2 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-white rounded-xl border border-gray-100 p-4">
@@ -218,9 +268,9 @@ export default function DonasiPage() {
               </p>
             </div>
             <div className="bg-white rounded-xl border border-gray-100 p-4">
-              <p className="text-sm text-gray-500">CO₂ Didukung</p>
+              <p className="text-sm text-gray-500">COâ‚‚ Didukung</p>
               <p className="text-2xl font-display font-bold text-gray-900 mt-1">
-                {userImpact ? userImpact.totalCo2.toFixed(2) : "0"} tCO₂e
+                {userImpact ? userImpact.totalCo2.toFixed(2) : "0"} tCOâ‚‚e
               </p>
               <p className="text-xs text-gray-400 mt-1">Dari donasi Anda</p>
             </div>
@@ -258,7 +308,7 @@ export default function DonasiPage() {
                       <p className="text-sm font-semibold text-gray-900">{formatRp(c.amount)}</p>
                       <div className="flex items-center gap-1 justify-end mt-0.5">
                         <Leaf className="w-3 h-3 text-emerald-600" />
-                        <span className="text-xs text-emerald-600">{c.co2Equivalent.toFixed(4)} tCO₂e</span>
+                        <span className="text-xs text-emerald-600">{c.co2Equivalent.toFixed(4)} tCOâ‚‚e</span>
                         {c.paymentStatus && (
                           <span className={`text-xs ml-1 px-1.5 py-0.5 rounded-full font-medium ${
                             c.paymentStatus === "paid"
@@ -283,16 +333,16 @@ export default function DonasiPage() {
           </div>
         </div>
 
-        {/* ── QRIS Panel ── */}
+        {/* â”€â”€ QRIS Panel â”€â”€ */}
         <div className="space-y-4">
           <div className="bg-white rounded-xl border border-gray-100 p-6">
             <h3 className="font-display font-semibold text-gray-900 mb-1 flex items-center gap-2">
               <QrCode className="w-5 h-5 text-emerald-600" />
               Donasi via QRIS
             </h3>
-            <p className="text-xs text-gray-400 mb-4">Mayar.id · Semua bank & e-wallet</p>
+            <p className="text-xs text-gray-400 mb-4">Mayar.id Â· Semua bank & e-wallet</p>
 
-            {/* ── KYC GATE ── */}
+            {/* â”€â”€ KYC GATE â”€â”€ */}
             {userData === undefined ? (
               <div className="py-8 flex justify-center">
                 <Loader2 className="w-6 h-6 animate-spin text-gray-300" />
@@ -313,7 +363,7 @@ export default function DonasiPage() {
                       onChange={(e) => setSelectedProjectId(e.target.value)}
                       className="w-full appearance-none pl-3 pr-8 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-500 bg-white"
                     >
-                      {!projects && <option value="">Memuat proyek…</option>}
+                      {!projects && <option value="">Memuat proyekâ€¦</option>}
                       {projects?.map((p) => (
                         <option key={p._id} value={p._id}>{p.title}</option>
                       ))}
@@ -352,7 +402,7 @@ export default function DonasiPage() {
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">Rp</span>
                     <input
                       type="text"
-                      placeholder="Nominal lain…"
+                      placeholder="Nominal lainâ€¦"
                       value={customAmount}
                       onChange={(e) => setCustomAmount(e.target.value.replace(/\D/g, ""))}
                       className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-500"
@@ -362,7 +412,7 @@ export default function DonasiPage() {
 
                 {finalAmount >= 1000 && (
                   <p className="text-xs text-emerald-600 bg-emerald-50 rounded-lg px-3 py-2">
-                    {formatRp(finalAmount)} ≈ <strong>{(finalAmount / 5000).toFixed(4)} tCO₂e</strong> diserap mangrove
+                    {formatRp(finalAmount)} â‰ˆ <strong>{(finalAmount / 5000).toFixed(4)} tCOâ‚‚e</strong> diserap mangrove
                   </p>
                 )}
 
@@ -387,21 +437,17 @@ export default function DonasiPage() {
             {state === "generating" && (
               <div className="py-10 flex flex-col items-center gap-3 text-gray-500">
                 <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
-                <p className="text-sm">Membuat QRIS via Mayar.id…</p>
+                <p className="text-sm">Membuat QRIS via Mayar.idâ€¦</p>
               </div>
             )}
 
             {/* WAITING PAYMENT */}
             {state === "waiting" && qrisData && (
               <div className="space-y-4">
-                {(qrisData.isSandbox || qrisData.isDummy) && (
+                {qrisData.isSandbox && (
                   <div className="flex items-start gap-2 text-xs text-amber-700 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">
                     <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-                    <span>
-                      {qrisData.isDummy
-                        ? "Mode Demo — tambahkan MAYAR_API_KEY di .env.local untuk QR sungguhan."
-                        : "Sandbox Mayar.id aktif — gunakan tombol simulasi."}
-                    </span>
+                    <span>Sandbox Mayar.id aktif — gunakan tombol simulasi.</span>
                   </div>
                 )}
 
@@ -409,14 +455,7 @@ export default function DonasiPage() {
                   {qrisData.qrImageUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={qrisData.qrImageUrl} alt="QRIS" className="w-44 h-44 object-contain" />
-                  ) : (
-                    <QRCodeSVG
-                      value={`https://mayar.id/pay/demo?amount=${qrisData.amount}&ref=${qrisData.paymentId}`}
-                      size={176}
-                      level="M"
-                      fgColor="#000000"
-                    />
-                  )}
+                  ) : null}
                 </div>
 
                 <div className="text-center">
@@ -427,20 +466,22 @@ export default function DonasiPage() {
                 <div className="bg-emerald-50 rounded-lg px-3 py-2 space-y-1">
                   <p className="text-xs font-semibold text-emerald-800">Detail Transaksi</p>
                   <p className="text-xs text-emerald-700">
-                    CO₂e: <strong>{qrisData.co2Equivalent.toFixed(4)} tCO₂e</strong>
+                    COâ‚‚e: <strong>{qrisData.co2Equivalent.toFixed(4)} tCOâ‚‚e</strong>
                   </p>
                   <p className="text-xs text-gray-400 font-mono break-all">
-                    ID: {qrisData.paymentId?.slice(0, 24)}…
+                    ID: {qrisData.paymentId?.slice(0, 24)}...
                   </p>
                 </div>
 
-                <button
-                  onClick={handleSimulatePayment}
-                  className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
-                >
-                  <CheckCircle className="w-4 h-4" />
-                  Simulasi Pembayaran Berhasil
-                </button>
+                {qrisData.isSandbox && (
+                  <button
+                    onClick={handleSimulatePayment}
+                    className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
+                  >
+                    <CheckCircle className="w-4 h-4" />
+                    Simulasi Pembayaran Berhasil
+                  </button>
+                )}
 
                 <button
                   onClick={handleReset}
@@ -456,7 +497,7 @@ export default function DonasiPage() {
             {state === "simulating" && (
               <div className="py-10 flex flex-col items-center gap-3 text-gray-500">
                 <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
-                <p className="text-sm">Memproses pembayaran…</p>
+                <p className="text-sm">Memproses pembayaranâ€¦</p>
               </div>
             )}
 
@@ -476,7 +517,7 @@ export default function DonasiPage() {
                   <div className="w-full bg-emerald-50 rounded-lg px-4 py-3">
                     <p className="text-xs text-emerald-700 font-semibold">Dampak Donasi Anda</p>
                     <p className="text-xl font-bold text-emerald-800 mt-0.5">
-                      {qrisData.co2Equivalent.toFixed(4)} tCO₂e
+                      {qrisData.co2Equivalent.toFixed(4)} tCOâ‚‚e
                     </p>
                     <p className="text-xs text-emerald-600">karbon tersimpan di mangrove</p>
                   </div>
@@ -517,3 +558,14 @@ export default function DonasiPage() {
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+

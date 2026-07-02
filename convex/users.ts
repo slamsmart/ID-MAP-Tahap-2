@@ -3,6 +3,7 @@ import { v } from "convex/values";
 import { ConvexError } from "convex/values";
 import bcrypt from "bcryptjs";
 import { requireAdmin, requireOwnerOrAdmin } from "./authz";
+import { writeAuditLog } from "./audit";
 import type { MutationCtx } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
 
@@ -129,22 +130,29 @@ function toPublicUser(u: RawUser) {
 
 // ─── Queries ───────────────────────────────────────────────────────
 
+// PII endpoint — hanya admin. Dump anonim `users:list` diblokir di sini.
 export const list = query({
-  args: {},
-  handler: async (ctx) => {
+  args: { actorId: v.id("users") },
+  handler: async (ctx, args) => {
+    await requireAdmin(ctx, args.actorId);
     const rows = await ctx.db.query("users").collect();
     return rows.map(toPublicUser);
   },
 });
 
+// PII per-user — hanya pemilik record atau admin.
 export const get = query({
-  args: { userId: v.id("users") },
+  args: { actorId: v.id("users"), userId: v.id("users") },
   handler: async (ctx, args) => {
+    await requireOwnerOrAdmin(ctx, args.actorId, args.userId);
     const u = await ctx.db.get(args.userId);
     return u ? toPublicUser(u) : null;
   },
 });
 
+// Cek keberadaan email (dipakai server-side OTP/lupa-password). Sengaja
+// TIDAK return PII (nama/HP/alamat) — cukup existence + _id — supaya
+// tidak jadi vektor email-enumeration yang membocorkan profil.
 export const getByEmail = query({
   args: { email: v.string() },
   handler: async (ctx, args) => {
@@ -152,13 +160,14 @@ export const getByEmail = query({
       .query("users")
       .withIndex("by_email", (q) => q.eq("email", args.email))
       .first();
-    return u ? toPublicUser(u) : null;
+    return u ? { _id: u._id } : null;
   },
 });
 
 export const listByRole = query({
-  args: { role: roleValidator },
+  args: { actorId: v.id("users"), role: roleValidator },
   handler: async (ctx, args) => {
+    await requireAdmin(ctx, args.actorId);
     const rows = await ctx.db
       .query("users")
       .withIndex("by_role", (q) => q.eq("role", args.role))
@@ -384,6 +393,7 @@ export const update = mutation({
   handler: async (ctx, args) => {
     // Hanya pemilik atau admin yang boleh update profile.
     await requireOwnerOrAdmin(ctx, args.actorId, args.userId);
+    const before = await ctx.db.get(args.userId);
 
     const { actorId: _a, userId, ...updates } = args;
     const cleanUpdates = Object.fromEntries(
@@ -391,6 +401,23 @@ export const update = mutation({
     );
     if (Object.keys(cleanUpdates).length > 0) {
       await ctx.db.patch(userId, cleanUpdates);
+      await writeAuditLog(ctx, {
+        actorId: args.actorId,
+        action: "user.update_profile",
+        entityType: "users",
+        entityId: userId,
+        source: "convex",
+        before: before
+          ? {
+              name: before.name,
+              email: before.email,
+              phone: before.phone,
+              organization: before.organization,
+              address: before.address,
+            }
+          : undefined,
+        after: cleanUpdates,
+      });
     }
     return null;
   },
@@ -410,6 +437,13 @@ export const updateKycStatus = internalMutation({
   returns: v.null(),
   handler: async (ctx, args) => {
     await ctx.db.patch(args.userId, { kycStatus: args.kycStatus });
+    await writeAuditLog(ctx, {
+      action: "user.update_kyc_status",
+      entityType: "users",
+      entityId: args.userId,
+      source: "convex",
+      after: { kycStatus: args.kycStatus },
+    });
     return null;
   },
 });
@@ -432,6 +466,14 @@ export const resetPasswordByEmail = mutation({
       throw new ConvexError("Email tidak terdaftar.");
     }
     await ctx.db.patch(user._id, { password: hashPassword(args.newPassword) });
+    await writeAuditLog(ctx, {
+      actorId: user._id,
+      action: "user.reset_password",
+      entityType: "users",
+      entityId: user._id,
+      source: "api",
+      metadata: { email: args.email },
+    });
     return null;
   },
 });
@@ -444,7 +486,23 @@ export const remove = mutation({
   returns: v.null(),
   handler: async (ctx, args) => {
     await requireAdmin(ctx, args.actorId);
+    const before = await ctx.db.get(args.userId);
     await ctx.db.delete(args.userId);
+    await writeAuditLog(ctx, {
+      actorId: args.actorId,
+      action: "user.delete",
+      entityType: "users",
+      entityId: args.userId,
+      source: "convex",
+      before: before
+        ? {
+            email: before.email,
+            name: before.name,
+            role: before.role,
+            kycStatus: before.kycStatus,
+          }
+        : undefined,
+    });
     return null;
   },
 });

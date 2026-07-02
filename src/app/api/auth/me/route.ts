@@ -13,6 +13,7 @@ export async function GET() {
 
   try {
     const user = await convex.query(api.users.get, {
+      actorId: session.uid as Id<"users">,
       userId: session.uid as Id<"users">,
     });
     if (!user) {

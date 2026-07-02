@@ -12,7 +12,9 @@ import {
   XCircle,
   AlertCircle,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getSession, User } from "@/lib/auth";
+import { Id } from "../../../../convex/_generated/dataModel";
 
 type RoleFilter = "semua" | "sahabat" | "mitra" | "verifikator" | "admin";
 type KycFilter = "semua" | "belum" | "menunggu" | "terverifikasi" | "ditolak";
@@ -46,7 +48,11 @@ const roleBadge = (role: string) => {
 };
 
 export default function PenggunaPage() {
-  const users = useQuery(api.users.list);
+  const [session, setSession] = useState<User | null>(null);
+  useEffect(() => setSession(getSession()), []);
+  const actorId = session?._id as Id<"users"> | undefined;
+
+  const users = useQuery(api.users.list, actorId ? { actorId } : "skip");
   const userStats = useQuery(api.users.getStats);
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState<RoleFilter>("semua");

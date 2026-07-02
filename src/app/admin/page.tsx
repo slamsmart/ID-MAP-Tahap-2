@@ -21,7 +21,9 @@ import {
   Phone,
 } from "lucide-react";
 import Link from "next/link";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
+import { getSession, User } from "@/lib/auth";
+import { Id } from "../../../convex/_generated/dataModel";
 
 const fmtID = new Intl.NumberFormat("id-ID");
 import { ABRASION_SITES, PRIORITAS_CONFIG, type PrioritasType } from "@/lib/abrasionData";
@@ -30,9 +32,13 @@ import { DATA_POKMASWAS, KABKOTA_WARNA } from "@/lib/pokmaswasData";
 export default function AdminDashboard() {
   const projectStats = useQuery(api.projects.getStats);
   const txStats = useQuery(api.transactions.getTotalStats);
-  const users = useQuery(api.users.list);
+  const [session, setSession] = useState<User | null>(null);
+  useEffect(() => setSession(getSession()), []);
+  const actorId = session?._id as Id<"users"> | undefined;
+
+  const users = useQuery(api.users.list, actorId ? { actorId } : "skip");
   const projects = useQuery(api.projects.list);
-  const transactions = useQuery(api.transactions.list);
+  const transactions = useQuery(api.transactions.list, actorId ? { actorId } : "skip");
   const activities = useQuery(api.activities.listRecent, { limit: 5 });
   const kycStats = useQuery(api.kyc.getStats);
 

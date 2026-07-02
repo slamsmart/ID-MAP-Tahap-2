@@ -31,14 +31,33 @@ const nextConfig = {
   },
   async headers() {
     // Security headers — defense in depth.
-    // CSP sengaja tidak di-set strict di sini supaya tidak block live-edit
-    // dashboard yang inject lib eksternal (NVIDIA chat stream, Mayar JS).
-    // Untuk tahap pilot/produksi: tambahkan Content-Security-Policy yang
-    // diinventarisasi dari domain yang benar-benar dipakai.
+    // CSP: script-src/connect-src/img-src sengaja longgar (https:) supaya
+    // lib eksternal (Mayar JS, NVIDIA chat stream) & tile peta Leaflet tetap
+    // jalan. Yang di-lock adalah vektor yang tidak dipakai app: object-src,
+    // base-uri, frame-ancestors (anti-clickjacking), form-action.
+    // TODO pilot: inventaris host script eksternal → ganti 'unsafe-inline'
+    // /'unsafe-eval' dengan nonce untuk proteksi XSS penuh.
+    const csp = [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https:",
+      "style-src 'self' 'unsafe-inline' https:",
+      "img-src 'self' data: blob: https:",
+      "font-src 'self' data: https:",
+      "connect-src 'self' https: wss:",
+      "frame-src 'self' https:",
+      "media-src 'self' https: data: blob:",
+      "worker-src 'self' blob:",
+      "object-src 'none'",
+      "base-uri 'self'",
+      "form-action 'self' https:",
+      "frame-ancestors 'self'",
+      "upgrade-insecure-requests",
+    ].join("; ");
     return [
       {
         source: "/:path*",
         headers: [
+          { key: "Content-Security-Policy", value: csp },
           {
             key: "Strict-Transport-Security",
             value: "max-age=63072000; includeSubDomains; preload",

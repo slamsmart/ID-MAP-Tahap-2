@@ -1,5 +1,6 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
+import { requireRole } from "./authz";
 
 const txValidator = v.object({
   _id: v.id("transactions"),
@@ -20,10 +21,12 @@ const txValidator = v.object({
 
 // ─── Queries ───────────────────────────────────────────────────────
 
+// Data transaksi karbon — hanya admin & mitra. Blokir akses anonim.
 export const list = query({
-  args: {},
+  args: { actorId: v.id("users") },
   returns: v.array(txValidator),
-  handler: async (ctx) => {
+  handler: async (ctx, args) => {
+    await requireRole(ctx, args.actorId, ["admin", "mitra"]);
     return await ctx.db.query("transactions").order("desc").collect();
   },
 });

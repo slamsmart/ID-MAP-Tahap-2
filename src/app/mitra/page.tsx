@@ -20,7 +20,7 @@ export default function MitraDashboard() {
   const mitraId = session?._id as Id<"users"> | undefined;
 
   const projects = useQuery(api.projects.listByMitra, mitraId ? { mitraId } : "skip");
-  const allTransactions = useQuery(api.transactions.list);
+  const allTransactions = useQuery(api.transactions.list, mitraId ? { actorId: mitraId } : "skip");
   const mrvReports = useQuery(api.mrvReports.listAll);
 
   const activeProjectsCount = projects?.filter(p => p.status !== "Draft").length || 0;
