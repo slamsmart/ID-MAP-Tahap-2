@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
+import { Id } from "../../../../convex/_generated/dataModel";
+import { getSession } from "@/lib/auth";
 import {
   AlertTriangle,
   ArrowRight,
@@ -128,7 +130,12 @@ export default function VerifikatorLandingHeroPage() {
     setSaving(true);
     setError(null);
     try {
-      await updateHero(form);
+      const session = getSession();
+      if (!session?._id) {
+        setError("Sesi tidak valid. Silakan login ulang.");
+        return;
+      }
+      await updateHero({ ...form, actorId: session._id as Id<"users"> });
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
     } catch (err) {
