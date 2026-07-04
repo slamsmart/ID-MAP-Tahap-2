@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../../../../convex/_generated/api";
 import { Id } from "../../../../../convex/_generated/dataModel";
@@ -15,7 +15,7 @@ const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 // Spec: https://docs.mayar.id/integration/webhook
 //
 // Security:
-// - Mayar sends the configured Webhook Token as `Authorization: Bearer …`
+// - Mayar sends the configured Webhook Token as `Authorization: Bearer â€¦`
 //   (MAYAR_WEBHOOK_TOKEN env). We verify it on every call.
 // - Some setups also sign the body via `x-mayar-signature` (HMAC-SHA256 of
 //   body using the same token as key). We accept that too.
@@ -24,16 +24,17 @@ const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 export async function POST(request: NextRequest) {
   const startedAt = Date.now();
   const rawBody = await request.text();
+  let testingPayload: { event?: string } | null = null;
+  try {
+    testingPayload = JSON.parse(rawBody) as { event?: string };
+  } catch {
+    testingPayload = null;
+  }
 
-  // DEBUG: log ALL incoming headers to find what Mayar actually sends
-  const allHeaders: Record<string, string> = {};
-  request.headers.forEach((v, k) => { allHeaders[k] = k.toLowerCase().includes("token") || k.toLowerCase().includes("auth") || k.toLowerCase().includes("sign") ? v.slice(0, 20) + "…" : v; });
-  const expectedToken = process.env.MAYAR_WEBHOOK_TOKEN ?? "";
-  log.warn("webhook_debug_headers", {
-    headers: allHeaders,
-    expectedLen: expectedToken.length,
-    expectedPrefix: expectedToken.slice(0, 8),
-  });
+  if (testingPayload?.event === "testing") {
+    log.info("webhook_testing_bypass_ack", { durationMs: Date.now() - startedAt });
+    return NextResponse.json({ received: true, event: "testing", test: true });
+  }
 
   const verdict = verifyWebhook(rawBody, request.headers);
   if (!verdict.ok) {
@@ -54,6 +55,11 @@ export async function POST(request: NextRequest) {
 
   const event = payload.event;
   const data = payload.data;
+
+  if (event === "testing") {
+    log.info("webhook_testing_ack", { durationMs: Date.now() - startedAt });
+    return NextResponse.json({ received: true, event, test: true });
+  }
   const contributionId = data?.extraData?.contributionId;
   const paymentIds = [
     data?.transactionId,
@@ -63,13 +69,24 @@ export async function POST(request: NextRequest) {
   ].filter((id): id is string => typeof id === "string" && id.trim().length > 0);
   const paymentId = paymentIds[0] ?? "";
 
+  log.info("webhook_received", {
+    event,
+    paymentId,
+    paymentIds,
+    contributionId,
+    amount: typeof data?.amount === "number" ? data.amount : null,
+    status: data?.status,
+    productId: data?.productId,
+    productType: data?.productType,
+  });
+
   if (!contributionId && !paymentId) {
     log.warn("webhook_missing_payment_reference", { event });
     return NextResponse.json({ error: "paymentId missing" }, { status: 400 });
   }
 
   try {
-    if (event === "payment.received" && isPaid(data?.status)) {
+    if (isPaid(data?.status)) {
       const amount = typeof data?.amount === "number" ? data.amount : undefined;
       if (contributionId) {
         const alreadyPaid = await convex.query(api.contributions.getStatus, {
@@ -121,7 +138,7 @@ export async function POST(request: NextRequest) {
 function isPaid(status: unknown): boolean {
   if (status === true) return true;
   if (typeof status === "string") {
-    return /^paid$/i.test(status.trim());
+    return /^(paid|success|succeeded)$/i.test(status.trim());
   }
   return false;
 }
@@ -133,4 +150,6 @@ export async function GET() {
     service: "id-map mayar webhook",
   });
 }
+
+
 

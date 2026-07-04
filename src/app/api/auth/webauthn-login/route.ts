@@ -23,11 +23,11 @@ export async function GET(req: NextRequest) {
       email,
     });
     return NextResponse.json({ credentialIds });
-  } catch {
-    return NextResponse.json(
-      { error: "Gagal mengambil data biometrik." },
-      { status: 500 }
-    );
+  } catch (err) {
+    const msg = err instanceof Error ? (err as Error).message : String(err);
+    const body: Record<string, string> = { error: "Gagal mengambil data biometrik." };
+    if (process.env.NODE_ENV !== "production") body.detail = msg;
+    return NextResponse.json(body, { status: 500 });
   }
 }
 
@@ -114,10 +114,10 @@ export async function POST(req: NextRequest) {
     });
 
     return res;
-  } catch {
-    return NextResponse.json(
-      { error: "Terjadi kesalahan server biometrik. Silakan coba lagi." },
-      { status: 500 }
-    );
+  } catch (err) {
+    const msg = err instanceof Error ? (err as Error).message : String(err);
+    const body: Record<string, string> = { error: "Terjadi kesalahan server biometrik. Silakan coba lagi." };
+    if (process.env.NODE_ENV !== "production") body.detail = msg;
+    return NextResponse.json(body, { status: 500 });
   }
 }

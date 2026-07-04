@@ -8,6 +8,7 @@ import {
 } from "@/lib/sessionToken";
 import { rateLimitAsync } from "@/lib/rateLimit";
 import { createLogger } from "@/lib/logger";
+import crypto from "crypto";
 
 const log = createLogger("api.auth.login");
 const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
@@ -25,6 +26,11 @@ const DEMO_ACCOUNTS = {
     role: "mitra" as const,
   },
 };
+
+function timingSafeEq(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  return crypto.timingSafeEqual(Buffer.from(a), Buffer.from(b));
+}
 
 function getErrorMessage(err: unknown): string {
   if (err instanceof Error) return err.message;
@@ -88,7 +94,7 @@ export async function POST(req: NextRequest) {
 
     const demo = DEMO_ACCOUNTS[email as keyof typeof DEMO_ACCOUNTS];
     let user = null;
-    if (demo && demo.password === password) {
+    if (demo && timingSafeEq(demo.password, password)) {
       try {
         user = await convex.mutation(api.demoAuth.ensureDemoSession, {
           email,
@@ -133,11 +139,14 @@ export async function POST(req: NextRequest) {
     log.info("login_ok", { email, role: user.role, durationMs: Date.now() - startedAt });
     return res;
   } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
     log.error("login_exception", {
       err: err as Error,
-      message: err instanceof Error ? err.message : String(err),
+      message: msg,
       data: getErrorData(err),
     });
-    return NextResponse.json({ error: "Terjadi kesalahan server." }, { status: 500 });
+    const body: Record<string, string> = { error: "Terjadi kesalahan server." };
+    if (process.env.NODE_ENV !== "production") body.detail = msg;
+    return NextResponse.json(body, { status: 500 });
   }
 }

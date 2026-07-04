@@ -1,0 +1,54 @@
+
+> id-map@0.1.0 dev
+> node --max-old-space-size=4096 ./node_modules/next/dist/bin/next dev
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+  - Environments: .env.local
+
+ ✓ Starting...
+<w> [webpack.cache.PackFileCacheStrategy] Restoring pack from D:\2026\7. VIBE CODING ETC\ID-MAP TAHAP 2 V.1.0\ID-MAP-Final\.next\cache\webpack\server-development.pack.gz failed: TypeError: Cannot read properties of undefined (reading 'hasStartTime')
+ ✓ Ready in 5s
+ ○ Compiling /daftar ...
+The user aborted a request.
+
+Retrying 1/3...
+The user aborted a request.
+
+Retrying 1/3...
+ ✓ Compiled /daftar in 13.5s (736 modules)
+ GET /daftar 200 in 14032ms
+ ✓ Compiled in 913ms (346 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 5s (872 modules)
+ GET / 200 in 5381ms
+ ✓ Compiled /manifest.webmanifest in 505ms (499 modules)
+ GET /manifest.webmanifest 200 in 674ms
+ ✓ Compiled /api/auth/me in 212ms (501 modules)
+ ✓ Compiled (534 modules)
+ GET /api/auth/me 200 in 663ms
+ GET /icon.png?749d59ff1f9074c3 200 in 741ms
+ GET /manifest.webmanifest 200 in 27ms
+ ○ Compiling /api/auth/send-otp ...
+ ✓ Compiled /api/auth/send-otp in 1955ms (654 modules)
+{"ts":"2026-06-04T16:12:52.609Z","level":"info","scope":"api.auth.send-otp","msg":"otp_sent","email":"slamsmart2023@gmail.com","durationMs":5497}
+ POST /api/auth/send-otp 200 in 7692ms
+ ✓ Compiled /api/auth/register in 394ms (615 modules)
+{"ts":"2026-06-04T16:13:43.582Z","level":"info","scope":"api.auth.register","msg":"register_ok","email":"slamsmart2023@gmail.com","role":"sahabat"}
+ POST /api/auth/register 200 in 2229ms
+ ○ Compiling /src/middleware ...
+ ✓ Compiled /src/middleware in 734ms (72 modules)
+ ○ Compiling /user ...
+ ✓ Compiled /user in 9s (1923 modules)
+ ○ Compiling /manifest.webmanifest ...
+ ✓ Compiled /manifest.webmanifest in 645ms (1079 modules)
+ ✓ Compiled (1111 modules)
+ GET /manifest.webmanifest 200 in 1172ms
+ GET /api/auth/me 200 in 1326ms
+ ○ Compiling /user/analisis-ai ...
+ ✓ Compiled /user/analisis-ai in 1047ms (1931 modules)
+ GET /api/auth/me 200 in 27ms
+ GET /manifest.webmanifest 200 in 33ms
+ ✓ Compiled in 4.4s (874 modules)
+ GET /api/auth/me 200 in 23ms
+   Reload env: .env.local

@@ -112,10 +112,10 @@ export default function PengaturanAdminPage() {
           {/* Demo credentials */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
             {[
-              { role: "Komunitas", email: "user@idmap.id", pass: "user123", color: "emerald" },
-              { role: "Mitra", email: "mitra@idmap.id", pass: "mitra123", color: "blue" },
-              { role: "Verifikator", email: "verifikator@idmap.id", pass: "verif123", color: "purple" },
-              { role: "Admin", email: "admin@idmap.id", pass: "admin123", color: "gray" },
+              { role: "Komunitas", email: "user@idmap.id", pass: "Lihat hasil seed", color: "emerald" },
+              { role: "Mitra", email: "mitra@idmap.id", pass: "Lihat hasil seed", color: "blue" },
+              { role: "Verifikator", email: "verifikator@idmap.id", pass: "Lihat hasil seed", color: "purple" },
+              { role: "Admin", email: "admin@idmap.id", pass: "Lihat hasil seed", color: "gray" },
             ].map((u) => (
               <div key={u.role} className="bg-gray-50 rounded-lg p-3 border border-gray-100">
                 <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">{u.role}</p>

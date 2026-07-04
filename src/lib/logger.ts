@@ -42,11 +42,28 @@ const REDACT_KEYS = new Set([
   "code",
 ]);
 
+// PII di-mask (bukan dibuang) supaya log tetap bisa dikorelasi tanpa
+// membocorkan data pribadi utuh ke Vercel Logs / agregator eksternal.
+const PII_KEYS = new Set(["email", "phone", "address"]);
+
+function maskPII(key: string, val: string): string {
+  if (!val) return val;
+  if (key === "email") {
+    const [user, domain] = val.split("@");
+    return domain ? `${user.slice(0, 2)}***@${domain}` : "***";
+  }
+  if (key === "phone") return val.length > 2 ? `***${val.slice(-2)}` : "***";
+  return "[redacted]"; // address & PII lain — tak perlu tampil di log
+}
+
 function sanitize(fields: LogFields): LogFields {
   const out: LogFields = {};
   for (const [k, v] of Object.entries(fields)) {
-    if (REDACT_KEYS.has(k.toLowerCase())) {
+    const lk = k.toLowerCase();
+    if (REDACT_KEYS.has(lk)) {
       out[k] = "[redacted]";
+    } else if (PII_KEYS.has(lk) && typeof v === "string") {
+      out[k] = maskPII(lk, v);
     } else if (v instanceof Error) {
       out[k] = { name: v.name, message: v.message };
     } else {

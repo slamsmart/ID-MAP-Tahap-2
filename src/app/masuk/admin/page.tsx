@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState, useEffect } from "react";
+import { Suspense, useRef, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
@@ -49,9 +49,14 @@ function AdminLoginForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const submittingRef = useRef(false);
   const DEFAULT_BG = "/images/hero-mangrove.webp";
   const [bgImage, setBgImage] = useState(DEFAULT_BG);
   const stats = useQuery(api.platformStats.getAll);
+
+  useEffect(() => {
+    router.prefetch(safeNext ?? "/admin");
+  }, [router, safeNext]);
   const statByKey = new Map((stats ?? []).map((s) => [s.key, s.value]));
   const sahabatStat = statByKey.get("sahabat_terlibat") ?? "12.456";
   const bibitStat = statByKey.get("bibit_ditanam") ?? "1.285.760";
@@ -68,6 +73,7 @@ function AdminLoginForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (submittingRef.current) return;
     setError("");
 
     if (!email || !password) {
@@ -75,6 +81,7 @@ function AdminLoginForm() {
       return;
     }
 
+    submittingRef.current = true;
     try {
       setIsLoading(true);
       const normalizedEmail = email.trim().toLowerCase();
@@ -108,10 +115,12 @@ function AdminLoginForm() {
       }
 
       setSession(user);
-      router.push(safeNext ?? getDashboardPath(user.role));
+      router.replace(safeNext ?? getDashboardPath(user.role));
+      router.refresh();
     } catch {
       setError(t("Terjadi kesalahan. Silakan coba lagi.", "An error occurred. Please try again."));
     } finally {
+      submittingRef.current = false;
       setIsLoading(false);
     }
   };

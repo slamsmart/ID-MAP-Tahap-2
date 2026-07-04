@@ -30,8 +30,8 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Auth: butuh logged-in user ATAU admin token. Admin token dipakai
-  // untuk integration test / e2e harness.
+  // Auth: endpoint ini sensitif. Hanya admin session ATAU admin token
+  // yang boleh trigger, bahkan saat sandbox aktif.
   const adminToken = process.env.ADMIN_API_TOKEN ?? "";
   const provided = request.headers.get("x-admin-token") ?? "";
   const adminOk = adminToken.length >= 16 && timingSafeCompare(provided, adminToken);
@@ -42,6 +42,15 @@ export async function POST(request: NextRequest) {
       ip: request.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown",
     });
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  }
+
+  if (!adminOk && session?.role !== "admin") {
+    log.warn("simulate_forbidden", {
+      ip: request.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown",
+      actor: session?.uid,
+      role: session?.role,
+    });
+    return NextResponse.json({ error: "forbidden" }, { status: 403 });
   }
 
   // Rate limit per-IP supaya satu sesi tidak bisa increment tanpa batas.
@@ -75,3 +84,4 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: error?.message ?? "Gagal" }, { status: 500 });
   }
 }
+

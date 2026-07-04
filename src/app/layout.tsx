@@ -112,7 +112,7 @@ export default function RootLayout({
           href="/images/hero-mangrove.webp"
           type="image/webp"
         />
-        {/* Resource hints — mempercepat koneksi awal peta interaktif (Earth Engine iframe + tile satelit) */}
+        {/* Resource hints â€” mempercepat koneksi awal peta interaktif (Earth Engine iframe + tile satelit) */}
         <link
           rel="preconnect"
           href="https://ee-dimassyarifworkspace.projects.earthengine.app"

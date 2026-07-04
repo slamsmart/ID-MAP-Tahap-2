@@ -1,17 +1,17 @@
-import { query, mutation } from "./_generated/server";
+﻿import { query, mutation } from "./_generated/server";
 import { v, ConvexError } from "convex/values";
 import type { MutationCtx } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
 
-// ─── Konstanta aturan ──────────────────────────────────────────────
+// â”€â”€â”€ Konstanta aturan â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const POINTS_PER_CHECKIN = 10;
 const POINTS_PER_REFERRAL = 50;
-const STREAK_PER_SEEDLING = 15; // 15 hari beruntun → 1 bibit
-const REFERRALS_PER_SEEDLING = 10; // 10 referral ter-KYC → 1 bibit
+const STREAK_PER_SEEDLING = 15; // 15 hari beruntun â†’ 1 bibit
+const REFERRALS_PER_SEEDLING = 10; // 10 referral ter-KYC â†’ 1 bibit
 
-// ─── Date helper (Asia/Jakarta, UTC+7) ─────────────────────────────
+// â”€â”€â”€ Date helper (Asia/Jakarta, UTC+7) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Convex query TIDAK boleh pakai Date.now(); client kirim `today`.
-// Mutation boleh pakai Date.now() → kita hitung server-side di sana.
+// Mutation boleh pakai Date.now() â†’ kita hitung server-side di sana.
 function jakartaDateFromMs(ms: number): string {
   const d = new Date(ms + 7 * 60 * 60 * 1000);
   return d.toISOString().slice(0, 10); // YYYY-MM-DD
@@ -22,7 +22,7 @@ function prevDate(date: string): string {
   return d.toISOString().slice(0, 10);
 }
 
-// ─── Referral code generator (mutation-only: pakai Math.random) ────
+// â”€â”€â”€ Referral code generator (mutation-only: pakai Math.random) â”€â”€â”€â”€
 async function genReferralCode(ctx: MutationCtx, name: string): Promise<string> {
   const base = (name || "SHB")
     .toUpperCase()
@@ -59,7 +59,7 @@ export async function ensureReferralCodeFor(
   return code;
 }
 
-// ─── Hitung referral ter-KYC ───────────────────────────────────────
+// â”€â”€â”€ Hitung referral ter-KYC â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function countReferrals(ctx: { db: any }, userId: Id<"users">) {
   const referred = await ctx.db
     .query("users")
@@ -70,7 +70,7 @@ async function countReferrals(ctx: { db: any }, userId: Id<"users">) {
   return { total: referred.length, verified, pending };
 }
 
-// ─── Query: data gamifikasi 1 user ─────────────────────────────────
+// â”€â”€â”€ Query: data gamifikasi 1 user â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export const getUserGamification = query({
   args: { userId: v.id("users"), today: v.string() },
   returns: v.object({
@@ -124,7 +124,7 @@ export const getUserGamification = query({
   },
 });
 
-// ─── Mutation: check-in harian ─────────────────────────────────────
+// â”€â”€â”€ Mutation: check-in harian â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export const dailyCheckIn = mutation({
   args: { userId: v.id("users") },
   returns: v.object({
@@ -188,7 +188,7 @@ export const dailyCheckIn = mutation({
   },
 });
 
-// ─── Mutation: pastikan user punya referral code ───────────────────
+// â”€â”€â”€ Mutation: pastikan user punya referral code â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export const ensureReferralCode = mutation({
   args: { userId: v.id("users") },
   returns: v.string(),
@@ -197,7 +197,7 @@ export const ensureReferralCode = mutation({
   },
 });
 
-// ─── Query: leaderboard (rank by total poin) ───────────────────────
+// â”€â”€â”€ Query: leaderboard (rank by total poin) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export const getLeaderboard = query({
   args: {},
   returns: v.array(
@@ -216,22 +216,31 @@ export const getLeaderboard = query({
       .withIndex("by_role", (q) => q.eq("role", "sahabat"))
       .collect();
 
-    const rows = [];
-    for (const u of sahabat) {
-      const { verified } = await countReferrals(ctx, u._id);
+    const referralRows = await ctx.db.query("referrals").collect();
+    const verifiedCounts = new Map<string, number>();
+    for (const row of referralRows) {
+      if (row.status !== "verified" || !row.referrerId) continue;
+      const key = String(row.referrerId);
+      verifiedCounts.set(key, (verifiedCounts.get(key) ?? 0) + 1);
+    }
+
+    const rows = sahabat.map((u) => {
+      const verified = verifiedCounts.get(String(u._id)) ?? 0;
       const points = u.points ?? 0;
       const seedlings =
         (u.seedlingsCheckin ?? 0) + Math.floor(verified / REFERRALS_PER_SEEDLING);
-      rows.push({
+      return {
         userId: u._id,
         name: u.name,
         points,
         verifiedReferrals: verified,
         seedlings,
         totalPoints: points + verified * POINTS_PER_REFERRAL,
-      });
-    }
+      };
+    });
+
     rows.sort((a, b) => b.totalPoints - a.totalPoints);
     return rows.slice(0, 20);
   },
 });
+

@@ -230,32 +230,44 @@ export default function OurServicesSection() {
   const goTo = useCallback((i: number) => setActiveIndex(i), []);
 
   const secondsLeft = Math.ceil((1 - timerPct) * (TIMER_MS / 1000));
+  const canGoPrev = activeIndex > 0;
+  const canGoNext = activeIndex < totalCards - 1;
 
   return (
-    <section className="bg-white py-14 sm:py-20">
+    <section className="bg-white py-12 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
 
         {/* ── Header row ─────────────────────────────────────────── */}
-        <div className="mb-8 flex flex-col gap-5 sm:mb-10 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
+        <div className="mb-6 flex flex-col gap-4 sm:mb-9 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
           <ScrollReveal>
-            <h2 className="max-w-[12ch] text-3xl font-semibold leading-tight tracking-tight text-[#0f3d2e] sm:max-w-none sm:text-4xl">
+            <h2 className="max-w-[10ch] text-[2rem] font-bold leading-[1.05] tracking-[-0.02em] text-[#0f3d2e] sm:max-w-none sm:text-[2rem]">
               {t("Solusi Ekosistem Pesisir", "Coastal Ecosystem Solutions")}
             </h2>
           </ScrollReveal>
 
-          {/* Green nav arrows — top right (matches reference) */}
-          <div className="flex flex-shrink-0 gap-3 pt-1">
+          {/* Outline nav arrows */}
+          <div className="hidden flex-shrink-0 gap-3 pt-1 sm:flex">
             <button
               onClick={() => navigate("left")}
               aria-label="Sebelumnya"
-              className="flex h-11 w-11 items-center justify-center rounded-full bg-emerald-500 text-white shadow-md transition-all duration-200 hover:bg-emerald-400 active:scale-95 sm:h-12 sm:w-12"
+              disabled={!canGoPrev}
+              className={`flex h-10 w-10 items-center justify-center rounded-full border transition-all duration-200 active:scale-95 sm:h-[38px] sm:w-[38px] ${
+                canGoPrev
+                  ? "border-[#0f3d2e] bg-transparent text-[#0f3d2e] hover:bg-[#0f3d2e] hover:text-white"
+                  : "cursor-not-allowed border-slate-300 text-slate-400 opacity-35"
+              }`}
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
             <button
               onClick={() => navigate("right")}
               aria-label="Berikutnya"
-              className="flex h-11 w-11 items-center justify-center rounded-full bg-emerald-500 text-white shadow-md transition-all duration-200 hover:bg-emerald-400 active:scale-95 sm:h-12 sm:w-12"
+              disabled={!canGoNext}
+              className={`flex h-10 w-10 items-center justify-center rounded-full border transition-all duration-200 active:scale-95 sm:h-[38px] sm:w-[38px] ${
+                canGoNext
+                  ? "border-[#0f3d2e] bg-transparent text-[#0f3d2e] hover:bg-[#0f3d2e] hover:text-white"
+                  : "cursor-not-allowed border-slate-300 text-slate-400 opacity-35"
+              }`}
             >
               <ChevronRight className="w-5 h-5" />
             </button>
@@ -265,14 +277,14 @@ export default function OurServicesSection() {
         {/* ── Carousel track ──────────────────────────────────────── */}
         <div
           ref={scrollRef}
-          className="-mx-4 flex gap-4 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:gap-5 sm:px-0 [&::-webkit-scrollbar]:hidden"
+          className="-mx-4 flex gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:gap-4 sm:px-0 [&::-webkit-scrollbar]:hidden"
           style={{ scrollSnapType: "x mandatory" }}
         >
           {isLoading
             ? [0, 1, 2].map((i) => (
                 <div
                   key={i}
-                  className="h-[440px] w-[calc(100vw-2rem)] flex-shrink-0 rounded-2xl bg-stone-300/60 animate-pulse sm:h-[420px] sm:w-[min(72vw,680px)] lg:w-[min(55vw,680px)]"
+                  className="h-[420px] w-[calc(100vw-2rem)] flex-shrink-0 rounded-xl bg-stone-300/60 animate-pulse sm:h-[420px] sm:w-[min(72vw,680px)] lg:w-[min(55vw,680px)]"
                   style={{
                     scrollSnapAlign: "start",
                   }}
@@ -280,6 +292,7 @@ export default function OurServicesSection() {
               ))
             : displayServices.map((svc, i) => {
                 const isActive = i === activeIndex;
+                const ServiceIcon = svc.icon;
 
                 return (
                   <TiltCard
@@ -287,7 +300,7 @@ export default function OurServicesSection() {
                     maxTilt={15}
                     liftZ={40}
                     glare={false}
-                    className="w-[calc(100vw-2rem)] flex-shrink-0 rounded-2xl sm:w-[min(72vw,680px)] lg:w-[min(55vw,680px)]"
+                    className="w-[calc(100vw-2rem)] flex-shrink-0 rounded-xl sm:w-[min(72vw,690px)] lg:w-[min(48vw,710px)]"
                     style={
                       {
                         scrollSnapAlign: "start",
@@ -296,40 +309,54 @@ export default function OurServicesSection() {
                   >
                     {/* Card inner — click to jump to this card */}
                     <div
-                      className="group relative h-[440px] cursor-pointer overflow-hidden rounded-2xl border-[6px] border-[#f4efd8] bg-[#f4efd8] shadow-sm sm:h-[420px]"
+                      className="group relative h-[392px] cursor-pointer overflow-hidden rounded-xl bg-[#0f3d2e] shadow-[0_24px_60px_-30px_rgba(15,61,46,0.42)] sm:h-[392px]"
                       onClick={() => goTo(i)}
                     >
-                      {/* ── Full-bleed background photo ── */}
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={svc.image}
-                        alt={svc.title[0]}
-                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
-
-                      {/* ── Panel: standby = gradasi semi-transparan, hover = solid ── */}
-                      <div className="absolute inset-x-0 bottom-0 h-[68%] rounded-t-3xl bg-gradient-to-t from-[#071f17]/95 via-[#0f3d2e]/82 to-[#0f3d2e]/10 backdrop-blur-[2px] transition-all duration-500 ease-out sm:inset-x-auto sm:inset-y-0 sm:left-0 sm:h-auto sm:w-[50%] sm:rounded-r-3xl sm:rounded-t-none sm:bg-gradient-to-r sm:from-[#071f17]/90 sm:via-[#0f3d2e]/75 sm:to-[#0f3d2e]/30 sm:backdrop-blur-[3px] sm:group-hover:w-[52%] sm:group-hover:rounded-r-none sm:group-hover:bg-[#0f3d2e] sm:group-hover:from-[#0f3d2e] sm:group-hover:via-[#0f3d2e] sm:group-hover:to-[#0f3d2e] sm:group-hover:backdrop-blur-0" />
-
-                      {/* ── Card content ── */}
-                      <div className="absolute inset-x-0 bottom-0 flex min-h-[68%] flex-col justify-between p-5 sm:inset-x-auto sm:inset-y-0 sm:left-0 sm:min-h-0 sm:w-[50%] sm:p-7 md:p-9">
-                        <div>
-                          <h3 className="max-w-full break-words text-2xl font-semibold leading-tight text-white transition-colors duration-300 group-hover:text-[#ffd84d] sm:text-3xl sm:leading-[1.02] md:text-4xl">
+                      <div className="absolute inset-x-0 top-0 z-10 flex min-h-[60%] flex-col justify-start px-5 py-6 sm:inset-y-0 sm:left-0 sm:w-[52%] sm:px-8 md:px-10">
+                        <div className="max-w-[32ch]">
+                          <h3 className="max-w-[12ch] break-words text-[1.7rem] font-bold leading-[1.08] tracking-[-0.02em] text-white sm:max-w-[13ch] sm:text-[2rem]">
                             {t(svc.title[0], svc.title[1])}
                           </h3>
-                        </div>
-                        <div>
-                          <p className="mt-5 max-w-[34ch] text-sm font-normal leading-relaxed text-white sm:mt-0 sm:text-base sm:leading-snug md:text-lg">
+                          <p className="mt-4 max-w-[27ch] text-[14px] font-normal leading-[1.65] text-[#c9e9dd] sm:mt-5 sm:max-w-[30ch] sm:text-[16px]">
                             {t(svc.desc[0], svc.desc[1])}
                           </p>
+
+                          <div className="mt-5 inline-flex items-center rounded-full border border-[#5dcaa5]/35 bg-white/10 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#d9f5ea]">
+                            Layanan inti
+                          </div>
+
+                          <div className="mt-5 flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-[#9fe1cb]">
+                            <ServiceIcon className="h-5 w-5" strokeWidth={2} />
+                          </div>
                         </div>
+                      </div>
+
+                      <div className="absolute inset-y-0 right-0 hidden w-[48%] overflow-hidden sm:block">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={svc.image}
+                          alt={svc.title[0]}
+                          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(225,245,238,0.18),rgba(93,202,165,0.08))]" />
+                      </div>
+
+                      <div className="absolute inset-x-0 bottom-0 top-[54%] overflow-hidden sm:hidden">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={svc.image}
+                          alt={svc.title[0]}
+                          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(15,61,46,0.04),rgba(15,61,46,0.18))]" />
                       </div>
 
                       {/* ── Timer ring (bottom-right, only active card) ── */}
                       {isActive && (
-                        <div className="absolute bottom-5 right-5 pointer-events-none">
+                        <div className="pointer-events-none absolute bottom-3 right-3 rounded-full bg-[#0f3d2e]/40 p-1 backdrop-blur-sm sm:bottom-4 sm:right-4">
                           <svg
-                            width="48"
-                            height="48"
+                            width="42"
+                            height="42"
                             viewBox="0 0 48 48"
                             className="-rotate-90"
                           >
@@ -356,7 +383,7 @@ export default function OurServicesSection() {
                             />
                           </svg>
                           {/* Countdown number */}
-                          <span className="absolute inset-0 flex items-center justify-center text-white text-[11px] font-bold rotate-90">
+                          <span className="absolute inset-0 flex items-center justify-center text-white text-[10px] font-bold rotate-90 sm:text-[11px]">
                             {secondsLeft}s
                           </span>
                         </div>
@@ -369,16 +396,61 @@ export default function OurServicesSection() {
 
         {/* ── Dot indicators ──────────────────────────────────────── */}
         {!isLoading && (
-          <div className="flex gap-2 mt-6 justify-center">
+          <div className="mt-6 flex items-center justify-center gap-3 sm:hidden">
+            <button
+              onClick={() => navigate("left")}
+              aria-label="Sebelumnya"
+              disabled={!canGoPrev}
+              className={`flex h-10 w-10 items-center justify-center rounded-full border transition-all duration-200 active:scale-95 ${
+                canGoPrev
+                  ? "border-[#0f3d2e] bg-transparent text-[#0f3d2e] hover:bg-[#0f3d2e] hover:text-white"
+                  : "cursor-not-allowed border-slate-300 text-slate-400 opacity-35"
+              }`}
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+
+            <div className="flex items-center justify-center gap-2">
+              {displayServices.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => goTo(i)}
+                  aria-label={`Ke layanan ${i + 1}`}
+                  className={`h-2 rounded-full border transition-all duration-300 ${
+                    i === activeIndex
+                      ? "w-[22px] border-[#5dcaa5] bg-[#5dcaa5]"
+                      : "w-2 border-[#5dcaa5] bg-transparent hover:bg-[#e1f5ee]"
+                  }`}
+                />
+              ))}
+            </div>
+
+            <button
+              onClick={() => navigate("right")}
+              aria-label="Berikutnya"
+              disabled={!canGoNext}
+              className={`flex h-10 w-10 items-center justify-center rounded-full border transition-all duration-200 active:scale-95 ${
+                canGoNext
+                  ? "border-[#0f3d2e] bg-transparent text-[#0f3d2e] hover:bg-[#0f3d2e] hover:text-white"
+                  : "cursor-not-allowed border-slate-300 text-slate-400 opacity-35"
+              }`}
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
+          </div>
+        )}
+
+        {!isLoading && (
+          <div className="mt-8 hidden justify-center gap-2 sm:flex">
             {displayServices.map((_, i) => (
               <button
                 key={i}
                 onClick={() => goTo(i)}
                 aria-label={`Ke layanan ${i + 1}`}
-                className={`h-2 rounded-full transition-all duration-300 ${
+                className={`h-2 rounded-full border transition-all duration-300 ${
                   i === activeIndex
-                    ? "w-8 bg-emerald-600"
-                    : "w-2 bg-emerald-300 hover:bg-emerald-400"
+                    ? "w-[22px] border-[#5dcaa5] bg-[#5dcaa5]"
+                    : "w-2 border-[#5dcaa5] bg-transparent hover:bg-[#e1f5ee]"
                 }`}
               />
             ))}

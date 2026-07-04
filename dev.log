@@ -1,0 +1,103 @@
+
+> id-map@0.1.0 dev
+> node --max-old-space-size=4096 ./node_modules/next/dist/bin/next dev --port 3002
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3002
+  - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 17.5s
+ ○ Compiling /berita-terkini ...
+The user aborted a request.
+
+Retrying 1/3...
+The user aborted a request.
+
+Retrying 1/3...
+ ✓ Compiled /berita-terkini in 31.1s (875 modules)
+ ✓ Compiled in 679ms (414 modules)
+ GET /berita-terkini 200 in 32039ms
+ ○ Compiling /manifest.webmanifest ...
+ ✓ Compiled /api/berita-mangrove in 3.3s (478 modules)
+ ✓ Compiled (579 modules)
+ GET /manifest.webmanifest 200 in 4145ms
+ GET /api/auth/me 200 in 3181ms
+ GET /icon.png?f299df2546171577 200 in 3268ms
+ GET /api/berita-mangrove 200 in 4477ms
+ GET /api/berita-mangrove 200 in 28ms
+ GET /berita-terkini 200 in 160ms
+ GET /berita-terkini 200 in 88ms
+ GET /manifest.webmanifest 200 in 123ms
+ GET /api/auth/me 200 in 46ms
+ GET /api/berita-mangrove 200 in 38ms
+ GET /api/berita-mangrove 200 in 44ms
+ ○ Compiling /leaderboard ...
+ ✓ Compiled /leaderboard in 2s (1009 modules)
+ GET /manifest.webmanifest 200 in 43ms
+ GET /manifest.webmanifest 200 in 19ms
+ GET /manifest.webmanifest 200 in 47ms
+ GET /api/berita-mangrove 200 in 42ms
+ GET /api/berita-mangrove 200 in 88ms
+ GET /api/berita-mangrove 200 in 5162ms
+ GET /api/berita-mangrove 200 in 50ms
+ GET /api/berita-mangrove 200 in 55ms
+ ○ Compiling / ...
+ ✓ Compiled / in 6.8s (930 modules)
+ ✓ Compiled in 651ms (442 modules)
+ ✓ Compiled /manifest.webmanifest in 235ms (520 modules)
+ ✓ Compiled (525 modules)
+ GET /manifest.webmanifest 200 in 516ms
+ GET /icon.png?f299df2546171577 200 in 738ms
+ ✓ Compiled /api/berita-mangrove in 231ms (550 modules)
+ GET /api/berita-mangrove 200 in 1366ms
+ GET /api/berita-mangrove 200 in 26ms
+ ○ Compiling /tentang ...
+ ✓ Compiled /tentang in 7s (952 modules)
+ GET /berita-terkini 200 in 432ms
+ ✓ Compiled /manifest.webmanifest in 493ms (536 modules)
+ GET /manifest.webmanifest 200 in 603ms
+ ○ Compiling /api/berita-mangrove ...
+ ✓ Compiled /api/berita-mangrove in 944ms (633 modules)
+ ✓ Compiled (637 modules)
+ GET /icon.png?f299df2546171577 200 in 2000ms
+ GET /api/auth/me 200 in 2321ms
+ GET /api/berita-mangrove 200 in 2641ms
+ GET /api/berita-mangrove 200 in 632ms
+ GET /manifest.webmanifest 200 in 41ms
+ GET /icon.png?f299df2546171577 200 in 44ms
+ GET /manifest.webmanifest 200 in 50ms
+ GET /manifest.webmanifest 200 in 14ms
+ GET /manifest.webmanifest 200 in 13ms
+ GET /manifest.webmanifest 200 in 33ms
+ GET /manifest.webmanifest 200 in 22ms
+ ○ Compiling /faq ...
+ ✓ Compiled /faq in 1381ms (1099 modules)
+ GET /icon.png?f299df2546171577 200 in 43ms
+ GET /manifest.webmanifest 200 in 39ms
+ GET /manifest.webmanifest 200 in 27ms
+ GET /manifest.webmanifest 200 in 23ms
+ GET /manifest.webmanifest 200 in 19ms
+ GET /api/berita-mangrove 200 in 52ms
+ GET /manifest.webmanifest 200 in 63ms
+ GET /api/berita-mangrove 200 in 28ms
+ GET /manifest.webmanifest 200 in 26ms
+ ○ Compiling /kebijakan-privasi ...
+ ✓ Compiled /kebijakan-privasi in 1959ms (1028 modules)
+ GET /manifest.webmanifest 200 in 30ms
+ ○ Compiling /syarat-ketentuan ...
+ ✓ Compiled /syarat-ketentuan in 1398ms (1044 modules)
+ GET /manifest.webmanifest 200 in 34ms
+ GET /manifest.webmanifest 200 in 22ms
+ GET /manifest.webmanifest 200 in 39ms
+ GET /api/berita-mangrove 200 in 70ms
+ GET /api/berita-mangrove 200 in 5347ms
+ GET /api/berita-mangrove 200 in 5462ms
+ GET /api/berita-mangrove 200 in 165ms
+ GET /api/berita-mangrove 200 in 5212ms
+ GET /api/berita-mangrove 200 in 5652ms
+ GET /api/berita-mangrove 200 in 4368ms
+ GET /api/berita-mangrove 200 in 5702ms
+ GET /api/berita-mangrove 200 in 60ms
+ GET /api/berita-mangrove 200 in 5503ms
+ GET /manifest.webmanifest 200 in 40ms

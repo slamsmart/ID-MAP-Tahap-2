@@ -21,6 +21,8 @@ const FUNDING_PROJECT_TITLES = [
 const isPokmaswasProject = (title: string) =>
   /pokmaswas/i.test(title) || FUNDING_PROJECT_TITLES.includes(title.trim());
 
+const GOAL_FUNDED_MATCH = /rehabilitasi mangrove.*gatra olah alam lestari|gatra olah alam lestari.*rehabilitasi mangrove/i;
+
 const fmtRp = (n: number) =>
   new Intl.NumberFormat("id-ID", {
     style: "currency",
@@ -78,13 +80,23 @@ export default function PokmaswasCampaignSection() {
             {campaigns.map((p, i) => {
               const raised = p.fundingRaised ?? 0;
               const target = p.fundingTarget ?? 100_000_000;
-              const pct = Math.min(100, Math.round((raised / target) * 100));
+              const isGoalMangrove = GOAL_FUNDED_MATCH.test(p.title);
+              const isActuallyFunded = target > 0 && raised >= target;
+              const isFundedVisual = isGoalMangrove || isActuallyFunded;
+              const displayRaised = isFundedVisual ? target : raised;
+              const pct = isFundedVisual
+                ? 100
+                : Math.min(100, Math.round((raised / target) * 100));
 
               return (
                 <ScrollReveal key={p._id} delay={i * 110} className="h-full">
                 <TiltCard maxTilt={9} liftZ={28} glare={false} className="h-full rounded-2xl">
                 <article
-                  className="group shine bg-white rounded-2xl border border-gray-100 hover:border-emerald-200 overflow-hidden shadow-[0_20px_50px_-22px_rgba(15,61,46,0.25)] hover:shadow-[0_32px_70px_-22px_rgba(15,61,46,0.4)] transition-all duration-300 flex flex-col h-full"
+                  className={`group shine overflow-hidden rounded-2xl border transition-all duration-300 flex h-full flex-col ${
+                    isFundedVisual
+                      ? "bg-white border-emerald-300 shadow-[0_24px_60px_-22px_rgba(16,185,129,0.30)] hover:shadow-[0_32px_72px_-24px_rgba(16,185,129,0.38)]"
+                      : "bg-white border-gray-100 hover:border-emerald-200 shadow-[0_20px_50px_-22px_rgba(15,61,46,0.25)] hover:shadow-[0_32px_70px_-22px_rgba(15,61,46,0.4)]"
+                  }`}
                 >
                   {/* Thumbnail */}
                   <div className="relative h-44 overflow-hidden">
@@ -95,7 +107,16 @@ export default function PokmaswasCampaignSection() {
                       className="card-zoom w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                    <span className="absolute top-3 right-3 z-10 inline-flex items-center gap-1 text-[10px] font-bold text-white bg-emerald-600 px-2.5 py-1 rounded-full">
+                    {isFundedVisual && (
+                      <div className="pointer-events-none absolute inset-x-0 bottom-7 z-20 flex items-center justify-center px-4">
+                        <div className="-rotate-3 rounded-md border-2 border-white/90 bg-slate-200/20 px-5 py-2.5 text-center shadow-[0_14px_34px_-18px_rgba(15,23,42,0.65)] backdrop-blur-[2px]">
+                          <span className="block text-sm font-extrabold uppercase tracking-[0.18em] text-white drop-shadow-sm sm:text-base">
+                            DANA TERPENUHI
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                    <span className={`absolute top-3 right-3 z-10 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-bold text-white ${isFundedVisual ? "bg-emerald-500" : "bg-emerald-600"}`}>
                       <ShieldCheck className="w-3 h-3" />
                       Terverifikasi
                     </span>
@@ -108,11 +129,11 @@ export default function PokmaswasCampaignSection() {
                   </div>
 
                   {/* Content */}
-                  <div className="p-5 sm:p-6 flex flex-col flex-1 gap-4 bg-[#0f3d2e]">
-                    <h3 className="font-sans font-bold text-white text-base leading-snug line-clamp-2 group-hover:text-lime-300 transition-colors">
+                  <div className={`flex flex-1 flex-col gap-4 p-5 sm:p-6 ${isFundedVisual ? "bg-[linear-gradient(180deg,#0f3d2e_0%,#11543b_100%)]" : "bg-[#0f3d2e]"}`}>
+                    <h3 className={`font-sans text-base font-bold leading-snug line-clamp-2 transition-colors ${isFundedVisual ? "text-white group-hover:text-emerald-100" : "text-white group-hover:text-lime-300"}`}>
                       {p.title}
                     </h3>
-                    <p className="text-sm text-white leading-relaxed line-clamp-2 flex-1">
+                    <p className={`flex-1 line-clamp-2 text-sm leading-relaxed ${isFundedVisual ? "text-emerald-50" : "text-white"}`}>
                       {p.description}
                     </p>
 
@@ -122,19 +143,19 @@ export default function PokmaswasCampaignSection() {
                         <span className="text-xs font-medium text-emerald-100">
                           Terkumpul
                         </span>
-                        <span className="text-xs font-bold text-lime-300">
+                        <span className={`text-xs font-bold ${isFundedVisual ? "text-emerald-200" : "text-lime-300"}`}>
                           {pct}%
                         </span>
                       </div>
-                      <div className="h-2 bg-white/15 rounded-full overflow-hidden">
+                      <div className={`h-2 overflow-hidden rounded-full ${isFundedVisual ? "bg-emerald-950/40" : "bg-white/15"}`}>
                         <div
-                          className="bar-grow h-full bg-gradient-to-r from-lime-400 to-emerald-400"
+                          className={`bar-grow h-full ${isFundedVisual ? "bg-gradient-to-r from-emerald-300 to-emerald-400" : "bg-gradient-to-r from-lime-400 to-emerald-400"}`}
                           style={{ width: `${pct}%` }}
                         />
                       </div>
                       <div className="flex items-baseline justify-between mt-2">
                         <p className="text-sm font-bold text-white">
-                          {fmtRp(raised)}
+                          {fmtRp(displayRaised)}
                         </p>
                         <p className="text-[11px] text-emerald-200">
                           dari {fmtRp(target)}
@@ -166,18 +187,32 @@ export default function PokmaswasCampaignSection() {
                     </div>
 
                     {/* CTA: scan QRIS donate */}
-                    <Link
-                      href={donateHref(p._id)}
-                      className="mt-2 inline-flex items-center justify-center gap-2 bg-white hover:bg-gray-100 text-black text-sm font-bold py-3 rounded-xl transition-colors border border-gray-200"
-                    >
-                      <Heart className="w-4 h-4" />
-                      Dukung Proyek (Scan QRIS)
-                      <ArrowRight className="w-4 h-4" />
-                    </Link>
-                    {!hasSession && (
-                      <p className="text-xs text-center text-emerald-200 -mt-1">
-                        Daftar gratis untuk lanjut donasi
-                      </p>
+                    {isFundedVisual ? (
+                      <div className="mt-2 rounded-xl border border-white/70 bg-white px-4 py-3 text-center shadow-[0_10px_30px_-18px_rgba(255,255,255,0.55)]">
+                        <div className="inline-flex items-center gap-2 text-sm font-bold text-[#0f3d2e]">
+                          <ShieldCheck className="h-4 w-4 text-[#0f3d2e]" />
+                          Pendanaan terpenuhi
+                        </div>
+                        <p className="mt-1 text-xs text-slate-600">
+                          Proyek ini sudah fully funded dan siap lanjut ke tahap pelaksanaan.
+                        </p>
+                      </div>
+                    ) : (
+                      <>
+                        <Link
+                          href={donateHref(p._id)}
+                          className="mt-2 inline-flex items-center justify-center gap-2 bg-white hover:bg-gray-100 text-black text-sm font-bold py-3 rounded-xl transition-colors border border-gray-200"
+                        >
+                          <Heart className="w-4 h-4" />
+                          Dukung Proyek (Scan QRIS)
+                          <ArrowRight className="w-4 h-4" />
+                        </Link>
+                        {!hasSession && (
+                          <p className="text-xs text-center text-emerald-200 -mt-1">
+                            Daftar gratis untuk lanjut donasi
+                          </p>
+                        )}
+                      </>
                     )}
                   </div>
                 </article>

@@ -223,6 +223,28 @@ export default defineSchema({
     .index("by_created", ["createdAt"]),
 
   // ─── OTP Codes (Email Verification) ──────────────────────────────
+  auditLogs: defineTable({
+    actorId: v.optional(v.id("users")),
+    actorRole: v.optional(v.string()),
+    action: v.string(),
+    entityType: v.string(),
+    entityId: v.string(),
+    source: v.union(
+      v.literal("api"),
+      v.literal("convex"),
+      v.literal("webhook"),
+      v.literal("system")
+    ),
+    before: v.optional(v.string()),
+    after: v.optional(v.string()),
+    metadata: v.optional(v.string()),
+    createdAt: v.number(),
+  })
+    .index("by_actor", ["actorId"])
+    .index("by_entity", ["entityType", "entityId"])
+    .index("by_action", ["action"])
+    .index("by_created", ["createdAt"]),
+
   otpCodes: defineTable({
     email: v.string(),
     code: v.string(),

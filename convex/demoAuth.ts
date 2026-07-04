@@ -1,5 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v, ConvexError } from "convex/values";
+import { hashPassword } from "./users";
 
 const DEMO_ACCOUNTS = {
   "user@idmap.id": {
@@ -46,7 +47,7 @@ export const ensureDemoSession = mutation({
     if (existing) {
       await ctx.db.patch(existing._id, {
         name: demo.name,
-        password: demo.password,
+        password: hashPassword(demo.password),
         role: demo.role,
         createdAt: existing.createdAt ?? existing._creationTime,
         kycStatus: "terverifikasi",
@@ -57,7 +58,7 @@ export const ensureDemoSession = mutation({
     const userId = await ctx.db.insert("users", {
       email,
       name: demo.name,
-      password: demo.password,
+      password: hashPassword(demo.password),
       role: demo.role,
       kycStatus: "terverifikasi",
       points: 0,

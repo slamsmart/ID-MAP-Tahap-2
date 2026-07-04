@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState, useEffect } from "react";
+import { Suspense, useRef, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Eye, EyeOff, Globe, ArrowRight, ShieldCheck, Lock, Mail, Fingerprint, Loader2 } from "lucide-react";
@@ -61,6 +61,7 @@ function LoginForm() {
   const [biometricDirectScanning, setBiometricDirectScanning] = useState(false);
   const [biometricDirectError, setBiometricDirectError] = useState("");
   const [emailCredentialIds, setEmailCredentialIds] = useState<string[]>([]);
+  const submittingRef = useRef(false);
   const DEFAULT_BG = "/images/hero-mangrove.webp";
   const [bgImage, setBgImage] = useState(DEFAULT_BG);
   const stats = useQuery(api.platformStats.getAll);
@@ -114,8 +115,13 @@ function LoginForm() {
     mitra: t("Kelola proyek mitra & laporan MRV", "Manage partner projects & MRV reports"),
   };
 
+  useEffect(() => {
+    router.prefetch(safeNext ?? getDashboardPath(role));
+  }, [router, role, safeNext]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (submittingRef.current) return;
     setError("");
 
     if (!email || !password) {
@@ -123,6 +129,7 @@ function LoginForm() {
       return;
     }
 
+    submittingRef.current = true;
     try {
       setIsLoading(true);
       const normalizedEmail = email.trim().toLowerCase();
@@ -146,10 +153,12 @@ function LoginForm() {
       }
 
       setSession(user);
-      router.push(safeNext ?? getDashboardPath(user.role));
+      router.replace(safeNext ?? getDashboardPath(user.role));
+      router.refresh();
     } catch {
       setError(t("Terjadi kesalahan. Silakan coba lagi.", "An error occurred. Please try again."));
     } finally {
+      submittingRef.current = false;
       setIsLoading(false);
     }
   };
@@ -186,7 +195,8 @@ function LoginForm() {
       const user = data.user as User;
       setSession(user);
       rememberBiometricEmail(user.email);
-      router.push(safeNext ?? getDashboardPath(user.role));
+      router.replace(safeNext ?? getDashboardPath(user.role));
+      router.refresh();
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Login biometrik gagal.";
       setBiometricError(
@@ -250,7 +260,8 @@ function LoginForm() {
       const user = data.user as User;
       setSession(user);
       rememberBiometricEmail(user.email);
-      router.push(safeNext ?? getDashboardPath(user.role));
+      router.replace(safeNext ?? getDashboardPath(user.role));
+      router.refresh();
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Login biometrik gagal.";
       setBiometricDirectError(

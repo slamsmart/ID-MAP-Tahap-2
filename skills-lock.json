@@ -1,6 +1,12 @@
 {
   "version": 1,
   "skills": {
+    "backend-testing": {
+      "source": "akillness/oh-my-skills",
+      "sourceType": "github",
+      "skillPath": ".agent-skills/backend-testing/SKILL.md",
+      "computedHash": "658b6ca60fe301eb70cf6dd774e2bb093526cfb9b9b51f9fd31dd6ac552d4d2e"
+    },
     "bmad-advanced-elicitation": {
       "source": "bmad-code-org/BMAD-METHOD",
       "sourceType": "github",
@@ -337,11 +343,35 @@
       "skillPath": "skills/pwa-development/SKILL.md",
       "computedHash": "2219041ce92f6361ba77eb06c9a927dc7a1ba48f40ff5132321a29c4154ebc7a"
     },
+    "redis-security": {
+      "source": "redis/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/redis-security/SKILL.md",
+      "computedHash": "4f862bd39990439a298da1bb0ecf09ad9448da553b832f416ae2a770ec28ef3f"
+    },
+    "security-pen-testing": {
+      "source": "alirezarezvani/claude-skills",
+      "sourceType": "github",
+      "skillPath": "engineering-team/skills/security-pen-testing/SKILL.md",
+      "computedHash": "72dc4ce302accee895e128220ba7de40175ba285c0130376e8bb19240067cfb3"
+    },
+    "shannon-ai-pentester": {
+      "source": "aradotso/trending-skills",
+      "sourceType": "github",
+      "skillPath": "skills/shannon-ai-pentester/SKILL.md",
+      "computedHash": "801034b1a8c0cf2d85e0c5633c2e76adf6dcb9ccbcd812cad21807591f58e0b4"
+    },
     "wcag-audit-patterns": {
       "source": "wshobson/agents",
       "sourceType": "github",
       "skillPath": "plugins/accessibility-compliance/skills/wcag-audit-patterns/SKILL.md",
       "computedHash": "c26ec40131b7bc851c784bcecc3456e8fde931f38ca42aeed47ed7df6a8b05e8"
+    },
+    "webperf-loading": {
+      "source": "nucliweb/webperf-snippets",
+      "sourceType": "github",
+      "skillPath": "skills/webperf-loading/SKILL.md",
+      "computedHash": "915fc0d170dfa6e91b1130b5d92933883c2a981e40b555191278e8fa42cf2c54"
     }
   }
 }

@@ -142,6 +142,7 @@ export default function ThreeRolesSection() {
         <div className="grid lg:grid-cols-3 gap-6">
           {cards.map((card, i) => {
             const title = language === "en" ? card.titleEn : card.titleId;
+            const isPrimeCorporate = card.key === "perusahaan";
             const bullets =
               language === "en"
                 ? [card.bullet1En, card.bullet2En, card.bullet3En]
@@ -159,10 +160,25 @@ export default function ThreeRolesSection() {
                   className="h-full rounded-2xl"
                 >
                   <article
-                    className="group relative flex flex-col items-center text-center rounded-2xl border border-white/10 h-full min-h-[460px] p-8 pt-10 bg-[#0f3d2e] shadow-[0_28px_70px_-22px_rgba(15,61,46,0.45)]"
+                    className={`group relative flex h-full min-h-[460px] flex-col items-center rounded-2xl border p-8 pt-10 text-center transition-all duration-300 ${
+                      isPrimeCorporate
+                        ? "border-[#0f3d2e] bg-[#0f3d2e] shadow-[0_30px_80px_-24px_rgba(15,61,46,0.68)]"
+                        : "border-slate-200/80 bg-white shadow-[0_22px_55px_-34px_rgba(15,23,42,0.45)]"
+                    }`}
                   >
+                    {isPrimeCorporate && (
+                      <span className="absolute right-5 top-5 rounded-full bg-[#e1f5ee] px-4 py-1.5 text-xs font-semibold text-[#04342c] shadow-sm">
+                        Paket CSR
+                      </span>
+                    )}
                     {/* Circular logo */}
-                    <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-white/30 shadow-lg mb-5 flex-shrink-0">
+                    <div
+                      className={`mb-5 h-20 w-20 flex-shrink-0 overflow-hidden rounded-full border-4 ${
+                        isPrimeCorporate
+                          ? "border-white/30 bg-white/10"
+                          : "border-[#e1f5ee] bg-[#e1f5ee]"
+                      }`}
+                    >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={card.image}
@@ -173,7 +189,13 @@ export default function ThreeRolesSection() {
                     </div>
 
                     {/* Title */}
-                    <h3 className="font-semibold text-white text-3xl tracking-tight leading-snug mb-6 group-hover:text-lime-300 transition-colors duration-300">
+                    <h3
+                      className={`mb-6 text-3xl font-semibold leading-snug tracking-tight transition-colors duration-300 ${
+                        isPrimeCorporate
+                          ? "text-white group-hover:text-lime-300"
+                          : "text-[#0f3d2e] group-hover:text-[#0b5d43]"
+                      }`}
+                    >
                       {title}
                     </h3>
 
@@ -182,20 +204,30 @@ export default function ThreeRolesSection() {
                       {bullets.map((bullet) => (
                         <li
                           key={bullet}
-                          className="flex items-start gap-3 text-white/90 text-base leading-snug"
+                          className={`flex items-start gap-3 text-base leading-snug ${
+                            isPrimeCorporate ? "text-[#c9e9dd]" : "text-slate-600"
+                          }`}
                         >
-                          <CheckCircle2 className="h-4 w-4 mt-0.5 flex-shrink-0 text-white/70" />
+                          <CheckCircle2
+                            className={`mt-0.5 h-4 w-4 flex-shrink-0 ${
+                              isPrimeCorporate ? "text-[#9fe1cb]" : "text-[#5dcaa5]"
+                            }`}
+                          />
                           <span>{bullet}</span>
                         </li>
                       ))}
                     </ul>
 
-                    {/* CTA — matches Pokmaswas solid white button */}
+                    {/* CTA */}
                     <a
                       href={card.href}
                       target={isExternal ? "_blank" : undefined}
                       rel={isExternal ? "noopener noreferrer" : undefined}
-                      className="mt-8 inline-flex items-center justify-center gap-2 rounded-lg px-6 py-2.5 text-sm font-bold text-black bg-white hover:bg-gray-100 border border-gray-200 transition-colors"
+                      className={`mt-8 inline-flex items-center justify-center gap-2 rounded-full border px-6 py-2.5 text-sm font-semibold transition-colors ${
+                        isPrimeCorporate
+                          ? "border-white bg-white text-[#0f3d2e] hover:bg-[#e1f5ee]"
+                          : "border-[#0f3d2e] bg-[#0f3d2e] text-white hover:border-[#0b5d43] hover:bg-[#0b5d43]"
+                      }`}
                     >
                       {cta}
                       <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />

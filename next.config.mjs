@@ -7,7 +7,7 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   experimental: {
-    // Tree-shake import ikon/komponen besar → bundle peta & halaman lebih ringan
+    // Tree-shake import ikon/komponen besar Ã¢â€ â€™ bundle peta & halaman lebih ringan
     optimizePackageImports: ["lucide-react", "recharts", "motion"],
   },
   webpack: (config, { isServer, dev }) => {
@@ -30,16 +30,17 @@ const nextConfig = {
     ],
   },
   async headers() {
-    // Security headers — defense in depth.
+    const isDev = process.env.NODE_ENV !== "production";
+    // Security headers Ã¢â‚¬â€ defense in depth.
     // CSP: script-src/connect-src/img-src sengaja longgar (https:) supaya
     // lib eksternal (Mayar JS, NVIDIA chat stream) & tile peta Leaflet tetap
     // jalan. Yang di-lock adalah vektor yang tidak dipakai app: object-src,
     // base-uri, frame-ancestors (anti-clickjacking), form-action.
-    // TODO pilot: inventaris host script eksternal → ganti 'unsafe-inline'
+    // TODO pilot: inventaris host script eksternal Ã¢â€ â€™ ganti 'unsafe-inline'
     // /'unsafe-eval' dengan nonce untuk proteksi XSS penuh.
     const csp = [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https:",
+      `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https:`,
       "style-src 'self' 'unsafe-inline' https:",
       "img-src 'self' data: blob: https:",
       "font-src 'self' data: https:",
@@ -51,7 +52,7 @@ const nextConfig = {
       "base-uri 'self'",
       "form-action 'self' https:",
       "frame-ancestors 'self'",
-      "upgrade-insecure-requests",
+      ...(isDev ? [] : ["upgrade-insecure-requests"]),
     ].join("; ");
     return [
       {

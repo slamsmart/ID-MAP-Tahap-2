@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { MessageCircle, X, Send, Bot, User, Loader2, Leaf } from "lucide-react";
-
+import Image from "next/image";
+import { MessageCircle, X, Send, Bot, User, Loader2 } from "lucide-react";
 type Message = {
   id: string;
   role: "user" | "assistant";
@@ -203,8 +203,8 @@ export default function LiveChat() {
           {!guest && (
             <div className="flex-1 flex flex-col justify-center p-5 bg-gray-50">
               <div className="text-center mb-5">
-                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
-                  <Leaf size={22} />
+                <div className="mx-auto mb-3 flex h-[4.5rem] w-[4.5rem] items-center justify-center overflow-hidden rounded-full bg-emerald-100/90 p-0 shadow-sm">
+                  <Image src="/images/logo-chat.png" alt="ID-MAP" width={60} height={60} className="h-14 w-14 rounded-full object-cover" />
                 </div>
                 <p className="text-sm font-semibold text-gray-800">Sebelum memulai chat</p>
                 <p className="text-xs text-gray-500 mt-1">Masukkan nama dan email Anda agar kami bisa melayani lebih baik.</p>

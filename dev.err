@@ -1,0 +1,14 @@
+{"ts":"2026-06-18T23:38:38.387Z","level":"error","scope":"api.auth.login","msg":"login_exception","err":{"name":"Error","message":"[Request ID: fa754ef01d7768f7] Server Error"}}
+{"ts":"2026-06-18T23:38:59.328Z","level":"error","scope":"api.auth.login","msg":"login_exception","err":{"name":"TypeError","message":"fetch failed"}}
+{"ts":"2026-06-18T23:48:41.533Z","level":"error","scope":"api.auth.login","msg":"login_exception","err":{"name":"Error","message":"[Request ID: 93c8214f8f1f76a9] Server Error"}}
+{"ts":"2026-06-19T00:00:22.030Z","level":"error","scope":"api.auth.login","msg":"login_exception","err":{"name":"Error","message":"[Request ID: dca2db2d6001fbe9] Server Error"}}
+{"ts":"2026-06-19T00:02:48.919Z","level":"error","scope":"api.auth.login","msg":"login_exception","err":{"name":"Error","message":"[Request ID: c83a50224fff7e9d] Server Error"}}
+{"ts":"2026-06-19T00:03:46.276Z","level":"error","scope":"api.auth.login","msg":"login_exception","err":{"name":"Error","message":"[Request ID: 4167f27604ab8394] Server Error"},"message":"[Request ID: 4167f27604ab8394] Server Error"}
+{"ts":"2026-06-19T00:11:13.850Z","level":"error","scope":"api.auth.login","msg":"login_exception","err":{"name":"Error","message":"[Request ID: 9d0790f35beb6d8f] Server Error"},"message":"[Request ID: 9d0790f35beb6d8f] Server Error"}
+{"ts":"2026-06-19T00:12:02.097Z","level":"error","scope":"api.auth.login","msg":"login_exception","err":{"name":"Error","message":"[Request ID: d6765d625384f876] Server Error"},"message":"[Request ID: d6765d625384f876] Server Error"}
+{"ts":"2026-06-19T01:31:50.498Z","level":"error","scope":"api.auth.login","msg":"login_exception","err":{"name":"Error","message":"[Request ID: 4a0076ebdfc0390e] Server Error"},"message":"[Request ID: 4a0076ebdfc0390e] Server Error"}
+{"ts":"2026-06-19T01:35:08.643Z","level":"error","scope":"api.auth.login","msg":"login_exception","err":{"name":"Error","message":"[Request ID: 0447256fde96640a] Server Error"},"message":"[Request ID: 0447256fde96640a] Server Error"}
+{"ts":"2026-06-19T01:40:07.654Z","level":"error","scope":"api.auth.login","msg":"login_exception","err":{"name":"Error","message":"[Request ID: 3d6be74ef00960ce] Server Error"},"message":"[Request ID: 3d6be74ef00960ce] Server Error"}
+{"ts":"2026-06-19T01:42:05.717Z","level":"error","scope":"api.auth.login","msg":"login_exception","err":{"name":"Error","message":"[Request ID: 4a59b49343874024] Server Error"},"message":"[Request ID: 4a59b49343874024] Server Error"}
+{"ts":"2026-06-19T01:47:54.080Z","level":"warn","scope":"api.auth.login","msg":"[Request ID: d2a01fc27b8f27c5] Server Error","email":"user@idmap.id"}
+{"ts":"2026-06-19T01:48:40.668Z","level":"warn","scope":"api.auth.login","msg":"[Request ID: b56084e57b8e0d2e] Server Error","email":"user@idmap.id"}

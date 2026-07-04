@@ -1,4 +1,4 @@
-﻿// Mayar.id helper
+// Mayar.id helper
 // Docs: https://docs.mayar.id/
 // All requests use Bearer auth with the API key from env.
 
@@ -137,7 +137,7 @@ export function verifyWebhook(
   if (auth.startsWith("Bearer ")) {
     const token = auth.slice("Bearer ".length).trim();
     if (timingSafeEq(token, expected)) return { ok: true };
-    // Token present but wrong → reject (don't fall through)
+    // Token present but wrong ? reject (don't fall through)
     return { ok: false, reason: "signature mismatch" };
   }
 
@@ -155,9 +155,10 @@ export function verifyWebhook(
     return { ok: false, reason: "signature mismatch" };
   }
 
-  // 4. Mayar "payme/QRIS" sends no auth header at all — allow through.
-  //    Payment validity is confirmed via amount+time matching in Convex.
-  return { ok: true };
+  // 4. Fail closed: webhook TANPA auth header/signature tidak boleh diterima.
+  //    Jika integrasi provider membutuhkan mode lain, verifikasi harus
+  //    dilakukan eksplisit di route handler via server-to-server check.
+  return { ok: false, reason: "missing webhook authentication" };
 }
 
 function timingSafeEq(a: string, b: string): boolean {
@@ -205,6 +206,7 @@ export type MayarWebhookPayload = {
     transactionId?: string;
   };
 };
+
 
 
 

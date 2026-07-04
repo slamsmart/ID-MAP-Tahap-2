@@ -13,7 +13,7 @@ import type { Id } from "./_generated/dataModel";
 // ini untuk auto-detect legacy plaintext (untuk migrasi smooth).
 const BCRYPT_COST = 10;
 const isHashed = (s: string) => s.startsWith("$2a$") || s.startsWith("$2b$") || s.startsWith("$2y$");
-function hashPassword(plain: string): string {
+export function hashPassword(plain: string): string {
   if (isHashed(plain)) return plain; // already hashed (idempotent)
   return bcrypt.hashSync(plain, BCRYPT_COST);
 }
@@ -224,6 +224,17 @@ export const create = mutation({
   },
   returns: v.id("users"),
   handler: async (ctx, args) => {
+    // Registrasi publik HANYA boleh role self-service. Role privileged
+    // (admin/verifikator/corporate/mitra_facilitator) wajib lewat flow
+    // server-side terproteksi — cegah privilege escalation via panggilan
+    // Convex langsung ke NEXT_PUBLIC_CONVEX_URL yang bypass API route.
+    if (args.role !== "sahabat" && args.role !== "mitra") {
+      throw new ConvexError({
+        code: "FORBIDDEN_ROLE",
+        message: "Role ini tidak boleh didaftarkan lewat registrasi publik.",
+      });
+    }
+
     // Check if email already exists
     const existing = await ctx.db
       .query("users")
@@ -353,7 +364,7 @@ export const ensureDemoAccount = mutation({
     if (existing) {
       await ctx.db.patch(existing._id, {
         name: demo.name,
-        password: demo.password,
+        password: hashPassword(demo.password),
         role: demo.role,
       });
       return toPublicUser({ ...existing, name: demo.name, password: demo.password, role: demo.role });
@@ -362,7 +373,7 @@ export const ensureDemoAccount = mutation({
     const userId = await ctx.db.insert("users", {
       email,
       name: demo.name,
-      password: demo.password,
+      password: hashPassword(demo.password),
       role: demo.role,
       kycStatus: "belum",
       points: 0,

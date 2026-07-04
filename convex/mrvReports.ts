@@ -1,5 +1,6 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
+import { writeAuditLog } from "./audit";
 
 const mrvValidator = v.object({
   _id: v.id("mrvReports"),
@@ -41,6 +42,7 @@ export const listAll = query({
 
 export const updateStatus = mutation({
   args: { 
+    actorId: v.optional(v.id("users")),
     reportId: v.id("mrvReports"),
     status: v.union(
       v.literal("Selesai"),
@@ -50,7 +52,18 @@ export const updateStatus = mutation({
   },
   returns: v.null(),
   handler: async (ctx, args) => {
+    const before = await ctx.db.get(args.reportId);
     await ctx.db.patch(args.reportId, { status: args.status });
+    await writeAuditLog(ctx, {
+      actorId: args.actorId,
+      action: "mrv_report.update_status",
+      entityType: "mrvReports",
+      entityId: args.reportId,
+      source: "convex",
+      before: before ? { status: before.status } : undefined,
+      after: { status: args.status },
+      metadata: before ? { projectId: before.projectId, period: before.period, type: before.type } : undefined,
+    });
     return null;
   },
 });
