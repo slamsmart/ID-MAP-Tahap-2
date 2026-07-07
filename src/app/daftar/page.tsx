@@ -24,6 +24,9 @@ function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [step, setStep] = useState<"form" | "otp" | "biometric">("form");
   const [otpValue, setOtpValue] = useState("");
+  // Email dikunci setelah OTP terkirim — tidak bisa diubah kecuali mulai
+  // ulang pendaftaran dari nol (cegah loop "ganti email → minta OTP").
+  const [otpSent, setOtpSent] = useState(false);
   const [newUserId, setNewUserId] = useState("");
   const [redirectPath, setRedirectPath] = useState("");
   const [resendCooldown, setResendCooldown] = useState(0);
@@ -134,6 +137,7 @@ function RegisterForm() {
         return;
       }
       setStep("otp");
+      setOtpSent(true);
       setOtpValue("");
       startResendCooldown();
     } catch {
@@ -392,10 +396,22 @@ function RegisterForm() {
 
                 <button
                   type="button"
-                  onClick={() => { setStep("form"); setError(""); setOtpValue(""); }}
+                  onClick={() => {
+                    setStep("form");
+                    setError("");
+                    setOtpValue("");
+                    setEmail("");
+                    setName("");
+                    setPassword("");
+                    setPhone("");
+                    setPartnerType("");
+                    setProjectLocation("");
+                    setAgreeTerms(false);
+                    setOtpSent(false);
+                  }}
                   className="block w-full text-sm text-gray-500 hover:text-gray-700 text-center"
                 >
-                  <ArrowLeft className="w-3.5 h-3.5 inline" aria-hidden="true" /> {t("Ganti email", "Change email")}
+                  <ArrowLeft className="w-3.5 h-3.5 inline" aria-hidden="true" /> {t("Ganti email (mulai ulang)", "Change email (restart)")}
                 </button>
               </form>
             </div>
@@ -469,10 +485,13 @@ function RegisterForm() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                disabled={otpSent}
                 aria-invalid={!!error}
                 aria-describedby={error ? "register-error" : undefined}
                 placeholder="nama@email.com"
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                className={`w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent ${
+                  otpSent ? "bg-gray-100 text-gray-500 cursor-not-allowed" : ""
+                }`}
               />
             </div>
 
