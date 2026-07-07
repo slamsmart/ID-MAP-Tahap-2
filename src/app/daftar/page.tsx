@@ -3,7 +3,7 @@
 import { Suspense, useState, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Eye, EyeOff, Mail, Inbox, ArrowLeft, AlertTriangle, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Mail, Inbox, AlertTriangle, Loader2 } from "lucide-react";
 import { setSession, getDashboardPath, User } from "@/lib/auth";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getAuthBgImage } from "@/lib/heroImageStore";
@@ -394,25 +394,6 @@ function RegisterForm() {
                     : t("Kirim ulang kode OTP", "Resend OTP code")}
                 </button>
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    setStep("form");
-                    setError("");
-                    setOtpValue("");
-                    setEmail("");
-                    setName("");
-                    setPassword("");
-                    setPhone("");
-                    setPartnerType("");
-                    setProjectLocation("");
-                    setAgreeTerms(false);
-                    setOtpSent(false);
-                  }}
-                  className="block w-full text-sm text-gray-500 hover:text-gray-700 text-center"
-                >
-                  <ArrowLeft className="w-3.5 h-3.5 inline" aria-hidden="true" /> {t("Ganti email (mulai ulang)", "Change email (restart)")}
-                </button>
               </form>
             </div>
           )}
