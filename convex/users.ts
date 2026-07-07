@@ -395,7 +395,6 @@ export const update = mutation({
     actorId: v.id("users"),
     userId: v.id("users"),
     name: v.optional(v.string()),
-    email: v.optional(v.string()),
     phone: v.optional(v.string()),
     organization: v.optional(v.string()),
     address: v.optional(v.string()),
@@ -484,6 +483,59 @@ export const resetPasswordByEmail = mutation({
       entityId: user._id,
       source: "api",
       metadata: { email: args.email },
+    });
+    return null;
+  },
+});
+
+// Ganti email setelah OTP ke email BARU terverifikasi. Mutation ini TIDAK
+// verify OTP sendiri — server route (/api/auth/change-email) wajib call
+// api.otpCodes.verifyOtp dulu. Dilock dari users.update supaya email tidak
+// bisa diubah tanpa verifikasi kepemilikan email baru (anti abuse loop
+// "ganti email → minta OTP" berkali-kali).
+export const changeEmail = mutation({
+  args: {
+    userId: v.id("users"),
+    newEmail: v.string(),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const email = args.newEmail.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      throw new ConvexError({ code: "INVALID_EMAIL", message: "Format email tidak valid." });
+    }
+
+    const user = await ctx.db.get(args.userId);
+    if (!user) {
+      throw new ConvexError({ code: "NOT_FOUND", message: "User tidak ditemukan" });
+    }
+    if (user.email.toLowerCase() === email) {
+      throw new ConvexError({
+        code: "SAME_EMAIL",
+        message: "Email baru sama dengan email saat ini.",
+      });
+    }
+
+    // Defense-in-depth: pastikan email target belum dipakai user lain,
+    // meski server route sudah cek sebelum kirim OTP.
+    const clash = await ctx.db
+      .query("users")
+      .withIndex("by_email", (q) => q.eq("email", email))
+      .first();
+    if (clash) {
+      throw new ConvexError({ code: "DUPLICATE_EMAIL", message: "Email sudah digunakan." });
+    }
+
+    const beforeEmail = user.email;
+    await ctx.db.patch(args.userId, { email });
+    await writeAuditLog(ctx, {
+      actorId: args.userId,
+      action: "user.change_email",
+      entityType: "users",
+      entityId: args.userId,
+      source: "api",
+      before: { email: beforeEmail },
+      after: { email },
     });
     return null;
   },

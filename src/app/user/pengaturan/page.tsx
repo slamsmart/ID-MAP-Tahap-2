@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { Save, User, Bell, Shield, CheckCircle2, Loader2 } from "lucide-react";
 import { getSession } from "@/lib/auth";
 import BiometricEnrollCard from "@/components/settings/BiometricEnrollCard";
+import ChangeEmailCard from "@/components/settings/ChangeEmailCard";
 
 type SaveState = "idle" | "saving" | "success";
 
@@ -68,6 +69,9 @@ export default function PengaturanUserPage() {
             </div>
           </div>
         </div>
+
+        {/* ── Ganti Email (OTP-verified, throttled) ── */}
+        <ChangeEmailCard />
 
         {/* ── Notifikasi ── */}
         <div className="bg-white rounded-xl border border-gray-100 p-6">
