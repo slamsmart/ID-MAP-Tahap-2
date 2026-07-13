@@ -44,6 +44,15 @@ const PokmaswasLayer = dynamic(() => import("@/components/map/PokmaswasLayer"), 
   ),
 });
 
+const PolaruangLayer = dynamic(() => import("@/components/map/PolaruangLayer"), {
+  ssr: false,
+  loading: () => (
+    <div className="absolute inset-0 flex items-center justify-center bg-[#0F2E2A] z-[400]">
+      <Loader2 className="h-8 w-8 text-teal-400 animate-spin" />
+    </div>
+  ),
+});
+
 const EE_APP_URL =
   "https://ee-dimassyarifworkspace.projects.earthengine.app/view/mangrove-health-indeks-jatim";
 
@@ -64,6 +73,7 @@ export default function JelajahiPetaMangrovePage() {
   const [isAbrasionOpen, setIsAbrasionOpen] = useState(false);
   const [isTurtleLayerOpen, setIsTurtleLayerOpen] = useState(false);
   const [isPokmaswasLayerOpen, setIsPokmaswasLayerOpen] = useState(false);
+  const [isPolaruangLayerOpen, setIsPolaruangLayerOpen] = useState(false);
   const [isLayerDropdownOpen, setIsLayerDropdownOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [mobileSheet, setMobileSheet] = useState<"none" | "legend" | "calculator">("none");
@@ -173,7 +183,7 @@ export default function JelajahiPetaMangrovePage() {
             <button
               onClick={() => setIsLayerDropdownOpen((v) => !v)}
               className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl transition-all duration-300 text-xs sm:text-sm font-bold border ${
-                isLayerDropdownOpen || isAbrasionOpen || isTurtleLayerOpen || isPokmaswasLayerOpen
+                isLayerDropdownOpen || isAbrasionOpen || isTurtleLayerOpen || isPokmaswasLayerOpen || isPolaruangLayerOpen
                   ? "bg-emerald-500 text-white shadow-lg shadow-teal-500/20 border-teal-400"
                   : "bg-[#062d22] text-white hover:bg-teal-600 border-[#235850] hover:border-teal-400"
               }`}
@@ -226,6 +236,7 @@ export default function JelajahiPetaMangrovePage() {
                       setIsPokmaswasLayerOpen(true);
                       setIsAbrasionOpen(false);
                       setIsTurtleLayerOpen(false);
+                      setIsPolaruangLayerOpen(false);
                       setIsLayerDropdownOpen(false);
                     }}
                     className={`w-full flex items-center gap-2.5 px-3 py-2.5 text-sm font-semibold text-left transition-colors hover:bg-emerald-50 ${
@@ -237,6 +248,23 @@ export default function JelajahiPetaMangrovePage() {
                     </div>
                     Mitra
                   </button>
+                  <button
+                    onClick={() => {
+                      setIsPolaruangLayerOpen(true);
+                      setIsAbrasionOpen(false);
+                      setIsTurtleLayerOpen(false);
+                      setIsPokmaswasLayerOpen(false);
+                      setIsLayerDropdownOpen(false);
+                    }}
+                    className={`w-full flex items-center gap-2.5 px-3 py-2.5 text-sm font-semibold text-left transition-colors hover:bg-teal-50 ${
+                      isPolaruangLayerOpen ? "bg-teal-50 text-teal-600" : "text-gray-700"
+                    }`}
+                  >
+                    <div className="w-7 h-7 rounded-lg bg-teal-100 flex items-center justify-center flex-shrink-0 text-base">
+                      🗺️
+                    </div>
+                    Pola Ruang Laut
+                  </button>
                   <div className="h-px bg-gray-100 mx-3 my-1" />
                   <p className="px-3 pb-2.5 text-[10px] text-gray-400">
                     {isAbrasionOpen
@@ -245,6 +273,8 @@ export default function JelajahiPetaMangrovePage() {
                       ? "Penyu aktif"
                       : isPokmaswasLayerOpen
                       ? "Mitra aktif"
+                      : isPolaruangLayerOpen
+                      ? "Pola Ruang aktif"
                       : "Tidak ada layer aktif"}
                   </p>
                 </div>
@@ -489,6 +519,11 @@ export default function JelajahiPetaMangrovePage() {
           {/* Pokmaswas Layer - kelompok pengawas masyarakat */}
           {isPokmaswasLayerOpen && (
             <PokmaswasLayer onClose={() => setIsPokmaswasLayerOpen(false)} />
+          )}
+
+          {/* Pola Ruang Laut - Konservasi & Pemanfaatan */}
+          {isPolaruangLayerOpen && (
+            <PolaruangLayer onClose={() => setIsPolaruangLayerOpen(false)} />
           )}
 
           {/* ===== MOBILE FAB: Legend + Calculator triggers ===== */}
