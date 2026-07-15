@@ -92,16 +92,16 @@ export default function KebijakanPrivasiPage() {
               <Shield className="w-3.5 h-3.5" />
               {pick("Perlindungan Data", "Data Protection")}
             </div>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-emerald-50">
               {pick("Kebijakan Privasi", "Privacy Policy")}
             </h1>
-            <p className="mt-4 text-lg text-emerald-200 max-w-2xl mx-auto">
+            <p className="mt-4 text-lg text-emerald-100 max-w-2xl mx-auto">
               {pick(
                 "Kami berkomitmen melindungi privasi dan keamanan data pribadi Anda. Halaman ini menjelaskan cara kami mengumpulkan, menggunakan, dan menjaga data Anda.",
                 "We are committed to protecting your privacy and personal data security. This page explains how we collect, use, and safeguard your data."
               )}
             </p>
-            <p className="mt-3 text-sm text-emerald-300">
+            <p className="mt-3 text-sm text-emerald-200">
               {pick("Terakhir diperbarui: 22 Juni 2025", "Last updated: June 22, 2025")}
             </p>
           </ScrollReveal>

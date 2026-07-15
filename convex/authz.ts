@@ -43,6 +43,26 @@ export async function requireRole<T extends QueryCtx>(
 }
 
 /**
+ * Require a server-only secret before running public Convex mutations that
+ * should only be reachable through trusted Next.js route handlers.
+ */
+export function requireServerMutationSecret(secret: string) {
+  const expected = process.env.CONVEX_ADMIN_MUTATION_SECRET;
+  if (!expected || expected.length < 32) {
+    throw new ConvexError({
+      code: "SERVER_MISCONFIGURED",
+      message: "Admin mutation secret belum dikonfigurasi.",
+    });
+  }
+  if (secret !== expected) {
+    throw new ConvexError({
+      code: "UNAUTHORIZED",
+      message: "Sesi admin tidak valid.",
+    });
+  }
+}
+
+/**
  * Pastikan actor adalah admin.
  */
 export async function requireAdmin<T extends QueryCtx>(

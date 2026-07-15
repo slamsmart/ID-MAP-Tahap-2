@@ -1,13 +1,10 @@
 "use client";
 
 import { Save, Shield, Bell, Globe, Database, RefreshCw, AlertTriangle, CheckCircle } from "lucide-react";
-import { useMutation } from "convex/react";
-import { api } from "../../../../convex/_generated/api";
 import { useState } from "react";
+import { callAdminSeed } from "@/lib/adminConvex";
 
 export default function PengaturanAdminPage() {
-  const seedMutation = useMutation(api.seed.seedAll);
-  const resetSeedMutation = useMutation(api.seed.resetAndSeed);
   const [seedStatus, setSeedStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [seedMsg, setSeedMsg] = useState("");
   return (
@@ -145,12 +142,12 @@ export default function PengaturanAdminPage() {
                 setSeedStatus("loading");
                 setSeedMsg("Menjalankan seed...");
                 try {
-                  const msg = await seedMutation({});
+                  const msg = await callAdminSeed("seedAll");
                   setSeedStatus("success");
                   setSeedMsg(msg);
-                } catch (e: any) {
+                } catch (e: unknown) {
                   setSeedStatus("error");
-                  setSeedMsg(e.message ?? "Gagal menjalankan seed.");
+                  setSeedMsg(e instanceof Error ? e.message : "Gagal menjalankan seed.");
                 }
               }}
               className="flex items-center gap-2 px-4 py-2.5 bg-emerald-700 text-white rounded-lg text-sm font-semibold hover:bg-emerald-600 disabled:opacity-60 transition-colors"
@@ -166,12 +163,12 @@ export default function PengaturanAdminPage() {
                 setSeedStatus("loading");
                 setSeedMsg("Mereset dan menyeed ulang...");
                 try {
-                  const msg = await resetSeedMutation({});
+                  const msg = await callAdminSeed("resetAndSeed");
                   setSeedStatus("success");
                   setSeedMsg(msg);
-                } catch (e: any) {
+                } catch (e: unknown) {
                   setSeedStatus("error");
-                  setSeedMsg(e.message ?? "Gagal reset & seed.");
+                  setSeedMsg(e instanceof Error ? e.message : "Gagal reset & seed.");
                 }
               }}
               className="flex items-center gap-2 px-4 py-2.5 bg-red-600 text-white rounded-lg text-sm font-semibold hover:bg-red-500 disabled:opacity-60 transition-colors"

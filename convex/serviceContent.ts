@@ -1,5 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { requireRole, requireServerMutationSecret } from "./authz";
 
 const serviceContentValidator = v.object({
   _id: v.id("serviceContent"),
@@ -33,9 +34,14 @@ export const list = query({
 });
 
 export const generateUploadUrl = mutation({
-  args: {},
+  args: {
+    actorId: v.id("users"),
+    adminSecret: v.string(),
+  },
   returns: v.string(),
-  handler: async (ctx) => {
+  handler: async (ctx, args) => {
+    requireServerMutationSecret(args.adminSecret);
+    await requireRole(ctx, args.actorId, ["admin", "verifikator"]);
     return await ctx.storage.generateUploadUrl();
   },
 });
@@ -50,6 +56,8 @@ export const getImageUrl = query({
 
 export const update = mutation({
   args: {
+    actorId: v.id("users"),
+    adminSecret: v.string(),
     key: v.string(),
     titleId: v.string(),
     titleEn: v.string(),
@@ -70,13 +78,16 @@ export const update = mutation({
   },
   returns: v.null(),
   handler: async (ctx, args) => {
+    const { actorId, adminSecret, ...updates } = args;
+    requireServerMutationSecret(adminSecret);
+    await requireRole(ctx, actorId, ["admin", "verifikator"]);
     const existing = await ctx.db
       .query("serviceContent")
-      .withIndex("by_key", (q) => q.eq("key", args.key))
+      .withIndex("by_key", (q) => q.eq("key", updates.key))
       .unique();
 
     const content = {
-      ...args,
+      ...updates,
       updatedAt: Date.now(),
     };
 

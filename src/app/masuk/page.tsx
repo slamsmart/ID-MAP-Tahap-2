@@ -4,7 +4,7 @@ import { Suspense, useRef, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Eye, EyeOff, Globe, ArrowRight, ShieldCheck, Lock, Mail, Fingerprint, Loader2 } from "lucide-react";
-import { setSession, getDashboardPath, User } from "@/lib/auth";
+import { setSession, getDashboardPath, refreshSession, User } from "@/lib/auth";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getAuthBgImage } from "@/lib/heroImageStore";
 import { useQuery } from "convex/react";
@@ -61,6 +61,7 @@ function LoginForm() {
   const [biometricDirectScanning, setBiometricDirectScanning] = useState(false);
   const [biometricDirectError, setBiometricDirectError] = useState("");
   const [emailCredentialIds, setEmailCredentialIds] = useState<string[]>([]);
+  const [isRecoveringSession, setIsRecoveringSession] = useState(false);
   const submittingRef = useRef(false);
   const DEFAULT_BG = "/images/hero-mangrove.webp";
   const [bgImage, setBgImage] = useState(DEFAULT_BG);
@@ -116,8 +117,68 @@ function LoginForm() {
   };
 
   useEffect(() => {
+    if (!safeNext) return;
     router.prefetch(safeNext ?? getDashboardPath(role));
   }, [router, role, safeNext]);
+
+  useEffect(() => {
+    if (!safeNext) return;
+    let active = true;
+
+    const canAccessNext = (userRole: User["role"], next: string | null) => {
+      if (!next) return true;
+      if (next === "/user" || next.startsWith("/user/")) return userRole === "sahabat" || userRole === "admin";
+      if (next === "/mitra" || next.startsWith("/mitra/")) return ["mitra", "mitra_facilitator", "admin"].includes(userRole);
+      if (next === "/admin" || next.startsWith("/admin/")) return userRole === "admin";
+      if (next === "/verifikator" || next.startsWith("/verifikator/")) return userRole === "verifikator" || userRole === "admin";
+      if (next === "/corporate" || next.startsWith("/corporate/")) return userRole === "corporate" || userRole === "admin";
+      return true;
+    };
+
+    const recover = async () => {
+      setIsRecoveringSession(true);
+      const user = await refreshSession();
+      if (!active) return;
+      if (!user) {
+        setIsRecoveringSession(false);
+        return;
+      }
+
+      const destination = canAccessNext(user.role, safeNext)
+        ? (safeNext ?? getDashboardPath(user.role))
+        : getDashboardPath(user.role);
+
+      console.info("login_autorecover_redirect", {
+        loginPath: "/masuk",
+        safeNext,
+        role: user.role,
+        destination,
+      });
+
+      router.replace(destination);
+      router.refresh();
+    };
+
+    void recover().finally(() => {
+      if (active) setIsRecoveringSession(false);
+    });
+    return () => {
+      active = false;
+    };
+  }, [router, safeNext]);
+
+  if (isRecoveringSession) {
+    return (
+      <div className="min-h-screen bg-[#0f3d2e] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3 text-white/90">
+          <Loader2 className="w-10 h-10 animate-spin text-emerald-300" />
+          <p className="text-sm font-medium">
+            {t("Memulihkan sesi masuk…", "Restoring login session...")}
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -153,6 +214,7 @@ function LoginForm() {
       }
 
       setSession(user);
+      await refreshSession();
       router.replace(safeNext ?? getDashboardPath(user.role));
       router.refresh();
     } catch {
@@ -195,6 +257,7 @@ function LoginForm() {
       const user = data.user as User;
       setSession(user);
       rememberBiometricEmail(user.email);
+      await refreshSession();
       router.replace(safeNext ?? getDashboardPath(user.role));
       router.refresh();
     } catch (err) {
@@ -260,6 +323,7 @@ function LoginForm() {
       const user = data.user as User;
       setSession(user);
       rememberBiometricEmail(user.email);
+      await refreshSession();
       router.replace(safeNext ?? getDashboardPath(user.role));
       router.refresh();
     } catch (err) {

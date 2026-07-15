@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useMutation, useQuery } from "convex/react";
+import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
+import { callAdminContent } from "@/lib/adminConvex";
 import {
   AlertTriangle,
   ArrowDown,
@@ -41,7 +42,6 @@ const defaults: FaqForm = {
 
 export default function VerifikatorFaqPage() {
   const data = useQuery(api.faqContent.get);
-  const updateFaq = useMutation(api.faqContent.update);
 
   const [form, setForm] = useState<FaqForm>(defaults);
   const [hydrated, setHydrated] = useState(false);
@@ -96,7 +96,7 @@ export default function VerifikatorFaqPage() {
     setSaving(true);
     setError(null);
     try {
-      await updateFaq(form);
+      await callAdminContent("faq.update", form);
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
     } catch (err) {

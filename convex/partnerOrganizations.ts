@@ -1,6 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
-import { requireAdmin } from "./authz";
+import { requireAdmin, requireServerMutationSecret } from "./authz";
 
 const orgValidator = v.object({
   _id: v.id("partnerOrganizations"),
@@ -73,8 +73,8 @@ export const create = mutation({
   },
   returns: v.id("partnerOrganizations"),
   handler: async (ctx, args) => {
-    await requireAdmin(ctx, args.actorId);
-    const { actorId: _a, ...rest } = args;
+    const { actorId, ...rest } = args;
+    await requireAdmin(ctx, actorId);
     return await ctx.db.insert("partnerOrganizations", {
       ...rest,
       status: "aktif",
@@ -108,9 +108,10 @@ export const updateStatus = mutation({
 // Seed 3 NGO pilot — dipakai sekali untuk submission demo.
 // Run: npx convex run partnerOrganizations:seedPilot
 export const seedPilot = mutation({
-  args: {},
+  args: { adminSecret: v.string() },
   returns: v.string(),
-  handler: async (ctx) => {
+  handler: async (ctx, args) => {
+    requireServerMutationSecret(args.adminSecret);
     const existing = await ctx.db.query("partnerOrganizations").first();
     if (existing) return "Skipped: NGO whitelist sudah pernah di-seed.";
 

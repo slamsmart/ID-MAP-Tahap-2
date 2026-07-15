@@ -23,93 +23,95 @@ waiting for navigation until "load"
 ```yaml
 - generic [active] [ref=e1]:
   - generic [ref=e2]:
-    - generic [ref=e8]:
-      - link "ID-MAP" [ref=e9] [cursor=pointer]:
+    - generic [ref=e4]:
+      - link "ID-MAP" [ref=e5] [cursor=pointer]:
         - /url: /
-        - img "ID-MAP" [ref=e10]
-      - generic [ref=e11]:
-        - generic [ref=e12]:
-          - img [ref=e13]
-          - generic [ref=e16]: Platform Integrasi Data Ekosistem Pesisir Berkelanjutan
-        - heading "Satu Platform. Seluruh Ekosistem Mangrove & Pesisir Indonesia." [level=2] [ref=e17]:
+        - img "ID-MAP" [ref=e6]
+      - generic [ref=e7]:
+        - generic [ref=e8]:
+          - img [ref=e9]
+          - text: Platform Integrasi Data Ekosistem Pesisir Berkelanjutan
+        - heading "Satu Platform. Seluruh Ekosistem Mangrove & Pesisir Indonesia." [level=2] [ref=e12]:
           - text: Satu Platform.
           - text: Seluruh Ekosistem Mangrove & Pesisir
           - text: Indonesia.
-        - paragraph [ref=e18]: Data terintegrasi untuk pemantauan restorasi lingkungan, rehabilitasi, dan keberlanjutan pesisir nusantara.
-        - generic [ref=e19]:
-          - generic [ref=e20]:
-            - generic [ref=e21]: "12.456"
-            - generic [ref=e22]: Sahabat Terlibat
-          - generic [ref=e23]:
-            - generic [ref=e24]: 1.285.760
-            - generic [ref=e25]: Bibit Ditanam
-          - generic [ref=e26]:
-            - generic [ref=e27]: 823.456 Ton
-            - generic [ref=e28]: Serapan Karbon (CO₂e)
-          - generic [ref=e29]:
-            - generic [ref=e30]: Rp 98,65 M
-            - generic [ref=e31]: Potensi Nilai Carbon
-      - generic [ref=e32]:
-        - paragraph [ref=e33]: “ID-MAP memudahkan kami memantau proyek restorasi mangrove secara real-time dan transparan.”
-        - generic [ref=e34]:
-          - generic [ref=e35]: DR
-          - generic [ref=e36]:
-            - generic [ref=e37]: Dr. Rina S.
-            - generic [ref=e38]: Direktur, Yayasan Mangrove Indonesia
-    - generic [ref=e39]:
-      - generic [ref=e41]:
-        - img [ref=e42]
-        - button "EN" [ref=e45] [cursor=pointer]
-        - button "ID" [ref=e46] [cursor=pointer]
-      - generic [ref=e48]:
-        - generic [ref=e49]:
-          - heading "Selamat Datang Kembali 👋" [level=1] [ref=e50]
-          - paragraph [ref=e51]: Masuk ke akun Anda untuk melanjutkan perjalanan karbon.
-        - generic [ref=e52]:
-          - button "Sahabat" [ref=e53] [cursor=pointer]
-          - button "Mitra" [ref=e54] [cursor=pointer]
-        - generic [ref=e55]:
-          - img [ref=e56]
-          - paragraph [ref=e59]: Donasi QRIS, pantau dampak, & sertifikat
-        - generic [ref=e60]:
-          - generic [ref=e61]:
-            - generic [ref=e62]: Alamat Email
-            - generic [ref=e63]:
-              - img [ref=e64]
-              - textbox "Alamat Email" [ref=e67]:
+        - paragraph [ref=e13]: Data terintegrasi untuk pemantauan restorasi lingkungan, rehabilitasi, dan keberlanjutan pesisir nusantara.
+        - generic [ref=e14]:
+          - generic [ref=e15]:
+            - generic [ref=e16]: "12.456"
+            - generic [ref=e17]: Sahabat Terlibat
+          - generic [ref=e18]:
+            - generic [ref=e19]: 1.285.760
+            - generic [ref=e20]: Bibit Ditanam
+          - generic [ref=e21]:
+            - generic [ref=e22]: 823.456 Ton
+            - generic [ref=e23]: Serapan Karbon (CO₂e)
+          - generic [ref=e24]:
+            - generic [ref=e25]: Rp 98,65 M
+            - generic [ref=e26]: Potensi Nilai Carbon
+      - generic [ref=e27]:
+        - paragraph [ref=e28]: “ID-MAP memudahkan kami memantau proyek restorasi mangrove secara real-time dan transparan.”
+        - generic [ref=e29]:
+          - generic [ref=e30]: DR
+          - generic [ref=e31]:
+            - generic [ref=e32]: Dr. Rina S.
+            - generic [ref=e33]: Direktur, Yayasan Mangrove Indonesia
+    - generic [ref=e34]:
+      - generic [ref=e35]:
+        - link "Beranda ID-MAP" [ref=e36] [cursor=pointer]:
+          - /url: /
+          - img "ID-MAP" [ref=e38]
+        - generic [ref=e39]:
+          - img [ref=e40]
+          - button "EN" [ref=e43]
+          - button "ID" [ref=e44]
+      - generic [ref=e46]:
+        - generic [ref=e47]:
+          - heading "Selamat Datang Kembali 👋" [level=1] [ref=e48]
+          - paragraph [ref=e49]: Masuk ke akun Anda untuk melanjutkan perjalanan karbon.
+        - generic [ref=e50]:
+          - button "Sahabat" [ref=e51]
+          - button "Mitra" [ref=e52]
+        - generic [ref=e53]:
+          - img [ref=e54]
+          - paragraph [ref=e57]: Donasi QRIS, pantau dampak, & sertifikat
+        - generic [ref=e58]:
+          - generic [ref=e59]:
+            - text: Alamat Email
+            - generic [ref=e60]:
+              - img [ref=e61]
+              - textbox "Alamat Email" [ref=e64]:
                 - /placeholder: nama@email.com
-          - generic [ref=e68]:
-            - generic [ref=e69]:
-              - generic [ref=e70]: Kata Sandi
-              - link "Lupa password?" [ref=e71] [cursor=pointer]:
+          - generic [ref=e65]:
+            - generic [ref=e66]:
+              - text: Kata Sandi
+              - link "Lupa password?" [ref=e67] [cursor=pointer]:
                 - /url: /lupa-password
-            - generic [ref=e72]:
-              - img [ref=e73]
-              - textbox "Kata Sandi" [ref=e76]:
+            - generic [ref=e68]:
+              - img [ref=e69]
+              - textbox "Kata Sandi" [ref=e72]:
                 - /placeholder: Masukkan kata sandi
-              - button "Tampilkan password" [ref=e77] [cursor=pointer]:
-                - img [ref=e78]
-          - generic [ref=e81]:
-            - checkbox "Ingat saya" [ref=e82]
-            - generic [ref=e83]: Ingat saya
-          - button "Masuk" [ref=e84] [cursor=pointer]:
+              - button "Tampilkan password" [ref=e73]:
+                - img [ref=e74]
+          - generic [ref=e77]:
+            - checkbox "Ingat saya" [ref=e78]
+            - text: Ingat saya
+          - button "Masuk" [ref=e79]:
             - text: Masuk
-            - img [ref=e85]
-        - generic [ref=e87]:
-          - generic [ref=e88]:
-            - paragraph [ref=e89]: Demo Akun
-            - generic [ref=e90]: Sahabat
-          - generic [ref=e91]:
-            - generic [ref=e92]:
-              - generic [ref=e93]: user@idmap.id
-              - generic [ref=e94]: user123
-            - button "Isi Otomatis" [ref=e95] [cursor=pointer]
-        - paragraph [ref=e96]:
+            - img [ref=e80]
+        - generic [ref=e82]:
+          - generic [ref=e83]:
+            - paragraph [ref=e84]: Demo Akun
+            - text: Sahabat
+          - generic [ref=e85]:
+            - generic [ref=e86]: user@idmap.iduser123
+            - button "Isi Otomatis" [ref=e87]
+        - paragraph [ref=e88]:
           - text: Belum punya akun?
-          - link "Daftar Sekarang" [ref=e97] [cursor=pointer]:
+          - link "Daftar Sekarang" [ref=e89] [cursor=pointer]:
             - /url: /daftar
-  - button "Buka Live Chat" [ref=e98] [cursor=pointer]:
-    - img [ref=e99]
+  - button "Buka Live Chat" [ref=e90]:
+    - img [ref=e91]
 ```
 
 # Test source

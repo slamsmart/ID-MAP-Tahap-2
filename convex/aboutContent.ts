@@ -1,5 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { requireRole, requireServerMutationSecret } from "./authz";
 
 const serviceItem = v.object({
   iconKey: v.string(),
@@ -56,6 +57,8 @@ export const get = query({
 
 export const update = mutation({
   args: {
+    actorId: v.id("users"),
+    adminSecret: v.string(),
     heroImage: v.optional(v.string()),
     heroTitleId: v.string(),
     heroTitleEn: v.string(),
@@ -76,6 +79,9 @@ export const update = mutation({
   },
   returns: v.null(),
   handler: async (ctx, args) => {
+    const { actorId, adminSecret, ...content } = args;
+    requireServerMutationSecret(adminSecret);
+    await requireRole(ctx, actorId, ["admin", "verifikator"]);
     const existing = await ctx.db
       .query("aboutContent")
       .withIndex("by_key", (q) => q.eq("key", "default"))
@@ -83,7 +89,7 @@ export const update = mutation({
 
     const data = {
       key: "default",
-      ...args,
+      ...content,
       updatedAt: Date.now(),
     };
 

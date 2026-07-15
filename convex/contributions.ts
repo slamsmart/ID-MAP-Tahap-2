@@ -3,6 +3,11 @@ import { v } from "convex/values";
 import type { Id } from "./_generated/dataModel";
 import { writeAuditLog } from "./audit";
 
+function amountMatchesExpected(expected: number, actual?: number) {
+  if (typeof actual !== "number" || actual <= 0) return true;
+  return actual >= expected && actual <= expected * 1.05 + 100;
+}
+
 const contribValidator = v.object({
   _id: v.id("contributions"),
   _creationTime: v.number(),
@@ -295,7 +300,7 @@ export const confirmPaymentForContribution = mutation({
     const contrib = await ctx.db.get(args.contributionId);
     if (!contrib) return null;
     if (contrib.paymentStatus === "paid") return null;
-    if (typeof args.amount === "number" && args.amount > 0 && contrib.amount !== args.amount) {
+    if (!amountMatchesExpected(contrib.amount, args.amount)) {
       return null;
     }
     if (args.paymentId && args.paymentId.trim().length > 0) {
@@ -376,7 +381,7 @@ async function confirmMatchedContribution(
   const contrib = await ctx.db.get(contributionId);
   if (!contrib) return null;
   if (contrib.paymentStatus === "paid") return null;
-  if (typeof amount === "number" && amount > 0 && contrib.amount !== amount) {
+  if (!amountMatchesExpected(contrib.amount, amount)) {
     return null;
   }
 

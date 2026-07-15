@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Instrument_Sans, Plus_Jakarta_Sans } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { ConvexClientProvider } from "./ConvexClientProvider";
 import { LanguageProvider } from "@/contexts/LanguageContext";
@@ -8,16 +8,9 @@ import ServiceWorkerRegistrar from "@/components/pwa/ServiceWorkerRegistrar";
 import InstallPrompt from "@/components/pwa/InstallPrompt";
 import SplashScreen from "@/components/pwa/SplashScreen";
 
-const instrumentSans = Instrument_Sans({
+const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-instrument-sans",
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-});
-
-const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  variable: "--font-plus-jakarta-sans",
+  variable: "--font-inter",
   weight: ["300", "400", "500", "600", "700", "800"],
   display: "swap",
 });
@@ -122,7 +115,7 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com" />
       </head>
       <body
-        className={`${instrumentSans.variable} ${plusJakartaSans.variable} font-sans antialiased`}
+        className={`${inter.variable} font-sans antialiased`}
       >
         <ConvexClientProvider>
           <LanguageProvider>

@@ -1,10 +1,12 @@
 /** @type {import('next').NextConfig} */
+const strictBuild = process.env.NEXT_STRICT_BUILD === "true";
+
 const nextConfig = {
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: !strictBuild,
   },
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: !strictBuild,
   },
   experimental: {
     // Tree-shake import ikon/komponen besar Ã¢â€ â€™ bundle peta & halaman lebih ringan
@@ -54,17 +56,38 @@ const nextConfig = {
       "frame-ancestors 'self'",
       ...(isDev ? [] : ["upgrade-insecure-requests"]),
     ].join("; ");
+
+    // Staged strict CSP candidate. Report-only prevents payment/map/chat
+    // breakage while we inventory every external host.
+    const cspReportOnly = [
+      "default-src 'self'",
+      "script-src 'self' https://*.mayar.id https://*.convex.cloud",
+      "style-src 'self' 'unsafe-inline' https:",
+      "img-src 'self' data: blob: https:",
+      "font-src 'self' data: https:",
+      "connect-src 'self' https://*.convex.cloud wss://*.convex.cloud https://*.mayar.id https://api.mayar.id https://api.openai.com https://integrate.api.nvidia.com",
+      "frame-src 'self' https://*.mayar.id",
+      "media-src 'self' https: data: blob:",
+      "worker-src 'self' blob:",
+      "object-src 'none'",
+      "base-uri 'self'",
+      "form-action 'self'",
+      "frame-ancestors 'self'",
+      "report-uri /api/security/csp-report",
+    ].join("; ");
     return [
       {
         source: "/:path*",
         headers: [
           { key: "Content-Security-Policy", value: csp },
+          { key: "Content-Security-Policy-Report-Only", value: cspReportOnly },
           {
             key: "Strict-Transport-Security",
             value: "max-age=63072000; includeSubDomains; preload",
           },
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          { key: "X-XSS-Protection", value: "0" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           {
             key: "Permissions-Policy",

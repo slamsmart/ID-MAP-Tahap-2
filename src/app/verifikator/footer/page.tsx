@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useMutation, useQuery } from "convex/react";
+import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
+import { callAdminContent } from "@/lib/adminConvex";
 import {
   AlertTriangle,
   Check,
@@ -36,7 +37,6 @@ const defaults: FooterForm = {
 
 export default function VerifikatorFooterPage() {
   const data = useQuery(api.footerContent.get);
-  const updateFooter = useMutation(api.footerContent.update);
 
   const [form, setForm] = useState<FooterForm>(defaults);
   const [saving, setSaving] = useState(false);
@@ -68,7 +68,7 @@ export default function VerifikatorFooterPage() {
     setSaving(true);
     setError(null);
     try {
-      await updateFooter(form);
+      await callAdminContent("footer.update", form);
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
     } catch (err: unknown) {

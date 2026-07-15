@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useMutation, useQuery } from "convex/react";
+import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
+import { callAdminContent } from "@/lib/adminConvex";
 import {
   AlertTriangle,
   Check,
@@ -109,7 +110,6 @@ async function uploadToCloudinary(file: File): Promise<string> {
 
 export default function VerifikatorTentangPage() {
   const data = useQuery(api.aboutContent.get);
-  const updateAbout = useMutation(api.aboutContent.update);
 
   const [form, setForm] = useState<AboutForm>(defaults);
   const [hydrated, setHydrated] = useState(false);
@@ -196,7 +196,7 @@ export default function VerifikatorTentangPage() {
     setSaving(true);
     setError(null);
     try {
-      await updateAbout(form);
+      await callAdminContent("about.update", form);
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
     } catch (err) {

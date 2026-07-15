@@ -115,16 +115,16 @@ export default function SyaratKetentuanPage() {
               <FileText className="w-3.5 h-3.5" />
               {pick("Perjanjian Pengguna", "User Agreement")}
             </div>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-emerald-50">
               {pick("Syarat & Ketentuan", "Terms & Conditions")}
             </h1>
-            <p className="mt-4 text-lg text-emerald-200 max-w-2xl mx-auto">
+            <p className="mt-4 text-lg text-emerald-100 max-w-2xl mx-auto">
               {pick(
                 "Harap baca syarat dan ketentuan penggunaan platform ID-MAP secara seksama sebelum menggunakan layanan kami.",
                 "Please read the terms and conditions of using the ID-MAP platform carefully before using our services."
               )}
             </p>
-            <p className="mt-3 text-sm text-emerald-300">
+            <p className="mt-3 text-sm text-emerald-200">
               {pick("Terakhir diperbarui: 22 Juni 2025", "Last updated: June 22, 2025")}
             </p>
           </ScrollReveal>

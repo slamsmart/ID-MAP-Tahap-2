@@ -1,10 +1,9 @@
 "use client";
 
-import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { ArrowRight, CheckCircle2, Sparkles } from "lucide-react";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { useLanguage } from "@/contexts/LanguageContext";
-import TiltCard from "@/components/shared/TiltCard";
 import ScrollReveal from "@/components/shared/ScrollReveal";
 
 type CardData = {
@@ -89,27 +88,63 @@ export default function ThreeRolesSection() {
 
   if (data === undefined) {
     return (
-      <section className="py-14 bg-white">
+      <section className="bg-[#fbfdf9] py-20 font-hero">
         <div className="mx-auto max-w-7xl px-6">
-          <div className="text-center mb-10">
-            <div className="h-9 w-80 max-w-full mx-auto rounded-md bg-gray-100 animate-pulse" />
-            <div className="mt-3 h-4 w-96 max-w-full mx-auto rounded bg-gray-100 animate-pulse" />
+          <div className="mx-auto mb-10 max-w-2xl text-center">
+            <div className="mx-auto h-9 w-64 rounded-full bg-[#edf5ef] animate-pulse" />
+            <div className="mx-auto mt-5 h-14 w-[34rem] max-w-full rounded-xl bg-[#edf5ef] animate-pulse" />
+            <div className="mx-auto mt-5 h-5 w-96 max-w-full rounded bg-[#edf5ef] animate-pulse" />
           </div>
-          <div className="grid lg:grid-cols-3 gap-6">
-            {[0, 1, 2].map((i) => (
-              <div
-                key={i}
-                className="flex flex-col items-center rounded-2xl bg-gray-100 animate-pulse min-h-[400px] p-8"
-              >
-                <div className="w-20 h-20 rounded-full bg-gray-200 mb-5" />
-                <div className="h-7 w-1/2 rounded bg-gray-200 mb-6" />
-                <div className="space-y-3 w-full">
-                  {[0, 1, 2].map((b) => (
-                    <div key={b} className="h-3.5 w-3/4 rounded bg-gray-200" />
-                  ))}
+          <div className="grid gap-6 lg:grid-cols-3">
+            {[0, 1, 2].map((i) => {
+              const isCorporateSkeleton = i === 2;
+
+              return (
+                <div
+                  key={i}
+                  className={`min-h-[440px] rounded-lg border p-6 animate-pulse ${
+                    isCorporateSkeleton
+                      ? "border-[#0f3d2e] bg-[#0f3d2e]"
+                      : "border-[#dfe8e2] bg-white"
+                  }`}
+                >
+                  <div className="mb-8 flex items-start justify-between">
+                    <div className="space-y-3">
+                      <div
+                        className={`h-3 w-8 rounded ${
+                          isCorporateSkeleton ? "bg-[#3b3d39]" : "bg-[#edf5ef]"
+                        }`}
+                      />
+                      <div
+                        className={`h-7 w-40 rounded ${
+                          isCorporateSkeleton ? "bg-[#3b3d39]" : "bg-[#edf5ef]"
+                        }`}
+                      />
+                    </div>
+                    <div
+                      className={`h-14 w-14 rounded-full ${
+                        isCorporateSkeleton ? "bg-[#3b3d39]" : "bg-[#edf5ef]"
+                      }`}
+                    />
+                  </div>
+                  <div
+                    className={`mb-8 h-12 rounded ${
+                      isCorporateSkeleton ? "bg-[#3b3d39]" : "bg-[#edf5ef]"
+                    }`}
+                  />
+                  <div className="space-y-4">
+                    {[0, 1, 2].map((b) => (
+                      <div
+                        key={b}
+                        className={`h-4 w-3/4 rounded ${
+                          isCorporateSkeleton ? "bg-[#3b3d39]" : "bg-[#edf5ef]"
+                        }`}
+                      />
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -117,11 +152,15 @@ export default function ThreeRolesSection() {
   }
 
   const headline = data
-    ? language === "en" ? data.headlineEn : data.headlineId
+    ? language === "en"
+      ? data.headlineEn
+      : data.headlineId
     : t(fallback.headlineId, fallback.headlineEn);
 
   const subtitle = data
-    ? language === "en" ? data.subtitleEn : data.subtitleId
+    ? language === "en"
+      ? data.subtitleEn
+      : data.subtitleId
     : t(fallback.subtitleId, fallback.subtitleEn);
 
   const cards = (data?.cards ?? fallback.cards)
@@ -129,20 +168,21 @@ export default function ThreeRolesSection() {
     .sort((a, b) => a.order - b.order);
 
   return (
-    <section className="relative py-16 bg-gradient-to-b from-white via-emerald-50/40 to-white overflow-hidden">
-      <div className="pointer-events-none absolute left-1/2 top-1/3 h-72 w-[42rem] -translate-x-1/2 rounded-full bg-emerald-300/20 blur-3xl" />
+    <section className="relative overflow-hidden bg-[#fbfdf9] py-20 font-hero text-[#0f3d2e]">
       <div className="relative mx-auto max-w-7xl px-6">
-        <ScrollReveal className="text-center mb-10">
-          <h2 className="text-4xl font-semibold tracking-tight text-[#0f3d2e]">
+        <ScrollReveal className="mx-auto mb-12 max-w-3xl text-center">
+          <h2 className="font-hero text-4xl font-bold leading-tight tracking-tight text-[#0f3d2e] md:text-5xl">
             {headline}
           </h2>
-          <p className="mt-3 text-slate-600 max-w-2xl mx-auto">{subtitle}</p>
+          <p className="mx-auto mt-4 max-w-2xl font-hero text-lg font-normal leading-8 text-[#4A5568]">
+            {subtitle}
+          </p>
         </ScrollReveal>
 
-        <div className="grid lg:grid-cols-3 gap-6">
+        <div className="grid gap-6 lg:grid-cols-3 lg:items-stretch">
           {cards.map((card, i) => {
             const title = language === "en" ? card.titleEn : card.titleId;
-            const isPrimeCorporate = card.key === "perusahaan";
+            const isCorporate = card.key === "perusahaan";
             const bullets =
               language === "en"
                 ? [card.bullet1En, card.bullet2En, card.bullet3En]
@@ -152,94 +192,136 @@ export default function ThreeRolesSection() {
             const isExternal = card.href.startsWith("http");
 
             return (
-              <ScrollReveal key={card.key} delay={i * 120} className="h-full">
-                <TiltCard
-                  maxTilt={9}
-                  liftZ={28}
-                  glare={false}
-                  className="h-full rounded-2xl"
+              <ScrollReveal
+                key={card.key}
+                delay={i * 120}
+                className="h-full"
+                as="article"
+              >
+                <div
+                  className={`group relative flex h-full min-h-[440px] flex-col overflow-hidden rounded-lg border p-6 transition-[border-color,transform] duration-300 ease-[var(--ease-out-quart)] hover:-translate-y-1 ${
+                    isCorporate
+                      ? "border-[#0f3d2e] bg-[#0f3d2e] shadow-[0_28px_72px_-48px_rgba(15,61,46,0.9)]"
+                      : "border-[#dfe8e2] bg-white shadow-[0_18px_44px_-36px_rgba(16,24,18,0.48)] hover:border-[#c8d5cc]"
+                  }`}
                 >
-                  <article
-                    className={`group relative flex h-full min-h-[460px] flex-col items-center rounded-2xl border p-8 pt-10 text-center transition-all duration-300 ${
-                      isPrimeCorporate
-                        ? "border-[#0f3d2e] bg-[#0f3d2e] shadow-[0_30px_80px_-24px_rgba(15,61,46,0.68)]"
-                        : "border-slate-200/80 bg-white shadow-[0_22px_55px_-34px_rgba(15,23,42,0.45)]"
-                    }`}
-                  >
-                    {isPrimeCorporate && (
-                      <span className="absolute right-5 top-5 rounded-full bg-[#e1f5ee] px-4 py-1.5 text-xs font-semibold text-[#04342c] shadow-sm">
-                        Paket CSR
-                      </span>
-                    )}
-                    {/* Circular logo */}
+                  {isCorporate && (
+                    <div className="absolute right-5 top-5 z-10 rounded-full bg-[#d8f4ea] px-4 py-1.5 text-sm font-bold text-[#0f3d2e]">
+                      {t("Paket CSR", "CSR Plan")}
+                    </div>
+                  )}
+
+                  <div className="mb-6 flex items-start justify-between gap-4 pt-5">
+                    <div className="min-w-0">
+                      <p
+                        className={`mb-3 text-xs font-bold ${
+                          isCorporate ? "text-[#d8f4ea]" : "text-[#4A5568]"
+                        }`}
+                      >
+                        0{i + 1}
+                      </p>
+                      <h3
+                        className={`font-hero text-2xl font-semibold tracking-normal ${
+                          isCorporate ? "text-white" : "text-[#0F2C22]"
+                        }`}
+                      >
+                        {title}
+                      </h3>
+                    </div>
+
                     <div
-                      className={`mb-5 h-20 w-20 flex-shrink-0 overflow-hidden rounded-full border-4 ${
-                        isPrimeCorporate
-                          ? "border-white/30 bg-white/10"
-                          : "border-[#e1f5ee] bg-[#e1f5ee]"
+                      className={`h-14 w-14 flex-shrink-0 overflow-hidden rounded-full border ${
+                        isCorporate
+                          ? "border-white/30 bg-white"
+                          : "border-[#dfe8e2] bg-[#f7fbf7]"
                       }`}
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={card.image}
                         alt={title}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        className="h-full w-full object-cover transition-transform duration-500 ease-[var(--ease-out-quart)] group-hover:scale-110"
                         loading="lazy"
                       />
                     </div>
+                  </div>
 
-                    {/* Title */}
-                    <h3
-                      className={`mb-6 text-3xl font-semibold leading-snug tracking-tight transition-colors duration-300 ${
-                        isPrimeCorporate
-                          ? "text-white group-hover:text-lime-300"
-                          : "text-[#0f3d2e] group-hover:text-[#0b5d43]"
-                      }`}
-                    >
-                      {title}
-                    </h3>
+                  <p
+                    className={`mb-7 min-h-[52px] text-sm font-normal leading-6 ${
+                      isCorporate ? "text-[#c9e9dd]" : "text-[#4A5568]"
+                    }`}
+                  >
+                    {isCorporate
+                      ? t(
+                          "Untuk perusahaan yang butuh kontribusi ESG, CSR, dan kepatuhan karbon yang bisa diaudit.",
+                          "For companies that need auditable ESG, CSR, and carbon-compliance contributions."
+                        )
+                      : t(
+                          "Masuk ke ekosistem ID-MAP sesuai peran dan kebutuhan kontribusi Anda.",
+                          "Join the ID-MAP ecosystem through the role that matches your contribution needs."
+                        )}
+                  </p>
 
-                    {/* Bullets — left-aligned */}
-                    <ul className="space-y-3 text-left w-full flex-1">
-                      {bullets.map((bullet) => (
-                        <li
-                          key={bullet}
-                          className={`flex items-start gap-3 text-base leading-snug ${
-                            isPrimeCorporate ? "text-[#c9e9dd]" : "text-slate-600"
-                          }`}
+                  {isCorporate && (
+                    <div className="mb-6 grid grid-cols-3 gap-2 border-y border-white/20 py-4">
+                      {["ESG", "CSR", "SRN"].map((item) => (
+                        <span
+                          key={item}
+                          className="rounded-md bg-white/10 px-2 py-2 text-center text-xs font-bold text-[#d8f4ea]"
                         >
-                          <CheckCircle2
-                            className={`mt-0.5 h-4 w-4 flex-shrink-0 ${
-                              isPrimeCorporate ? "text-[#9fe1cb]" : "text-[#5dcaa5]"
-                            }`}
-                          />
-                          <span>{bullet}</span>
-                        </li>
+                          {item}
+                        </span>
                       ))}
-                    </ul>
+                    </div>
+                  )}
 
-                    {/* CTA */}
-                    <a
-                      href={card.href}
-                      target={isExternal ? "_blank" : undefined}
-                      rel={isExternal ? "noopener noreferrer" : undefined}
-                      className={`mt-8 inline-flex items-center justify-center gap-2 rounded-full border px-6 py-2.5 text-sm font-semibold transition-colors ${
-                        isPrimeCorporate
-                          ? "border-white bg-white text-[#0f3d2e] hover:bg-[#e1f5ee]"
-                          : "border-[#0f3d2e] bg-[#0f3d2e] text-white hover:border-[#0b5d43] hover:bg-[#0b5d43]"
-                      }`}
-                    >
-                      {cta}
-                      <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                    </a>
-                  </article>
-                </TiltCard>
+                  <ul className="flex-1 space-y-3">
+                    {bullets.map((bullet) => (
+                      <li
+                        key={bullet}
+                        className={`flex items-start gap-3 text-sm font-normal leading-6 ${
+                          isCorporate ? "text-[#d8f4ea]" : "text-[#4A5568]"
+                        }`}
+                      >
+                        <CheckCircle2
+                          className={`mt-1 h-4 w-4 flex-shrink-0 ${
+                            isCorporate ? "text-[#9fe1cb]" : "text-[#22c79a]"
+                          }`}
+                        />
+                        <span>{bullet}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <a
+                    href={card.href}
+                    target={isExternal ? "_blank" : undefined}
+                    rel={isExternal ? "noopener noreferrer" : undefined}
+                    className={`mt-8 inline-flex h-12 w-full items-center justify-center gap-2 rounded-md border px-5 text-sm font-medium transition-colors ${
+                      isCorporate
+                        ? "border-white bg-white text-[#0f3d2e] hover:bg-[#e8f5ef]"
+                        : "border-[#0f3d2e] bg-[#0f3d2e] text-white hover:border-[#0b5d43] hover:bg-[#0b5d43]"
+                    }`}
+                  >
+                    {isCorporate && <Sparkles className="h-4 w-4" />}
+                    {cta}
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                  </a>
+                </div>
               </ScrollReveal>
             );
           })}
         </div>
+
+        <ScrollReveal delay={360} className="mt-8">
+          <div className="rounded-lg border border-[#dfe8e2] bg-white/75 px-5 py-4 text-center text-sm font-medium leading-6 text-[#69756e]">
+            {t(
+              "Akun perusahaan tetap menjadi jalur utama untuk pembelian kontribusi karbon, portofolio ESG, dan dokumen audit.",
+              "Corporate accounts remain the primary path for carbon contribution purchases, ESG portfolios, and audit documents."
+            )}
+          </div>
+        </ScrollReveal>
       </div>
     </section>
   );
 }
-

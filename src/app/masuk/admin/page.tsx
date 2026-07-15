@@ -13,7 +13,7 @@ import {
   Lock,
   Mail,
 } from "lucide-react";
-import { setSession, getDashboardPath, User } from "@/lib/auth";
+import { setSession, getDashboardPath, refreshSession, User } from "@/lib/auth";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getAuthBgImage } from "@/lib/heroImageStore";
 import { useQuery } from "convex/react";
@@ -49,14 +49,63 @@ function AdminLoginForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isRecoveringSession, setIsRecoveringSession] = useState(false);
   const submittingRef = useRef(false);
   const DEFAULT_BG = "/images/hero-mangrove.webp";
   const [bgImage, setBgImage] = useState(DEFAULT_BG);
   const stats = useQuery(api.platformStats.getAll);
 
   useEffect(() => {
+    if (!safeNext) return;
     router.prefetch(safeNext ?? "/admin");
   }, [router, safeNext]);
+
+  useEffect(() => {
+    if (!safeNext) return;
+    let active = true;
+
+    const recover = async () => {
+      setIsRecoveringSession(true);
+      const user = await refreshSession();
+      if (!active) return;
+      if (!user) {
+        setIsRecoveringSession(false);
+        return;
+      }
+
+      const destination = user.role === "admin"
+        ? (safeNext ?? "/admin")
+        : getDashboardPath(user.role);
+
+      console.info("login_autorecover_redirect", {
+        loginPath: "/masuk/admin",
+        safeNext,
+        role: user.role,
+        destination,
+      });
+
+      router.replace(destination);
+      router.refresh();
+    };
+
+    void recover().finally(() => {
+      if (active) setIsRecoveringSession(false);
+    });
+    return () => {
+      active = false;
+    };
+  }, [router, safeNext]);
+
+  if (isRecoveringSession) {
+    return (
+      <div className="min-h-screen bg-[#0f3d2e] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3 text-white/90">
+          <Loader2 className="w-10 h-10 animate-spin text-emerald-300" />
+          <p className="text-sm font-medium">{t("Memulihkan sesi masuk…", "Restoring login session...")}</p>
+        </div>
+      </div>
+    );
+  }
   const statByKey = new Map((stats ?? []).map((s) => [s.key, s.value]));
   const sahabatStat = statByKey.get("sahabat_terlibat") ?? "12.456";
   const bibitStat = statByKey.get("bibit_ditanam") ?? "1.285.760";
@@ -115,6 +164,7 @@ function AdminLoginForm() {
       }
 
       setSession(user);
+      await refreshSession();
       router.replace(safeNext ?? getDashboardPath(user.role));
       router.refresh();
     } catch {

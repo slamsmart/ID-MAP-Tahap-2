@@ -36,7 +36,7 @@ export default function ScrollReveal({
   style,
   delay = 0,
   as: Tag = "div",
-  once = true,
+  once = false,
 }: ScrollRevealProps) {
   const ref = useRef<HTMLElement>(null);
 

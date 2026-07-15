@@ -12,7 +12,7 @@ export default function GlobalError({
   return (
     <html lang="id">
       <body>
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-red-50/60 via-white to-emerald-50/30 px-4 py-12" style={{ fontFamily: "'Plus Jakarta Sans', 'Inter', system-ui, sans-serif" }}>
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-red-50/60 via-white to-emerald-50/30 px-4 py-12" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
           <div className="max-w-md w-full text-center">
             <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-red-100 to-orange-50 grid place-items-center shadow-lg shadow-red-100/40 ring-1 ring-red-100 mb-6">
               <AlertTriangle className="w-12 h-12 text-red-500" strokeWidth={1.5} />

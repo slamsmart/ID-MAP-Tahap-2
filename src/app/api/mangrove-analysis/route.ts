@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import {
-  buildMangroveContext,
   DATA_PROVINSI,
   RINGKASAN_NASIONAL as R,
   PROGRAM_RESTORASI,
@@ -11,6 +10,7 @@ import { rateLimitAsync } from "@/lib/rateLimit";
 import { createLogger } from "@/lib/logger";
 
 const log = createLogger("api.mangrove-analysis");
+const ALLOWED_FOCUS = new Set(["umum", "restorasi", "ancaman", "karbon", "kkmd", "kebijakan"]);
 
 /** Context ringkas (~40% lebih sedikit token dari buildMangroveContext() */
 function buildShortContext(): string {
@@ -87,10 +87,9 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { fokus = "umum", role = "admin" } = body as {
-      fokus?: "umum" | "restorasi" | "ancaman" | "karbon" | "kkmd" | "kebijakan";
-      role?: string;
-    };
+    const parsed = body as { fokus?: string; role?: string };
+    const fokus = ALLOWED_FOCUS.has(parsed.fokus ?? "") ? parsed.fokus! : "umum";
+    const role = typeof parsed.role === "string" ? parsed.role.slice(0, 40) : "admin";
 
     const konteksData = buildShortContext();
 
@@ -152,7 +151,7 @@ Fokus: ${instruksiFokus}. Role: ${role}.`;
     // Coba provider satu per satu — NVIDIA dulu, lalu OpenRouter
     type StreamResult = Awaited<ReturnType<typeof openrouterClient.chat.completions.create>>;
     let stream: StreamResult | null = null;
-    let lastError: any = null;
+    let lastError: unknown = null;
 
     const providers: Array<{ client: OpenAI; models: string[] }> = [
       ...(nvidiaClient ? [{ client: nvidiaClient, models: NVIDIA_MODELS }] : []),
@@ -174,9 +173,13 @@ Fokus: ${instruksiFokus}. Role: ${role}.`;
             ],
           });
           break outer; // berhasil, hentikan semua loop
-        } catch (err: any) {
+        } catch (err: unknown) {
           lastError = err;
-          const status = err?.status ?? err?.statusCode;
+          const status =
+            typeof err === "object" && err !== null
+              ? (err as { status?: unknown; statusCode?: unknown }).status ??
+                (err as { status?: unknown; statusCode?: unknown }).statusCode
+              : undefined;
           // Lanjut fallback jika model tidak tersedia (404) atau rate limit (429)
           if (status !== 404 && status !== 429) throw err;
         }
@@ -207,13 +210,17 @@ Fokus: ${instruksiFokus}. Role: ${role}.`;
         "Cache-Control": "no-cache",
       },
     });
-  } catch (error: any) {
-    console.error("Mangrove AI error:", error);
-    const status = error?.status ?? error?.statusCode ?? 500;
+  } catch (error: unknown) {
+    log.error("mangrove_analysis_exception", { err: error as Error });
+    const status =
+      typeof error === "object" && error !== null
+        ? (error as { status?: unknown; statusCode?: unknown }).status ??
+          (error as { status?: unknown; statusCode?: unknown }).statusCode
+        : 500;
     const message =
-      error?.message?.includes("402") || status === 402
+      error instanceof Error && (error.message.includes("402") || status === 402)
         ? "Model AI sedang tidak tersedia. Coba lagi dalam beberapa saat."
-        : (error?.message ?? "Terjadi kesalahan pada analisis AI");
+        : "Terjadi kesalahan pada analisis AI";
     return NextResponse.json({ error: message }, { status: status === 402 ? 503 : 500 });
   }
 }

@@ -1,14 +1,14 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
-import { useConvex, useMutation, useQuery } from "convex/react";
+import { useConvex, useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
+import { callAdminContent } from "@/lib/adminConvex";
 import {
   AlertTriangle,
   BarChart3,
   Check,
   Fish,
-  ImageIcon,
   Loader2,
   Pencil,
   Save,
@@ -178,8 +178,6 @@ const colorOptions = [
 export default function ThumbnailLayananPage() {
   const convex = useConvex();
   const savedServices = useQuery(api.serviceContent.list);
-  const updateService = useMutation(api.serviceContent.update);
-  const generateUploadUrl = useMutation(api.serviceContent.generateUploadUrl);
   const fileRef = useRef<HTMLInputElement>(null);
   const editorRef = useRef<HTMLDivElement>(null);
 
@@ -237,7 +235,7 @@ export default function ThumbnailLayananPage() {
     setError(null);
 
     try {
-      const uploadUrl = await generateUploadUrl();
+      const uploadUrl = await callAdminContent<string>("service.generateUploadUrl");
       const uploadRes = await fetch(uploadUrl, {
         method: "POST",
         headers: { "Content-Type": file.type },
@@ -250,7 +248,7 @@ export default function ThumbnailLayananPage() {
 
       const nextForm = { ...form, image: signedUrl };
       setForm(nextForm);
-      await updateService(nextForm);
+      await callAdminContent("service.update", nextForm);
       setSavedKey(nextForm.key);
       setTimeout(() => setSavedKey(null), 2500);
     } catch (err: unknown) {
@@ -265,7 +263,7 @@ export default function ThumbnailLayananPage() {
     setSaving(true);
     setError(null);
     try {
-      await updateService(form);
+      await callAdminContent("service.update", form);
       setSavedKey(form.key);
       setEditKey(null);
       setTimeout(() => setSavedKey(null), 2500);

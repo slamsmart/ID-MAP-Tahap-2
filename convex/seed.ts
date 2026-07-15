@@ -1,6 +1,8 @@
 import { mutation } from "./_generated/server";
 import { v } from "convex/values";
 import bcrypt from "bcryptjs";
+import { requireServerMutationSecret } from "./authz";
+import type { Id } from "./_generated/dataModel";
 
 // Hash plaintext password sekali, di-cache per-process. Cost 10 sama
 // dengan users.ts:hashPassword supaya seed account perilakunya identik
@@ -18,9 +20,10 @@ function hp(plain: string): string {
 }
 
 export const seedAll = mutation({
-  args: {},
+  args: { adminSecret: v.string() },
   returns: v.string(),
-  handler: async (ctx) => {
+  handler: async (ctx, args) => {
+    requireServerMutationSecret(args.adminSecret);
     // Check if already seeded
     const existingUsers = await ctx.db.query("users").first();
     if (existingUsers) {
@@ -148,7 +151,7 @@ export const seedAll = mutation({
       createdAt: Date.now() - 86400000 * 45,
     });
 
-    const proj4 = await ctx.db.insert("projects", {
+    await ctx.db.insert("projects", {
       title: "Decarbonisasi Aquaculture Sumba",
       location: "Sumba, Nusa Tenggara Timur",
       province: "Nusa Tenggara Timur",
@@ -164,7 +167,7 @@ export const seedAll = mutation({
       createdAt: Date.now() - 86400000 * 60,
     });
 
-    const proj5 = await ctx.db.insert("projects", {
+    await ctx.db.insert("projects", {
       title: "Rehabilitasi Habitat Penyu Bali",
       location: "Badung, Bali",
       province: "Bali",
@@ -426,9 +429,10 @@ export const seedAll = mutation({
 
 // ─── resetAndSeed: wipe all data then seed fresh ──────────────────────────────
 export const resetAndSeed = mutation({
-  args: {},
+  args: { adminSecret: v.string() },
   returns: v.string(),
-  handler: async (ctx) => {
+  handler: async (ctx, args) => {
+    requireServerMutationSecret(args.adminSecret);
     const tables = [
       "kycDocuments", "systemActivities", "platformStats",
       "mrvReports", "contributions", "certificates",
@@ -436,7 +440,7 @@ export const resetAndSeed = mutation({
     ] as const;
 
     for (const table of tables) {
-      const docs = await (ctx.db.query(table) as any).collect();
+      const docs = await ctx.db.query(table).collect();
       for (const doc of docs) {
         await ctx.db.delete(doc._id);
       }
@@ -510,7 +514,7 @@ export const resetAndSeed = mutation({
       description: "Monitoring dan evaluasi kesehatan ekosistem mangrove di pesisir utara Jawa Tengah secara berkala.",
       createdAt: Date.now() - 86400000 * 45,
     });
-    const proj4 = await ctx.db.insert("projects", {
+    await ctx.db.insert("projects", {
       title: "Decarbonisasi Aquaculture Sumba", location: "Sumba, Nusa Tenggara Timur",
       province: "Nusa Tenggara Timur", image: "https://images.unsplash.com/photo-1565118531796-763e5082d113?w=800&auto=format&fit=crop",
       status: "Terverifikasi", co2Absorption: 120000, area: 200,
@@ -519,7 +523,7 @@ export const resetAndSeed = mutation({
       description: "Integrasi mangrove dalam tambak udang untuk mengurangi emisi karbon dan meningkatkan produktivitas berkelanjutan.",
       createdAt: Date.now() - 86400000 * 60,
     });
-    const proj5 = await ctx.db.insert("projects", {
+    await ctx.db.insert("projects", {
       title: "Rehabilitasi Habitat Penyu Bali", location: "Badung, Bali",
       province: "Bali", image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop",
       status: "Dalam Proses", co2Absorption: 45000, area: 30,
@@ -586,9 +590,10 @@ export const resetAndSeed = mutation({
 // Idempotent: skips projects that already exist (matched by title).
 // Run: npx convex run seed:seedPokmaswasProjects
 export const seedPokmaswasProjects = mutation({
-  args: {},
+  args: { adminSecret: v.string() },
   returns: v.string(),
-  handler: async (ctx) => {
+  handler: async (ctx, args) => {
+    requireServerMutationSecret(args.adminSecret);
     // Find a mitra user to attach as owner (optional)
     const mitra = await ctx.db
       .query("users")
@@ -691,9 +696,10 @@ export const seedPokmaswasProjects = mutation({
 // Idempotent: runs only when the sahabat account has no certificates yet.
 // Run: npx convex run seed:seedDummyCertificates
 export const seedDummyCertificates = mutation({
-  args: {},
+  args: { adminSecret: v.string() },
   returns: v.string(),
-  handler: async (ctx) => {
+  handler: async (ctx, args) => {
+    requireServerMutationSecret(args.adminSecret);
     // Resolve the demo sahabat user (seeded by resetAndSeed → user@idmap.id).
     // Fallback to the first sahabat user if the demo email is not present.
     let sahabat = await ctx.db
@@ -788,9 +794,10 @@ export const seedDummyCertificates = mutation({
 // supaya leaderboard & kartu referral terisi realistis. Idempoten:
 // skip kalau dummy sudah ada (cek email penanda).
 export const seedGamificationDummy = mutation({
-  args: {},
+  args: { adminSecret: v.string() },
   returns: v.string(),
-  handler: async (ctx) => {
+  handler: async (ctx, args) => {
+    requireServerMutationSecret(args.adminSecret);
     const marker = await ctx.db
       .query("users")
       .withIndex("by_email", (q) => q.eq("email", "rani.dummy@idmap.id"))
@@ -820,7 +827,7 @@ export const seedGamificationDummy = mutation({
       { name: "Tari Wulandari", first: "tari", points: 60, streak: 1, best: 2, seed: 0, kyc: "terverifikasi" as const },
     ];
 
-    const ids: Record<string, any> = {};
+    const ids: Partial<Record<string, Id<"users">>> = {};
     let i = 0;
     for (const d of dummies) {
       const id = await ctx.db.insert("users", {
@@ -846,8 +853,10 @@ export const seedGamificationDummy = mutation({
     // Rantai referral ter-KYC → top users punya referral count.
     // Rani ajak 12 (semua verified) → 1 bibit referral; Bagas ajak 8.
     const setRef = async (childFirst: string, parentFirst: string) => {
-      if (ids[childFirst] && ids[parentFirst]) {
-        await ctx.db.patch(ids[childFirst], { referredBy: ids[parentFirst] });
+      const childId = ids[childFirst];
+      const parentId = ids[parentFirst];
+      if (childId && parentId) {
+        await ctx.db.patch(childId, { referredBy: parentId });
       }
     };
     // Rani referral chain

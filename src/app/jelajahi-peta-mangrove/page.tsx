@@ -2,7 +2,7 @@
 
 import {
   ChevronLeft, ChevronRight, Calculator, PenTool, Layers, Info,
-  Loader2, Leaf, Car, Plane, Home, Globe, Waves, ChevronDown,
+  Loader2, Leaf, Car, Plane, Home, Globe, Waves, ChevronDown, Map,
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -44,14 +44,15 @@ const PokmaswasLayer = dynamic(() => import("@/components/map/PokmaswasLayer"), 
   ),
 });
 
-const PolaruangLayer = dynamic(() => import("@/components/map/PolaruangLayer"), {
+const KmlLayer = dynamic(() => import("@/components/map/KmlLayer"), {
   ssr: false,
   loading: () => (
     <div className="absolute inset-0 flex items-center justify-center bg-[#0F2E2A] z-[400]">
-      <Loader2 className="h-8 w-8 text-teal-400 animate-spin" />
+      <Loader2 className="h-8 w-8 text-emerald-400 animate-spin" />
     </div>
   ),
 });
+
 
 const EE_APP_URL =
   "https://ee-dimassyarifworkspace.projects.earthengine.app/view/mangrove-health-indeks-jatim";
@@ -73,7 +74,7 @@ export default function JelajahiPetaMangrovePage() {
   const [isAbrasionOpen, setIsAbrasionOpen] = useState(false);
   const [isTurtleLayerOpen, setIsTurtleLayerOpen] = useState(false);
   const [isPokmaswasLayerOpen, setIsPokmaswasLayerOpen] = useState(false);
-  const [isPolaruangLayerOpen, setIsPolaruangLayerOpen] = useState(false);
+  const [isRtrwLayerOpen, setIsRtrwLayerOpen] = useState(false);
   const [isLayerDropdownOpen, setIsLayerDropdownOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [mobileSheet, setMobileSheet] = useState<"none" | "legend" | "calculator">("none");
@@ -130,7 +131,7 @@ export default function JelajahiPetaMangrovePage() {
             <div className="min-w-0">
               <h1 className="font-display font-bold text-white text-sm sm:text-lg tracking-wide flex items-center gap-1 sm:gap-2 truncate">
                 PETA
-                <span className="font-light text-emerald-400 truncate">RESTORASI LINGKUNGAN</span>
+                <span className="font-light text-white truncate">RESTORASI LINGKUNGAN</span>
               </h1>
               <div className="hidden sm:flex items-center gap-1.5 text-[10px] text-emerald-100/50 uppercase tracking-wider font-medium mt-0.5">
                 <span>Powered by</span>
@@ -183,7 +184,7 @@ export default function JelajahiPetaMangrovePage() {
             <button
               onClick={() => setIsLayerDropdownOpen((v) => !v)}
               className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl transition-all duration-300 text-xs sm:text-sm font-bold border ${
-                isLayerDropdownOpen || isAbrasionOpen || isTurtleLayerOpen || isPokmaswasLayerOpen || isPolaruangLayerOpen
+                isLayerDropdownOpen || isAbrasionOpen || isTurtleLayerOpen || isPokmaswasLayerOpen || isRtrwLayerOpen
                   ? "bg-emerald-500 text-white shadow-lg shadow-teal-500/20 border-teal-400"
                   : "bg-[#062d22] text-white hover:bg-teal-600 border-[#235850] hover:border-teal-400"
               }`}
@@ -204,6 +205,7 @@ export default function JelajahiPetaMangrovePage() {
                       setIsAbrasionOpen(true);
                       setIsTurtleLayerOpen(false);
                       setIsPokmaswasLayerOpen(false);
+                      setIsRtrwLayerOpen(false);
                       setIsLayerDropdownOpen(false);
                     }}
                     className={`w-full flex items-center gap-2.5 px-3 py-2.5 text-sm font-semibold text-left transition-colors hover:bg-orange-50 ${
@@ -220,10 +222,12 @@ export default function JelajahiPetaMangrovePage() {
                       setIsTurtleLayerOpen(true);
                       setIsAbrasionOpen(false);
                       setIsPokmaswasLayerOpen(false);
+                      setIsRtrwLayerOpen(false);
                       setIsLayerDropdownOpen(false);
                     }}
                     className={`w-full flex items-center gap-2.5 px-3 py-2.5 text-sm font-semibold text-left transition-colors hover:bg-emerald-50 ${
                       isTurtleLayerOpen ? "bg-emerald-50 text-emerald-600" : "text-gray-700"
+
                     }`}
                   >
                     <div className="w-7 h-7 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0 text-base">
@@ -236,7 +240,7 @@ export default function JelajahiPetaMangrovePage() {
                       setIsPokmaswasLayerOpen(true);
                       setIsAbrasionOpen(false);
                       setIsTurtleLayerOpen(false);
-                      setIsPolaruangLayerOpen(false);
+                      setIsRtrwLayerOpen(false);
                       setIsLayerDropdownOpen(false);
                     }}
                     className={`w-full flex items-center gap-2.5 px-3 py-2.5 text-sm font-semibold text-left transition-colors hover:bg-emerald-50 ${
@@ -246,24 +250,24 @@ export default function JelajahiPetaMangrovePage() {
                     <div className="w-7 h-7 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0 text-base">
                       🛡️
                     </div>
-                    Mitra
-                  </button>
+                      Mitra
+                   </button>
                   <button
                     onClick={() => {
-                      setIsPolaruangLayerOpen(true);
+                      setIsRtrwLayerOpen(true);
                       setIsAbrasionOpen(false);
                       setIsTurtleLayerOpen(false);
                       setIsPokmaswasLayerOpen(false);
                       setIsLayerDropdownOpen(false);
                     }}
-                    className={`w-full flex items-center gap-2.5 px-3 py-2.5 text-sm font-semibold text-left transition-colors hover:bg-teal-50 ${
-                      isPolaruangLayerOpen ? "bg-teal-50 text-teal-600" : "text-gray-700"
+                    className={`w-full flex items-center gap-2.5 px-3 py-2.5 text-sm font-semibold text-left transition-colors hover:bg-emerald-50 ${
+                      isRtrwLayerOpen ? "bg-emerald-50 text-emerald-600" : "text-gray-700"
                     }`}
                   >
-                    <div className="w-7 h-7 rounded-lg bg-teal-100 flex items-center justify-center flex-shrink-0 text-base">
-                      🗺️
+                    <div className="w-7 h-7 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                      <Map className="w-3.5 h-3.5 text-emerald-600" />
                     </div>
-                    Pola Ruang Laut
+                    Pemanfaatan Ruang Laut
                   </button>
                   <div className="h-px bg-gray-100 mx-3 my-1" />
                   <p className="px-3 pb-2.5 text-[10px] text-gray-400">
@@ -273,8 +277,8 @@ export default function JelajahiPetaMangrovePage() {
                       ? "Penyu aktif"
                       : isPokmaswasLayerOpen
                       ? "Mitra aktif"
-                      : isPolaruangLayerOpen
-                      ? "Pola Ruang aktif"
+                      : isRtrwLayerOpen
+                      ? "Pemanfaatan Ruang Laut aktif"
                       : "Tidak ada layer aktif"}
                   </p>
                 </div>
@@ -521,10 +525,15 @@ export default function JelajahiPetaMangrovePage() {
             <PokmaswasLayer onClose={() => setIsPokmaswasLayerOpen(false)} />
           )}
 
-          {/* Pola Ruang Laut - Konservasi & Pemanfaatan */}
-          {isPolaruangLayerOpen && (
-            <PolaruangLayer onClose={() => setIsPolaruangLayerOpen(false)} />
+          {/* RTRW / Tata Ruang - overlay KML/KMZ langsung (tanpa GeoJSON) */}
+          {isRtrwLayerOpen && (
+            <KmlLayer
+              url="/docs-idmap/rtrw-pemanfaatan-ruang-laut.kmz"
+              title="Pemanfaatan Ruang Laut (Perda No. 10 Tahun 2023)"
+              onClose={() => setIsRtrwLayerOpen(false)}
+            />
           )}
+
 
           {/* ===== MOBILE FAB: Legend + Calculator triggers ===== */}
           <div className="md:hidden absolute bottom-4 right-4 z-[450] flex flex-col gap-2">

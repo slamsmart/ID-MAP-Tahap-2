@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useMutation, useQuery } from "convex/react";
+import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
+import { callAdminContent } from "@/lib/adminConvex";
 import {
   AlertTriangle,
   ArrowRight,
@@ -133,7 +134,6 @@ const defaults: RolesForm = {
 
 export default function TigaPeranPage() {
   const data = useQuery(api.rolesSection.get);
-  const updateRoles = useMutation(api.rolesSection.update);
 
   const [form, setForm] = useState<RolesForm>(defaults);
   const [hydrated, setHydrated] = useState(false);
@@ -217,7 +217,7 @@ export default function TigaPeranPage() {
         ),
       };
       setForm(next);
-      await updateRoles(next);
+      await callAdminContent("roles.update", next);
       setSavedFlash(true);
       setTimeout(() => setSavedFlash(false), 2500);
     } catch (err: unknown) {
@@ -233,7 +233,7 @@ export default function TigaPeranPage() {
     setSaving(true);
     setError(null);
     try {
-      await updateRoles(form);
+      await callAdminContent("roles.update", form);
       setSavedFlash(true);
       setEditKey(null);
       setTimeout(() => setSavedFlash(false), 2500);

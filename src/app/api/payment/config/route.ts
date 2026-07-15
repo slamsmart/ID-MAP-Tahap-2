@@ -4,5 +4,5 @@ import { NextResponse } from "next/server";
 // JANGAN expose hasMayarKey: itu information disclosure tentang config
 // internal yang berguna untuk recon attacker.
 export async function GET() {
-  return NextResponse.json({}, { status: 204 });
+  return new NextResponse(null, { status: 204 });
 }

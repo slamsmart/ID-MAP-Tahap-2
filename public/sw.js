@@ -1,7 +1,7 @@
 /* ID-MAP service worker — vanilla, no deps.
  * Makes the site installable (A2HS) + offline-capable.
  * Bump CACHE_VERSION to invalidate old caches on deploy. */
-const CACHE_VERSION = "idmap-v1";
+const CACHE_VERSION = "idmap-v2";
 const PRECACHE = `${CACHE_VERSION}-precache`;
 const RUNTIME = `${CACHE_VERSION}-runtime`;
 
@@ -46,7 +46,9 @@ function isBypassed(url) {
   return (
     url.hostname.includes("convex.cloud") ||
     url.hostname.includes("convex.site") ||
-    url.pathname.startsWith("/api/")
+    url.pathname.startsWith("/api/") ||
+    url.pathname.startsWith("/masuk") ||
+    url.pathname.startsWith("/daftar")
   );
 }
 
@@ -102,5 +104,16 @@ self.addEventListener("fetch", (event) => {
   }
 
   // Everything else → network, fall back to cache if offline.
-  event.respondWith(fetch(request).catch(() => caches.match(request)));
+  event.respondWith(
+    fetch(request).catch(async () => {
+      const cached = await caches.match(request);
+      if (cached) return cached;
+
+      if (request.destination === "document") {
+        return (await caches.match("/offline")) || Response.error();
+      }
+
+      return Response.error();
+    })
+  );
 });

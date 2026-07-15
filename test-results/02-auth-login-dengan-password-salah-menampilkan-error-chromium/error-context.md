@@ -35,6 +35,9 @@ Call log:
 - text: 12.456 Sahabat Terlibat 1.285.760 Bibit Ditanam 823.456 Ton Serapan Karbon (CO₂e) Rp 98,65 M Potensi Nilai Carbon
 - paragraph: “ID-MAP memudahkan kami memantau proyek restorasi mangrove secara real-time dan transparan.”
 - text: DR Dr. Rina S. Direktur, Yayasan Mangrove Indonesia
+- link "Beranda ID-MAP":
+  - /url: /
+  - img "ID-MAP"
 - button "EN"
 - button "ID"
 - heading "Selamat Datang Kembali 👋" [level=1]
@@ -55,7 +58,7 @@ Call log:
 - text: Ingat saya
 - button "Masuk"
 - paragraph: Demo Akun
-- text: Sahabat user@idmap.id user123
+- text: Sahabat user@idmap.iduser123
 - button "Isi Otomatis"
 - paragraph:
   - text: Belum punya akun?

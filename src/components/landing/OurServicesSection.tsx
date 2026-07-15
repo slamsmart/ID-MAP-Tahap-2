@@ -246,7 +246,7 @@ export default function OurServicesSection() {
           </ScrollReveal>
 
           {/* Outline nav arrows */}
-          <div className="hidden flex-shrink-0 gap-3 pt-1 sm:flex">
+          <ScrollReveal delay={90} className="hidden flex-shrink-0 gap-3 pt-1 sm:flex">
             <button
               onClick={() => navigate("left")}
               aria-label="Sebelumnya"
@@ -271,15 +271,16 @@ export default function OurServicesSection() {
             >
               <ChevronRight className="w-5 h-5" />
             </button>
-          </div>
+          </ScrollReveal>
         </div>
 
         {/* ── Carousel track ──────────────────────────────────────── */}
-        <div
-          ref={scrollRef}
-          className="-mx-4 flex gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:gap-4 sm:px-0 [&::-webkit-scrollbar]:hidden"
-          style={{ scrollSnapType: "x mandatory" }}
-        >
+        <ScrollReveal delay={140}>
+          <div
+            ref={scrollRef}
+            className="-mx-4 flex gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:gap-4 sm:px-0 [&::-webkit-scrollbar]:hidden"
+            style={{ scrollSnapType: "x mandatory" }}
+          >
           {isLoading
             ? [0, 1, 2].map((i) => (
                 <div
@@ -392,11 +393,12 @@ export default function OurServicesSection() {
                   </TiltCard>
                 );
               })}
-        </div>
+          </div>
+        </ScrollReveal>
 
         {/* ── Dot indicators ──────────────────────────────────────── */}
         {!isLoading && (
-          <div className="mt-6 flex items-center justify-center gap-3 sm:hidden">
+          <ScrollReveal delay={220} className="mt-6 flex items-center justify-center gap-3 sm:hidden">
             <button
               onClick={() => navigate("left")}
               aria-label="Sebelumnya"
@@ -437,11 +439,11 @@ export default function OurServicesSection() {
             >
               <ChevronRight className="h-5 w-5" />
             </button>
-          </div>
+          </ScrollReveal>
         )}
 
         {!isLoading && (
-          <div className="mt-8 hidden justify-center gap-2 sm:flex">
+          <ScrollReveal delay={220} className="mt-8 hidden justify-center gap-2 sm:flex">
             {displayServices.map((_, i) => (
               <button
                 key={i}
@@ -454,7 +456,7 @@ export default function OurServicesSection() {
                 }`}
               />
             ))}
-          </div>
+          </ScrollReveal>
         )}
       </div>
     </section>

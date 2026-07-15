@@ -29,7 +29,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: var(--font-plus-jakarta), sans-serif;
+  font-family: var(--font-inter), sans-serif;
   font-weight: 700;
 }
 
@@ -45,7 +45,7 @@ h6 {
 .dashboard-surface h2,
 .dashboard-surface h3,
 .dashboard-surface .font-display {
-  font-family: var(--font-plus-jakarta), sans-serif;
+  font-family: var(--font-inter), sans-serif;
   font-weight: 700;
   letter-spacing: 0;
 }

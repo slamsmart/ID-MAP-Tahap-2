@@ -102,8 +102,10 @@ export default function DonasiCepatPage() {
   const [customAmount, setCustomAmount] = useState("");
   const [state, setState] = useState<State>("idle");
   const [qrisData, setQrisData] = useState<QrisData | null>(null);
+  const [paidSummary, setPaidSummary] = useState<QrisData | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
   const [isSandbox, setIsSandbox] = useState(false);
+  const [showToast, setShowToast] = useState(false);
   const qrContainerRef = useRef<HTMLDivElement>(null);
 
   // Real-time: Convex WebSocket pushes update the moment webhook confirms payment.
@@ -113,10 +115,47 @@ export default function DonasiCepatPage() {
   );
   useEffect(() => {
     if (state === "waiting" && pendingStatus?.paymentStatus === "paid") {
+      if (qrisData) setPaidSummary(qrisData);
+      setQrisData(null);
       setState("paid");
+      setShowToast(true);
       router.refresh();
+      setTimeout(() => setShowToast(false), 4000);
     }
-  }, [pendingStatus, state, router]);
+  }, [pendingStatus, qrisData, state, router]);
+
+  useEffect(() => {
+    if (state !== "waiting" || !qrisData) return;
+
+    const pollPaymentStatus = async () => {
+      try {
+        const res = await fetch(
+          `/api/payment/status?contributionId=${qrisData.contributionId}`,
+          { cache: "no-store", credentials: "same-origin" }
+        );
+        if (!res.ok) return;
+
+        const data = (await res.json()) as { paymentStatus?: string };
+        if (data.paymentStatus === "paid") {
+          setPaidSummary(qrisData);
+          setQrisData(null);
+          setState("paid");
+          setShowToast(true);
+          router.refresh();
+          setTimeout(() => setShowToast(false), 4000);
+        }
+      } catch {
+        // ignore; Convex live query remains the primary path
+      }
+    };
+
+    void pollPaymentStatus();
+    const timer = setInterval(() => {
+      void pollPaymentStatus();
+    }, 3000);
+
+    return () => clearInterval(timer);
+  }, [state, qrisData, router]);
 
   const handleDownloadQris = async () => {
     if (!qrisData) return;
@@ -188,6 +227,7 @@ export default function DonasiCepatPage() {
       const data = await parseApiResponse<QrisData & { error?: string }>(res);
       if (!res.ok) throw new Error(data.error ?? "Gagal membuat QRIS");
       setQrisData(data);
+      setPaidSummary(null);
       setState("waiting");
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Terjadi kesalahan";
@@ -198,6 +238,7 @@ export default function DonasiCepatPage() {
 
   function reset() {
     setQrisData(null);
+    setPaidSummary(null);
     setState("idle");
     setErrorMsg("");
   }
@@ -214,8 +255,12 @@ export default function DonasiCepatPage() {
       });
       const data = await parseApiResponse<{ error?: string }>(res);
       if (!res.ok) throw new Error(data.error ?? "Simulasi gagal");
+      if (qrisData) setPaidSummary(qrisData);
       setQrisData(null);
       setState("paid");
+      setShowToast(true);
+      router.refresh();
+      setTimeout(() => setShowToast(false), 4000);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Simulasi gagal";
       setErrorMsg(msg);
@@ -259,6 +304,18 @@ export default function DonasiCepatPage() {
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-emerald-50/60 via-white to-emerald-50/30">
+      {showToast && (
+        <div className="fixed top-4 right-4 z-50 flex items-center gap-3 rounded-xl bg-emerald-600 px-4 py-3 text-white shadow-xl">
+          <CheckCircle className="h-5 w-5 shrink-0" />
+          <div>
+            <p className="text-sm font-semibold">Pembayaran Berhasil!</p>
+            <p className="text-xs text-emerald-100">
+              Donasi Anda sudah tercatat untuk proyek ini.
+            </p>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-5 pb-12 lg:pt-8 lg:pb-16">
         {/* Top nav */}
         <div className="flex items-center justify-between mb-5 lg:mb-8">
@@ -610,7 +667,7 @@ export default function DonasiCepatPage() {
                   </div>
                 )}
 
-                {state === "paid" && qrisData && (
+                {state === "paid" && paidSummary && (
                   <div className="py-4 flex flex-col items-center gap-4 text-center">
                     <div className="w-20 h-20 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-full flex items-center justify-center shadow-inner">
                       <CheckCircle className="w-12 h-12 text-emerald-600" />
@@ -620,7 +677,7 @@ export default function DonasiCepatPage() {
                         Terima kasih!
                       </p>
                       <p className="text-sm text-gray-500 mt-1.5">
-                        Donasi {formatRp(qrisData.amount)} berhasil
+                        Donasi {formatRp(paidSummary.amount)} berhasil
                       </p>
                     </div>
                     <div className="w-full bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100 rounded-2xl px-4 py-4">
@@ -628,7 +685,7 @@ export default function DonasiCepatPage() {
                         Dampak Anda
                       </p>
                       <p className="text-3xl font-display font-bold text-emerald-800 mt-1">
-                        {qrisData.co2Equivalent.toFixed(4)} tCO₂e
+                        {paidSummary.co2Equivalent.toFixed(4)} tCO₂e
                       </p>
                       <p className="text-xs text-emerald-600 mt-1">
                         karbon tersimpan di mangrove {project.title}

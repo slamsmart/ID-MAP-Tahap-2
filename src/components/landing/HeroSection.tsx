@@ -7,6 +7,7 @@ import { api } from "../../../convex/_generated/api";
 import { getHeroImage } from "@/lib/heroImageStore";
 import { useLanguage } from "@/contexts/LanguageContext";
 import TiltCard from "@/components/shared/TiltCard";
+import ScrollReveal from "@/components/shared/ScrollReveal";
 
 const DEFAULT_IMAGE = "/images/hero-mangrove.webp";
 
@@ -16,12 +17,12 @@ const DEFAULT_IMAGE = "/images/hero-mangrove.webp";
 const DEFAULTS = {
   badgeId: "Platform Integrasi Data Ekosistem Pesisir Berkelanjutan",
   badgeEn: "Integrated Coastal Ecosystem Data Platform for Sustainability",
-  headlineLine1Id: "Satu Platform.",
-  headlineLine1En: "One Platform.",
+  headlineLine1Id: "Satu Platform",
+  headlineLine1En: "One Platform",
   headlineLine2Id: "Seluruh Ekosistem Mangrove & Pesisir",
   headlineLine2En: "The Entire Mangrove & Coastal Ecosystem",
-  headlineAccentId: "Indonesia.",
-  headlineAccentEn: "Indonesia.",
+  headlineAccentId: "Indonesia",
+  headlineAccentEn: "Indonesia",
   subheadId:
     "Data terintegrasi untuk pemantauan restorasi lingkungan, rehabilitasi, dan keberlanjutan pesisir nusantara.",
   subheadEn:
@@ -214,26 +215,32 @@ export default function HeroSection() {
           {/* Left: copy, lifted toward viewer */}
           <div
             ref={copyRef}
-            className="lg:col-span-7 animate-rise-fade transition-transform duration-300 ease-out"
+            className="lg:col-span-7 transition-transform duration-300 ease-out"
           >
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/5 px-4 py-2 text-white md:backdrop-blur-md text-sm font-medium mb-6">
-              <ShieldCheck className="h-4 w-4" />
-              {badge}
-            </div>
+            <ScrollReveal>
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/5 px-4 py-2 text-sm font-medium text-white md:backdrop-blur-md">
+                <ShieldCheck className="h-4 w-4" />
+                {badge}
+              </div>
+            </ScrollReveal>
 
-            <h1 className="font-hero text-4xl sm:text-5xl md:text-6xl font-extrabold leading-[1.02] tracking-tight text-white">
-              <span className="drop-shadow-[0_4px_24px_rgba(0,0,0,0.5)]">{line1}</span>
-              <br />
-              <span className="drop-shadow-[0_4px_24px_rgba(0,0,0,0.5)]">{line2}</span>
-              <br />
-              <span className="text-white">{accent}</span>
-            </h1>
+            <ScrollReveal delay={90}>
+              <h1 className="font-hero text-4xl font-extrabold leading-[1.02] tracking-tight text-white sm:text-5xl md:text-6xl">
+                <span className="drop-shadow-[0_4px_24px_rgba(0,0,0,0.5)]">{line1}</span>
+                <br />
+                <span className="drop-shadow-[0_4px_24px_rgba(0,0,0,0.5)]">{line2}</span>
+                <br />
+                <span className="text-white">{accent}</span>
+              </h1>
+            </ScrollReveal>
 
-            <p className="mt-6 max-w-2xl text-lg md:text-xl leading-relaxed text-emerald-50/90 font-normal">
-              {subhead}
-            </p>
+            <ScrollReveal delay={180}>
+              <p className="mt-6 max-w-2xl text-lg font-normal leading-relaxed text-emerald-50/90 md:text-xl">
+                {subhead}
+              </p>
+            </ScrollReveal>
 
-            <div className="mt-10 flex flex-col sm:flex-row flex-wrap gap-4">
+            <ScrollReveal delay={270} className="mt-10 flex flex-col flex-wrap gap-4 sm:flex-row">
               <a
                 href={data.primaryCtaHref}
                 className="group inline-flex items-center justify-center gap-2 rounded-xl bg-white hover:bg-gray-100 px-6 py-3.5 text-sm font-bold text-black shadow-[0_12px_30px_-8px_rgba(0,0,0,0.25)] hover:shadow-[0_18px_40px_-8px_rgba(0,0,0,0.3)] hover:-translate-y-0.5 transition-all focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 focus:ring-offset-[#06140f]"
@@ -248,33 +255,35 @@ export default function HeroSection() {
                 {secondaryLabel}
                 <ArrowRight className="h-4 w-4" />
               </a>
-            </div>
+            </ScrollReveal>
           </div>
 
           {/* Right: floating 3D tilt image frame */}
           <div className="lg:col-span-5">
-            <TiltCard
-              maxTilt={12}
-              liftZ={30}
-              className="md:animate-float-tilt rounded-3xl"
-            >
-              <div className="relative rounded-3xl overflow-hidden border border-white/15 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.8)]">
-                <div
-                  className="aspect-[4/5] bg-cover bg-center"
-                  style={{ backgroundImage: `url('${heroImage}')` }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#06140f]/70 via-transparent to-transparent" />
-                {/* floating mini-badge on the frame */}
-                <div className="absolute bottom-4 left-4 right-4 flex items-center gap-3 rounded-2xl border border-white/15 bg-white/10 px-4 py-3 md:backdrop-blur-md">
-                  <span className="grid h-9 w-9 place-items-center rounded-full bg-emerald-400/90 text-[#06140f]">
-                    <Leaf className="h-4 w-4" />
-                  </span>
-                  <p className="text-xs font-semibold text-white leading-tight">
-                    {t("Pemantauan restorasi real-time", "Real-time restoration monitoring")}
-                  </p>
+            <ScrollReveal delay={180}>
+              <TiltCard
+                maxTilt={12}
+                liftZ={30}
+                className="rounded-3xl md:animate-float-tilt"
+              >
+                <div className="relative overflow-hidden rounded-3xl border border-white/15 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.8)]">
+                  <div
+                    className="aspect-[4/5] bg-cover bg-center"
+                    style={{ backgroundImage: `url('${heroImage}')` }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#06140f]/70 via-transparent to-transparent" />
+                  {/* floating mini-badge on the frame */}
+                  <div className="absolute bottom-4 left-4 right-4 flex items-center gap-3 rounded-2xl border border-white/15 bg-white/10 px-4 py-3 md:backdrop-blur-md">
+                    <span className="grid h-9 w-9 place-items-center rounded-full bg-emerald-400/90 text-[#06140f]">
+                      <Leaf className="h-4 w-4" />
+                    </span>
+                    <p className="text-xs font-semibold leading-tight text-white">
+                      {t("Pemantauan restorasi real-time", "Real-time restoration monitoring")}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            </TiltCard>
+              </TiltCard>
+            </ScrollReveal>
           </div>
         </div>
 
@@ -284,9 +293,9 @@ export default function HeroSection() {
           aria-label={t("Statistik dampak ID-MAP", "ID-MAP impact statistics")}
         >
           <div className="grid grid-cols-2 gap-x-8 gap-y-6 md:grid-cols-4 md:gap-x-10 lg:gap-x-14">
-            {impactStatCards.map((stat) => {
+            {impactStatCards.map((stat, index) => {
               return (
-                <div key={stat.label} className="min-w-0">
+                <ScrollReveal key={stat.label} delay={index * 80} className="min-w-0">
                   <p className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.65)]">
                     <span className="break-words text-2xl font-extrabold leading-none text-white sm:text-3xl lg:text-[2rem]">
                       {stat.value}
@@ -300,7 +309,7 @@ export default function HeroSection() {
                   <p className="mt-2 text-sm font-medium leading-snug text-emerald-50/70 sm:text-base">
                     {stat.label}
                   </p>
-                </div>
+                </ScrollReveal>
               );
             })}
           </div>

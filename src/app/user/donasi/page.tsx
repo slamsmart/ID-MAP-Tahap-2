@@ -6,7 +6,6 @@ import {
   QrCode, Heart, Leaf, ArrowUpRight, CheckCircle,
   Loader2, RefreshCw, AlertCircle, ChevronDown, ShieldCheck, Clock,
 } from "lucide-react";
-import { QRCodeSVG } from "qrcode.react";
 import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { getSession, refreshSession, User } from "@/lib/auth";
@@ -93,6 +92,7 @@ export default function DonasiPage() {
   const [selectedProjectId, setSelectedProjectId] = useState<string>("");
   const [state, setState] = useState<PaymentState>("idle");
   const [qrisData, setQrisData] = useState<QrisData | null>(null);
+  const [paidSummary, setPaidSummary] = useState<QrisData | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
   const [showToast, setShowToast] = useState(false);
 
@@ -127,6 +127,12 @@ export default function DonasiPage() {
     api.contributions.listByUser,
     user?._id ? { userId: user._id as Id<"users"> } : "skip"
   );
+  const pendingStatus = useQuery(
+    api.contributions.getStatus,
+    state === "waiting" && qrisData
+      ? { contributionId: qrisData.contributionId as Id<"contributions"> }
+      : "skip"
+  );
 
   useEffect(() => {
     if (projects && projects.length > 0 && !selectedProjectId) {
@@ -143,6 +149,17 @@ export default function DonasiPage() {
     }).format(n);
 
   useEffect(() => {
+    if (state === "waiting" && pendingStatus?.paymentStatus === "paid" && qrisData) {
+      setPaidSummary(qrisData);
+      setQrisData(null);
+      setState("paid");
+      setShowToast(true);
+      router.refresh();
+      setTimeout(() => setShowToast(false), 4000);
+    }
+  }, [pendingStatus, qrisData, state, router]);
+
+  useEffect(() => {
     if (state !== "waiting" || !qrisData) return;
 
     const pollPaymentStatus = async () => {
@@ -152,6 +169,7 @@ export default function DonasiPage() {
 
         const data = (await res.json()) as { paymentStatus?: string };
         if (data.paymentStatus === "paid") {
+          setPaidSummary(qrisData);
           setQrisData(null);
           setState("paid");
           setShowToast(true);
@@ -199,6 +217,7 @@ export default function DonasiPage() {
       const data = await parseApiResponse<QrisData & { error?: string }>(res);
       if (!res.ok) throw new Error(data.error ?? "Gagal membuat QRIS");
       setQrisData(data as QrisData);
+      setPaidSummary(null);
       setState("waiting");
     } catch (err: unknown) {
       setErrorMsg(getErrorMessage(err, "Terjadi kesalahan"));
@@ -218,6 +237,7 @@ export default function DonasiPage() {
       });
       const data = await parseApiResponse<{ error?: string }>(res);
       if (!res.ok) throw new Error(data.error ?? "Simulasi gagal");
+      setPaidSummary(qrisData);
       setQrisData(null);
       setState("paid");
       setShowToast(true);
@@ -231,18 +251,19 @@ export default function DonasiPage() {
 
   function handleReset() {
     setQrisData(null);
+    setPaidSummary(null);
     setState("idle");
     setErrorMsg("");
   }
 
   return (
     <div className="flex-1 p-6 bg-gray-50">
-      {showToast && qrisData && (
+      {showToast && paidSummary && (
         <div className="fixed top-4 right-4 z-50 flex items-center gap-3 bg-emerald-600 text-white px-4 py-3 rounded-xl shadow-xl">
           <CheckCircle className="w-5 h-5 shrink-0" />
           <div>
             <p className="font-semibold text-sm">Pembayaran Berhasil!</p>
-            <p className="text-xs text-emerald-100">{formatRp(qrisData.amount)} telah diterima</p>
+            <p className="text-xs text-emerald-100">{formatRp(paidSummary.amount)} telah diterima</p>
           </div>
         </div>
       )}
@@ -502,7 +523,7 @@ export default function DonasiPage() {
             )}
 
             {/* PAID */}
-            {state === "paid" && qrisData && (
+            {state === "paid" && paidSummary && (
               <div className="space-y-4">
                 <div className="py-6 flex flex-col items-center gap-3 text-center">
                   <div className="w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center">
@@ -511,13 +532,13 @@ export default function DonasiPage() {
                   <div>
                     <p className="font-bold text-gray-900">Pembayaran Berhasil!</p>
                     <p className="text-sm text-gray-500 mt-1">
-                      Terima kasih atas donasi {formatRp(qrisData.amount)}
+                      Terima kasih atas donasi {formatRp(paidSummary.amount)}
                     </p>
                   </div>
                   <div className="w-full bg-emerald-50 rounded-lg px-4 py-3">
                     <p className="text-xs text-emerald-700 font-semibold">Dampak Donasi Anda</p>
                     <p className="text-xl font-bold text-emerald-800 mt-0.5">
-                      {qrisData.co2Equivalent.toFixed(4)} tCOâ‚‚e
+                      {paidSummary.co2Equivalent.toFixed(4)} tCOâ‚‚e
                     </p>
                     <p className="text-xs text-emerald-600">karbon tersimpan di mangrove</p>
                   </div>

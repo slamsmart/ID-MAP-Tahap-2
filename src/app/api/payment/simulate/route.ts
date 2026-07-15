@@ -79,9 +79,10 @@ export async function POST(request: NextRequest) {
       actor: adminOk ? "admin-token" : session?.uid,
     });
     return NextResponse.json({ success: true, message: "Pembayaran berhasil disimulasikan" });
-  } catch (error: any) {
+  } catch (error: unknown) {
     log.error("simulate_exception", { err: error as Error });
-    return NextResponse.json({ error: error?.message ?? "Gagal" }, { status: 500 });
+    const message = error instanceof Error ? error.message : "Gagal";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
 

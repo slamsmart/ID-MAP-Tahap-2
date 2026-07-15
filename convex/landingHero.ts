@@ -1,6 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
-import { requireRole } from "./authz";
+import { requireRole, requireServerMutationSecret } from "./authz";
 
 const landingHeroValidator = v.object({
   _id: v.id("landingHero"),
@@ -42,6 +42,7 @@ export const get = query({
 export const update = mutation({
   args: {
     actorId: v.id("users"),
+    adminSecret: v.string(),
     image: v.string(),
     badgeId: v.string(),
     badgeEn: v.string(),
@@ -63,8 +64,9 @@ export const update = mutation({
   returns: v.null(),
   handler: async (ctx, args) => {
     // Hanya admin/verifikator boleh menimpa hero homepage (anti-deface).
-    await requireRole(ctx, args.actorId, ["admin", "verifikator"]);
-    const { actorId: _actor, ...rest } = args;
+    const { actorId, adminSecret, ...rest } = args;
+    requireServerMutationSecret(adminSecret);
+    await requireRole(ctx, actorId, ["admin", "verifikator"]);
     const existing = await ctx.db
       .query("landingHero")
       .withIndex("by_key", (q) => q.eq("key", "default"))

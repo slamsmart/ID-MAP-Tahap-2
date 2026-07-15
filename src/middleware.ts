@@ -100,6 +100,11 @@ export async function middleware(req: NextRequest) {
   const session = await verifyToken(token, effectiveSecret);
 
   if (!session) {
+    console.info("auth_middleware_redirect", {
+      reason: "no_session",
+      pathname,
+      loginPath: guard.loginPath,
+    });
     const url = req.nextUrl.clone();
     url.pathname = guard.loginPath;
     url.searchParams.set("next", pathname);
@@ -107,6 +112,11 @@ export async function middleware(req: NextRequest) {
   }
 
   if (!guard.roles.includes(session.role)) {
+    console.info("auth_middleware_redirect", {
+      reason: "invalid_role",
+      pathname,
+      role: session.role,
+    });
     const url = req.nextUrl.clone();
     url.pathname = session.role === "sahabat" ? "/user" : `/${session.role}`;
     url.search = "";

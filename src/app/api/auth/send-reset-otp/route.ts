@@ -112,8 +112,8 @@ export async function POST(req: NextRequest) {
 
     log.info("reset_otp_sent", { email, durationMs: Date.now() - startedAt });
     return NextResponse.json({ success: true });
-  } catch (err: any) {
+  } catch (err: unknown) {
     log.error("send_reset_otp_exception", { err: err as Error });
-    return NextResponse.json({ error: err.message ?? "Terjadi kesalahan." }, { status: 500 });
+    return NextResponse.json({ error: "Terjadi kesalahan." }, { status: 500 });
   }
 }

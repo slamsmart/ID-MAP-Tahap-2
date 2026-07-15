@@ -126,19 +126,30 @@ export function verifyWebhook(
   headers: Headers
 ): { ok: true } | { ok: false; reason: string } {
   const expected = process.env.MAYAR_WEBHOOK_TOKEN ?? "";
+  const normalizedExpected = expected.trim();
 
   // 1. No token configured -> fail closed (assume unsafe)
-  if (!expected) {
+  if (!normalizedExpected) {
     return { ok: false, reason: "MAYAR_WEBHOOK_TOKEN not configured" };
   }
 
-  // 2. Bearer token (Mayar standard)
-  const auth = headers.get("authorization") ?? "";
-  if (auth.startsWith("Bearer ")) {
-    const token = auth.slice("Bearer ".length).trim();
-    if (timingSafeEq(token, expected)) return { ok: true };
-    // Token present but wrong ? reject (don't fall through)
-    return { ok: false, reason: "signature mismatch" };
+  // 2. Token-based auth. Some Mayar deliveries use `Authorization: Bearer …`,
+  // others send the raw token or dedicated webhook-token style headers.
+  const authCandidates = [
+    headers.get("authorization"),
+    headers.get("x-webhook-token"),
+    headers.get("webhook-token"),
+    headers.get("x-callback-token"),
+  ]
+    .filter((value): value is string => typeof value === "string" && value.trim().length > 0)
+    .map((value) => value.trim());
+
+  for (const candidate of authCandidates) {
+    const token = candidate.toLowerCase().startsWith("bearer ")
+      ? candidate.slice("Bearer ".length).trim()
+      : candidate;
+
+    if (timingSafeEq(token, normalizedExpected)) return { ok: true };
   }
 
   // 3. HMAC-SHA256 signature (some Mayar variants)
@@ -148,10 +159,15 @@ export function verifyWebhook(
     "";
   if (sig) {
     const computed = crypto
-      .createHmac("sha256", expected)
+      .createHmac("sha256", normalizedExpected)
       .update(rawBody)
       .digest("hex");
-    if (timingSafeEq(sig, computed)) return { ok: true };
+    const normalizedSig = sig.trim();
+    if (timingSafeEq(normalizedSig, computed)) return { ok: true };
+    return { ok: false, reason: "signature mismatch" };
+  }
+
+  if (authCandidates.length > 0) {
     return { ok: false, reason: "signature mismatch" };
   }
 

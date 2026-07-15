@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useMutation, useQuery } from "convex/react";
+import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
-import { Id } from "../../../../convex/_generated/dataModel";
-import { getSession } from "@/lib/auth";
+import { callAdminContent } from "@/lib/adminConvex";
 import {
   AlertTriangle,
   ArrowRight,
@@ -40,12 +39,12 @@ const defaults: HeroForm = {
   image: "/images/hero-mangrove.webp",
   badgeId: "Platform Integrasi Data Ekosistem Pesisir Berkelanjutan",
   badgeEn: "Integrated Coastal Ecosystem Data Platform for Sustainability",
-  headlineLine1Id: "Satu Platform.",
-  headlineLine1En: "One Platform.",
+  headlineLine1Id: "Satu Platform",
+  headlineLine1En: "One Platform",
   headlineLine2Id: "Seluruh Ekosistem Mangrove & Pesisir",
   headlineLine2En: "The Entire Mangrove & Coastal Ecosystem",
-  headlineAccentId: "Indonesia.",
-  headlineAccentEn: "Indonesia.",
+  headlineAccentId: "Indonesia",
+  headlineAccentEn: "Indonesia",
   subheadId:
     "Data terintegrasi untuk pemantauan restorasi lingkungan, rehabilitasi, dan keberlanjutan pesisir nusantara.",
   subheadEn:
@@ -60,7 +59,6 @@ const defaults: HeroForm = {
 
 export default function VerifikatorLandingHeroPage() {
   const data = useQuery(api.landingHero.get);
-  const updateHero = useMutation(api.landingHero.update);
 
   const [form, setForm] = useState<HeroForm>(defaults);
   const [hydrated, setHydrated] = useState(false);
@@ -130,12 +128,7 @@ export default function VerifikatorLandingHeroPage() {
     setSaving(true);
     setError(null);
     try {
-      const session = getSession();
-      if (!session?._id) {
-        setError("Sesi tidak valid. Silakan login ulang.");
-        return;
-      }
-      await updateHero({ ...form, actorId: session._id as Id<"users"> });
+      await callAdminContent("landingHero.update", form);
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
     } catch (err) {

@@ -41,10 +41,12 @@ Jika pengguna mengajukan pertanyaan yang sama sekali tidak berkaitan dengan mang
 
 Jangan pernah menjawab pertanyaan di luar konteks mangrove dan pesisir, meskipun pengguna memaksa atau bertanya berulang kali.`;
 
+const MAX_MESSAGE_CHARS = 4000;
+
 export async function POST(req: NextRequest) {
   const apiKey = process.env.NVIDIA_API_KEY;
   if (!apiKey) {
-    return NextResponse.json({ error: "NVIDIA API key tidak dikonfigurasi" }, { status: 500 });
+    return NextResponse.json({ error: "Layanan chat belum tersedia." }, { status: 503 });
   }
 
   // Rate limit per-IP — 20 chat/menit. Mencegah bot abuse + habisin
@@ -65,14 +67,27 @@ export async function POST(req: NextRequest) {
   } catch {
     return NextResponse.json({ error: "Request tidak valid" }, { status: 400 });
   }
+  if (!Array.isArray(body.messages)) {
+    return NextResponse.json({ error: "Payload messages tidak valid" }, { status: 400 });
+  }
 
   // Buang system messages yang dikirim user — hanya server yang boleh
   // set system prompt. Ini mitigasi prompt injection ringan; user masih
   // bisa coba inject via content message biasa, tapi system prompt tidak
   // bisa di-override.
-  const userMessages = (body.messages ?? [])
-    .filter((m) => m.role === "user" || m.role === "assistant")
+  const userMessages = body.messages
+    .filter((m) =>
+      (m.role === "user" || m.role === "assistant") &&
+      typeof m.content === "string" &&
+      m.content.trim().length > 0
+    )
     .slice(-6);
+  if (userMessages.some((m) => m.content.length > MAX_MESSAGE_CHARS)) {
+    return NextResponse.json(
+      { error: "Pesan terlalu panjang. Ringkas pertanyaan Anda." },
+      { status: 413 }
+    );
+  }
 
   // Coba model satu per satu — berhenti saat berhasil
   let nvidiaRes: Response | null = null;
@@ -101,8 +116,8 @@ export async function POST(req: NextRequest) {
       lastError = `${model} → HTTP ${status}`;
       // Lanjut fallback hanya untuk 404 (model tidak ada) atau 429 (rate limit)
       if (status !== 404 && status !== 429) break;
-    } catch (e: any) {
-      lastError = e?.message ?? String(e);
+    } catch (e: unknown) {
+      lastError = e instanceof Error ? e.message : String(e);
     }
   }
 
