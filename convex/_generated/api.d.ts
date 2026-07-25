@@ -9,6 +9,7 @@
  */
 
 import type * as aboutContent from "../aboutContent.js";
+import type * as abrasionSites from "../abrasionSites.js";
 import type * as activities from "../activities.js";
 import type * as audit from "../audit.js";
 import type * as auditLogs from "../auditLogs.js";
@@ -16,6 +17,7 @@ import type * as authz from "../authz.js";
 import type * as certificates from "../certificates.js";
 import type * as contributions from "../contributions.js";
 import type * as demoAuth from "../demoAuth.js";
+import type * as disbursements from "../disbursements.js";
 import type * as faqContent from "../faqContent.js";
 import type * as footerContent from "../footerContent.js";
 import type * as gamification from "../gamification.js";
@@ -41,6 +43,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   aboutContent: typeof aboutContent;
+  abrasionSites: typeof abrasionSites;
   activities: typeof activities;
   audit: typeof audit;
   auditLogs: typeof auditLogs;
@@ -48,6 +51,7 @@ declare const fullApi: ApiFromModules<{
   certificates: typeof certificates;
   contributions: typeof contributions;
   demoAuth: typeof demoAuth;
+  disbursements: typeof disbursements;
   faqContent: typeof faqContent;
   footerContent: typeof footerContent;
   gamification: typeof gamification;

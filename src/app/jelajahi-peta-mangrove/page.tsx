@@ -2,60 +2,60 @@
 
 import {
   ChevronLeft, ChevronRight, Calculator, PenTool, Layers, Info,
-  Loader2, Leaf, Car, Plane, Home, Globe, Waves, ChevronDown, Map,
+  Loader2, Car, Plane, Home, Globe, Waves, Map, ShieldAlert, Target,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import { INA_RISK_LEGEND } from "@/components/map/inaRiskLegend";
+import { RTRW_LEGEND } from "@/components/map/rtrwLegend";
+import { PRIORITAS_CONFIG, type PrioritasType } from "@/lib/abrasionData";
+
+const ABRASION_LEGEND: { key: PrioritasType; label: string; color: string; desc: string }[] = [
+  { key: "Tinggi", label: "Prioritas Tinggi", color: PRIORITAS_CONFIG["Tinggi"].dot, desc: "Abrasi berat, butuh intervensi segera" },
+  { key: "Sedang", label: "Prioritas Sedang", color: PRIORITAS_CONFIG["Sedang"].dot, desc: "Abrasi sedang, pantau & rehabilitasi" },
+  { key: "Rendah–Sedang", label: "Prioritas Rendah–Sedang", color: PRIORITAS_CONFIG["Rendah–Sedang"].dot, desc: "Risiko abrasi lebih rendah" },
+];
 
 const NativeMap = dynamic(() => import("@/components/map/NativeMap"), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-full flex flex-col items-center justify-center bg-transparent">
-      <Loader2 className="h-8 w-8 text-emerald-400 animate-spin" />
+    <div className="w-full h-full flex flex-col items-center justify-center gap-2 bg-transparent animate-rise-fade">
+      <Loader2 className="h-7 w-7 text-emerald-400 animate-spin" />
+      <p className="text-[11px] font-medium text-emerald-100/70 text-rise">Mengukur area…</p>
     </div>
   ),
 });
 
-const TurtleLayer = dynamic(() => import("@/components/map/TurtleLayer"), {
-  ssr: false,
-  loading: () => (
-    <div className="absolute inset-0 flex items-center justify-center bg-[#0F2E2A] z-[400]">
-      <Loader2 className="h-8 w-8 text-emerald-400 animate-spin" />
-    </div>
-  ),
-});
+const SharedInteractiveMap = dynamic(
+  () => import("@/components/map/SharedInteractiveMap"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-full flex flex-col items-center justify-center gap-3 bg-[#0F2E2A] animate-rise-fade">
+        <div className="w-12 h-12 rounded-2xl bg-emerald-500/15 border border-emerald-400/30 flex items-center justify-center text-rise">
+          <Loader2 className="h-6 w-6 text-emerald-300 animate-spin" />
+        </div>
+        <p className="text-sm font-semibold text-emerald-50/90 text-rise" style={{ animationDelay: "90ms" }}>
+          Memuat peta interaktif…
+        </p>
+        <p className="text-[11px] text-emerald-100/50 text-rise" style={{ animationDelay: "160ms" }}>
+          Satellite · MHI · RTRW · PRL
+        </p>
+      </div>
+    ),
+  }
+);
 
-const AbrasionMap = dynamic(() => import("@/components/map/AbrasionMap"), {
-  ssr: false,
-  loading: () => (
-    <div className="absolute inset-0 flex items-center justify-center bg-[#0F2E2A] z-[400]">
-      <Loader2 className="h-8 w-8 text-orange-400 animate-spin" />
-    </div>
-  ),
-});
-
-const PokmaswasLayer = dynamic(() => import("@/components/map/PokmaswasLayer"), {
-  ssr: false,
-  loading: () => (
-    <div className="absolute inset-0 flex items-center justify-center bg-[#0F2E2A] z-[400]">
-      <Loader2 className="h-8 w-8 text-emerald-400 animate-spin" />
-    </div>
-  ),
-});
-
-const KmlLayer = dynamic(() => import("@/components/map/KmlLayer"), {
-  ssr: false,
-  loading: () => (
-    <div className="absolute inset-0 flex items-center justify-center bg-[#0F2E2A] z-[400]">
-      <Loader2 className="h-8 w-8 text-emerald-400 animate-spin" />
-    </div>
-  ),
-});
-
-
-const EE_APP_URL =
-  "https://ee-dimassyarifworkspace.projects.earthengine.app/view/mangrove-health-indeks-jatim";
+const MhiOverlay = dynamic(() => import("@/components/map/MhiOverlay"), { ssr: false });
+const PrlOverlay = dynamic(() => import("@/components/map/PrlOverlay"), { ssr: false });
+const RtrwOverlay = dynamic(() => import("@/components/map/RtrwOverlay"), { ssr: false });
+const AbrasionOverlay = dynamic(() => import("@/components/map/AbrasionOverlay"), { ssr: false });
+const TurtleOverlay = dynamic(() => import("@/components/map/TurtleOverlay"), { ssr: false });
+const PokmaswasOverlay = dynamic(() => import("@/components/map/PokmaswasOverlay"), { ssr: false });
+const InaRiskOverlay = dynamic(() => import("@/components/map/InaRiskOverlay"), { ssr: false });
+const ScoringPanel = dynamic(() => import("@/components/map/ScoringPanel"), { ssr: false });
 
 const MHI_LEGEND = [
   { color: "#1a9641", label: "Excellent", range: "> 66.6", desc: "Mangrove sangat sehat, kerapatan tinggi" },
@@ -63,19 +63,75 @@ const MHI_LEGEND = [
   { color: "#d7191c", label: "Poor", range: "< 33.3", desc: "Kondisi kritis, butuh rehabilitasi" },
 ];
 
+/** Sumber data: ground check vs satelit (GMW) — legenda penjelasan, bukan layer toggle. */
+const DATA_SOURCE_LEGEND = [
+  {
+    key: "ground",
+    label: "Digitasi ground check",
+    badge: "Lapangan",
+    badgeClass: "bg-emerald-100 text-emerald-800",
+    color: "#059669",
+    desc: "Data ID-MAP dari verifikasi lapangan & digitasi manual (titik/poligon). Contoh: MHI Jatim, abrasi, penyu, mitra/Pokmaswas.",
+  },
+  {
+    key: "satellite",
+    label: "Citra satelit (GMW)",
+    badge: "Satelit",
+    badgeClass: "bg-sky-100 text-sky-800",
+    color: "#0284c7",
+    desc: "Global Mangrove Watch (v3/v4) dari penginderaan jauh — cakupan global, resolusi ~25–30 m. Bukan pengganti ground check.",
+  },
+] as const;
+
 export default function JelajahiPetaMangrovePage() {
   const [areaHa, setAreaHa] = useState<number>(0);
   const [isCalculatorOpen, setIsCalculatorOpen] = useState(true);
   const [isLegendOpen, setIsLegendOpen] = useState(true);
-  const [isEEPanelOpen, setIsEEPanelOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const [isDrawing, setIsDrawing] = useState(false);
   const [mhiCategory, setMhiCategory] = useState<"excellent" | "moderate" | "poor">("excellent");
   const [isAbrasionOpen, setIsAbrasionOpen] = useState(false);
   const [isTurtleLayerOpen, setIsTurtleLayerOpen] = useState(false);
   const [isPokmaswasLayerOpen, setIsPokmaswasLayerOpen] = useState(false);
-  const [isRtrwLayerOpen, setIsRtrwLayerOpen] = useState(false);
-  const [isLayerDropdownOpen, setIsLayerDropdownOpen] = useState(false);
+  const [isPrlLayerOpen, setIsPrlLayerOpen] = useState(false);
+  const [isRtrwDaratOpen, setIsRtrwDaratOpen] = useState(false);
+  const [isInaRiskOpen, setIsInaRiskOpen] = useState(false);
+  const [isMhiKmlOpen, setIsMhiKmlOpen] = useState(false);
+  const [isScoringOpen, setIsScoringOpen] = useState(false);
+
+  type LayerKey = "mhi" | "prl" | "rtrw" | "abrasion" | "turtle" | "pokmaswas" | "inarisk";
+
+  const activeLayers = [
+    isMhiKmlOpen && "MHI",
+    isPrlLayerOpen && "PRL",
+    isRtrwDaratOpen && "RTRW",
+    isAbrasionOpen && "Abrasi",
+    isTurtleLayerOpen && "Penyu",
+    isPokmaswasLayerOpen && "Mitra",
+    isInaRiskOpen && "BNPB",
+  ].filter(Boolean) as string[];
+
+  const anyLayerActive = activeLayers.length > 0;
+
+  const toggleLayer = (key: LayerKey) => {
+    if (key === "mhi") setIsMhiKmlOpen((v) => !v);
+    else if (key === "prl") setIsPrlLayerOpen((v) => !v);
+    else if (key === "rtrw") setIsRtrwDaratOpen((v) => !v);
+    else if (key === "abrasion") setIsAbrasionOpen((v) => !v);
+    else if (key === "turtle") setIsTurtleLayerOpen((v) => !v);
+    else if (key === "pokmaswas") setIsPokmaswasLayerOpen((v) => !v);
+    else if (key === "inarisk") setIsInaRiskOpen((v) => !v);
+  };
+
+  const setAllLayers = (on: boolean) => {
+    setIsMhiKmlOpen(on);
+    setIsPrlLayerOpen(on);
+    setIsRtrwDaratOpen(on);
+    setIsAbrasionOpen(on);
+    setIsTurtleLayerOpen(on);
+    setIsPokmaswasLayerOpen(on);
+    setIsInaRiskOpen(on);
+  };
+
   const [isMobile, setIsMobile] = useState(false);
   const [mobileSheet, setMobileSheet] = useState<"none" | "legend" | "calculator">("none");
 
@@ -118,15 +174,22 @@ export default function JelajahiPetaMangrovePage() {
   const homeEquivalent = Math.round(annualSequestration / 3);
 
   return (
-    <div className="fixed inset-0 z-[100] bg-[#0F2E2A] flex flex-col font-sans">
+    <div className="fixed inset-0 z-[100] bg-[#0F2E2A] flex flex-col font-sans animate-rise-fade">
       {/* ===== TOP NAVBAR ===== */}
-      <header className="bg-[#0F2E2A] border-b border-[#235850] z-[600] relative shadow-lg shadow-black/20">
-        {/* Row 1: branding + actions kanan (selalu satu baris) */}
+      <header className="bg-[#0F2E2A] border-b border-[#235850] z-[600] relative shadow-lg shadow-black/20 text-rise">
+        {/* Satu baris: branding | Polygon + Layer | Bantuan + Beranda */}
         <div className="flex items-center justify-between px-3 sm:px-6 py-2 gap-2">
           {/* Left: Branding */}
           <div className="flex items-center gap-2 sm:gap-3 shrink-0 min-w-0">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 items-center justify-center shadow-lg shadow-emerald-500/20 border border-white/10 hidden sm:flex">
-              <Leaf className="w-5 h-5 text-white" />
+            <div className="relative w-8 h-8 sm:w-10 sm:h-10 shrink-0">
+              <Image
+                src="/images/logo-white.png"
+                alt="ID-MAP"
+                fill
+                className="object-contain"
+                sizes="40px"
+                priority
+              />
             </div>
             <div className="min-w-0">
               <h1 className="font-display font-bold text-white text-sm sm:text-lg tracking-wide flex items-center gap-1 sm:gap-2 truncate">
@@ -143,8 +206,34 @@ export default function JelajahiPetaMangrovePage() {
             </div>
           </div>
 
-          {/* Right: Bantuan + Beranda */}
-          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+          {/* Center + right actions — satu baris sejajar judul */}
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={() => setIsDrawing(!isDrawing)}
+              className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg transition-all text-xs font-bold border ${
+                isDrawing
+                  ? "bg-emerald-500 text-white shadow-md border-emerald-400"
+                  : "bg-[#062d22] text-white hover:bg-emerald-600 border-[#235850] hover:border-emerald-400"
+              }`}
+            >
+              <PenTool className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">{isDrawing ? "Menggambar..." : "Polygon"}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setIsScoringOpen(true)}
+              className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg transition-all text-xs font-bold border ${
+                isScoringOpen
+                  ? "bg-emerald-500 text-white shadow-md border-emerald-400"
+                  : "bg-[#062d22] text-white hover:bg-amber-600 border-[#235850] hover:border-amber-400"
+              }`}
+            >
+              <Target className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">Skor</span>
+            </button>
+
             <a
               href="mailto:id.map.admin@gmail.com?subject=Bantuan%20Peta%20Mangrove%20ID-MAP&body=Halo%20Tim%20ID-MAP%2C%0A%0ASaya%20butuh%20bantuan%20terkait%3A%20"
               className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/40 bg-white/10 text-white hover:bg-white/20 transition-colors text-xs font-semibold"
@@ -163,179 +252,222 @@ export default function JelajahiPetaMangrovePage() {
             </Link>
           </div>
         </div>
-
-        {/* Row 2: action buttons (Gambar Polygon + Layer) — mobile turun ke baris ini, desktop juga di sini */}
-        <div className="flex items-center justify-center gap-2 px-3 sm:px-6 pb-2">
-          <button
-            onClick={() => setIsDrawing(!isDrawing)}
-            className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl transition-all duration-300 text-xs sm:text-sm font-bold border ${
-              isDrawing
-                ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/20 border-emerald-400"
-                : "bg-[#062d22] text-white hover:bg-emerald-600 border-[#235850] hover:border-emerald-400"
-            }`}
-          >
-            <PenTool className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            <span className="hidden xs:inline">{isDrawing ? "Sedang Menggambar..." : "Gambar Polygon"}</span>
-            <span className="xs:hidden">{isDrawing ? "Menggambar..." : "Polygon"}</span>
-          </button>
-
-          {/* Layer dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => setIsLayerDropdownOpen((v) => !v)}
-              className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl transition-all duration-300 text-xs sm:text-sm font-bold border ${
-                isLayerDropdownOpen || isAbrasionOpen || isTurtleLayerOpen || isPokmaswasLayerOpen || isRtrwLayerOpen
-                  ? "bg-emerald-500 text-white shadow-lg shadow-teal-500/20 border-teal-400"
-                  : "bg-[#062d22] text-white hover:bg-teal-600 border-[#235850] hover:border-teal-400"
-              }`}
-            >
-              <Layers className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              <span>Layer</span>
-              <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isLayerDropdownOpen ? "rotate-180" : ""}`} />
-            </button>
-
-            {isLayerDropdownOpen && (
-              <>
-                {/* backdrop */}
-                <div className="fixed inset-0 z-[550]" onClick={() => setIsLayerDropdownOpen(false)} />
-                <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 sm:left-0 sm:translate-x-0 z-[560] bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden min-w-[180px]">
-                  <p className="px-3 pt-2.5 pb-1 text-[10px] font-bold text-gray-400 uppercase tracking-wider">Pilih Layer</p>
-                  <button
-                    onClick={() => {
-                      setIsAbrasionOpen(true);
-                      setIsTurtleLayerOpen(false);
-                      setIsPokmaswasLayerOpen(false);
-                      setIsRtrwLayerOpen(false);
-                      setIsLayerDropdownOpen(false);
-                    }}
-                    className={`w-full flex items-center gap-2.5 px-3 py-2.5 text-sm font-semibold text-left transition-colors hover:bg-orange-50 ${
-                      isAbrasionOpen ? "bg-orange-50 text-orange-600" : "text-gray-700"
-                    }`}
-                  >
-                    <div className="w-7 h-7 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0">
-                      <Waves className="w-3.5 h-3.5 text-orange-600" />
-                    </div>
-                    Abrasi Pantai
-                  </button>
-                  <button
-                    onClick={() => {
-                      setIsTurtleLayerOpen(true);
-                      setIsAbrasionOpen(false);
-                      setIsPokmaswasLayerOpen(false);
-                      setIsRtrwLayerOpen(false);
-                      setIsLayerDropdownOpen(false);
-                    }}
-                    className={`w-full flex items-center gap-2.5 px-3 py-2.5 text-sm font-semibold text-left transition-colors hover:bg-emerald-50 ${
-                      isTurtleLayerOpen ? "bg-emerald-50 text-emerald-600" : "text-gray-700"
-
-                    }`}
-                  >
-                    <div className="w-7 h-7 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0 text-base">
-                      🐢
-                    </div>
-                    Penyu
-                  </button>
-                  <button
-                    onClick={() => {
-                      setIsPokmaswasLayerOpen(true);
-                      setIsAbrasionOpen(false);
-                      setIsTurtleLayerOpen(false);
-                      setIsRtrwLayerOpen(false);
-                      setIsLayerDropdownOpen(false);
-                    }}
-                    className={`w-full flex items-center gap-2.5 px-3 py-2.5 text-sm font-semibold text-left transition-colors hover:bg-emerald-50 ${
-                      isPokmaswasLayerOpen ? "bg-emerald-50 text-emerald-600" : "text-gray-700"
-                    }`}
-                  >
-                    <div className="w-7 h-7 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0 text-base">
-                      🛡️
-                    </div>
-                      Mitra
-                   </button>
-                  <button
-                    onClick={() => {
-                      setIsRtrwLayerOpen(true);
-                      setIsAbrasionOpen(false);
-                      setIsTurtleLayerOpen(false);
-                      setIsPokmaswasLayerOpen(false);
-                      setIsLayerDropdownOpen(false);
-                    }}
-                    className={`w-full flex items-center gap-2.5 px-3 py-2.5 text-sm font-semibold text-left transition-colors hover:bg-emerald-50 ${
-                      isRtrwLayerOpen ? "bg-emerald-50 text-emerald-600" : "text-gray-700"
-                    }`}
-                  >
-                    <div className="w-7 h-7 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0">
-                      <Map className="w-3.5 h-3.5 text-emerald-600" />
-                    </div>
-                    Pemanfaatan Ruang Laut
-                  </button>
-                  <div className="h-px bg-gray-100 mx-3 my-1" />
-                  <p className="px-3 pb-2.5 text-[10px] text-gray-400">
-                    {isAbrasionOpen
-                      ? "Abrasi Pantai aktif"
-                      : isTurtleLayerOpen
-                      ? "Penyu aktif"
-                      : isPokmaswasLayerOpen
-                      ? "Mitra aktif"
-                      : isRtrwLayerOpen
-                      ? "Pemanfaatan Ruang Laut aktif"
-                      : "Tidak ada layer aktif"}
-                  </p>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
       </header>
 
       {/* ===== MAIN CONTENT ===== */}
-      <div className="relative flex-1 w-full overflow-hidden">
+      <div className="relative flex-1 w-full overflow-hidden animate-rise-fade" style={{ animationDelay: "120ms" }}>
         
-        {/* ===== LEFT PANEL: MHI Legend (desktop only) ===== */}
+        {/* ===== LEFT PANEL: Legend + layer checklist (desktop only) ===== */}
         <div className={`hidden md:flex absolute top-4 left-4 md:top-6 md:left-6 z-[500] transition-transform duration-300 ${isLegendOpen ? "translate-x-0" : "-translate-x-[calc(100%+24px)]"}`}>
-          <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-100 p-5 w-[300px] md:w-[320px] flex flex-col gap-4 max-h-[calc(100vh-120px)] overflow-y-auto">
-            {/* Header */}
-            <div className="flex items-center gap-3 border-b border-gray-100 pb-3">
-              <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
-                <Layers className="w-5 h-5 text-emerald-600" />
+          <div
+            className="map-legend-panel bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-100 p-5 w-[300px] md:w-[320px] flex flex-col gap-4 max-h-[calc(100vh-120px)] overflow-y-auto"
+            style={{ fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif" }}
+          >
+            {/* Layer checklist — all indicators multi-select */}
+            <div className="space-y-2 border-b border-gray-100 pb-3">
+              <div className="flex items-center justify-between gap-2">
+                <h4 className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">
+                  Indikator di peta
+                </h4>
+                <div className="flex gap-1.5">
+                  <button type="button" onClick={() => setAllLayers(true)} className="text-[10px] font-bold text-emerald-600 hover:underline">
+                    Semua
+                  </button>
+                  <button type="button" onClick={() => setAllLayers(false)} className="text-[10px] font-bold text-gray-400 hover:underline">
+                    Kosong
+                  </button>
+                </div>
               </div>
-              <div>
-                <h3 className="font-bold text-gray-900 text-sm">MHI Mangrove Jawa Timur</h3>
-                <p className="text-emerald-600/70 text-[10px]">Dharmawan et al. 2021</p>
-              </div>
+              {([
+                { key: "mhi" as const, label: "MHI Mangrove", on: isMhiKmlOpen, color: "#1a9641" },
+                { key: "prl" as const, label: "PRL · Ruang Laut", on: isPrlLayerOpen, color: "#14b8a6" },
+                { key: "rtrw" as const, label: "RTRW Pola Ruang Darat", on: isRtrwDaratOpen, color: "#5b21b6" },
+                { key: "abrasion" as const, label: "Abrasi Pantai", on: isAbrasionOpen, color: "#f97316" },
+                { key: "turtle" as const, label: "Penyu", on: isTurtleLayerOpen, color: "#10b981" },
+                { key: "pokmaswas" as const, label: "Mitra / Pokmaswas", on: isPokmaswasLayerOpen, color: "#6366f1" },
+                { key: "inarisk" as const, label: "Banjir BNPB inaRISK", on: isInaRiskOpen, color: "#ef4444" },
+              ]).map((item) => (
+                <label
+                  key={item.key}
+                  className="flex items-center gap-2.5 p-2 rounded-xl border border-gray-100 hover:bg-gray-50 cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    className="w-4 h-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
+                    checked={item.on}
+                    onChange={() => toggleLayer(item.key)}
+                  />
+                  <span className="w-3 h-3 rounded-sm flex-shrink-0" style={{ backgroundColor: item.color }} />
+                  <span className="text-xs font-semibold text-gray-800">{item.label}</span>
+                </label>
+              ))}
+              {anyLayerActive && (
+                <p className="text-[10px] text-emerald-600 font-medium px-1">
+                  {activeLayers.join(" + ")} ditampilkan
+                </p>
+              )}
             </div>
 
-            {/* MHI Color Scale Bar */}
-            <div>
-              <h4 className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-2">Skala Indeks MHI</h4>
-              <div className="flex h-3 rounded-full overflow-hidden shadow-inner border border-gray-100">
-                <div className="flex-1 bg-[#d7191c]" />
-                <div className="flex-1 bg-[#f5c542]" />
-                <div className="flex-1 bg-[#1a9641]" />
-              </div>
-              <div className="flex justify-between mt-1.5 px-1">
-                <span className="text-[10px] text-red-500 font-mono font-medium">0</span>
-                <span className="text-[10px] text-yellow-500 font-mono font-medium">33.3</span>
-                <span className="text-[10px] text-emerald-500 font-mono font-medium">66.6</span>
-                <span className="text-[10px] text-emerald-600 font-mono font-medium">100</span>
-              </div>
-            </div>
-
-            {/* Klasifikasi MHI */}
-            <div className="space-y-2">
-              <h4 className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Klasifikasi MHI</h4>
-              {MHI_LEGEND.map((item, i) => (
-                <div key={i} className="flex items-start gap-3 p-2.5 rounded-xl bg-white border border-gray-100 hover:bg-gray-50 transition-colors shadow-sm">
-                  <div className="w-5 h-5 rounded shadow-sm flex-shrink-0 mt-0.5" style={{ backgroundColor: item.color }} />
+            {/* Sumber data: ground check vs satelit */}
+            <div className="space-y-2 border-b border-gray-100 pb-3">
+              <h4 className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">
+                Sumber data
+              </h4>
+              {DATA_SOURCE_LEGEND.map((item) => (
+                <div
+                  key={item.key}
+                  className="flex items-start gap-2.5 p-2.5 rounded-xl bg-white border border-gray-100"
+                >
+                  <div
+                    className="w-4 h-4 rounded-sm flex-shrink-0 mt-0.5 border border-black/10"
+                    style={{ backgroundColor: item.color }}
+                  />
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between gap-1 mb-0.5">
-                      <span className="text-gray-900 text-xs font-bold">{item.label}</span>
-                      <span className="text-emerald-600 text-[10px] font-mono flex-shrink-0">({item.range})</span>
+                    <div className="flex items-center gap-1.5 flex-wrap mb-0.5">
+                      <span className="text-xs font-bold text-gray-900">{item.label}</span>
+                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${item.badgeClass}`}>
+                        {item.badge}
+                      </span>
                     </div>
-                    <p className="text-gray-500 text-[10px] leading-snug">{item.desc}</p>
+                    <p className="text-[10px] text-gray-500 leading-snug">{item.desc}</p>
                   </div>
                 </div>
               ))}
+              <p className="text-[9px] text-gray-400 px-0.5 leading-snug">
+                Layer di peta saat ini didominasi data ground check. GMW (satelit) dapat ditambah sebagai overlay pembanding.
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              {isInaRiskOpen && (
+                <div className="space-y-2 border-b border-gray-100 pb-3 last:border-0 last:pb-0">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-red-50 flex items-center justify-center">
+                      <ShieldAlert className="w-4 h-4 text-red-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-gray-900 text-sm">Banjir · BNPB inaRISK</h3>
+                      <p className="text-red-600/70 text-[10px]">Klik area banjir (warna) · layer_bahaya_banjir_30</p>
+                    </div>
+                  </div>
+                  <h4 className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Skala Bahaya Banjir</h4>
+                  {INA_RISK_LEGEND.map((item) => (
+                    <div key={item.level} className="flex items-start gap-3 p-2.5 rounded-xl bg-white border border-gray-100 hover:bg-gray-50 transition-colors shadow-sm">
+                      <div className="w-5 h-5 rounded shadow-sm flex-shrink-0 mt-0.5 border border-white" style={{ backgroundColor: item.color }} />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-1 mb-0.5">
+                          <span className="text-gray-900 text-xs font-bold">{item.label}</span>
+                          <span className="text-red-600 text-[10px] flex-shrink-0">Level {item.level}</span>
+                        </div>
+                        <p className="text-gray-500 text-[10px] leading-snug">{item.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                  <p className="text-[10px] text-gray-400">Sumber: gis.bnpb.go.id · inaRISK</p>
+                </div>
+              )}
+
+              {isAbrasionOpen && (
+                <div className="space-y-2 border-b border-gray-100 pb-3 last:border-0 last:pb-0">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-orange-50 flex items-center justify-center">
+                      <Waves className="w-4 h-4 text-orange-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-gray-900 text-sm">Abrasi Pantai</h3>
+                      <p className="text-orange-600/70 text-[10px]">Titik prioritas pesisir Jatim</p>
+                    </div>
+                  </div>
+                  <h4 className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Prioritas Abrasi</h4>
+                  {ABRASION_LEGEND.map((item) => (
+                    <div key={item.key} className="flex items-start gap-3 p-2.5 rounded-xl bg-white border border-gray-100 hover:bg-gray-50 transition-colors shadow-sm">
+                      <div className="w-5 h-5 rounded-full shadow-sm flex-shrink-0 mt-0.5 border-2 border-white ring-1 ring-black/10" style={{ backgroundColor: item.color }} />
+                      <div className="flex-1 min-w-0">
+                        <span className="text-gray-900 text-xs font-bold block mb-0.5">{item.label}</span>
+                        <p className="text-gray-500 text-[10px] leading-snug">{item.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                      <p className="text-[10px] text-gray-400">Sumber: digitasi ground check · abrasi ID-MAP</p>
+                    </div>
+                  )}
+
+                  {isRtrwDaratOpen && (
+                <div className="space-y-2 border-b border-gray-100 pb-3 last:border-0 last:pb-0">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center">
+                      <Map className="w-4 h-4 text-indigo-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-gray-900 text-sm">RTRW Pola Ruang Darat</h3>
+                      <p className="text-indigo-600/70 text-[10px]">Rencana pola ruang (disederhanakan)</p>
+                    </div>
+                  </div>
+                  <h4 className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Zona utama</h4>
+                  <div className="max-h-52 overflow-y-auto space-y-1.5 pr-1">
+                    {RTRW_LEGEND.map((item) => (
+                      <div
+                        key={item.name}
+                        className="flex items-center gap-2.5 p-2 rounded-lg bg-white border border-gray-100"
+                      >
+                        <div
+                          className="w-4 h-4 rounded-sm flex-shrink-0 border border-black/10"
+                          style={{ backgroundColor: item.color }}
+                        />
+                        <span className="text-[11px] font-semibold text-gray-800 leading-snug">
+                          {item.short || item.name}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-[10px] text-gray-400">
+                    Warna legenda diset agar tidak bentrok MHI/PRL/BNPB. Layer = GeoJSON ringan (~1.8MB), bukan KMZ 491MB.
+                  </p>
+                </div>
+              )}
+
+              {(isMhiKmlOpen || (!isInaRiskOpen && !isAbrasionOpen && !isRtrwDaratOpen && !isPrlLayerOpen)) && (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-3 border-b border-gray-100 pb-3">
+                    <div className="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center">
+                      <Layers className="w-4 h-4 text-emerald-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-gray-900 text-sm">MHI Mangrove Jawa Timur</h3>
+                      <p className="text-emerald-600/70 text-[10px]">Digitasi ground check · Dharmawan et al. 2021</p>
+                    </div>
+                  </div>
+                  <div>
+                    <h4 className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-2">Skala Indeks MHI</h4>
+                    <div className="flex h-3 rounded-full overflow-hidden shadow-inner border border-gray-100">
+                      <div className="flex-1 bg-[#d7191c]" />
+                      <div className="flex-1 bg-[#f5c542]" />
+                      <div className="flex-1 bg-[#1a9641]" />
+                    </div>
+                    <div className="flex justify-between mt-1.5 px-1">
+                      <span className="text-[10px] text-red-500 font-medium">0</span>
+                      <span className="text-[10px] text-yellow-500 font-medium">33.3</span>
+                      <span className="text-[10px] text-emerald-500 font-medium">66.6</span>
+                      <span className="text-[10px] text-emerald-600 font-medium">100</span>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <h4 className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Klasifikasi MHI</h4>
+                    {MHI_LEGEND.map((item, i) => (
+                      <div key={i} className="flex items-start gap-3 p-2.5 rounded-xl bg-white border border-gray-100 hover:bg-gray-50 transition-colors shadow-sm">
+                        <div className="w-5 h-5 rounded shadow-sm flex-shrink-0 mt-0.5" style={{ backgroundColor: item.color }} />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between gap-1 mb-0.5">
+                            <span className="text-gray-900 text-xs font-bold">{item.label}</span>
+                            <span className="text-emerald-600 text-[10px] flex-shrink-0">({item.range})</span>
+                          </div>
+                          <p className="text-gray-500 text-[10px] leading-snug">{item.desc}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -460,78 +592,25 @@ export default function JelajahiPetaMangrovePage() {
         </div>
 
         {/* ===== MAIN MAP AREA ===== */}
-        <div className="w-full h-full relative bg-[#062d22]" style={{ zIndex: 0, isolation: "isolate" }}>
-          {/* MHI Earth Engine iframe (always visible as base layer) */}
-          <div className="w-full h-full overflow-hidden">
-            {isLoading && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#0F2E2A] z-10">
-                <Loader2 className="h-12 w-12 text-[#22C55E] animate-spin mb-4" />
-                <p className="text-[#E6F4F1] text-base font-medium">Memuat Peta MHI Mangrove...</p>
-                <p className="text-[#E6F4F1]/50 text-xs mt-2">Menghubungkan ke Google Earth Engine...</p>
-              </div>
-            )}
-
-            {/* EE Filter toggle (desktop only — di mobile, iframe full-width) */}
-            <button
-              onClick={() => setIsEEPanelOpen(!isEEPanelOpen)}
-              className={`hidden md:flex absolute top-[40%] z-[300] bg-white/90 hover:bg-white text-emerald-800 p-2 shadow-lg backdrop-blur-md border border-gray-200 transition-all duration-500 rounded-r-xl border-l-0 items-center gap-2 ${
-                isEEPanelOpen ? "left-[300px]" : "left-0"
-              }`}
-              title={isEEPanelOpen ? "Tutup Filter EE" : "Buka Filter Wilayah & Tahun"}
-            >
-              {isEEPanelOpen ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-              {!isEEPanelOpen && <span className="text-[10px] font-bold uppercase tracking-wider py-2" style={{ writingMode: 'vertical-rl' }}>Filter</span>}
-            </button>
-
-            <iframe
-              src={EE_APP_URL}
-              className="border-0 max-w-none transition-all duration-500 ease-in-out"
-              style={isMobile ? {
-                height: 'calc(100% + 80px)',
-                marginTop: '-80px',
-                width: '100%',
-              } : {
-                height: 'calc(100% + 120px)',
-                marginTop: '-120px',
-                width: 'calc(100% + 380px)',
-                marginLeft: isEEPanelOpen ? '0px' : '-300px',
-                clipPath: 'inset(0 300px 0 0)',
-              }}
-              allow="geolocation; fullscreen"
-              onLoad={() => setIsLoading(false)}
-              title="Mangrove Health Index & Coastal Ecosystem - Jawa Timur"
-            />
+        <div className="w-full h-full relative bg-[#062d22] animate-rise-fade" style={{ zIndex: 0, isolation: "isolate", animationDelay: "180ms" }}>
+          {/* Shared satellite map + all stackable overlays */}
+          <div className="w-full h-full overflow-hidden relative">
+            <SharedInteractiveMap>
+              {isMhiKmlOpen && <MhiOverlay fitOnLoad={!anyLayerActive || activeLayers[0] === "MHI"} />}
+              {isRtrwDaratOpen && <RtrwOverlay fitOnLoad={activeLayers[0] === "RTRW"} />}
+              {isPrlLayerOpen && <PrlOverlay fitOnLoad={activeLayers[0] === "PRL"} />}
+              {isAbrasionOpen && <AbrasionOverlay fitOnLoad={activeLayers[0] === "Abrasi"} />}
+              {isTurtleLayerOpen && <TurtleOverlay fitOnLoad={activeLayers[0] === "Penyu"} />}
+              {isPokmaswasLayerOpen && <PokmaswasOverlay fitOnLoad={activeLayers[0] === "Mitra"} />}
+              {isInaRiskOpen && <InaRiskOverlay fitOnLoad={activeLayers[0] === "BNPB"} />}
+            </SharedInteractiveMap>
           </div>
 
-          {/* Polygon Drawing - transparent Leaflet overlay, MHI stays visible */}
+          {/* Polygon Drawing - transparent Leaflet overlay */}
           {isDrawing && (
             <div className="absolute inset-0 z-[350]">
               <NativeMap onAreaCalculated={setAreaHa} transparent={true} />
             </div>
-          )}
-
-          {/* Abrasi Pantai - full satellite map with pins */}
-          {isAbrasionOpen && (
-            <AbrasionMap onClose={() => setIsAbrasionOpen(false)} />
-          )}
-
-          {/* Turtle Layer - full Leaflet map with satellite tiles */}
-          {isTurtleLayerOpen && (
-            <TurtleLayer onClose={() => setIsTurtleLayerOpen(false)} />
-          )}
-
-          {/* Pokmaswas Layer - kelompok pengawas masyarakat */}
-          {isPokmaswasLayerOpen && (
-            <PokmaswasLayer onClose={() => setIsPokmaswasLayerOpen(false)} />
-          )}
-
-          {/* RTRW / Tata Ruang - overlay KML/KMZ langsung (tanpa GeoJSON) */}
-          {isRtrwLayerOpen && (
-            <KmlLayer
-              url="/docs-idmap/rtrw-pemanfaatan-ruang-laut.kmz"
-              title="Pemanfaatan Ruang Laut (Perda No. 10 Tahun 2023)"
-              onClose={() => setIsRtrwLayerOpen(false)}
-            />
           )}
 
 
@@ -561,10 +640,23 @@ export default function JelajahiPetaMangrovePage() {
                 onClick={() => setMobileSheet("none")}
                 aria-hidden
               />
-              <div className="md:hidden fixed left-0 right-0 bottom-0 z-[710] bg-white rounded-t-2xl shadow-2xl border-t border-gray-100 max-h-[80vh] overflow-y-auto">
+              <div
+                className="md:hidden fixed left-0 right-0 bottom-0 z-[710] bg-white rounded-t-2xl shadow-2xl border-t border-gray-100 max-h-[80vh] overflow-y-auto"
+                style={mobileSheet === "legend" ? { fontFamily: "Arial, Helvetica, sans-serif" } : undefined}
+              >
                 <div className="sticky top-0 bg-white border-b border-gray-100 px-4 py-3 flex items-center justify-between">
                   <h3 className="font-bold text-gray-900 text-sm">
-                    {mobileSheet === "legend" ? "Legenda MHI" : "Kalkulator Karbon"}
+                    {mobileSheet === "legend"
+                      ? isRtrwDaratOpen
+                        ? "Legenda RTRW Darat"
+                        : isInaRiskOpen && isAbrasionOpen
+                          ? "Legenda Banjir + Abrasi"
+                          : isInaRiskOpen
+                            ? "Legenda Banjir BNPB"
+                            : isAbrasionOpen
+                              ? "Legenda Abrasi"
+                              : "Legenda Peta"
+                      : "Kalkulator Karbon"}
                   </h3>
                   <button
                     onClick={() => setMobileSheet("none")}
@@ -577,37 +669,103 @@ export default function JelajahiPetaMangrovePage() {
                 <div className="p-4">
                   {mobileSheet === "legend" && (
                     <div className="flex flex-col gap-4">
-                      {/* MHI Color Scale Bar */}
-                      <div>
-                        <h4 className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-2">Skala Indeks MHI</h4>
-                        <div className="flex h-3 rounded-full overflow-hidden shadow-inner border border-gray-100">
-                          <div className="flex-1 bg-[#d7191c]" />
-                          <div className="flex-1 bg-[#f5c542]" />
-                          <div className="flex-1 bg-[#1a9641]" />
-                        </div>
-                        <div className="flex justify-between mt-1.5 px-1">
-                          <span className="text-[10px] text-red-500 font-mono font-medium">0</span>
-                          <span className="text-[10px] text-yellow-500 font-mono font-medium">33.3</span>
-                          <span className="text-[10px] text-emerald-500 font-mono font-medium">66.6</span>
-                          <span className="text-[10px] text-emerald-600 font-mono font-medium">100</span>
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <h4 className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Klasifikasi MHI</h4>
-                        {MHI_LEGEND.map((item, i) => (
-                          <div key={i} className="flex items-start gap-3 p-2.5 rounded-xl bg-white border border-gray-100">
-                            <div className="w-5 h-5 rounded shadow-sm flex-shrink-0 mt-0.5" style={{ backgroundColor: item.color }} />
+                      <div className="space-y-2 pb-2 border-b border-gray-100">
+                        <h4 className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Sumber data</h4>
+                        {DATA_SOURCE_LEGEND.map((item) => (
+                          <div key={item.key} className="flex items-start gap-2.5 p-2.5 rounded-xl bg-white border border-gray-100">
+                            <div className="w-4 h-4 rounded-sm flex-shrink-0 mt-0.5 border border-black/10" style={{ backgroundColor: item.color }} />
                             <div className="flex-1 min-w-0">
-                              <div className="flex items-center justify-between gap-1 mb-0.5">
-                                <span className="text-gray-900 text-xs font-bold">{item.label}</span>
-                                <span className="text-emerald-600 text-[10px] font-mono flex-shrink-0">({item.range})</span>
+                              <div className="flex items-center gap-1.5 flex-wrap mb-0.5">
+                                <span className="text-xs font-bold text-gray-900">{item.label}</span>
+                                <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${item.badgeClass}`}>
+                                  {item.badge}
+                                </span>
                               </div>
-                              <p className="text-gray-500 text-[10px] leading-snug">{item.desc}</p>
+                              <p className="text-[10px] text-gray-500 leading-snug">{item.desc}</p>
                             </div>
                           </div>
                         ))}
+                        <p className="text-[9px] text-gray-400 leading-snug">
+                          Layer aktif = ground check. GMW satelit = pembanding (opsional).
+                        </p>
                       </div>
-                      <p className="text-[10px] text-gray-400">Sumber: Dharmawan et al. 2021</p>
+                      {isInaRiskOpen && (
+                        <div className="space-y-2">
+                          <h4 className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Skala Bahaya Banjir BNPB</h4>
+                          {INA_RISK_LEGEND.map((item) => (
+                            <div key={item.level} className="flex items-start gap-3 p-2.5 rounded-xl bg-white border border-gray-100">
+                              <div className="w-5 h-5 rounded shadow-sm flex-shrink-0 mt-0.5 border border-white" style={{ backgroundColor: item.color }} />
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center justify-between gap-1 mb-0.5">
+                                  <span className="text-gray-900 text-xs font-bold">{item.label}</span>
+                                  <span className="text-red-600 text-[10px] flex-shrink-0">Level {item.level}</span>
+                                </div>
+                                <p className="text-gray-500 text-[10px] leading-snug">{item.desc}</p>
+                              </div>
+                            </div>
+                          ))}
+                          <p className="text-[10px] text-gray-400">Sumber: gis.bnpb.go.id · inaRISK</p>
+                        </div>
+                      )}
+                      {isAbrasionOpen && (
+                        <div className="space-y-2">
+                          <h4 className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Prioritas Abrasi</h4>
+                          {ABRASION_LEGEND.map((item) => (
+                            <div key={item.key} className="flex items-start gap-3 p-2.5 rounded-xl bg-white border border-gray-100">
+                              <div className="w-5 h-5 rounded-full shadow-sm flex-shrink-0 mt-0.5 border-2 border-white ring-1 ring-black/10" style={{ backgroundColor: item.color }} />
+                              <div className="flex-1 min-w-0">
+                                <span className="text-gray-900 text-xs font-bold block mb-0.5">{item.label}</span>
+                                <p className="text-gray-500 text-[10px] leading-snug">{item.desc}</p>
+                              </div>
+                            </div>
+                          ))}
+                          <p className="text-[10px] text-gray-400">Sumber: digitasi ground check · abrasi ID-MAP</p>
+                        </div>
+                      )}
+                      {isRtrwDaratOpen && (
+                        <div className="space-y-2">
+                          <h4 className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">RTRW Pola Ruang Darat</h4>
+                          {RTRW_LEGEND.map((item) => (
+                            <div key={item.name} className="flex items-center gap-2.5 p-2 rounded-lg bg-white border border-gray-100">
+                              <div className="w-4 h-4 rounded-sm flex-shrink-0 border border-black/10" style={{ backgroundColor: item.color }} />
+                              <span className="text-[11px] font-semibold text-gray-800">{item.short || item.name}</span>
+                            </div>
+                          ))}
+                          <p className="text-[10px] text-gray-400">GeoJSON ringan · warna anti-bentrok layer lain</p>
+                        </div>
+                      )}
+                      {(isMhiKmlOpen || (!isInaRiskOpen && !isAbrasionOpen && !isRtrwDaratOpen)) && (
+                        <div className="space-y-2">
+                          <h4 className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-2">Skala Indeks MHI</h4>
+                          <div className="flex h-3 rounded-full overflow-hidden shadow-inner border border-gray-100">
+                            <div className="flex-1 bg-[#d7191c]" />
+                            <div className="flex-1 bg-[#f5c542]" />
+                            <div className="flex-1 bg-[#1a9641]" />
+                          </div>
+                          <div className="flex justify-between mt-1.5 px-1">
+                            <span className="text-[10px] text-red-500 font-medium">0</span>
+                            <span className="text-[10px] text-yellow-500 font-medium">33.3</span>
+                            <span className="text-[10px] text-emerald-500 font-medium">66.6</span>
+                            <span className="text-[10px] text-emerald-600 font-medium">100</span>
+                          </div>
+                          <div className="space-y-2">
+                            <h4 className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Klasifikasi MHI</h4>
+                            {MHI_LEGEND.map((item, i) => (
+                              <div key={i} className="flex items-start gap-3 p-2.5 rounded-xl bg-white border border-gray-100">
+                                <div className="w-5 h-5 rounded shadow-sm flex-shrink-0 mt-0.5" style={{ backgroundColor: item.color }} />
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center justify-between gap-1 mb-0.5">
+                                    <span className="text-gray-900 text-xs font-bold">{item.label}</span>
+                                    <span className="text-emerald-600 text-[10px] flex-shrink-0">({item.range})</span>
+                                  </div>
+                                  <p className="text-gray-500 text-[10px] leading-snug">{item.desc}</p>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                          <p className="text-[10px] text-gray-400">Sumber: digitasi ground check · Dharmawan et al. 2021</p>
+                        </div>
+                      )}
                     </div>
                   )}
 
@@ -699,6 +857,7 @@ export default function JelajahiPetaMangrovePage() {
           )}
         </div>
       </div>
+      {isScoringOpen && <ScoringPanel onClose={() => setIsScoringOpen(false)} />}
     </div>
   );
 }

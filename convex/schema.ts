@@ -101,6 +101,9 @@ export default defineSchema({
     serviceType: v.optional(v.string()),
     fundingTarget: v.optional(v.number()),  // IDR
     fundingRaised: v.optional(v.number()),  // IDR (default 0)
+    contractSignedAt: v.optional(v.number()),
+    finalReportSubmittedAt: v.optional(v.number()),
+    monevCompletedAt: v.optional(v.number()),
     // Stage 11 NGO Layer — facilitator (NGO/akademisi/dll) sebagai
     // co-operator. Pokmaswas tetap "owner" via mitraId.
     facilitatorId: v.optional(v.id("users")),
@@ -206,6 +209,36 @@ export default defineSchema({
     createdAt: v.number(),
   })
     .index("by_project", ["projectId"]),
+
+  // Pencairan dana proyek bertahap: 25% kontrak, 50% realisasi, 25% final.
+  disbursementRequests: defineTable({
+    projectId: v.id("projects"),
+    mitraId: v.id("users"),
+    milestone: v.union(
+      v.literal("contract"),
+      v.literal("realization"),
+      v.literal("final")
+    ),
+    percentage: v.union(v.literal(25), v.literal(50)),
+    amount: v.number(),
+    bankName: v.string(),
+    accountName: v.string(),
+    accountNumber: v.string(),
+    notes: v.optional(v.string()),
+    status: v.union(
+      v.literal("Menunggu Review"),
+      v.literal("Disetujui"),
+      v.literal("Dibayar"),
+      v.literal("Ditolak")
+    ),
+    reviewNote: v.optional(v.string()),
+    requestedAt: v.number(),
+    reviewedAt: v.optional(v.number()),
+    paidAt: v.optional(v.number()),
+  })
+    .index("by_mitra", ["mitraId"])
+    .index("by_project", ["projectId"])
+    .index("by_status", ["status"]),
 
   // ─── System Activities (Audit Log) ───────────────────────────────
   systemActivities: defineTable({
@@ -446,4 +479,22 @@ export default defineSchema({
     .index("by_user", ["userId"])
     .index("by_status", ["status"])
     .index("by_user_and_status", ["userId", "status"]),
+
+  // ─── Abrasion Sites (Map Pins) ───────────────────────────────────
+  abrasionSites: defineTable({
+    no: v.number(),
+    namaPantai: v.string(),
+    kecamatanKab: v.string(),
+    indikasiAbrasi: v.string(),
+    kondisiSesudah: v.string(),
+    substrat: v.string(),
+    luasan: v.string(),
+    prioritas: v.string(),
+    tanamanRekomendasi: v.array(v.string()),
+    lat: v.number(),
+    lng: v.number(),
+    updatedAt: v.number(),
+    updatedBy: v.optional(v.id("users")),
+  })
+    .index("by_no", ["no"]),
 });

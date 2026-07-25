@@ -1,24 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { ABRASION_SITES, PRIORITAS_CONFIG, type AbrasionSite, type PrioritasType } from "@/lib/abrasionData";
-import { Plus, Pencil, Trash2, Save, X, AlertTriangle, ChevronDown, ChevronUp } from "lucide-react";
+import { useState, Fragment } from "react";
+import dynamic from "next/dynamic";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import { ABRASION_SITES, PRIORITAS_CONFIG, type PrioritasType, type AbrasionSite } from "@/lib/abrasionData";
+import { Plus, Pencil, Trash2, Save, X, AlertTriangle, ChevronDown, ChevronUp, Map as MapIcon } from "lucide-react";
 
-const STORAGE_KEY = "idmap_abrasi_override";
-
-function loadSites(): AbrasionSite[] {
-  if (typeof window === "undefined") return ABRASION_SITES;
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    return stored ? JSON.parse(stored) : ABRASION_SITES;
-  } catch {
-    return ABRASION_SITES;
-  }
-}
-
-function saveSites(sites: AbrasionSite[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(sites));
-}
+const AbrasionMap = dynamic(
+  () => import("@/components/map/AbrasionMap"),
+  { ssr: false }
+);
 
 const emptyForm: Omit<AbrasionSite, "no"> = {
   namaPantai: "",
@@ -33,105 +25,56 @@ const emptyForm: Omit<AbrasionSite, "no"> = {
   lng: 0,
 };
 
-export default function KelolaAbrasiPage() {
-  const [sites, setSites] = useState<AbrasionSite[]>([]);
-  const [editId, setEditId] = useState<number | null>(null);
-  const [isAdding, setIsAdding] = useState(false);
-  const [form, setForm] = useState<Omit<AbrasionSite, "no">>(emptyForm);
-  const [filterPrioritas, setFilterPrioritas] = useState<PrioritasType | "Semua">("Semua");
-  const [expandedId, setExpandedId] = useState<number | null>(null);
-  const [saved, setSaved] = useState(false);
-
-  useEffect(() => {
-    setSites(loadSites());
-  }, []);
-
-  const filtered = filterPrioritas === "Semua" ? sites : sites.filter((s) => s.prioritas === filterPrioritas);
-
-  function handleEdit(site: AbrasionSite) {
-    setEditId(site.no);
-    setIsAdding(false);
-    setForm({ ...site });
-  }
-
-  function handleDelete(no: number) {
-    if (!confirm("Hapus lokasi ini?")) return;
-    const updated = sites.filter((s) => s.no !== no).map((s, i) => ({ ...s, no: i + 1 }));
-    setSites(updated);
-    saveSites(updated);
-    flash();
-  }
-
-  function handleSaveEdit() {
-    const updated = sites.map((s) => s.no === editId ? { ...form, no: editId } : s);
-    setSites(updated);
-    saveSites(updated);
-    setEditId(null);
-    flash();
-  }
-
-  function handleAdd() {
-    const nextNo = sites.length > 0 ? Math.max(...sites.map((s) => s.no)) + 1 : 1;
-    const updated = [...sites, { ...form, no: nextNo }];
-    setSites(updated);
-    saveSites(updated);
-    setIsAdding(false);
-    setForm(emptyForm);
-    flash();
-  }
-
-  function handleReset() {
-    if (!confirm("Reset ke data awal? Semua perubahan akan hilang.")) return;
-    localStorage.removeItem(STORAGE_KEY);
-    setSites(ABRASION_SITES);
-    flash();
-  }
-
-  function flash() {
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-  }
-
+function EditForm({
+  form,
+  setForm,
+  onSave,
+  onCancel,
+}: {
+  form: Omit<AbrasionSite, "no">;
+  setForm: React.Dispatch<React.SetStateAction<Omit<AbrasionSite, "no">>>;
+  onSave: () => void;
+  onCancel: () => void;
+}) {
   function updateTanaman(idx: number, val: string) {
-    const arr = [...form.tanamanRekomendasi];
-    arr[idx] = val;
-    setForm({ ...form, tanamanRekomendasi: arr });
+    setForm((prev) => {
+      const arr = [...prev.tanamanRekomendasi];
+      arr[idx] = val;
+      return { ...prev, tanamanRekomendasi: arr };
+    });
   }
-
-  function addTanaman() {
-    setForm({ ...form, tanamanRekomendasi: [...form.tanamanRekomendasi, ""] });
+  function addTanamanField() {
+    setForm((prev) => ({ ...prev, tanamanRekomendasi: [...prev.tanamanRekomendasi, ""] }));
   }
-
   function removeTanaman(idx: number) {
-    setForm({ ...form, tanamanRekomendasi: form.tanamanRekomendasi.filter((_, i) => i !== idx) });
+    setForm((prev) => ({ ...prev, tanamanRekomendasi: prev.tanamanRekomendasi.filter((_, i) => i !== idx) }));
   }
-
-  const EditForm = ({ onSave, onCancel }: { onSave: () => void; onCancel: () => void }) => (
+  return (
     <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 space-y-3">
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="text-xs font-semibold text-gray-600 block mb-1">Nama Pantai</label>
-          <input value={form.namaPantai} onChange={(e) => setForm({ ...form, namaPantai: e.target.value })}
+          <input value={form.namaPantai} onChange={(e) => setForm((prev) => ({ ...prev, namaPantai: e.target.value }))}
             className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" placeholder="Nama pantai" />
         </div>
         <div>
           <label className="text-xs font-semibold text-gray-600 block mb-1">Kecamatan/Kab</label>
-          <input value={form.kecamatanKab} onChange={(e) => setForm({ ...form, kecamatanKab: e.target.value })}
+          <input value={form.kecamatanKab} onChange={(e) => setForm((prev) => ({ ...prev, kecamatanKab: e.target.value }))}
             className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" placeholder="Kecamatan, Kab." />
         </div>
         <div>
           <label className="text-xs font-semibold text-gray-600 block mb-1">Indikasi Abrasi</label>
-          <input value={form.indikasiAbrasi} onChange={(e) => setForm({ ...form, indikasiAbrasi: e.target.value })}
+          <input value={form.indikasiAbrasi} onChange={(e) => setForm((prev) => ({ ...prev, indikasiAbrasi: e.target.value }))}
             className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" placeholder="Keterangan abrasi" />
         </div>
         <div>
           <label className="text-xs font-semibold text-gray-600 block mb-1">Kondisi Sesudah</label>
-          <input value={form.kondisiSesudah} onChange={(e) => setForm({ ...form, kondisiSesudah: e.target.value })}
+          <input value={form.kondisiSesudah} onChange={(e) => setForm((prev) => ({ ...prev, kondisiSesudah: e.target.value }))}
             className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" />
         </div>
         <div>
           <label className="text-xs font-semibold text-gray-600 block mb-1">Prioritas</label>
-          <select value={form.prioritas} onChange={(e) => setForm({ ...form, prioritas: e.target.value as PrioritasType })}
+          <select value={form.prioritas} onChange={(e) => setForm((prev) => ({ ...prev, prioritas: e.target.value as PrioritasType }))}
             className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm">
             <option value="Tinggi">Tinggi</option>
             <option value="Sedang">Sedang</option>
@@ -140,7 +83,7 @@ export default function KelolaAbrasiPage() {
         </div>
         <div>
           <label className="text-xs font-semibold text-gray-600 block mb-1">Substrat</label>
-          <select value={form.substrat} onChange={(e) => setForm({ ...form, substrat: e.target.value as AbrasionSite["substrat"] })}
+          <select value={form.substrat} onChange={(e) => setForm((prev) => ({ ...prev, substrat: e.target.value as AbrasionSite["substrat"] }))}
             className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm">
             <option value="Pasir">Pasir</option>
             <option value="Lumpur">Lumpur</option>
@@ -150,24 +93,23 @@ export default function KelolaAbrasiPage() {
         </div>
         <div>
           <label className="text-xs font-semibold text-gray-600 block mb-1">Luasan</label>
-          <input value={form.luasan} onChange={(e) => setForm({ ...form, luasan: e.target.value })}
+          <input value={form.luasan} onChange={(e) => setForm((prev) => ({ ...prev, luasan: e.target.value }))}
             className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" placeholder="misal: 50–100 ha" />
         </div>
         <div className="grid grid-cols-2 gap-2">
           <div>
             <label className="text-xs font-semibold text-gray-600 block mb-1">Lat</label>
-            <input type="number" value={form.lat} onChange={(e) => setForm({ ...form, lat: parseFloat(e.target.value) || 0 })}
+            <input type="number" value={form.lat} onChange={(e) => setForm((prev) => ({ ...prev, lat: parseFloat(e.target.value) || 0 }))}
               className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" step="0.0001" />
           </div>
           <div>
             <label className="text-xs font-semibold text-gray-600 block mb-1">Lng</label>
-            <input type="number" value={form.lng} onChange={(e) => setForm({ ...form, lng: parseFloat(e.target.value) || 0 })}
+            <input type="number" value={form.lng} onChange={(e) => setForm((prev) => ({ ...prev, lng: parseFloat(e.target.value) || 0 }))}
               className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" step="0.0001" />
           </div>
         </div>
       </div>
 
-      {/* Tanaman rekomendasi */}
       <div>
         <label className="text-xs font-semibold text-gray-600 block mb-1">Tanaman Rekomendasi</label>
         {form.tanamanRekomendasi.map((t, i) => (
@@ -179,7 +121,7 @@ export default function KelolaAbrasiPage() {
             </button>
           </div>
         ))}
-        <button onClick={addTanaman} className="text-xs text-emerald-600 font-semibold flex items-center gap-1 hover:text-emerald-700">
+        <button onClick={addTanamanField} className="text-xs text-emerald-600 font-semibold flex items-center gap-1 hover:text-emerald-700">
           <Plus className="w-3.5 h-3.5" /> Tambah Tanaman
         </button>
       </div>
@@ -194,6 +136,131 @@ export default function KelolaAbrasiPage() {
       </div>
     </div>
   );
+}
+
+export default function KelolaAbrasiPage() {
+  const convexSites = useQuery(api.abrasionSites.list);
+  const seed = useMutation(api.abrasionSites.seed);
+  const updateSite = useMutation(api.abrasionSites.updateSite);
+  const addSite = useMutation(api.abrasionSites.addSite);
+  const deleteSite = useMutation(api.abrasionSites.deleteSite);
+
+  const [editId, setEditId] = useState<number | null>(null);
+  const [isAdding, setIsAdding] = useState(false);
+  const [form, setForm] = useState<Omit<AbrasionSite, "no">>(emptyForm);
+  const [filterPrioritas, setFilterPrioritas] = useState<PrioritasType | "Semua">("Semua");
+  const [expandedId, setExpandedId] = useState<number | null>(null);
+  const [saved, setSaved] = useState(false);
+  const [view, setView] = useState<"table" | "map">("table");
+  const [seeding, setSeeding] = useState(false);
+
+  const sites: AbrasionSite[] =
+    convexSites && convexSites.length > 0
+      ? (convexSites as unknown as AbrasionSite[])
+      : ABRASION_SITES;
+
+  const filtered = filterPrioritas === "Semua" ? sites : sites.filter((s) => s.prioritas === filterPrioritas);
+
+  async function ensureDatabase() {
+    if (convexSites && convexSites.length > 0) return;
+    setSeeding(true);
+    try {
+      await seed();
+      // tunggu re-render setelah seed
+      await new Promise((r) => setTimeout(r, 500));
+    } catch (e) {
+      console.error("Seed gagal:", e);
+    } finally {
+      setSeeding(false);
+    }
+  }
+
+  function toSitePayload(site: AbrasionSite | Omit<AbrasionSite, "no">) {
+    return {
+      namaPantai: site.namaPantai,
+      kecamatanKab: site.kecamatanKab,
+      indikasiAbrasi: site.indikasiAbrasi,
+      kondisiSesudah: site.kondisiSesudah,
+      substrat: site.substrat,
+      luasan: site.luasan,
+      prioritas: site.prioritas,
+      tanamanRekomendasi: (site.tanamanRekomendasi || []).map((t) => t.trim()).filter(Boolean),
+      lat: Number(site.lat),
+      lng: Number(site.lng),
+    };
+  }
+
+  function handleEdit(site: AbrasionSite) {
+    setEditId(site.no);
+    setIsAdding(false);
+    // Hanya salin field yg dikenal, hindari _id / _creationTime dari Convex
+    setForm({
+      namaPantai: site.namaPantai,
+      kecamatanKab: site.kecamatanKab,
+      indikasiAbrasi: site.indikasiAbrasi,
+      kondisiSesudah: site.kondisiSesudah,
+      substrat: site.substrat,
+      luasan: site.luasan,
+      prioritas: site.prioritas,
+      tanamanRekomendasi: site.tanamanRekomendasi,
+      lat: site.lat,
+      lng: site.lng,
+    });
+  }
+
+  async function handleDelete(no: number) {
+    if (!confirm("Hapus lokasi ini?")) return;
+    try {
+      await ensureDatabase();
+      await deleteSite({ no });
+      flash();
+    } catch (e) {
+      alert("Gagal menghapus: " + (e instanceof Error ? e.message : "Error"));
+    }
+  }
+
+  async function handleSaveEdit() {
+    if (editId === null) return;
+    try {
+      await ensureDatabase();
+      // Hanya field schema — jangan sebar _id/_creationTime dari dokumen Convex
+      await updateSite({ no: editId, ...toSitePayload(form) });
+      setEditId(null);
+      flash();
+    } catch (e) {
+      console.error("Gagal simpan edit:", e);
+      alert("Gagal menyimpan: " + (e instanceof Error ? e.message : "Cek console"));
+    }
+  }
+
+  async function handleAdd() {
+    try {
+      await ensureDatabase();
+      await addSite(toSitePayload(form));
+      setIsAdding(false);
+      setForm(emptyForm);
+      flash();
+    } catch (e) {
+      console.error("Gagal tambah:", e);
+      alert("Gagal menambah: " + (e instanceof Error ? e.message : "Cek console"));
+    }
+  }
+
+  function flash() {
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  }
+
+  if (view === "map") {
+    return (
+      <div className="fixed inset-0 z-[400]">
+        <AbrasionMap
+          onClose={() => setView("table")}
+          editable
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-5">
@@ -203,14 +270,31 @@ export default function KelolaAbrasiPage() {
           <p className="text-sm text-gray-500">{sites.length} lokasi · Jawa Timur</p>
         </div>
         <div className="flex items-center gap-2">
+          {seeding && (
+            <span className="text-xs font-semibold text-amber-600 bg-amber-50 border border-amber-100 px-3 py-1.5 rounded-lg">
+              Menyimpan data awal…
+            </span>
+          )}
           {saved && (
             <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 border border-emerald-100 px-3 py-1.5 rounded-lg">
               ✓ Tersimpan
             </span>
           )}
-          <button onClick={handleReset} className="text-xs text-gray-500 hover:text-red-600 px-3 py-1.5 border border-gray-200 rounded-lg hover:border-red-100 transition-colors">
-            Reset Data
+          <button
+            onClick={() => setView("map")}
+            className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white text-sm font-semibold rounded-lg hover:bg-emerald-700"
+          >
+            <MapIcon className="w-4 h-4" /> Peta Interaktif
           </button>
+          {!convexSites?.length && (
+            <button
+              onClick={ensureDatabase}
+              disabled={seeding}
+              className="text-xs text-emerald-600 hover:text-emerald-700 px-3 py-1.5 border border-emerald-200 rounded-lg hover:bg-emerald-50 transition-colors disabled:opacity-50"
+            >
+              Simpan ke Database
+            </button>
+          )}
           <button onClick={() => { setIsAdding(true); setEditId(null); setForm(emptyForm); }}
             className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white text-sm font-semibold rounded-lg hover:bg-orange-600">
             <Plus className="w-4 h-4" /> Tambah Lokasi
@@ -218,7 +302,6 @@ export default function KelolaAbrasiPage() {
         </div>
       </div>
 
-      {/* Filter */}
       <div className="flex items-center gap-2">
         {(["Semua", "Tinggi", "Sedang", "Rendah–Sedang"] as const).map((f) => (
           <button key={f} onClick={() => setFilterPrioritas(f)}
@@ -235,12 +318,10 @@ export default function KelolaAbrasiPage() {
         ))}
       </div>
 
-      {/* Add form */}
       {isAdding && (
-        <EditForm onSave={handleAdd} onCancel={() => setIsAdding(false)} />
+        <EditForm key="add-form" form={form} setForm={setForm} onSave={handleAdd} onCancel={() => setIsAdding(false)} />
       )}
 
-      {/* Table */}
       <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
         <table className="w-full text-sm">
           <thead>
@@ -257,11 +338,12 @@ export default function KelolaAbrasiPage() {
           </thead>
           <tbody>
             {filtered.map((site) => {
-              const cfg = PRIORITAS_CONFIG[site.prioritas];
+              const cfg = PRIORITAS_CONFIG[site.prioritas as PrioritasType];
+              if (!cfg) return null;
               const isExpanded = expandedId === site.no;
               return (
-                <>
-                  <tr key={site.no} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+                <Fragment key={site.no}>
+                  <tr className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
                     <td className="px-4 py-3 text-gray-400 font-mono text-xs">{site.no}</td>
                     <td className="px-4 py-3">
                       <button onClick={() => setExpandedId(isExpanded ? null : site.no)}
@@ -297,7 +379,6 @@ export default function KelolaAbrasiPage() {
                     </td>
                   </tr>
 
-                  {/* Expanded row */}
                   {isExpanded && (
                     <tr key={`${site.no}-exp`} className="bg-gray-50/50">
                       <td colSpan={8} className="px-4 pb-3 pt-0">
@@ -329,15 +410,14 @@ export default function KelolaAbrasiPage() {
                     </tr>
                   )}
 
-                  {/* Edit form inline */}
                   {editId === site.no && (
                     <tr key={`${site.no}-edit`}>
                       <td colSpan={8} className="px-4 py-3">
-                        <EditForm onSave={handleSaveEdit} onCancel={() => setEditId(null)} />
+                        <EditForm key="edit-form" form={form} setForm={setForm} onSave={handleSaveEdit} onCancel={() => setEditId(null)} />
                       </td>
                     </tr>
                   )}
-                </>
+                </Fragment> 
               );
             })}
           </tbody>
@@ -349,7 +429,7 @@ export default function KelolaAbrasiPage() {
 
       <div className="text-xs text-gray-400 flex items-center gap-1.5">
         <AlertTriangle className="w-3.5 h-3.5" />
-        Perubahan disimpan di browser ini. Untuk sinkronisasi ke semua perangkat, hubungi admin.
+        Data tersimpan di database dan sinkron real-time ke semua perangkat.
       </div>
     </div>
   );
