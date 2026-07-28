@@ -61,6 +61,13 @@ export const metadata: Metadata = {
       "Donasi QRIS langsung tersalurkan ke Pokmaswas pelaksana. Sertifikat digital otomatis. Data pesisir Indonesia dalam satu platform.",
     images: ["/screenshot-wide.jpeg"],
   },
+  icons: {
+    icon: "/icon-192.png",
+    apple: "/apple-icon.png",
+  },
+  other: {
+    "mobile-web-app-capable": "yes",
+  },
   alternates: {
     canonical: "/",
   },

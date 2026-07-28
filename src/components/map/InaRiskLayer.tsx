@@ -54,8 +54,7 @@ const JATIM_CITIES: { name: string; lat: number; lng: number; type: "kota" | "ka
   { name: "Kab. Sumenep", lat: -7.0150, lng: 113.8616, type: "kabupaten" },
 ];
 
-const GEOJSON_URL =
-  "https://raw.githubusercontent.com/superpikar/indonesia-geojson/master/east-java.geojson";
+const GEOJSON_URL = "/data/east-java.geojson";
 
 // Kabupaten/kota yang berbatasan langsung dengan laut (pesisir Jawa Timur + Madura)
 const PESISIR_NAMES = new Set([

@@ -14,8 +14,7 @@ import {
   parseIdentifyPixel,
 } from "./inaRiskLegend";
 
-const GEOJSON_URL =
-  "https://raw.githubusercontent.com/superpikar/indonesia-geojson/master/east-java.geojson";
+const GEOJSON_URL = "/data/east-java.geojson";
 
 const PESISIR_NAMES = new Set([
   "Kota Surabaya", "Surabaya", "Kota Probolinggo", "Probolinggo",
