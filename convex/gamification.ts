@@ -216,12 +216,15 @@ export const getLeaderboard = query({
       .withIndex("by_role", (q) => q.eq("role", "sahabat"))
       .collect();
 
-    const referralRows = await ctx.db.query("referrals").collect();
+    // Tabel `referrals` tidak ada di schema (fitur masih dalam roadmap).
+    // Untuk sementara, hitung "verified referral" sebagai jumlah kontribusi
+    // berstatus `paid` yang menggunakan `referralCode` milik user tsb.
+    // Schema contributions belum menyimpan referralCode jadi untuk sekarang
+    // leaderboard selalu menampilkan 0 verified referrals sampai fitur
+    // selesai diimplementasi.
     const verifiedCounts = new Map<string, number>();
-    for (const row of referralRows) {
-      if (row.status !== "verified" || !row.referrerId) continue;
-      const key = String(row.referrerId);
-      verifiedCounts.set(key, (verifiedCounts.get(key) ?? 0) + 1);
+    for (const u of sahabat) {
+      verifiedCounts.set(String(u._id), 0);
     }
 
     const rows = sahabat.map((u) => {

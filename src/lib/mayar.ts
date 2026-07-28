@@ -48,6 +48,10 @@ async function call<T>(
 
 // Dynamic QRIS
 // Returns a QR image URL the user can scan. No auto-redirect.
+// NOTE: Mayar's dynamic QRIS endpoint only accepts `{ amount }`.
+// The transaction id is derived from the QR image URL (UUID filename).
+// We do NOT send extraData because the endpoint does not echo it back,
+// so it would not help with webhook correlation.
 export type QrisResponse = { url: string; amount: number; id?: string };
 
 export function createQris(amount: number) {

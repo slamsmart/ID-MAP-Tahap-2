@@ -116,23 +116,3 @@ export function createInaRiskPinIcon(
     popupAnchor: [0, -20],
   });
 }
-
-/** Skala Bahaya Banjir (digabungkan) */
-export function createInaRiskLegendHtml(): string {
-  return `
-    <div class="flex flex-col gap-2 text-xs bg-white/95 p-3 rounded-xl border border-gray-200 shadow">
-      <div class="font-bold text-red-700 flex items-center gap-2">
-        <span>⚠️</span>
-        <span>Skala Bahaya Banjir</span>
-      </div>
-      <div class="flex flex-wrap gap-3">
-        ${INA_RISK_LEGEND.map((l) => 
-          `<div class="flex items-center gap-2">
-            <span class="w-3 h-3 rounded border" style="background:${l.color}"></span>
-            <span>${l.label}</span>
-          </div>`
-        ).join('')}
-      </div>
-    </div>
-  `;
-}

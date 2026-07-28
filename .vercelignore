@@ -1,0 +1,28 @@
+# Heavy source GIS archives (not runtime — use public/docs-idmap/* instead)
+docs-idmap/spatial/**
+docs-idmap/product/**
+*.crdownload
+*.kmz.crdownload
+
+# Local tooling / agent / workspace
+_workspace/**
+graphify-out/**
+_bmad/**
+.agents/**
+.claude/**
+.codex/**
+.cursor/**
+.kiro/**
+.impeccable/**
+__tests__/**
+tests/**
+screenshots/**
+test-results/**
+*.log
+
+# Dev / build noise
+.next/**
+node_modules/**
+.git/**
+.env*
+!.env.example

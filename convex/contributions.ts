@@ -2,6 +2,7 @@ import { query, mutation, type MutationCtx } from "./_generated/server";
 import { v } from "convex/values";
 import type { Id } from "./_generated/dataModel";
 import { writeAuditLog } from "./audit";
+import { requireRole } from "./authz";
 
 function amountMatchesExpected(expected: number, actual?: number) {
   if (typeof actual !== "number" || actual <= 0) return true;
@@ -248,8 +249,11 @@ export const confirmByPaymentIds = mutation({
     }
 
     if (!contrib && typeof args.amount === "number" && args.amount > 0) {
-      const recent = await ctx.db.query("contributions").order("desc").take(25);
-      const cutoff = Date.now() - 30 * 60 * 1000;
+      // Perluas window menjadi 24 jam agar webhook yang sangat telat (Mayar
+      // retry, antrian Vercel, dsb) tetap bisa matched. Ambil 200 row agar
+      // robust terhadap traffic tinggi, lalu filter JS-side.
+      const recent = await ctx.db.query("contributions").order("desc").take(200);
+      const cutoff = Date.now() - 24 * 60 * 60 * 1000;
       contrib = recent.find((item) =>
         item.paymentStatus === "pending" &&
         item.method === "QRIS" &&

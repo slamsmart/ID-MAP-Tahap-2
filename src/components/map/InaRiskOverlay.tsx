@@ -5,14 +5,10 @@ import { createPortal } from "react-dom";
 import { useMap } from "react-leaflet";
 import L from "leaflet";
 import {
-  INA_RISK_LEGEND,
-  INARISK_BANJIR_MAPSERVER,
-  INARISK_BANJIR_SERVICE_LABEL,
   buildInaRiskPopupHtml,
   classifyInaRisk,
   createInaRiskPinIcon,
   parseIdentifyPixel,
-  createInaRiskLegendHtml,
 } from "./inaRiskLegend";
 
 const GEOJSON_URL = "/data/east-java.geojson";
@@ -44,7 +40,7 @@ function isPesisir(props: Record<string, unknown>): boolean {
   );
 }
 
-function buildExportUrl(
+function buildProxyUrl(
   map: L.Map,
   coords: L.Coords,
   tileSizePx: number
@@ -54,18 +50,13 @@ function buildExportUrl(
     [(coords.x + 1) * tileSizePx, (coords.y + 1) * tileSizePx],
     coords.z
   );
-  const params = new URLSearchParams({
-    bbox: `${nw.lng},${se.lat},${se.lng},${nw.lat}`,
-    bboxSR: "4326",
-    imageSR: "4326",
-    size: `${tileSizePx},${tileSizePx}`,
-    dpi: "96",
-    format: "png32",
-    transparent: "true",
-    f: "image",
-    layers: "show:0",
-  });
-  return `${INARISK_BANJIR_MAPSERVER}?${params.toString()}`;
+  // Round bbox ke 5 desimal → cache hit lebih tinggi antar client/viewport.
+  const round = (n: number) => Number(n.toFixed(5));
+  const w = round(nw.lng);
+  const s = round(se.lat);
+  const e = round(se.lng);
+  const n = round(nw.lat);
+  return `/api/inarisk/tile?bbox=${w},${s},${e},${n}&sizeW=${tileSizePx}&sizeH=${tileSizePx}`;
 }
 
 type ClaimMap = L.Map & { __zoneClickClaimed?: number };
@@ -97,7 +88,10 @@ async function fetchIdentify(lat: number, lng: number) {
 export default function InaRiskOverlay({ fitOnLoad = false }: { fitOnLoad?: boolean }) {
   const map = useMap();
   const [ready, setReady] = useState(false);
-  const [tileOk, setTileOk] = useState(false);
+  const [tileState, setTileState] = useState<"idle" | "loading" | "ok" | "error">("idle");
+  const [tileErrorMsg, setTileErrorMsg] = useState<string | null>(null);
+  const [tileLoaded, setTileLoaded] = useState(0);
+  const [tileFailed, setTileFailed] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -125,14 +119,23 @@ export default function InaRiskOverlay({ fitOnLoad = false }: { fitOnLoad?: bool
         img.style.opacity = "0.7";
         img.style.width = `${tileSizePx}px`;
         img.style.height = `${tileSizePx}px`;
+        img.crossOrigin = "anonymous";
         img.onload = () => {
-          if (!cancelled) setTileOk(true);
+          if (cancelled) return;
+          setTileState("ok");
+          setTileErrorMsg(null);
+          setTileLoaded((n) => n + 1);
           done(null, img);
         };
         img.onerror = () => {
+          if (cancelled) return;
+          setTileFailed((n) => n + 1);
+          setTileState("error");
+          setTileErrorMsg("Gagal memuat raster BNPB");
           done(new Error("tile load failed"), img);
         };
-        img.src = buildExportUrl(map, coords, tileSizePx);
+        if (!cancelled) setTileState("loading");
+        img.src = buildProxyUrl(map, coords, tileSizePx);
         return img;
       },
     });
@@ -150,6 +153,7 @@ export default function InaRiskOverlay({ fitOnLoad = false }: { fitOnLoad?: bool
       const { lat, lng } = e.latlng;
       const rid = ++requestId;
 
+      // Defer so PRL/RTRW can claim the click first (same map event).
       window.setTimeout(async () => {
         if (cancelled || rid !== requestId) return;
         if (isZoneClaimed(map)) {
@@ -167,6 +171,7 @@ export default function InaRiskOverlay({ fitOnLoad = false }: { fitOnLoad?: bool
 
           const index = parseIdentifyPixel(data.attributes ?? undefined);
           const level = classifyInaRisk(index);
+          // NoData / luar cakupan banjir → jangan pin (biar PRL/laut/dll)
           if (index == null || !level) {
             clearPin();
             return;
@@ -188,6 +193,7 @@ export default function InaRiskOverlay({ fitOnLoad = false }: { fitOnLoad?: bool
           activePin.addTo(map);
           activePin.openPopup();
         } catch {
+          // Silent: pin hanya untuk area berdata; error jaringan tidak ganggu layer lain
           if (cancelled || rid !== requestId) return;
           clearPin();
         }
@@ -240,9 +246,38 @@ export default function InaRiskOverlay({ fitOnLoad = false }: { fitOnLoad?: bool
 
   const container = map.getContainer();
   if (typeof document === "undefined" || !container) return null;
+  const statusText =
+    tileState === "loading"
+      ? "memuat…"
+      : tileState === "error"
+      ? "gagal"
+      : tileState === "ok" || ready
+      ? "aktif"
+      : "…";
+  const statusColor =
+    tileState === "error"
+      ? "text-red-700"
+      : tileState === "ok" || ready
+      ? "text-emerald-700"
+      : "text-amber-700";
   return createPortal(
-    <div className="absolute bottom-4 right-4 z-[450] pointer-events-none">
-      {ready || tileOk ? createInaRiskLegendHtml() : null}
+    <div
+      className="absolute bottom-4 right-4 z-[450] pointer-events-none bg-white/95 rounded-xl shadow border border-gray-100 px-3 py-2 max-w-[220px]"
+      style={{ fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif" }}
+    >
+      <p className={`text-[10px] font-bold ${statusColor}`}>
+        ⚠️ BNPB inaRISK {statusText}
+      </p>
+      {tileState === "error" && (
+        <p className="text-[9px] text-red-600/80 leading-snug mt-0.5">
+          {tileErrorMsg ?? "Raster BNPB tidak dapat dimuat."} Coba zoom in/out.
+        </p>
+      )}
+      {tileState === "ok" && (tileLoaded > 0 || tileFailed > 0) && (
+        <p className="text-[9px] text-gray-500 leading-snug mt-0.5">
+          Tile {tileLoaded} ok{tileFailed > 0 ? `, ${tileFailed} gagal` : ""}
+        </p>
+      )}
     </div>,
     container
   );

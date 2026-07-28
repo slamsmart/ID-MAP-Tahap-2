@@ -61,6 +61,19 @@ export async function POST(request: NextRequest) {
     let qrImageUrl: string | null = null;
     let mayarPaymentId: string | null = null;
 
+    // First create the pending contribution so we can correlate later.
+    // We use a placeholder paymentId; attachPaymentId updates it once
+    // we have the Mayar transaction ID (extracted from the QR image URL).
+    const contributionId = await convex.mutation(api.contributions.createPending, {
+      projectId: projectId as Id<"projects">,
+      userId: userId as Id<"users"> | undefined,
+      amount,
+      co2Equivalent,
+      paymentId: "", // placeholder; will be attached after Mayar call
+    });
+
+    // Now create the dynamic QRIS. Mayar returns a QR image URL; the
+    // transaction id is derived from the URL's UUID filename.
     try {
       const res = await createQris(amount);
       qrImageUrl = res.data?.url ?? null;
@@ -99,18 +112,17 @@ export async function POST(request: NextRequest) {
       log.warn("create_qris_id_fallback", { amount, paymentId: mayarPaymentId, qrImageUrl });
     }
 
-    const contributionId = await convex.mutation(api.contributions.createPending, {
-      projectId: projectId as Id<"projects">,
-      userId: userId as Id<"users"> | undefined,
-      amount,
-      co2Equivalent,
+    // Attach the mayarPaymentId to the contribution created earlier
+    await convex.mutation(api.contributions.attachPaymentId, {
+      contributionId,
       paymentId: mayarPaymentId,
     });
 
     log.info("qris_created", {
       paymentId: mayarPaymentId ?? null,
       contributionId,
-      amount,      hasQrImageUrl: true,
+      amount,
+      hasQrImageUrl: true,
     });
 
     return NextResponse.json({
@@ -120,7 +132,8 @@ export async function POST(request: NextRequest) {
       qrImageUrl,
       amount,
       co2Equivalent,
-      isSandbox: MAYAR_BASE.includes("mayar.club"),    });
+      isSandbox: MAYAR_BASE.includes("mayar.club"),
+    });
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : "Gagal membuat QRIS";
     log.error("create_qris_exception", { err: error as Error });

@@ -27,6 +27,11 @@ const projectValidator = v.object({
   serviceType: v.optional(v.string()),
   fundingTarget: v.optional(v.number()),
   fundingRaised: v.optional(v.number()),
+  contractSignedAt: v.optional(v.number()),
+  finalReportSubmittedAt: v.optional(v.number()),
+  monevCompletedAt: v.optional(v.number()),
+  facilitatorId: v.optional(v.id("users")),
+  facilitatorOrgId: v.optional(v.id("partnerOrganizations")),
   createdAt: v.number(),
 });
 

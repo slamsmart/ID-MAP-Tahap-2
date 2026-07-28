@@ -49,8 +49,6 @@ export default function HeroSection() {
   // phones/tablets and reduced-motion users get a static, cheap scene.
   const sceneRef = useRef<HTMLDivElement>(null);
   const bgRef = useRef<HTMLDivElement>(null);
-  const orb1Ref = useRef<HTMLDivElement>(null);
-  const orb2Ref = useRef<HTMLDivElement>(null);
   const copyRef = useRef<HTMLDivElement>(null);
 
   // Legacy fallback: per-browser hero image saved in IndexedDB by the old
@@ -76,10 +74,6 @@ export default function HeroSection() {
       frame = 0;
       if (bgRef.current)
         bgRef.current.style.transform = `translate3d(${x * -18}px, ${y * -18}px, 0) scale(1.12)`;
-      if (orb1Ref.current)
-        orb1Ref.current.style.transform = `translate3d(${x * 40}px, ${y * 40}px, 0)`;
-      if (orb2Ref.current)
-        orb2Ref.current.style.transform = `translate3d(${x * 60}px, ${y * 60}px, 0)`;
       if (copyRef.current)
         copyRef.current.style.transform = `translate3d(${x * 12}px, ${y * 12}px, 0)`;
     };
@@ -183,18 +177,6 @@ export default function HeroSection() {
       <div className="absolute inset-0 bg-gradient-to-br from-[#06140f]/95 via-[#0b2e22]/85 to-[#06140f]/70" />
       <div className="absolute inset-0 bg-gradient-to-t from-[#06140f] via-transparent to-[#06140f]/40" />
 
-      {/* Floating glow orbs — desktop only (blur-3xl is costly to composite on
-          mobile GPUs). Hidden below md so phones stay light. */}
-      <div
-        ref={orb1Ref}
-        className="hidden md:block absolute -top-24 -left-16 h-80 w-80 rounded-full bg-emerald-500/25 blur-3xl md:animate-glow-pulse will-change-transform"
-      />
-      <div
-        ref={orb2Ref}
-        className="hidden md:block absolute top-1/3 right-0 h-96 w-96 rounded-full bg-teal-400/20 blur-3xl md:animate-glow-pulse will-change-transform"
-        style={{ animationDelay: "1.5s" }}
-      />
-
       {/* Subtle grid floor for spatial depth — desktop only */}
       <div
         className="hidden md:block absolute inset-x-0 bottom-0 h-1/2 opacity-[0.12]"
@@ -226,9 +208,9 @@ export default function HeroSection() {
 
             <ScrollReveal delay={90}>
               <h1 className="font-hero text-4xl font-extrabold leading-[1.02] tracking-tight text-white sm:text-5xl md:text-6xl">
-                <span className="drop-shadow-[0_4px_24px_rgba(0,0,0,0.5)]">{line1}</span>
+                <span>{line1}</span>
                 <br />
-                <span className="drop-shadow-[0_4px_24px_rgba(0,0,0,0.5)]">{line2}</span>
+                <span>{line2}</span>
                 <br />
                 <span className="text-white">{accent}</span>
               </h1>
@@ -243,7 +225,7 @@ export default function HeroSection() {
             <ScrollReveal delay={270} className="mt-10 flex flex-col flex-wrap gap-4 sm:flex-row">
               <a
                 href={data.primaryCtaHref}
-                className="group inline-flex items-center justify-center gap-2 rounded-xl bg-white hover:bg-gray-100 px-6 py-3.5 text-sm font-bold text-black shadow-[0_12px_30px_-8px_rgba(0,0,0,0.25)] hover:shadow-[0_18px_40px_-8px_rgba(0,0,0,0.3)] hover:-translate-y-0.5 transition-all focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 focus:ring-offset-[#06140f]"
+                className="group inline-flex items-center justify-center gap-2 rounded-xl bg-white hover:bg-gray-100 px-6 py-3.5 text-sm font-bold text-black hover:-translate-y-0.5 transition-transform focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 focus:ring-offset-[#06140f]"
               >
                 {primaryLabel}
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />

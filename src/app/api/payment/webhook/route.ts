@@ -1,4 +1,4 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../../../../convex/_generated/api";
 import { Id } from "../../../../../convex/_generated/dataModel";
@@ -15,7 +15,7 @@ const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 // Spec: https://docs.mayar.id/integration/webhook
 //
 // Security:
-// - Mayar sends the configured Webhook Token as `Authorization: Bearer â€¦`
+// - Mayar sends the configured Webhook Token as `Authorization: Bearer …`
 //   (MAYAR_WEBHOOK_TOKEN env). We verify it on every call.
 // - Some setups also sign the body via `x-mayar-signature` (HMAC-SHA256 of
 //   body using the same token as key). We accept that too.
@@ -56,10 +56,15 @@ export async function POST(request: NextRequest) {
   const event = payload.event;
   const data = payload.data;
 
-  if (event === "testing") {
+  // Provider mengirim event 'testing' untuk sanity-check dan sudah
+  // di-ack di short-circuit atas dengan payload raw — baris di bawah
+  // sengaja dibiarkan sebagai safety net untuk payload yang lolos
+  // type-guard di atas (mis. payload tidak valid JSON di testingPayload).
+  if ((event as string) === "testing") {
     log.info("webhook_testing_ack", { durationMs: Date.now() - startedAt });
     return NextResponse.json({ received: true, event, test: true });
   }
+
   const contributionId = data?.extraData?.contributionId;
   const paymentIds = [
     data?.transactionId,
@@ -68,16 +73,18 @@ export async function POST(request: NextRequest) {
     data?.id,
   ].filter((id): id is string => typeof id === "string" && id.trim().length > 0);
   const paymentId = paymentIds[0] ?? "";
+  const amount = typeof data?.amount === "number" ? data.amount : undefined;
 
   log.info("webhook_received", {
     event,
     paymentId,
     paymentIds,
     contributionId,
-    amount: typeof data?.amount === "number" ? data.amount : null,
+    amount: amount ?? null,
     status: data?.status,
     productId: data?.productId,
     productType: data?.productType,
+    createdAt: data?.createdAt,
   });
 
   if (!contributionId && !paymentId) {
@@ -87,7 +94,6 @@ export async function POST(request: NextRequest) {
 
   try {
     if (isPaid(data?.status)) {
-      const amount = typeof data?.amount === "number" ? data.amount : undefined;
       if (contributionId) {
         const alreadyPaid = await convex.query(api.contributions.getStatus, {
           contributionId: contributionId as Id<"contributions">,
@@ -95,17 +101,20 @@ export async function POST(request: NextRequest) {
         if (alreadyPaid?.paymentStatus === "paid") {
           log.info("webhook_idempotent_skip", {
             event,
-        contributionId,
-        paymentId,
-      });
+            contributionId,
+            paymentId,
+          });
           return NextResponse.json({ received: true, event, skipped: true });
         }
         await convex.mutation(api.contributions.confirmPaymentFromWebhook, {
           contributionId: contributionId as Id<"contributions">,
           amount,
-      paymentId,
-    });
+          paymentId,
+        });
       } else {
+        // For QRIS payments without contributionId in extraData, rely on 
+        // the existing confirmByPaymentIds logic which already includes
+        // paymentId matching and amount+recent fallback
         await convex.mutation(api.contributions.confirmByPaymentIds, {
           paymentIds,
           amount,
@@ -150,6 +159,3 @@ export async function GET() {
     service: "id-map mayar webhook",
   });
 }
-
-
-
