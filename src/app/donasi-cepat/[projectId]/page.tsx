@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "convex/react";
-import { QRCodeSVG } from "qrcode.react";
+import { QRCodeSVG} from "qrcode.react";
 import {
   Leaf,
   CheckCircle,
@@ -21,8 +21,6 @@ import {
 import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { getSession, refreshSession, type User } from "@/lib/auth";
-
-const PRESETS = [10_000, 25_000, 50_000, 100_000, 250_000, 500_000];
 
 type State =
   | "idle"
@@ -100,13 +98,19 @@ export default function DonasiCepatPage() {
 
   const [amount, setAmount] = useState(25_000);
   const [customAmount, setCustomAmount] = useState("");
+
+  // Preset nominal donasi (IDR). Ditampilkan sebagai grid 3-kolom di panel QRIS.
+  const PRESETS = [25_000, 50_000, 100_000, 250_000, 500_000, 1_000_000] as const;
   const [state, setState] = useState<State>("idle");
   const [qrisData, setQrisData] = useState<QrisData | null>(null);
+
   const [paidSummary, setPaidSummary] = useState<QrisData | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
   const [isSandbox, setIsSandbox] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const qrContainerRef = useRef<HTMLDivElement>(null);
+  
+
 
   // Real-time: Convex WebSocket pushes update the moment webhook confirms payment.
   const pendingStatus = useQuery(
@@ -206,42 +210,44 @@ export default function DonasiCepatPage() {
     }).format(n);
 
 
-  async function handleCreateQris() {
-    if (!finalAmount || finalAmount < 1000) {
-      setErrorMsg("Minimal donasi Rp 1.000");
-      return;
-    }
-    setErrorMsg("");
-    setState("generating");
-    try {
-      const res = await fetch("/api/payment/create-qris", {
-        credentials: "same-origin",
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          amount: finalAmount,
-          projectId,
-          userId: user?._id,
-        }),
-      });
-      const data = await parseApiResponse<QrisData & { error?: string }>(res);
-      if (!res.ok) throw new Error(data.error ?? "Gagal membuat QRIS");
-      setQrisData(data);
-      setPaidSummary(null);
-      setState("waiting");
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Terjadi kesalahan";
-      setErrorMsg(msg);
-      setState("error");
-    }
+async function handleCreateQris() {
+  if (!finalAmount || finalAmount < 1000) {
+    setErrorMsg("Minimal donasi Rp 1.000");
+    return;
   }
-
-  function reset() {
-    setQrisData(null);
+  setErrorMsg("");
+  setState("generating");
+  try {
+    const res = await fetch("/api/payment/create-qris", {
+      credentials: "same-origin",
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        amount: finalAmount,
+        projectId,
+        userId: user?._id,
+      }),
+    });
+    const data = await parseApiResponse<QrisData & { error?: string }>(res);
+    if (!res.ok) throw new Error(data.error ?? "Gagal membuat QRIS");
+    setQrisData(data);
     setPaidSummary(null);
-    setState("idle");
-    setErrorMsg("");
+    setState("waiting");
+
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : "Terjadi kesalahan";
+    setErrorMsg(msg);
+    setState("error");
   }
+}
+
+function reset() {
+  setQrisData(null);
+  setPaidSummary(null);
+  setState("idle");
+  setErrorMsg("");
+
+}
 
   async function handleSimulatePayment() {
     if (!qrisData) return;
@@ -719,13 +725,4 @@ export default function DonasiCepatPage() {
     </main>
   );
 }
-
-
-
-
-
-
-
-
-
 
