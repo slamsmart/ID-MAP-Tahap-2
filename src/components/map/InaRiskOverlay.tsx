@@ -12,6 +12,7 @@ import {
   classifyInaRisk,
   createInaRiskPinIcon,
   parseIdentifyPixel,
+  createInaRiskLegendHtml,
 } from "./inaRiskLegend";
 
 const GEOJSON_URL = "/data/east-java.geojson";
@@ -149,7 +150,6 @@ export default function InaRiskOverlay({ fitOnLoad = false }: { fitOnLoad?: bool
       const { lat, lng } = e.latlng;
       const rid = ++requestId;
 
-      // Defer so PRL/RTRW can claim the click first (same map event).
       window.setTimeout(async () => {
         if (cancelled || rid !== requestId) return;
         if (isZoneClaimed(map)) {
@@ -167,7 +167,6 @@ export default function InaRiskOverlay({ fitOnLoad = false }: { fitOnLoad?: bool
 
           const index = parseIdentifyPixel(data.attributes ?? undefined);
           const level = classifyInaRisk(index);
-          // NoData / luar cakupan banjir → jangan pin (biar PRL/laut/dll)
           if (index == null || !level) {
             clearPin();
             return;
@@ -189,7 +188,6 @@ export default function InaRiskOverlay({ fitOnLoad = false }: { fitOnLoad?: bool
           activePin.addTo(map);
           activePin.openPopup();
         } catch {
-          // Silent: pin hanya untuk area berdata; error jaringan tidak ganggu layer lain
           if (cancelled || rid !== requestId) return;
           clearPin();
         }
@@ -243,8 +241,8 @@ export default function InaRiskOverlay({ fitOnLoad = false }: { fitOnLoad?: bool
   const container = map.getContainer();
   if (typeof document === "undefined" || !container) return null;
   return createPortal(
-    <div className="absolute bottom-4 right-4 z-[450] pointer-events-none bg-white/95 rounded-xl shadow border border-gray-100 px-3 py-2" style={{ fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif" }}>
-      <p className="text-[10px] font-bold text-red-700">⚠️ BNPB inaRISK {ready || tileOk ? "aktif" : "…"}</p>
+    <div className="absolute bottom-4 right-4 z-[450] pointer-events-none">
+      {ready || tileOk ? createInaRiskLegendHtml() : null}
     </div>,
     container
   );
