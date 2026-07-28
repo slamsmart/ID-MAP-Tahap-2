@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { useMap } from "react-leaflet";
 import L from "leaflet";
 import {
+  INA_RISK_LEGEND,
   buildInaRiskPopupHtml,
   classifyInaRisk,
   createInaRiskPinIcon,
@@ -260,25 +261,67 @@ export default function InaRiskOverlay({ fitOnLoad = false }: { fitOnLoad?: bool
       : tileState === "ok" || ready
       ? "text-emerald-700"
       : "text-amber-700";
-  return createPortal(
-    <div
-      className="absolute bottom-4 right-4 z-[450] pointer-events-none bg-white/95 rounded-xl shadow border border-gray-100 px-3 py-2 max-w-[220px]"
-      style={{ fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif" }}
-    >
-      <p className={`text-[10px] font-bold ${statusColor}`}>
-        ⚠️ BNPB inaRISK {statusText}
-      </p>
-      {tileState === "error" && (
-        <p className="text-[9px] text-red-600/80 leading-snug mt-0.5">
-          {tileErrorMsg ?? "Raster BNPB tidak dapat dimuat."} Coba zoom in/out.
-        </p>
+  const fontStack = { fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif" };
+  return (
+    <>
+      {createPortal(
+        <div
+          className="absolute bottom-4 left-4 z-[450] pointer-events-none bg-white/95 backdrop-blur-sm rounded-xl shadow-lg border border-gray-200 px-3 py-2.5 max-w-[240px]"
+          style={fontStack}
+        >
+          <p className="text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1.5">
+            Skala Bahaya Banjir · BNPB inaRISK
+          </p>
+          <ul className="space-y-1">
+            {INA_RISK_LEGEND.map((item) => (
+              <li
+                key={item.level}
+                className="flex items-center gap-2 text-[10px] text-gray-800"
+              >
+                <span
+                  aria-hidden
+                  className="flex-shrink-0 rounded-sm"
+                  style={{
+                    width: 14,
+                    height: 14,
+                    backgroundColor: item.color,
+                    // Border tipis + ring halus → chip kuning pucat tetap
+                    // punya kontras di background putih / device terang.
+                    border: "1px solid rgba(0,0,0,0.18)",
+                    boxShadow: "0 0 0 1px rgba(255,255,255,0.85)",
+                  }}
+                />
+                <span className="font-semibold leading-none">
+                  {item.level}
+                </span>
+                <span className="leading-none">{item.label}</span>
+              </li>
+            ))}
+          </ul>
+        </div>,
+        container
       )}
-      {tileState === "ok" && (tileLoaded > 0 || tileFailed > 0) && (
-        <p className="text-[9px] text-gray-500 leading-snug mt-0.5">
-          Tile {tileLoaded} ok{tileFailed > 0 ? `, ${tileFailed} gagal` : ""}
-        </p>
+      {createPortal(
+        <div
+          className="absolute bottom-4 right-4 z-[450] pointer-events-none bg-white/95 rounded-xl shadow border border-gray-100 px-3 py-2 max-w-[220px]"
+          style={fontStack}
+        >
+          <p className={`text-[10px] font-bold ${statusColor}`}>
+            ⚠️ BNPB inaRISK {statusText}
+          </p>
+          {tileState === "error" && (
+            <p className="text-[9px] text-red-600/80 leading-snug mt-0.5">
+              {tileErrorMsg ?? "Raster BNPB tidak dapat dimuat."} Coba zoom in/out.
+            </p>
+          )}
+          {tileState === "ok" && (tileLoaded > 0 || tileFailed > 0) && (
+            <p className="text-[9px] text-gray-500 leading-snug mt-0.5">
+              Tile {tileLoaded} ok{tileFailed > 0 ? `, ${tileFailed} gagal` : ""}
+            </p>
+          )}
+        </div>,
+        container
       )}
-    </div>,
-    container
+    </>
   );
 }
