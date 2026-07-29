@@ -6,6 +6,7 @@ import { useMap } from "react-leaflet";
 import L from "leaflet";
 import {
   INA_RISK_LEGEND,
+  INDEX3_LEGEND,
   buildInaRiskPopupHtml,
   classifyInaRisk,
   createInaRiskPinIcon,
@@ -85,6 +86,114 @@ async function fetchIdentify(lat: number, lng: number) {
   return data;
 }
 
+/**
+ * Decode raster BNPB ke canvas dengan klasifikasi 3-tier indeks utama.
+ * Pixel alpha < threshold → NoData (tetap transparan).
+ * Pixel non-transparan → dipetakan ke Hijau/Kuning/Merah berdasarkan
+ * hue-dominan hijau, dominasi merah/oranye, dan luminance fallback.
+ */
+function recolorTileToCanvas3(
+  img: HTMLImageElement,
+  size: number,
+  alphaThreshold = 8
+): HTMLCanvasElement {
+  const canvas = document.createElement("canvas");
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return canvas;
+  ctx.drawImage(img, 0, 0, size, size);
+  let data: ImageData;
+  try {
+    data = ctx.getImageData(0, 0, size, size);
+  } catch {
+    return canvas;
+  }
+  const px = data.data;
+  for (let i = 0; i < px.length; i += 4) {
+    const r = px[i];
+    const g = px[i + 1];
+    const b = px[i + 2];
+    const a = px[i + 3];
+    if (a < alphaThreshold) {
+      px[i + 3] = 0;
+      continue;
+    }
+    const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    const greenness = g - (r + b) / 2;
+    const redness = r - (g + b) / 2;
+    let bucket: 0 | 1 | 2;
+    if (greenness > 30) bucket = 0;
+    else if (redness > 0 && lum < 0.85) bucket = 2;
+    else if (lum > 0.7) bucket = 1;
+    else bucket = lum < 0.55 ? 0 : lum < 0.8 ? 1 : 2;
+    const target = INDEX3_LEGEND[bucket].color;
+    px[i] = parseInt(target.slice(1, 3), 16);
+    px[i + 1] = parseInt(target.slice(3, 5), 16);
+    px[i + 2] = parseInt(target.slice(5, 7), 16);
+    px[i + 3] = 210;
+  }
+  ctx.putImageData(data, 0, 0);
+  return canvas;
+}
+
+/** Render ulang tile BNPB ke canvas, lalu overlay pattern arsiran SVG
+ *  untuk tiap kategori. Hasilnya: visual gradasi 3-warna + arsiran
+ *  spasial yang color-blind friendly. */
+function renderInaRiskTileCanvas(
+  img: HTMLImageElement,
+  size: number
+): HTMLDivElement {
+  const wrapper = document.createElement("div");
+  wrapper.style.cssText = `position:relative;width:${size}px;height:${size}px;pointer-events:none;`;
+
+  const baseRaster = document.createElement("img");
+  baseRaster.alt = "";
+  baseRaster.crossOrigin = "anonymous";
+  baseRaster.style.cssText = `position:absolute;inset:0;width:${size}px;height:${size}px;opacity:.40;filter:saturate(.55);`;
+  baseRaster.src = img.src;
+
+  const canvasHost = document.createElement("div");
+  canvasHost.style.cssText = `position:absolute;inset:0;mix-blend-mode:multiply;`;
+  const canvas = document.createElement("canvas");
+  canvas.width = size;
+  canvas.height = size;
+  canvas.style.cssText = `width:${size}px;height:${size}px;display:block;`;
+  canvasHost.appendChild(canvas);
+
+  const hatchHost = document.createElement("div");
+  hatchHost.style.cssText = `position:absolute;inset:0;mix-blend-mode:overlay;opacity:.55;pointer-events:none;`;
+  INDEX3_LEGEND.forEach((lvl, idx) => {
+    const hatch = document.createElement("div");
+    hatch.style.cssText = `position:absolute;inset:0;background-image:${lvl.hatch};background-size:${10 + idx * 2}px ${10 + idx * 2}px;mix-blend-mode:overlay;opacity:.42;`;
+    hatchHost.appendChild(hatch);
+  });
+
+  wrapper.appendChild(baseRaster);
+  wrapper.appendChild(canvasHost);
+  wrapper.appendChild(hatchHost);
+
+  // Tunggu raster load → re-color ke canvas
+  const doRecolor = () => {
+    try {
+      const colored = recolorTileToCanvas3(baseRaster, size);
+      const ctx = canvas.getContext("2d");
+      if (ctx) {
+        ctx.clearRect(0, 0, size, size);
+        ctx.drawImage(colored, 0, 0);
+      }
+    } catch {
+      // Best-effort
+    }
+  };
+  if (baseRaster.complete && baseRaster.naturalWidth > 0) {
+    doRecolor();
+  } else {
+    baseRaster.onload = doRecolor;
+  }
+  return wrapper;
+}
+
 /** inaRISK bahaya banjir (nasional) + pin click identify + pesisir poly */
 export default function InaRiskOverlay({ fitOnLoad = false }: { fitOnLoad?: boolean }) {
   const map = useMap();
@@ -113,20 +222,37 @@ export default function InaRiskOverlay({ fitOnLoad = false }: { fitOnLoad?: bool
       extend: (opts: object) => new () => L.GridLayer;
     }).extend({
       createTile(coords: L.Coords, done: (err: Error | null, tile: HTMLElement) => void) {
-        const img = document.createElement("img");
         const tileSizePx = 256;
+        const wrapper = document.createElement("div");
+        wrapper.style.width = `${tileSizePx}px`;
+        wrapper.style.height = `${tileSizePx}px`;
+        wrapper.style.position = "relative";
+        wrapper.style.pointerEvents = "none";
+
+        const img = document.createElement("img");
         img.alt = "";
         img.setAttribute("role", "presentation");
-        img.style.opacity = "0.7";
         img.style.width = `${tileSizePx}px`;
         img.style.height = `${tileSizePx}px`;
+        img.style.display = "block";
         img.crossOrigin = "anonymous";
+
+        const url = buildProxyUrl(map, coords, tileSizePx);
         img.onload = () => {
           if (cancelled) return;
           setTileState("ok");
           setTileErrorMsg(null);
           setTileLoaded((n) => n + 1);
-          done(null, img);
+          // Replace img dengan canvas wrapper (recolor 3-tier + arsiran)
+          try {
+            const canvasWrap = renderInaRiskTileCanvas(img, tileSizePx);
+            if (wrapper.parentNode) {
+              wrapper.parentNode.replaceChild(canvasWrap, wrapper);
+            }
+            done(null, canvasWrap);
+          } catch {
+            done(null, img);
+          }
         };
         img.onerror = () => {
           if (cancelled) return;
@@ -136,12 +262,13 @@ export default function InaRiskOverlay({ fitOnLoad = false }: { fitOnLoad?: bool
           done(new Error("tile load failed"), img);
         };
         if (!cancelled) setTileState("loading");
-        img.src = buildProxyUrl(map, coords, tileSizePx);
-        return img;
+        img.src = url;
+        wrapper.appendChild(img);
+        return wrapper;
       },
     });
     const banjir = new (BanjirGrid as unknown as new (opts?: L.GridLayerOptions) => L.GridLayer)({
-      opacity: 0.75,
+      opacity: 0.85,
       updateWhenIdle: true,
       keepBuffer: 1,
     });
@@ -273,7 +400,44 @@ export default function InaRiskOverlay({ fitOnLoad = false }: { fitOnLoad?: bool
           style={fontStack}
         >
           <p className="text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1.5">
-            Skala Bahaya Banjir · BNPB inaRISK
+            Gradasi Indeks Utama · BNPB inaRISK
+          </p>
+          <ul className="space-y-1 mb-2">
+            {INDEX3_LEGEND.map((item) => (
+              <li
+                key={item.level}
+                className="flex items-center gap-2 text-[10px] text-gray-800"
+                title={item.desc}
+              >
+                <span
+                  aria-hidden
+                  className="flex-shrink-0 rounded-sm"
+                  style={{
+                    width: 18,
+                    height: 14,
+                    // Background dasar = warna kategori; layer arsiran
+                    // SVG pattern (hatch) overlay di atasnya dengan
+                    // blend-mode multiply → visualnya jelas "hijau/kuning/
+                    // merah dengan pola arsiran spasial".
+                    backgroundColor: item.color,
+                    backgroundImage: item.hatch,
+                    backgroundSize: "10px 10px",
+                    border: "1px solid rgba(0,0,0,0.32)",
+                    boxShadow: "0 0 0 1px rgba(255,255,255,0.85)",
+                  }}
+                />
+                <span className="font-bold leading-none w-3">
+                  {item.shortLabel}
+                </span>
+                <span className="leading-none font-semibold">{item.label}</span>
+                <span className="leading-none text-[9px] text-gray-500 ml-auto">
+                  {item.range[0].toFixed(1)}–{item.range[1].toFixed(1)}
+                </span>
+              </li>
+            ))}
+          </ul>
+          <p className="text-[9px] font-semibold text-gray-500 uppercase tracking-wider mb-1 pt-1.5 border-t border-gray-200">
+            Detail 5-Tingkat BNPB
           </p>
           <ul className="space-y-1">
             {INA_RISK_LEGEND.map((item) => (

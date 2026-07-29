@@ -15,6 +15,76 @@ export const INA_RISK_LEGEND: InaRiskLevel[] = [
 ];
 
 /**
+ * Gradasi 3 tingkat indeks utama — re-classification indeks pixel 0–1
+ * ke tiga kategori visual yang lebih gampang dibaca untuk pengguna awam.
+ *
+ * - Hijau = Rendah (v < 0.4): danger zone lemah, bisa diabaikan untuk rencana dasar.
+ * - Kuning = Sedang (0.4 ≤ v < 0.8): butuh mitigasi struktural/non-struktural.
+ * - Merah = Tinggi (v ≥ 0.8): area prioritas, wajib ada rencana kontingensi.
+ *
+ * `hatch` adalah dataURI SVG pattern (encoded %23 untuk #) untuk arsiran
+ * spasial — dipakai di canvas overlay / chip legend. Pola berbeda per level
+ * supaya area dapat dibedakan meski user buta warna (color-blind safe).
+ */
+export type InaRiskIndex3 = {
+  level: "1" | "2" | "3";
+  label: string;
+  shortLabel: string;
+  color: string;
+  hatch: string;
+  desc: string;
+  range: [number, number];
+};
+
+function svgHatch(hex: string, angleDeg: number, spacing: number, strokeW: number): string {
+  // pattern 24x24 tile; garis diagonal repetition untuk arsiran area besar
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${spacing}' height='${spacing}' viewBox='0 0 ${spacing} ${spacing}'><path d='M0 ${spacing / 2}L${spacing} ${-spacing / 2}M${-spacing / 2} ${spacing}L${spacing} ${spacing + spacing / 2}' stroke='${hex}' stroke-width='${strokeW}' fill='none'/></svg>`;
+  const rotated = `<svg xmlns='http://www.w3.org/2000/svg' width='${spacing}' height='${spacing}' viewBox='0 0 ${spacing} ${spacing}'><g transform='rotate(${angleDeg} ${spacing / 2} ${spacing / 2})'>${svg
+    .replace(/^<svg[^>]*>/, "")
+    .replace(/<\/svg>$/, "")}</g></svg>`;
+  return `url("data:image/svg+xml;utf8,${encodeURIComponent(rotated)}")`;
+}
+
+export const INDEX3_LEGEND: InaRiskIndex3[] = [
+  {
+    level: "1",
+    label: "Rendah",
+    shortLabel: "R",
+    color: "#16a34a",
+    hatch: svgHatch("#15803d", 0, 10, 1.2),
+    desc: "Bahaya rendah — indeks < 0.4",
+    range: [0, 0.4],
+  },
+  {
+    level: "2",
+    label: "Sedang",
+    shortLabel: "S",
+    color: "#facc15",
+    hatch: svgHatch("#a16207", 45, 10, 1.2),
+    desc: "Bahaya sedang — indeks 0.4–0.8",
+    range: [0.4, 0.8],
+  },
+  {
+    level: "3",
+    label: "Tinggi",
+    shortLabel: "T",
+    color: "#dc2626",
+    hatch: svgHatch("#7f1d1d", 135, 8, 1.4),
+    desc: "Bahaya tinggi — indeks ≥ 0.8",
+    range: [0.8, 1],
+  },
+];
+
+/** Klasifikasi pixel 0–1 ke 3 tingkat indeks utama. */
+export function classifyInaRiskIndex3(value: number | null): InaRiskIndex3 | null {
+  if (value == null || Number.isNaN(value)) return null;
+  const v = Math.max(0, Math.min(1, value));
+  if (v < INDEX3_LEGEND[0].range[1]) return INDEX3_LEGEND[0];
+  if (v < INDEX3_LEGEND[1].range[1]) return INDEX3_LEGEND[1];
+  return INDEX3_LEGEND[2];
+}
+
+/**
  * JBTBPJ = Jabodetabekpunjur saja (fullExtent ~106.7–107.4E).
  * Untuk peta Jatim/nasional pakai layer_bahaya_banjir_30.
  */
