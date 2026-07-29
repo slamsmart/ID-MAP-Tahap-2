@@ -102,9 +102,10 @@ function PolygonLayer({ geojson }: { geojson: GeoJSON.FeatureCollection | null }
     const layer = L.geoJSON(geojson, {
       filter: (feature) => isPesisir(feature.properties ?? {}),
       style: {
-        color: "#0ea5e9",
+        // Palet standar BNPB inaRISK (kuning → oranye → oranye tua)
+        color: "#ff6b0c",
         weight: 2,
-        fillColor: "#0ea5e9",
+        fillColor: "#ffa916",
         fillOpacity: 0.18,
         dashArray: undefined,
       },
